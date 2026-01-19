@@ -86,3 +86,5 @@ nav:
       - Configuration: reference/configuration.md
       - CLI: reference/cli.md
       - Troubleshooting: reference/troubleshooting.md
+      - Changelog: reference/changelog.md
+      - Contributing: reference/contributing.md
