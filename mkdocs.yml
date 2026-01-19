@@ -35,6 +35,7 @@ nav:
   - Home: index.md
   - Roadmap:
       - Overview: roadmap/overview.md
+      - Phase 1 (Platform MVP): roadmap/phase-1-platform-mvp.md
   - Getting started:
       - Overview: getting-started/overview.md
       - Prereqs: getting-started/prereqs.md

@@ -31,6 +31,8 @@ Definition of done:
 
 **Goal:** one playable experience built from the platform skeleton.
 
+Scope is locked in: `docs/roadmap/phase-1-platform-mvp.md`.
+
 Deliverables:
 
 - `packages/core`: lifecycle + DI + logging + cleanup
