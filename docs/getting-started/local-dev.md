@@ -15,6 +15,13 @@ Expected commands:
 - `pip install -r requirements-docs.txt`
 - `mkdocs serve`
 
+If you moved/renamed the repo folder and your existing `.venv` breaks (bad interpreter path), recreate it:
+
+- `rm -rf .venv`
+- `python -m venv .venv`
+- `source .venv/bin/activate`
+- `pip install -r requirements-docs.txt`
+
 ## Game workflow (planned)
 
 This is now scaffolded for the `games/starter` project.

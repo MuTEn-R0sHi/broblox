@@ -10,6 +10,25 @@
 
 Optional (recommended): Aftman for toolchain pinning (Rojo, etc.)
 
+### Installing Aftman
+
+Aftman lets us pin Roblox tooling versions (like Rojo) in-repo via `aftman.toml`.
+
+Linux options:
+
+- If you have Rust installed: `cargo install aftman`
+- Or download a release binary and put it on your `PATH` (see the Aftman GitHub releases page)
+
+Verify:
+
+- `aftman --version`
+
+Then from the repo root:
+
+- `aftman install`
+
+That installs the pinned tools (including Rojo) into `.aftman/`.
+
 ## CI prerequisites (GitHub)
 
 - Repository has GitHub Actions enabled
