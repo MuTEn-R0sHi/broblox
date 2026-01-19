@@ -8,7 +8,11 @@
   "scripts": {
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+
+    "game:starter:build": "pnpm --filter @rbx/game-starter run build",
+    "game:starter:dev": "pnpm --filter @rbx/game-starter run dev",
+    "game:starter:rojo": "pnpm --filter @rbx/game-starter run rojo:serve"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",

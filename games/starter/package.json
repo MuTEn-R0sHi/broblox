@@ -6,6 +6,9 @@
     "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude",
     "build": "rbxtsc -p tsconfig.roblox.json",
+    "dev": "rbxtsc -p tsconfig.roblox.json -w",
+    "rojo:serve": "rojo serve default.project.json",
+    "rojo:build": "rojo build default.project.json -o build.rbxl",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {

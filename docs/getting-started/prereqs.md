@@ -6,6 +6,9 @@
 - Node.js (LTS)
 - pnpm (recommended) or npm
 - Git
+- Rojo (recommended, for Roblox Studio sync)
+
+Optional (recommended): Aftman for toolchain pinning (Rojo, etc.)
 
 ## CI prerequisites (GitHub)
 

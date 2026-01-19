@@ -17,9 +17,28 @@ Expected commands:
 
 ## Game workflow (planned)
 
-- Install node dependencies (`pnpm install`)
-- Build/watch Roblox-TS (`pnpm build` / `pnpm dev`)
-- Start Rojo server (`rojo serve`) and connect Studio
+This is now scaffolded for the `games/starter` project.
+
+### 1) Install dependencies
+
+- `corepack enable`
+- `pnpm install`
+
+### 2) Build / watch Roblox-TS
+
+- Build once: `pnpm game:starter:build`
+- Watch: `pnpm game:starter:dev`
+
+### 3) Rojo + Studio sync
+
+Recommended: install Rojo via Aftman (toolchain pinned in `aftman.toml`).
+
+- Install tools: `aftman install`
+- Start Rojo: `pnpm game:starter:rojo`
+
+The Rojo project file is:
+
+- `games/starter/default.project.json`
 
 ## Debugging principles
 
