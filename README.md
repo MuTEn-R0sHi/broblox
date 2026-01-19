@@ -47,4 +47,6 @@ pip install -r requirements-docs.txt
 mkdocs serve
 ```
 
+Deployment is done via lima-city (FTPS) using the GitHub Actions workflow `.github/workflows/docs-deploy-limacity.yml`.
+
 

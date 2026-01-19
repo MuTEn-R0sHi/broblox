@@ -87,6 +87,7 @@ nav:
       - Configuration: reference/configuration.md
       - CLI: reference/cli.md
       - Tooling & commands: reference/tooling.md
+      - Docs deployment: reference/docs-deployment.md
       - Troubleshooting: reference/troubleshooting.md
       - Changelog: reference/changelog.md
       - Contributing: reference/contributing.md

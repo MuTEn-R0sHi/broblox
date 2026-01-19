@@ -9,6 +9,7 @@ This project is a **docs-first** platform. The docs define the architecture; the
 - Dependencies: npm/pnpm (and optionally Wally later for Luau packages)
 - Formatting/linting/testing: ESLint/Prettier + (later) Roblox-side tests
 - CI/CD: GitHub Actions + Roblox **Open Cloud**
+- Docs hosting: static MkDocs site deployed to external hosting (not GitHub Pages)
 - Web dashboard: Next.js + Postgres (audit logs, config history, moderation workflow)
 
 ## Key constraints (Roblox reality)
