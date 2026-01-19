@@ -15,6 +15,20 @@ Repo checks:
 - `pnpm typecheck`
 - `pnpm test`
 
+## Docs
+
+Local preview:
+
+- `python -m venv .venv`
+- `source .venv/bin/activate`
+- `pip install -r requirements-docs.txt`
+- `mkdocs serve`
+
+Deploy:
+
+- Deployment is handled by the GitHub Actions workflow `.github/workflows/docs-deploy-limacity.yml`
+- Setup details: `docs/reference/docs-deployment.md`
+
 ## Starter game (Roblox-TS)
 
 Build once:
