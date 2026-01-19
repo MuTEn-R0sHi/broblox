@@ -88,3 +88,6 @@ nav:
       - Troubleshooting: reference/troubleshooting.md
       - Changelog: reference/changelog.md
       - Contributing: reference/contributing.md
+      - Versioning: reference/versioning.md
+      - Releasing: reference/releasing.md
+

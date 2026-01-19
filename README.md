@@ -29,6 +29,11 @@ pnpm typecheck
 pnpm test
 ```
 
+## Versioning + releases
+
+- We use SemVer tags (`vX.Y.Z`) for repo releases.
+- See `VERSIONING.md` and `RELEASING.md`.
+
 ## Docs
 
 ```bash
@@ -37,3 +42,4 @@ source .venv/bin/activate
 pip install -r requirements-docs.txt
 mkdocs serve
 ```
+
