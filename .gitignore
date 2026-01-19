@@ -1,0 +1,31 @@
+# MkDocs build output
+site/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node
+node_modules/
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# TypeScript / build
+dist/
+build/
+*.tsbuildinfo
+
+# Roblox-TS
+games/**/out/
+
+# OS / editor
+.DS_Store
+.vscode/

@@ -1,0 +1,103 @@
+name: Bug report
+description: Report a bug in the platform, games, dashboard, or CI/CD.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please include enough detail to reproduce and assess impact.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Roblox runtime (server)
+        - Roblox runtime (client)
+        - Networking / remotes
+        - Persistence / economy
+        - Matchmaking / ranking
+        - Dashboard
+        - CI/CD / Open Cloud
+        - Docs
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - dev
+        - stage
+        - prod
+        - local
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps are best.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / evidence
+      description: Paste relevant logs, screenshots, matchIds, requestIds, serverIds.
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is affected and how severe is it?
+
+  - type: textarea
+    id: docs
+    attributes:
+      label: Related docs / ADRs
+      description: Link any relevant docs pages and ADRs.
+      placeholder: |
+        docs/architecture/networking.md
+        docs/security/threat-model.md
+        docs/architecture/decisions/0002-network-protocol-versioning.md
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security considerations
+      options:
+        - label: Might impact competitive integrity or anti-cheat
+        - label: Might impact economy integrity (grants/duplication)
+        - label: Might expose sensitive data

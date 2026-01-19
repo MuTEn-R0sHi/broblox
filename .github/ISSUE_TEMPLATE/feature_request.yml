@@ -1,0 +1,97 @@
+name: Feature request
+description: Propose a new platform feature/module or major enhancement.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests should align with the docs-first architecture.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Platform package
+        - Networking
+        - Security / anti-abuse
+        - Movement
+        - Matchmaking / ranking
+        - UI kit
+        - Live ops / feature flags
+        - Dashboard
+        - CI/CD
+        - Docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are we solving?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the proposed solution at a high level.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      placeholder: |
+        In scope:
+        -
+        Out of scope:
+        -
+
+  - type: textarea
+    id: docs
+    attributes:
+      label: Docs impact
+      description: Which docs pages must be created/updated?
+      placeholder: |
+        docs/modules/module-template.md
+        docs/architecture/clean-architecture.md
+        docs/architecture/networking-schema-catalog.md
+
+  - type: textarea
+    id: adr
+    attributes:
+      label: ADR requirement
+      description: Does this require an ADR? If yes, suggest a title.
+      placeholder: |
+        ADR-000X: ...
+
+  - type: textarea
+    id: security
+    attributes:
+      label: Security and abuse considerations
+      description: Threats, mitigations, and trust boundaries.
+      placeholder: |
+        - Client intent vs server authority
+        - Remote validation/rate limits
+        - Abuse cases
+
+  - type: textarea
+    id: rollout
+    attributes:
+      label: Rollout and rollback plan
+      description: How do we ship safely (dev→stage→prod) and roll back?
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ]
+        - [ ]
+        - [ ]

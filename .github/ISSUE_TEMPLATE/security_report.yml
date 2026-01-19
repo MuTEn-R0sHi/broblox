@@ -1,0 +1,90 @@
+name: Security report
+description: Report a vulnerability or exploit vector (use responsibly).
+title: "[Security] "
+labels:
+  - security
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If this is an active exploit or involves sensitive details, avoid posting secrets.
+        Consider using private reporting if available.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - SEV0 (active exploit/economy corruption)
+        - SEV1 (high risk / competitive integrity)
+        - SEV2 (moderate)
+        - SEV3 (low)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Remotes / networking
+        - Movement / physics
+        - Economy / grants
+        - Matchmaking / ranking
+        - Dashboard / RBAC
+        - CI/CD / Open Cloud
+        - Data leakage / privacy
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is the vulnerability or exploit vector?
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What can an attacker do? (economy dupes, unfair kills, admin escalation, etc.)
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction / proof
+      description: Provide steps, payload shapes, and conditions. Do not include secrets.
+
+  - type: textarea
+    id: mitigations
+    attributes:
+      label: Suggested mitigations
+      placeholder: |
+        - Add schema validation / bounds checks
+        - Add rate limit
+        - Make server authoritative for outcome
+        - Add telemetry signal
+
+  - type: textarea
+    id: docs
+    attributes:
+      label: Related docs / ADRs
+      placeholder: |
+        docs/security/threat-model.md
+        docs/architecture/networking.md
+        docs/architecture/networking-schema-catalog.md
+        docs/architecture/decisions/0002-network-protocol-versioning.md
+
+  - type: checkboxes
+    id: containment
+    attributes:
+      label: Immediate containment options
+      options:
+        - label: Add a kill-switch / disable ranked
+        - label: Throttle or disable affected remote(s)
+        - label: Roll back to previous release
+        - label: Quarantine suspicious accounts

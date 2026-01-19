@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "strict": true,
+
+    "noLib": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+
+    "typeRoots": ["./node_modules/@rbxts"],
+    "types": ["types"],
+
+    "rootDir": "src",
+    "outDir": "out"
+  },
+  "include": ["src/**/*.ts"]
+}

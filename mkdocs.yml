@@ -1,0 +1,88 @@
+site_name: Roblox Studio Platform
+site_description: Docs-driven architecture plan for a reusable Roblox-TS multi-game framework.
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Roadmap:
+      - Overview: roadmap/overview.md
+  - Getting started:
+      - Overview: getting-started/overview.md
+      - Prereqs: getting-started/prereqs.md
+      - Local dev: getting-started/local-dev.md
+      - Build & publish: getting-started/build-and-publish.md
+  - Security:
+      - Threat model: security/threat-model.md
+      - Privacy & policy: security/privacy-and-policy.md
+  - Architecture:
+      - Platform: architecture/platform.md
+      - Folders & packages: architecture/folders-and-packages.md
+      - Runtime model: architecture/runtime.md
+      - Networking: architecture/networking.md
+      - Networking catalog: architecture/networking-schema-catalog.md
+      - State & data: architecture/state-and-data.md
+      - Matchmaking & ranking: architecture/matchmaking-and-ranking.md
+      - Device matrix & controls: architecture/device-matrix-and-controls.md
+      - Observability: architecture/observability.md
+      - Telemetry taxonomy: architecture/telemetry-taxonomy.md
+      - Config schema & validation: architecture/config-schema-and-validation.md
+      - Clean architecture: architecture/clean-architecture.md
+      - Decisions (ADRs):
+          - Index: architecture/decisions/index.md
+          - ADR-0001: architecture/decisions/0001-record-architecture-decisions.md
+          - ADR-0002: architecture/decisions/0002-network-protocol-versioning.md
+          - ADR-0003: architecture/decisions/0003-persistence-idempotency-and-ledgers.md
+          - ADR-0004: architecture/decisions/0004-ci-publish-promote-open-cloud.md
+  - Dashboard:
+      - RBAC & audit: dashboard/rbac-and-audit.md
+  - Modules:
+      - Template: modules/module-template.md
+      - Battle pass: modules/battle-pass.md
+      - Daily rewards: modules/daily-rewards.md
+      - Cosmetics: modules/cosmetics.md
+      - Trading: modules/trading.md
+  - Runbooks:
+      - Incident response: runbooks/incident-response.md
+      - Exploit wave: runbooks/exploit-wave.md
+      - Matchmaking outage: runbooks/outage-matchmaking.md
+      - Release rollback: runbooks/release-rollback.md
+      - Data corruption: runbooks/data-corruption.md
+  - Roblox-TS:
+      - Conventions: roblox-ts/conventions.md
+      - Patterns: roblox-ts/patterns.md
+      - Performance: roblox-ts/performance.md
+  - Standards:
+      - Testing strategy: standards/testing-strategy.md
+  - Reference:
+      - Configuration: reference/configuration.md
+      - CLI: reference/cli.md
+      - Troubleshooting: reference/troubleshooting.md
