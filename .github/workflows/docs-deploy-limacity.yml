@@ -35,6 +35,7 @@ jobs:
       - name: Deploy via lftp (SFTP/FTPS)
         env:
           LIMACITY_HOST: ${{ secrets.LIMACITY_HOST }}
+          LIMACITY_PORT: ${{ secrets.LIMACITY_PORT }}
           LIMACITY_USER: ${{ secrets.LIMACITY_USER }}
           LIMACITY_PASS: ${{ secrets.LIMACITY_PASS }}
           LIMACITY_PROTOCOL: ${{ secrets.LIMACITY_PROTOCOL }}
@@ -49,8 +50,28 @@ jobs:
           sudo apt-get install -y lftp
 
           protocol="${LIMACITY_PROTOCOL:-sftp}"
+          port="${LIMACITY_PORT:-}"
+          remote_dir="${LIMACITY_REMOTE_DIR%/}"
+
+          # Connection options
+          # - For FTPS, enforce TLS and (by default) skip cert verification because CI runners
+          #   don't have the host cert pinned. If you want strict verification, we can add a
+          #   known-ca / fingerprint pin step later.
+          base_settings="set net:max-retries 2; set net:timeout 20; set net:reconnect-interval-base 2;"
+
+          if [ "$protocol" = "ftps" ]; then
+            proto_settings="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ssl:verify-certificate no;"
+          else
+            proto_settings="set sftp:auto-confirm yes;"
+          fi
+
+          if [ -n "$port" ]; then
+            host_url="$protocol://$LIMACITY_HOST:$port"
+          else
+            host_url="$protocol://$LIMACITY_HOST"
+          fi
 
           # Mirror local site/ -> remote dir (delete removed files, keep remote in sync)
-          lftp -e "set net:max-retries 2; set net:timeout 20; set sftp:auto-confirm yes; mirror -R --delete --verbose site/ \"$LIMACITY_REMOTE_DIR\"; bye" \
+          lftp -e "$base_settings $proto_settings mirror -R --delete --verbose site/ \"$remote_dir\"; bye" \
             -u "$LIMACITY_USER","$LIMACITY_PASS" \
-            "$protocol://$LIMACITY_HOST"
+            "$host_url"
