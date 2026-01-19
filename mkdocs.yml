@@ -90,4 +90,5 @@ nav:
       - Contributing: reference/contributing.md
       - Versioning: reference/versioning.md
       - Releasing: reference/releasing.md
+      - License: reference/license.md
 

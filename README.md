@@ -34,6 +34,10 @@ pnpm test
 - We use SemVer tags (`vX.Y.Z`) for repo releases.
 - See `VERSIONING.md` and `RELEASING.md`.
 
+## License
+
+No license has been selected yet. Until a license is added, assume **all rights reserved**.
+
 ## Docs
 
 ```bash
@@ -42,4 +46,5 @@ source .venv/bin/activate
 pip install -r requirements-docs.txt
 mkdocs serve
 ```
+
 
