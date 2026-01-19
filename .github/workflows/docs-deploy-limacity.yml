@@ -59,16 +59,25 @@ jobs:
           #   known-ca / fingerprint pin step later.
           base_settings="set net:max-retries 2; set net:timeout 20; set net:reconnect-interval-base 2;"
 
+          scheme="$protocol"
+
           if [ "$protocol" = "ftps" ]; then
-            proto_settings="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ftp:passive-mode true; set ssl:verify-certificate no;"
+            # lima-city uses explicit FTPS on port 21.
+            # In lftp, use the ftp:// scheme + enable TLS via settings.
+            scheme="ftp"
+            proto_settings="set ftp:ssl-force true; set ftp:ssl-auth TLS; set ftp:ssl-protect-data true; set ftp:ssl-protect-list true; set ftp:passive-mode true; set ssl:verify-certificate no;"
+          elif [ "$protocol" = "ftp" ]; then
+            # Plain FTP (not recommended). Keep passive mode for compatibility.
+            proto_settings="set ftp:passive-mode true;"
           else
+            # sftp
             proto_settings="set sftp:auto-confirm yes;"
           fi
 
           if [ -n "$port" ]; then
-            host_url="$protocol://$LIMACITY_HOST:$port"
+            host_url="$scheme://$LIMACITY_HOST:$port"
           else
-            host_url="$protocol://$LIMACITY_HOST"
+            host_url="$scheme://$LIMACITY_HOST"
           fi
 
           # Mirror local site/ -> remote dir (delete removed files, keep remote in sync)
