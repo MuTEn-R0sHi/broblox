@@ -11,18 +11,12 @@ MkDocs builds a static site into `site/`, which we deploy to our web host (curre
 - `pip install -r requirements-docs.txt`
 - `mkdocs serve`
 
-## CI build (validation)
-
-Workflow: `.github/workflows/docs.yml`
-
-- Runs `mkdocs build` on PRs and pushes.
-- Does not upload artifacts (GitHub Actions storage quota can be limited).
-
-## Deploy to lima-city
+## CI build & deploy
 
 Workflow: `.github/workflows/docs-deploy-limacity.yml`
 
-It builds MkDocs and mirrors `site/` to your webspace via `lftp`.
+- Runs on pushes to `main` and `workflow_dispatch`.
+- Builds MkDocs and mirrors `site/` to lima-city via `lftp` with `--parallel=10` for faster uploads.
 
 Required GitHub repo secrets:
 
