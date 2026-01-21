@@ -81,6 +81,8 @@ jobs:
           fi
 
           # Mirror local site/ -> remote dir (delete removed files, keep remote in sync)
-          lftp -e "$base_settings $proto_settings mirror -R --delete --verbose site/ \"$remote_dir\"; bye" \
+          # --parallel=5: Upload 5 files simultaneously (significant speedup)
+          # --use-pget-n=1: Disable segmented downloads (not needed for upload)
+          lftp -e "$base_settings $proto_settings mirror -R --delete --verbose --parallel=5 site/ \"$remote_dir\"; bye" \
             -u "$LIMACITY_USER","$LIMACITY_PASS" \
             "$host_url"
