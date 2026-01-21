@@ -16,3 +16,12 @@ Notes:
 - Initial docs site (MkDocs) and architecture plan.
 - Monorepo scaffold (pnpm workspaces) for platform packages, starter game, and dashboard.
 - CI workflows for JS checks and docs publishing.
+- roblox-ts monorepo architecture: packages (`@rbx/*`) compile independently with `--type package`, games consume them via Rojo symlinks.
+- Parallel docs deployment to lima-city (`lftp --parallel=10`).
+- Dependabot configuration with grouped updates (dev-dependencies, roblox-ts, eslint).
+- Branch protection on `main` requiring CI and PR reviews.
+
+### Changed
+
+- Consolidated docs workflows into single `docs-deploy-limacity.yml` (removed redundant `docs.yml`).
+- Bumped GitHub Actions to v6 (checkout, setup-node, setup-python).
