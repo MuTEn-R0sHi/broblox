@@ -87,24 +87,52 @@ importers:
         version: 3.0.0
 
   packages/config-featureflags:
-    dependencies:
-      '@rbx/shared-types':
-        specifier: workspace:*
-        version: link:../shared-types
+    devDependencies:
+      '@rbxts/compiler-types':
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      '@rbxts/types':
+        specifier: ^1.0.828
+        version: 1.0.902
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
 
   packages/core:
-    dependencies:
-      '@rbx/shared-types':
-        specifier: workspace:*
-        version: link:../shared-types
+    devDependencies:
+      '@rbxts/compiler-types':
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      '@rbxts/types':
+        specifier: ^1.0.828
+        version: 1.0.902
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
 
   packages/net:
-    dependencies:
-      '@rbx/shared-types':
-        specifier: workspace:*
-        version: link:../shared-types
+    devDependencies:
+      '@rbxts/compiler-types':
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      '@rbxts/types':
+        specifier: ^1.0.828
+        version: 1.0.902
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
 
-  packages/shared-types: {}
+  packages/shared-types:
+    devDependencies:
+      '@rbxts/compiler-types':
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      '@rbxts/types':
+        specifier: ^1.0.828
+        version: 1.0.902
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
 
 packages:
 
@@ -1123,9 +1151,6 @@ packages:
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
-
-  loupe@3.2.1:
-    resolution: {integrity: sha512-CdzqowRJCeLU72bHvWqwRBBlLcMEtIvGrlvef74kMnV2AolS9Y8xUv1I0U/MNAWMhBlKIoyuEgoJ0t/bbwHbLQ==}
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
@@ -2382,8 +2407,6 @@ snapshots:
       p-locate: 5.0.0
 
   lodash.merge@4.6.2: {}
-
-  loupe@3.2.1: {}
 
   magic-string@0.30.21:
     dependencies:

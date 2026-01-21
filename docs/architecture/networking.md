@@ -46,11 +46,35 @@ Token bucket per:
 - player + endpoint
 - global endpoint budget
 
-Penalties (configurable):
+### Implementation details
+
+**State location**: Rate limit state is stored **in-memory per server instance**. This is simple, fast, and sufficient because:
+
+- Most abuse is detectable within a single server session
+- Cross-server coordination adds latency and complexity
+- Persistent abusers are caught via aggregated analytics (Phase 2+)
+
+**On teleport/server hop**: Rate limit budgets are **reset**. A player teleporting to a new server gets fresh budgets. This is acceptable because:
+
+- Teleport itself is rate-limited
+- Aggregated analytics detect hop-based abuse patterns
+- Strict per-server limits still bound damage
+
+**Token bucket parameters** (per endpoint):
+
+```typescript
+interface RateLimitConfig {
+  windowMs: number;        // e.g., 1000 (1 second)
+  maxRequests: number;     // e.g., 10
+  burstAllowance?: number; // e.g., 3 (allow small bursts)
+}
+```
+
+**Penalties** (configurable):
 
 - log + score signal
-- throttle
-- kick (when malicious)
+- throttle (delay responses)
+- kick (when clearly malicious)
 
 ## Protocol versioning
 

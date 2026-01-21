@@ -14,11 +14,18 @@ Key docs to follow:
 - Clean architecture rules: `docs/architecture/clean-architecture.md`
 - Networking model: `docs/architecture/networking.md`
 - Networking endpoint catalog: `docs/architecture/networking-schema-catalog.md`
+- Hit validation (PvP): `docs/architecture/hit-validation.md`
 - Data/idempotency: `docs/architecture/state-and-data.md` and ADR-0003
 - Threat model: `docs/security/threat-model.md`
 - Privacy/policy: `docs/security/privacy-and-policy.md`
 - Config validation: `docs/architecture/config-schema-and-validation.md`
 - Dashboard RBAC/audit: `docs/dashboard/rbac-and-audit.md`
+- Dashboard tech stack: `docs/dashboard/tech-stack.md`
+- Schema validation: ADR-0005 (`docs/architecture/decisions/0005-schema-validation-library.md`)
+- Framework choice: ADR-0006 (`docs/architecture/decisions/0006-framework-choice-custom-vs-flamework.md`)
+- Roblox-TS patterns: `docs/roblox-ts/patterns.md`
+- Testing strategy: `docs/standards/testing-strategy.md`
+- Observability: `docs/architecture/observability.md`
 
 ## Non-negotiable security invariants
 

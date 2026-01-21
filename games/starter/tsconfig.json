@@ -1,10 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.roblox.json",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "types": ["@rbxts/types"],
-    "rootDir": "src"
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["out", "node_modules"]
+    "ignoreDeprecations": "6.0"
+  }
 }

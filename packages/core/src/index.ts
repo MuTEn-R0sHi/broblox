@@ -1,22 +1,79 @@
-import { ErrorCode, type Result } from "@rbx/shared-types";
+/**
+ * @rbx/core
+ * Core utilities for the platform.
+ * Compatible with roblox-ts.
+ */
 
+// Logger
 export interface Logger {
-  info(message: string, fields?: Record<string, unknown>): void;
-  warn(message: string, fields?: Record<string, unknown>): void;
-  error(message: string, fields?: Record<string, unknown>): void;
+  debug(message: string): void;
+  info(message: string): void;
+  warn(message: string): void;
+  error(message: string): void;
 }
 
-export const noopLogger: Logger = {
-  info: () => {},
-  warn: () => {},
-  error: () => {}
-};
+class LoggerImpl implements Logger {
+  private prefix: string;
 
-export function safeExecute<T>(fn: () => T, onError: (error: unknown) => void): Result<T> {
-  try {
-    return { ok: true, value: fn() };
-  } catch (error) {
-    onError(error);
-    return { ok: false, code: ErrorCode.Unknown };
+  constructor(name: string) {
+    this.prefix = `[${name}]`;
+  }
+
+  debug(message: string): void {
+    print(`${this.prefix} [DEBUG] ${message}`);
+  }
+
+  info(message: string): void {
+    print(`${this.prefix} [INFO] ${message}`);
+  }
+
+  warn(message: string): void {
+    warn(`${this.prefix} [WARN] ${message}`);
+  }
+
+  error(message: string): void {
+    warn(`${this.prefix} [ERROR] ${message}`);
   }
 }
+
+export function createLogger(name: string): Logger {
+  return new LoggerImpl(name);
+}
+
+// Janitor (cleanup utility)
+export class Janitor {
+  private tasks: Array<() => void> = [];
+
+  add(task: () => void): void {
+    this.tasks.push(task);
+  }
+
+  addConnection(connection: RBXScriptConnection): void {
+    this.add(() => connection.Disconnect());
+  }
+
+  addInstance(instance: Instance): void {
+    this.add(() => instance.Destroy());
+  }
+
+  cleanup(): void {
+    for (const task of this.tasks) {
+      pcall(task);
+    }
+    this.tasks = [];
+  }
+
+  destroy(): void {
+    this.cleanup();
+  }
+}
+
+// Clock
+export const Clock = {
+  now(): number {
+    return os.clock();
+  },
+  timestamp(): number {
+    return os.time();
+  },
+};

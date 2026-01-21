@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noLib": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./node_modules/@rbxts", "./games/starter/node_modules/@rbxts", "./games/starter/node_modules/@rbx"],
+    "types": ["types", "compiler-types"],
+    "rootDir": ".",
+    "outDir": "games/starter/out",
+    "paths": {
+      "@rbx/shared-types": ["./packages/shared-types/src/index.ts"],
+      "@rbx/core": ["./packages/core/src/index.ts"],
+      "@rbx/config-featureflags": ["./packages/config-featureflags/src/index.ts"],
+      "@rbx/net": ["./packages/net/src/index.ts"]
+    }
+  },
+  "include": [
+    "games/starter/src/**/*.ts",
+    "packages/*/src/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts"
+  ]
+}

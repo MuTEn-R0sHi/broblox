@@ -10,7 +10,10 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
 
-    "game:starter:build": "pnpm --filter @rbx/game-starter run build",
+    "build:packages": "pnpm --filter '@rbx/*' --filter '!@rbx/game-*' run build:roblox",
+    "build:starter": "pnpm run build:packages && pnpm --filter @rbx/game-starter run build",
+    
+    "game:starter:build": "pnpm run build:starter",
     "game:starter:dev": "pnpm --filter @rbx/game-starter run dev",
     "game:starter:rojo": "pnpm --filter @rbx/game-starter run rojo:serve"
   },

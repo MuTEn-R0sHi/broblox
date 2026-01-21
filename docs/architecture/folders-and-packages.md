@@ -75,3 +75,55 @@ A game should only provide:
 - minimal glue to boot platform services
 
 If game-specific logic starts duplicating across games, it belongs in `packages/`.
+
+## Roblox-TS monorepo setup
+
+The platform uses [roblox-ts](https://roblox-ts.com/) to compile TypeScript to Luau. This section documents the package architecture.
+
+### Package structure
+
+Each `@rbx/*` package has:
+
+```
+packages/example/
+├── src/
+│   └── index.ts        # Source code
+├── out/
+│   ├── init.luau       # Compiled Luau (gitignored)
+│   └── index.d.ts      # TypeScript declarations (gitignored)
+├── package.json        # main: "out", types: "out/index.d.ts"
+├── tsconfig.json       # Extends tsconfig.roblox.json (for VS Code)
+└── tsconfig.roblox.json # Roblox-TS compiler config
+```
+
+### Why two tsconfig files?
+
+- `tsconfig.roblox.json` - Used by `rbxtsc` compiler with Roblox-specific settings (`noLib: true`, `@rbxts/types`)
+- `tsconfig.json` - Extends the roblox config so VS Code gets proper intellisense
+
+### Build workflow
+
+Packages must be compiled before the game:
+
+```bash
+# Build all packages, then the game
+pnpm run build:starter
+
+# Or separately:
+pnpm run build:packages    # Compiles packages to out/
+pnpm --filter @rbx/game-starter build
+```
+
+### How games consume packages
+
+1. **pnpm workspaces** create symlinks in `node_modules/@rbx/*`
+2. **Packages export** `.d.ts` files for TypeScript and compiled Luau
+3. **Rojo config** maps `node_modules/@rbx/*/out` to the game tree
+4. **roblox-ts** resolves types from `.d.ts`, emits requires to the Rojo paths
+
+### Key constraints
+
+- **Packages must be self-contained** - No cross-package imports at compile time (causes Rojo path resolution issues)
+- **Types point to `out/`** - `package.json` has `"types": "out/index.d.ts"` so roblox-ts doesn't recompile package sources
+- **Games use `--type game`** - This emits RuntimeLib requires in entry scripts
+- **Rojo `include` folder** - Must match `includePath` in tsconfig for RuntimeLib resolution

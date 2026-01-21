@@ -2,6 +2,135 @@
 
 This page is the living catalog of every planned network message (remote), including payload shape, validation rules, budgets, and error codes.
 
+## Golden path example (Phase 1)
+
+This example shows how a remote is defined, validated, and handled. Use this as a template for all new remotes.
+
+### Registry definition
+
+```typescript
+// packages/net/src/registry.ts
+import t from "@rbxts/t";
+import { ErrorCode } from "@rbx/shared-types";
+
+export const REMOTES = {
+  Intent_DoAction: {
+    name: "Intent_DoAction",
+    direction: "client-to-server" as const,
+    
+    // Payload schema using @rbxts/t
+    payloadGuard: t.interface({
+      actionId: t.string,
+      timestamp: t.number,
+    }),
+    
+    // Response schema
+    responseGuard: t.interface({
+      ok: t.boolean,
+      newCount: t.optional(t.number),
+      code: t.optional(t.number),
+    }),
+    
+    // Rate limit config
+    rateLimit: {
+      windowMs: 1000,
+      maxRequests: 5,
+    },
+    
+    // Possible error codes
+    errorCodes: [
+      ErrorCode.InvalidPayload,
+      ErrorCode.RateLimited,
+      ErrorCode.FeatureDisabled,
+    ],
+  },
+} as const;
+
+export type RemoteRegistry = typeof REMOTES;
+```
+
+### Server handler
+
+```typescript
+// games/starter/src/server/handlers/doAction.ts
+import { validate, bounded } from "@rbx/net";
+import { REMOTES } from "@rbx/net/registry";
+import { ErrorCode, Result } from "@rbx/shared-types";
+import { getFeatureFlag } from "@rbx/config-featureflags";
+
+const playerState = new Map<number, number>();
+
+export function handleDoAction(
+  player: Player,
+  rawPayload: unknown
+): Result<{ newCount: number }> {
+  // 1. Check kill-switch
+  if (!getFeatureFlag("doAction.enabled")) {
+    return { ok: false, code: ErrorCode.FeatureDisabled };
+  }
+  
+  // 2. Validate payload
+  const validation = validate(
+    REMOTES.Intent_DoAction.payloadGuard,
+    rawPayload
+  );
+  if (!validation.ok) {
+    // Log violation for security scoring
+    logSecurityEvent("invalid_payload", { player, remote: "Intent_DoAction" });
+    return { ok: false, code: ErrorCode.InvalidPayload };
+  }
+  
+  const payload = validation.value;
+  
+  // 3. Bounds check (defense in depth)
+  if (payload.timestamp < 0 || payload.timestamp > os.clock() * 1000 + 5000) {
+    return { ok: false, code: ErrorCode.InvalidPayload };
+  }
+  
+  // 4. Apply server-authoritative state change
+  const currentCount = playerState.get(player.UserId) ?? 0;
+  const newCount = currentCount + 1;
+  playerState.set(player.UserId, newCount);
+  
+  // 5. Return success
+  return { ok: true, value: { newCount } };
+}
+```
+
+### Client caller
+
+```typescript
+// games/starter/src/client/actions/doAction.ts
+import { callRemote } from "@rbx/net/client";
+import { REMOTES } from "@rbx/net/registry";
+
+export async function doAction(actionId: string): Promise<number | undefined> {
+  const result = await callRemote(REMOTES.Intent_DoAction, {
+    actionId,
+    timestamp: os.clock() * 1000,
+  });
+  
+  if (result.ok) {
+    return result.value.newCount;
+  } else {
+    // Handle error (show UI feedback, etc.)
+    warn(`Action failed: ${result.code}`);
+    return undefined;
+  }
+}
+```
+
+### Key patterns demonstrated
+
+1. **Single source of truth**: Remote is defined once in registry
+2. **Schema validation**: Server validates before processing
+3. **Rate limiting**: Handled by middleware (not shown, but applied)
+4. **Kill-switch**: Feature flag checked before any logic
+5. **Stable errors**: Returns `ErrorCode`, never throws
+6. **Server authority**: State change is server-side only
+
+---
+
 ## Global rules (apply to all remotes)
 
 - All inbound payloads are schema-validated on the server.

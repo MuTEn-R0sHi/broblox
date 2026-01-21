@@ -27,6 +27,33 @@ Definition of done:
 - Docs build and deploy from CI
 - Navigation is stable
 
+### Phase 0.5 — Skeleton verification spike (recommended before Phase 1)
+
+**Goal:** validate tooling and architecture with minimal code.
+
+This is a **2-day spike** to verify the build pipeline works end-to-end before investing in Phase 1 implementation.
+
+Deliverables:
+
+- roblox-ts compiles the package structure correctly
+- Rojo syncs the compiled output to Roblox Studio
+- A single remote works end-to-end (client → server → response)
+- Rate limiting and validation middleware are wired up (even if minimal)
+
+Definition of done:
+
+- `pnpm game:starter:build` succeeds
+- Rojo sync shows client/server/shared in correct locations
+- One test remote can be called from client and receives validated response
+- Any tooling issues are documented and resolved
+
+Why this matters:
+
+- Catches roblox-ts/Rojo configuration issues early
+- Validates that the package structure compiles correctly
+- Confirms the networking middleware pattern works in practice
+- Reduces risk of discovering fundamental issues deep into Phase 1
+
 ### Phase 1 — Platform MVP (single game proves the platform)
 
 **Goal:** one playable experience built from the platform skeleton.

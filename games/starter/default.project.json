@@ -7,6 +7,42 @@
       "$className": "ReplicatedStorage",
       "shared": {
         "$path": "out/shared"
+      },
+      "include": {
+        "$path": "include",
+        "node_modules": {
+          "$className": "Folder",
+          "@rbxts": {
+            "$path": "node_modules/@rbxts"
+          },
+          "@rbx": {
+            "$className": "Folder",
+            "shared-types": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/shared-types/out"
+              }
+            },
+            "core": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/core/out"
+              }
+            },
+            "config-featureflags": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/config-featureflags/out"
+              }
+            },
+            "net": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/net/out"
+              }
+            }
+          }
+        }
       }
     },
 

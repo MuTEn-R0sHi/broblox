@@ -72,10 +72,45 @@ Concrete vertical slice for Phase 1:
   - have rate limits
   - return stable error codes
 
+### Security checklist (must all be checked)
+
+- [ ] All remotes are registry-defined (no ad-hoc `RemoteEvent.new()`)
+- [ ] All inbound payloads are schema-validated before any processing
+- [ ] All remotes have rate limits with bounded budgets
+- [ ] No client-to-server remote trusts any numeric value without clamping
+- [ ] Error responses never include stack traces or internal details
+- [ ] Violation events are emitted for invalid payloads and rate-limit hits
+- [ ] Server never trusts client for outcomes (only intent)
+- [ ] Feature flag kill-switch actually disables the feature when toggled
+
+### Testing requirements
+
+- [ ] At least one unit test for schema validation (vitest)
+- [ ] At least one unit test for rate limiting logic (vitest)
+- [ ] Manual E2E test: valid intent works
+- [ ] Manual E2E test: invalid intent is rejected
+- [ ] Manual E2E test: rate limit triggers on spam
+
 ### Documentation
 
 - `docs/architecture/networking-schema-catalog.md` has the Phase 1 endpoint(s)
 - Any hard-to-reverse choices are captured as ADRs
+
+## CI scope (Phase 1)
+
+What is implemented:
+
+- ✅ Docs deploy: GitHub Actions → lima-city
+- ✅ Build verification: `pnpm game:starter:build` runs in CI
+- ✅ Quality gates: lint, typecheck, test
+
+What is NOT implemented (deferred):
+
+- ❌ Automated game publish to Roblox (Phase 2+)
+- ❌ Environment promotion (dev → stage → prod) (Phase 2+)
+- ❌ Open Cloud integration (Phase 2+)
+
+Publishing to Roblox in Phase 1 is **manual via Studio** (acceptable for a single test game).
 
 ## Explicit non-goals (out of scope)
 

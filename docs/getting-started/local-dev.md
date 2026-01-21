@@ -33,8 +33,12 @@ This is now scaffolded for the `games/starter` project.
 
 ### 2) Build / watch Roblox-TS
 
+The build compiles shared packages first, then the game:
+
 - Build once: `pnpm game:starter:build`
 - Watch: `pnpm game:starter:dev`
+
+> **Note:** `build:starter` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @rbx/game-starter build` directly.
 
 ### 3) Rojo + Studio sync
 

@@ -6,6 +6,13 @@
 - Avoid `any`.
 - Use branded types for ids (`PlayerId`, `MatchId`) to prevent mixups.
 
+## Monorepo package rules
+
+- Each `@rbx/*` package compiles independently with `--type package`
+- Games compile with `--type game` to get RuntimeLib requires
+- Package `types` field points to `out/index.d.ts` (compiled declarations)
+- Packages should not import from other `@rbx/*` packages at compile time (inline shared types if needed)
+
 ## Folder intent
 
 - `client/`: UI, camera, input, effects, prediction

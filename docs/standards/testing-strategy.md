@@ -60,7 +60,80 @@ Later gates:
 
 - protocol compatibility tests (N-1)
 - performance budget checks (payload size, input frequency)
+## Test tooling
 
+### Unit tests (vitest)
+
+Pure TypeScript logic runs in Node.js via vitest:
+
+```bash
+pnpm test              # all packages
+pnpm --filter @rbx/net test  # single package
+```
+
+Coverage target: 80%+ for domain logic, 100% for security-critical validators.
+
+### Roblox runtime tests
+
+For code that requires Roblox APIs, we have two options:
+
+**Option A: TestEZ (in-Studio)**
+
+- Run tests inside Roblox Studio or via `run-in-roblox`
+- Best for integration tests that need real Roblox services
+- Slower iteration cycle
+
+**Option B: Lune (headless Luau)**
+
+- Run compiled Luau outside Roblox
+- Faster iteration, CI-friendly
+- Limited to code that doesn't use Roblox-specific APIs
+
+Recommendation: Use vitest for as much as possible (domain logic, validation, utilities). Use Lune or TestEZ only for tests that truly need Roblox APIs.
+
+### Mock strategy
+
+- Mock Roblox services at the adapter boundary
+- Never mock domain logic
+- Use dependency injection to swap real adapters for test doubles
+
+Example:
+
+```typescript
+// Real code injects adapter
+const service = new RewardService(dataStoreAdapter);
+
+// Test injects mock
+const service = new RewardService(mockDataStoreAdapter);
+```
+
+## Phase 1 minimum test requirements
+
+Before Phase 1 is complete, these tests must exist:
+
+### packages/shared-types
+
+- [ ] `Result` type helper tests
+- [ ] `ErrorCode` enum is stable (snapshot test)
+
+### packages/net
+
+- [ ] Schema validation wrapper tests:
+  - valid payload passes
+  - invalid type rejected
+  - out-of-bounds number rejected
+  - oversized array rejected
+- [ ] Rate limiter tests:
+  - under budget: allowed
+  - over budget: rejected with correct code
+  - budget refills over time
+
+### games/starter
+
+- [ ] At least one E2E remote test (can be manual initially):
+  - valid intent accepted
+  - invalid intent rejected
+  - rate limit enforced
 ## Definition of done for new features
 
 A feature is not “done” unless:

@@ -34,3 +34,5 @@ Each ADR should include:
 - ADR-0002: Network protocol versioning
 - ADR-0003: Persistence, idempotency, and ledgers
 - ADR-0004: CI publish/promote via Open Cloud
+- ADR-0005: Schema validation library choice
+- ADR-0006: Framework choice — custom vs Flamework

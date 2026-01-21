@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "strict": true,
+    "noLib": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./node_modules/@rbxts"],
+    "types": ["types", "compiler-types"],
+    "rootDir": "src",
+    "outDir": "out",
+    "declaration": true,
+    "declarationDir": "out"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
+}

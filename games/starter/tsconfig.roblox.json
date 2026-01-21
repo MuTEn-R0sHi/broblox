@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "strict": true,
 
     "noLib": true,
@@ -8,11 +9,21 @@
     "moduleDetection": "force",
     "allowSyntheticDefaultImports": true,
 
-    "typeRoots": ["./node_modules/@rbxts"],
-    "types": ["types"],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "types": ["types", "compiler-types"],
 
     "rootDir": "src",
-    "outDir": "out"
+    "outDir": "out",
+    
+    "baseUrl": "src",
+    "paths": {
+      "shared/*": ["shared/*"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "rbxts": {
+    "includePath": "include",
+    "rojo": "default.project.json"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules/@rbx/*/src/**"]
 }
