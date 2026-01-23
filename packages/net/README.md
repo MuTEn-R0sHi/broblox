@@ -20,12 +20,19 @@ This package provides:
 
 ### Runtime Validation
 
-Never trust client input. Validate all incoming payloads using `@rbxts/t` schemas:
+Never trust client input. Validate all incoming payloads using `@rbxts/t` schemas and the `validate` helper:
 
 ```typescript
-import { validateHandshakePayload } from "@rbx/net";
+import { validate, bounded } from "@rbx/net";
+import { t } from "@rbxts/t";
 
-const result = validateHandshakePayload(payload);
+const handshakeSchema = t.strictInterface({
+  protocolVersion: t.number,
+  buildId: bounded.string(64, 1),
+  deviceClass: t.union(t.literal("kbm"), t.literal("gamepad"), t.literal("touch")),
+});
+
+const result = validate(handshakeSchema, payload);
 if (!result.ok) {
   return result; // Return error to client
 }
@@ -44,12 +51,13 @@ import { RateLimiter } from "@rbx/net";
 const limiter = new RateLimiter({
   windowMs: 1000, // 1 second window
   maxRequests: 5, // 5 requests per second
+  burstAllowance: 2, // optional burst
 });
 
 // Check rate limit
 const result = limiter.check(player.UserId);
 if (!result.ok) {
-  return result; // Client rate limited
+  return result; // Client rate limited (includes retryAfterMs)
 }
 
 print(`Remaining: ${result.value.remaining}`);
@@ -85,6 +93,8 @@ const rateLimitConfig = REMOTES.Handshake.rateLimit;
 
 ### Validation Functions
 
+- `validate<T>(guard: t.check<T>, value: unknown): Result<T>`
+- `bounded` helpers: `number`, `string`, `array`, `vector3`
 - `validateDoActionPayload(value: unknown): Result<DoActionPayload>`
 - `validateHandshakePayload(value: unknown): Result<HandshakePayload>`
 
@@ -102,6 +112,7 @@ const rateLimitConfig = REMOTES.Handshake.rateLimit;
 interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds
   maxRequests: number; // Max requests per window
+  burstAllowance?: number; // Optional burst tokens
 }
 ```
 

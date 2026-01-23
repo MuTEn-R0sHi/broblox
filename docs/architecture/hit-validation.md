@@ -1,4 +1,3 @@
-```markdown
 # Architecture: Hit validation (PvP)
 
 This page defines how combat hits are validated in competitive modes. Hit validation is the highest-risk area for exploits and fairness complaints.
@@ -60,11 +59,13 @@ Lag compensation allows the server to "rewind" the game state to validate a shot
 ### Hit detection
 
 For hitscan weapons:
+
 - Server raycast from validated origin in validated direction
 - Check line-of-sight (no shooting through walls)
 - Check target hitbox intersection
 
 For projectiles:
+
 - Server spawns authoritative projectile
 - Projectile simulates at server tick rate
 - Hit is registered when projectile intersects target hitbox
@@ -100,6 +101,7 @@ Clients send `origin` (muzzle position) with fire intents. Server validates:
 Tolerance: **0.5 studs** (accounts for animation/interpolation)
 
 Violations:
+
 - Reject shot silently
 - Increment security score
 
@@ -111,6 +113,7 @@ Clients send `direction` (aim vector). Server validates:
 - Direction does not indicate impossible snap (>180° from previous frame)
 
 Violations:
+
 - Reject shot silently
 - High-confidence aimbot signals flagged for review
 
@@ -191,4 +194,3 @@ hitValidation: {
 - [ ] Origin and direction validation implemented
 - [ ] Abuse signals are logged with structured events
 - [ ] Hit validation config is externalized
-```

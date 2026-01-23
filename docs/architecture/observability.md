@@ -32,6 +32,7 @@ Every log/event should attach:
 
 - If an event can’t trigger a decision (alert, rollback, ban review), it’s noise.
 - Sampling is allowed for high-volume client events.
+
 ## Event output (phased)
 
 ### Phase 1: Structured console logs
@@ -39,16 +40,8 @@ Every log/event should attach:
 Events are logged to console as structured JSON:
 
 ```typescript
-// packages/core/src/logging.ts
-export function logEvent(category: string, event: string, data: Record<string, unknown>) {
-  print(HttpService.JSONEncode({
-    timestamp: os.time(),
-    category,
-    event,
-    ...getCorrelationContext(), // serverId, jobId, etc.
-    ...data,
-  }));
-}
+// packages/core/src/index.ts
+import { logEvent } from "@rbx/core";
 
 // Usage
 logEvent("security", "invalid_payload", { remote: "Intent_DoAction", playerId: 123 });
@@ -72,26 +65,26 @@ Review process: Manual review via Studio output or Roblox Developer Console.
 
 ### P0 alerts (immediate response required)
 
-| Alert | Trigger | Response |
-|-------|---------|----------|
-| Economy anomaly | Duplicate grant detected | Disable grants, investigate |
-| Security spike | >100 invalid payloads/min from single player | Auto-kick, flag for review |
-| Server crash rate | >5% of servers crash in 10 min | Rollback release |
-| Config failure | Config fetch fails for >50% of servers | Revert to defaults, investigate |
+| Alert             | Trigger                                      | Response                        |
+| ----------------- | -------------------------------------------- | ------------------------------- |
+| Economy anomaly   | Duplicate grant detected                     | Disable grants, investigate     |
+| Security spike    | >100 invalid payloads/min from single player | Auto-kick, flag for review      |
+| Server crash rate | >5% of servers crash in 10 min               | Rollback release                |
+| Config failure    | Config fetch fails for >50% of servers       | Revert to defaults, investigate |
 
 ### P1 alerts (investigate within 1 hour)
 
-| Alert | Trigger | Response |
-|-------|---------|----------|
-| Elevated error rate | >1% of remotes returning errors | Investigate, consider rollback |
-| Matchmaking delays | Queue times >5min for 10+ players | Check matchmaker health |
-| Rate limit spikes | >10% of requests rate-limited | Check for abuse or misconfigured client |
+| Alert               | Trigger                           | Response                                |
+| ------------------- | --------------------------------- | --------------------------------------- |
+| Elevated error rate | >1% of remotes returning errors   | Investigate, consider rollback          |
+| Matchmaking delays  | Queue times >5min for 10+ players | Check matchmaker health                 |
+| Rate limit spikes   | >10% of requests rate-limited     | Check for abuse or misconfigured client |
 
 ### P2 alerts (review daily)
 
-| Alert | Trigger | Response |
-|-------|---------|----------|
-| Unusual device mix | Device distribution shifts >20% | Verify client builds |
+| Alert                   | Trigger                           | Response             |
+| ----------------------- | --------------------------------- | -------------------- |
+| Unusual device mix      | Device distribution shifts >20%   | Verify client builds |
 | Performance degradation | Server tick rate drops below 50Hz | Profile and optimize |
 
 ### Phase 1 alerting (manual)
@@ -127,6 +120,7 @@ Review process: Manual review via Studio output or Roblox Developer Console.
 - Concurrent players
 - Match completions
 - Economy transactions
+
 ## Dashboard integration
 
 - Security events are aggregated into player “cases”.

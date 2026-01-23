@@ -21,15 +21,15 @@ export interface DoActionPayload {
 ```typescript
 // packages/net/src/validation.ts
 import { t } from "@rbxts/t";
+import { validate, bounded } from "@rbx/net";
 
 const doActionSchema = t.strictInterface({
-  actionId: (v) => t.string(v) && v.size() <= 50,
+  actionId: bounded.string(50, 1),
   timestamp: t.number,
 });
 
 export function validateDoActionPayload(value: unknown): Result<DoActionPayload> {
-  if (!doActionSchema(value)) return err(ErrorCode.InvalidPayload);
-  return ok(value);
+  return validate(doActionSchema, value);
 }
 ```
 
@@ -48,22 +48,20 @@ export const REMOTES = {
 ### Server handler
 
 ```typescript
-// games/starter/src/server/handlers/doAction.ts
-import { validate, bounded } from "@rbx/net";
-import { REMOTES } from "@rbx/net/registry";
-import { ErrorCode, Result } from "@rbx/shared-types";
-import { getFeatureFlag } from "@rbx/config-featureflags";
+// games/starter/src/server/services/ActionService.ts
+import { REMOTES, validateDoActionPayload, ErrorCode, Result } from "@rbx/net";
+import { isFlagEnabled } from "@rbx/config-featureflags";
 
 const playerState = new Map<number, number>();
 
 export function handleDoAction(player: Player, rawPayload: unknown): Result<{ newCount: number }> {
   // 1. Check kill-switch
-  if (!getFeatureFlag("doAction.enabled")) {
+  if (!isFlagEnabled("doAction.enabled")) {
     return { ok: false, code: ErrorCode.FeatureDisabled };
   }
 
   // 2. Validate payload
-  const validation = validate(REMOTES.Intent_DoAction.payloadGuard, rawPayload);
+  const validation = validateDoActionPayload(rawPayload);
   if (!validation.ok) {
     // Log violation for security scoring
     logSecurityEvent("invalid_payload", { player, remote: "Intent_DoAction" });
@@ -90,23 +88,22 @@ export function handleDoAction(player: Player, rawPayload: unknown): Result<{ ne
 ### Client caller
 
 ```typescript
-// games/starter/src/client/actions/doAction.ts
-import { callRemote } from "@rbx/net/client";
-import { REMOTES } from "@rbx/net/registry";
+// games/starter/src/client/controllers/ActionController.ts
+import { RemoteController } from "./RemoteController";
+import { type Result, type DoActionPayload } from "@rbx/net";
 
-export async function doAction(actionId: string): Promise<number | undefined> {
-  const result = await callRemote(REMOTES.Intent_DoAction, {
-    actionId,
-    timestamp: os.clock() * 1000,
-  });
+const payload: DoActionPayload = {
+  actionId: "intent_ping",
+  timestamp: os.clock() * 1000,
+};
 
-  if (result.ok) {
-    return result.value.newCount;
-  } else {
-    // Handle error (show UI feedback, etc.)
-    warn(`Action failed: ${result.code}`);
-    return undefined;
-  }
+const result = RemoteController.Remotes.DoAction.InvokeServer(payload) as Result<{
+  actionId: string;
+  processedAt: number;
+}>;
+
+if (!result.ok) {
+  warn(`Action failed: ${result.code}`);
 }
 ```
 

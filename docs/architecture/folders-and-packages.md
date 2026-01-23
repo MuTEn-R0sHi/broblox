@@ -128,7 +128,7 @@ pnpm --filter @rbx/game-starter build
 
 ### Key constraints
 
-- **Packages must be self-contained** - No cross-package imports at compile time (causes Rojo path resolution issues)
+- **Respect dependency direction** - Packages may depend on `@rbx/shared-types` and other packages per the dependency graph, but avoid cycles.
 - **Types point to `out/`** - `package.json` has `"types": "out/index.d.ts"` so roblox-ts doesn't recompile package sources
 - **Games use `--type game`** - This emits RuntimeLib requires in entry scripts
 - **Rojo `include` folder** - Must match `includePath` in tsconfig for RuntimeLib resolution

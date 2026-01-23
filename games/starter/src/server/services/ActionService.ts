@@ -37,6 +37,10 @@ export const ActionService: Service = {
       }
 
       const action = validated.value;
+      const nowMs = os.clock() * 1000;
+      if (action.timestamp < 0 || action.timestamp > nowMs + 5000) {
+        return err(ErrorCode.InvalidPayload);
+      }
       logger.debug(`Action from ${player.Name}: ${action.actionId}`);
 
       return ok({

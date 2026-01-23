@@ -1,4 +1,3 @@
-```markdown
 # ADR-0006: Framework choice — custom vs Flamework
 
 ## Status
@@ -9,11 +8,11 @@ Accepted
 
 The roblox-ts ecosystem has several framework options for structuring game code:
 
-| Framework | Description |
-|-----------|-------------|
+| Framework     | Description                                                                |
+| ------------- | -------------------------------------------------------------------------- |
 | **Flamework** | Decorator-based DI, lifecycle management, auto-generated networking guards |
-| **Knit** | Service/controller pattern, simpler than Flamework |
-| **Custom** | Roll our own lifecycle, DI, and patterns |
+| **Knit**      | Service/controller pattern, simpler than Flamework                         |
+| **Custom**    | Roll our own lifecycle, DI, and patterns                                   |
 
 We need to decide whether to adopt an existing framework or build a minimal custom layer.
 
@@ -95,4 +94,3 @@ Rejected: leads to inconsistent patterns across games.
 1. Implement lifecycle primitives in `packages/core`
 2. Document service/controller pattern in `docs/roblox-ts/patterns.md`
 3. Evaluate Flamework adoption at Phase 3 retrospective
-```

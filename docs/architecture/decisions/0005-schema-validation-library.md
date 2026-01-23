@@ -1,4 +1,3 @@
-```markdown
 # ADR-0005: Schema validation library choice
 
 ## Status
@@ -17,12 +16,12 @@ Every inbound remote payload must be runtime-validated on the server. We need a 
 
 Options evaluated:
 
-| Library | Pros | Cons |
-|---------|------|------|
-| `@rbxts/t` | Lightweight, battle-tested in Roblox ecosystem, composable guards | Manual type inference, no built-in error messages |
-| `@rbxts/zod` | Familiar Zod-like API, good error messages | Larger bundle, heavier runtime |
-| Flamework guards | Auto-generated from TypeScript types, minimal boilerplate | Requires full Flamework buy-in |
-| Custom | Full control, tailored to our error code system | More maintenance, no community support |
+| Library          | Pros                                                              | Cons                                              |
+| ---------------- | ----------------------------------------------------------------- | ------------------------------------------------- |
+| `@rbxts/t`       | Lightweight, battle-tested in Roblox ecosystem, composable guards | Manual type inference, no built-in error messages |
+| `@rbxts/zod`     | Familiar Zod-like API, good error messages                        | Larger bundle, heavier runtime                    |
+| Flamework guards | Auto-generated from TypeScript types, minimal boilerplate         | Requires full Flamework buy-in                    |
+| Custom           | Full control, tailored to our error code system                   | More maintenance, no community support            |
 
 ## Decision
 
@@ -45,7 +44,7 @@ Rationale:
 
 ```typescript
 // packages/net/src/validation.ts
-import t from "@rbxts/t";
+import { t } from "@rbxts/t";
 import { ErrorCode, Result } from "@rbx/shared-types";
 
 export interface ValidationResult<T> {
@@ -105,4 +104,3 @@ We could write all guards from scratch, but this would be significant maintenanc
 3. Add unit tests for validation edge cases
 4. Update `networking.md` to reference this wrapper
 5. Phase 1 starter game uses the wrapper for all remotes
-```

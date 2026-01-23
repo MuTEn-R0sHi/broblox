@@ -8,24 +8,37 @@ import { PROTOCOL_VERSION } from "@rbx/net";
  */
 export const UiController: Controller & {
   showStatus(connected: boolean): void;
+  showActionResult(message: string, success: boolean): void;
   screenGui?: ScreenGui;
+  statusLabel?: TextLabel;
+  infoLabel?: TextLabel;
+  playerLabel?: TextLabel;
+  actionLabel?: TextLabel;
+  ensureGui(): void;
 } = {
   screenGui: undefined,
+  statusLabel: undefined,
+  infoLabel: undefined,
+  playerLabel: undefined,
+  actionLabel: undefined,
 
   onDestroy() {
     if (this.screenGui) {
       this.screenGui.Destroy();
       this.screenGui = undefined;
+      this.statusLabel = undefined;
+      this.infoLabel = undefined;
+      this.playerLabel = undefined;
+      this.actionLabel = undefined;
     }
   },
 
-  showStatus(connected: boolean) {
+  ensureGui() {
     const player = Players.LocalPlayer;
     if (!player) return;
 
-    // Clean up existing UI
     if (this.screenGui) {
-      this.screenGui.Destroy();
+      return;
     }
 
     const screenGui = new Instance("ScreenGui");
@@ -36,7 +49,7 @@ export const UiController: Controller & {
 
     const frame = new Instance("Frame");
     frame.Name = "StatusFrame";
-    frame.Size = new UDim2(0, 300, 0, 100);
+    frame.Size = new UDim2(0, 320, 0, 130);
     frame.Position = new UDim2(0, 10, 0, 10);
     frame.BackgroundColor3 = new Color3(0.1, 0.1, 0.1);
     frame.BackgroundTransparency = 0.3;
@@ -51,12 +64,13 @@ export const UiController: Controller & {
     statusLabel.Size = new UDim2(1, -20, 0, 30);
     statusLabel.Position = new UDim2(0, 10, 0, 10);
     statusLabel.BackgroundTransparency = 1;
-    statusLabel.TextColor3 = connected ? new Color3(0, 1, 0) : new Color3(1, 0, 0);
+    statusLabel.TextColor3 = new Color3(1, 0, 0);
     statusLabel.TextSize = 18;
     statusLabel.Font = Enum.Font.GothamMedium;
     statusLabel.TextXAlignment = Enum.TextXAlignment.Left;
-    statusLabel.Text = connected ? "Connected" : "Disconnected";
+    statusLabel.Text = "Disconnected";
     statusLabel.Parent = frame;
+    this.statusLabel = statusLabel;
 
     const infoLabel = new Instance("TextLabel");
     infoLabel.Name = "InfoLabel";
@@ -69,6 +83,7 @@ export const UiController: Controller & {
     infoLabel.TextXAlignment = Enum.TextXAlignment.Left;
     infoLabel.Text = "Protocol: v" + tostring(PROTOCOL_VERSION);
     infoLabel.Parent = frame;
+    this.infoLabel = infoLabel;
 
     const playerLabel = new Instance("TextLabel");
     playerLabel.Name = "PlayerLabel";
@@ -81,8 +96,38 @@ export const UiController: Controller & {
     playerLabel.TextXAlignment = Enum.TextXAlignment.Left;
     playerLabel.Text = "Player: " + player.Name;
     playerLabel.Parent = frame;
+    this.playerLabel = playerLabel;
+
+    const actionLabel = new Instance("TextLabel");
+    actionLabel.Name = "ActionLabel";
+    actionLabel.Size = new UDim2(1, -20, 0, 20);
+    actionLabel.Position = new UDim2(0, 10, 0, 90);
+    actionLabel.BackgroundTransparency = 1;
+    actionLabel.TextColor3 = new Color3(0.8, 0.8, 0.8);
+    actionLabel.TextSize = 14;
+    actionLabel.Font = Enum.Font.Gotham;
+    actionLabel.TextXAlignment = Enum.TextXAlignment.Left;
+    actionLabel.Text = "Action: -";
+    actionLabel.Parent = frame;
+    this.actionLabel = actionLabel;
 
     const playerGui = player.WaitForChild("PlayerGui") as PlayerGui;
     screenGui.Parent = playerGui;
+  },
+
+  showStatus(connected: boolean) {
+    this.ensureGui();
+    if (!this.statusLabel) return;
+
+    this.statusLabel.TextColor3 = connected ? new Color3(0, 1, 0) : new Color3(1, 0, 0);
+    this.statusLabel.Text = connected ? "Connected" : "Disconnected";
+  },
+
+  showActionResult(message: string, success: boolean) {
+    this.ensureGui();
+    if (!this.actionLabel) return;
+
+    this.actionLabel.TextColor3 = success ? new Color3(0.6, 1, 0.6) : new Color3(1, 0.6, 0.6);
+    this.actionLabel.Text = message;
   },
 };

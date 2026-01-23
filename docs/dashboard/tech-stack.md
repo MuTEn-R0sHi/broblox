@@ -1,4 +1,3 @@
-```markdown
 # Dashboard: Tech stack
 
 This page documents technology choices and deployment strategy for the operations dashboard.
@@ -55,10 +54,10 @@ Users authenticate via Roblox OAuth:
 ```typescript
 // Operator record
 interface Operator {
-  id: string;                // internal UUID
-  robloxUserId: number;      // from OAuth
-  robloxUsername: string;    // display only
-  roles: Role[];             // RBAC roles
+  id: string; // internal UUID
+  robloxUserId: number; // from OAuth
+  robloxUsername: string; // display only
+  roles: Role[]; // RBAC roles
   createdAt: Date;
   lastLoginAt: Date;
 }
@@ -199,4 +198,3 @@ pnpm dev
 - [ ] Database hosting choice (Supabase vs Neon vs Railway)
 - [ ] Background job strategy (Vercel Cron vs dedicated worker)
 - [ ] Multi-tenant support (if platform serves multiple studios)
-```
