@@ -9,16 +9,21 @@ import {
   PROTOCOL_VERSION,
 } from "@rbx/net";
 import { RemoteService } from "./RemoteService";
-import { Players } from "@rbxts/services";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const logger = createLogger("HandshakeService");
 const limiter = new RateLimiter(REMOTES.Handshake.rateLimit);
 
 export const HandshakeService: Service = {
+  onInit() {
+    // Subscribe to player cleanup
+    PlayerLifecycleService.onPlayerRemoving((player) => {
+      limiter.reset(player.UserId);
+    });
+  },
+
   onStart() {
     logger.info("Starting Handshake Listener");
-
-    Players.PlayerRemoving.Connect((player) => limiter.reset(player.UserId));
 
     RemoteService.Remotes.Handshake.OnServerInvoke = (player: Player, payload: unknown) => {
       // Rate limit

@@ -1,22 +1,33 @@
 import { Service, createLogger } from "@rbx/core";
-import { REMOTES, RateLimiter, validateDoActionPayload, ok } from "@rbx/net";
+import { REMOTES, RateLimiter, validateDoActionPayload, ok, err, ErrorCode } from "@rbx/net";
+import { isFlagEnabled } from "@rbx/config-featureflags";
 import { RemoteService } from "./RemoteService";
-import { Players } from "@rbxts/services";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const logger = createLogger("ActionService");
 const limiter = new RateLimiter(REMOTES.DoAction.rateLimit);
 
 export const ActionService: Service = {
+  onInit() {
+    // Subscribe to player cleanup
+    PlayerLifecycleService.onPlayerRemoving((player) => {
+      limiter.reset(player.UserId);
+    });
+  },
+
   onStart() {
     logger.info("Starting Action Listener");
-
-    Players.PlayerRemoving.Connect((player) => limiter.reset(player.UserId));
 
     RemoteService.Remotes.DoAction.OnServerInvoke = (player: Player, payload: unknown) => {
       // Rate limit
       const rateResult = limiter.check(player.UserId);
       if (!rateResult.ok) {
         return rateResult;
+      }
+
+      // Check kill-switch
+      if (!isFlagEnabled("doAction.enabled")) {
+        return err(ErrorCode.FeatureDisabled);
       }
 
       // Validate
@@ -26,9 +37,12 @@ export const ActionService: Service = {
       }
 
       const action = validated.value;
-      logger.info(`Action from ${player.Name}: ${action.actionId}`);
+      logger.debug(`Action from ${player.Name}: ${action.actionId}`);
 
-      return ok("Action received");
+      return ok({
+        actionId: action.actionId,
+        processedAt: os.clock() * 1000,
+      });
     };
   },
 };

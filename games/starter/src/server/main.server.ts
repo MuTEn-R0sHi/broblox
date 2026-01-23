@@ -4,6 +4,7 @@
  */
 
 import { Application, createLogger } from "@rbx/core";
+import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
 import { RemoteService } from "./services/RemoteService";
 import { HandshakeService } from "./services/HandshakeService";
 import { ActionService } from "./services/ActionService";
@@ -13,7 +14,19 @@ const app = new Application();
 
 logger.info("Starting server...");
 
-app.register(RemoteService).register(HandshakeService).register(ActionService);
+// Register services in dependency order
+// PlayerLifecycleService must be first (others depend on it)
+app
+  .register(PlayerLifecycleService)
+  .register(RemoteService)
+  .register(HandshakeService)
+  .register(ActionService);
 
 app.boot();
 logger.info("Server booted.");
+
+// Handle graceful shutdown
+game.BindToClose(() => {
+  logger.info("Server shutting down...");
+  app.shutdown();
+});

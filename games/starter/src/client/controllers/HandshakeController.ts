@@ -2,7 +2,7 @@ import { UserInputService } from "@rbxts/services";
 import { type Result, type HandshakePayload, PROTOCOL_VERSION } from "@rbx/net";
 import { Controller, createLogger } from "@rbx/core";
 import { RemoteController } from "./RemoteController";
-import { createStatusUI } from "./UiController";
+import { UiController } from "./UiController";
 
 const logger = createLogger("HandshakeController");
 
@@ -42,6 +42,6 @@ export const HandshakeController: Controller = {
       logger.error(`Handshake failed: ${result.code}`);
     }
 
-    createStatusUI(connected);
+    UiController.showStatus(connected);
   },
 };
