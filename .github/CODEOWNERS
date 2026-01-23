@@ -1,0 +1,27 @@
+# Default owners for everything
+* @roshi
+
+# Package owners
+/packages/core/ @roshi
+/packages/net/ @roshi
+/packages/shared-types/ @roshi
+/packages/config-featureflags/ @roshi
+/packages/testing/ @roshi
+
+# Games
+/games/starter/ @roshi
+
+# Dashboard
+/apps/dashboard/ @roshi
+
+# Documentation
+/docs/ @roshi
+
+# CI/CD and infrastructure
+/.github/ @roshi
+/aftman.toml @roshi
+/default.project.json @roshi
+
+# Security-sensitive files
+/SECURITY.md @roshi
+/docs/security/ @roshi

@@ -29,6 +29,14 @@ Notes:
 - **Tools directory** with error catalog generator script.
 - **Error code reference documentation** auto-generated from ErrorCode enum.
 - **Enhanced CONTRIBUTING.md** with detailed workflow, commit conventions, and branch protection info.
+- **@rbx/testing package** - Shared test utilities, mocks, and helpers for vitest.
+- **Expanded test coverage** - 111 tests across all packages (core, config-featureflags, net, shared-types, dashboard).
+- **Commitlint** - Conventional commit enforcement with commit-msg hook.
+- **Coverage tooling** - `@vitest/coverage-v8` for test coverage reporting.
+- **Luau tooling** - Added selene (linter) and stylua (formatter) to aftman.toml with configuration.
+- **VS Code launch.json** - Debug configurations for tests, tools, and dashboard.
+- **CODEOWNERS** - Code review ownership routing for GitHub.
+- **Security scanning** - `pnpm audit` step added to CI workflow.
 
 ### Changed
 

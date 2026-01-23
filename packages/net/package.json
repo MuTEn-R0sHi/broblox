@@ -14,6 +14,7 @@
     "@rbx/shared-types": "workspace:*"
   },
   "devDependencies": {
+    "@rbx/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.903",
     "roblox-ts": "^3.0.0"

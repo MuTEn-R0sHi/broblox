@@ -1,0 +1,8 @@
+std = "roblox"
+
+[config]
+loop_must_be_numeric = true
+
+[rules]
+global_usage = "allow"  -- roblox-ts generates globals
+unused_variable = "allow"  -- roblox-ts may generate unused vars

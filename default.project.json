@@ -6,28 +6,32 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "shared": {
-        "$path": "games/starter/out/games/starter/src/shared"
+        "$path": "games/starter/out/shared"
       },
       "packages": {
         "$className": "Folder",
         "shared-types": {
-          "src": {
-            "$path": "games/starter/out/packages/shared-types/src"
+          "$className": "Folder",
+          "out": {
+            "$path": "packages/shared-types/out"
           }
         },
         "core": {
-          "src": {
-            "$path": "games/starter/out/packages/core/src"
+          "$className": "Folder",
+          "out": {
+            "$path": "packages/core/out"
           }
         },
         "config-featureflags": {
-          "src": {
-            "$path": "games/starter/out/packages/config-featureflags/src"
+          "$className": "Folder",
+          "out": {
+            "$path": "packages/config-featureflags/out"
           }
         },
         "net": {
-          "src": {
-            "$path": "games/starter/out/packages/net/src"
+          "$className": "Folder",
+          "out": {
+            "$path": "packages/net/out"
           }
         }
       },
@@ -45,7 +49,7 @@
     "ServerScriptService": {
       "$className": "ServerScriptService",
       "server": {
-        "$path": "games/starter/out/games/starter/src/server"
+        "$path": "games/starter/out/server"
       }
     },
 
@@ -54,7 +58,7 @@
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
         "client": {
-          "$path": "games/starter/out/games/starter/src/client"
+          "$path": "games/starter/out/client"
         }
       }
     }

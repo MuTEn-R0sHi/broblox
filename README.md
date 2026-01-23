@@ -1,18 +1,33 @@
 # Roblox Studio Platform
 
+[![CI](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/ci.yml)
+[![Docs](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/docs-deploy-limacity.yml/badge.svg)](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/docs-deploy-limacity.yml)
+
 Docs-first Roblox-TS multi-game platform + control-plane dashboard.
 
 ## Repo layout
 
-- `packages/*`: shared platform packages (pure TypeScript, no Roblox services)
-- `games/*`: Roblox-TS game projects (compiled to Luau)
-- `apps/*`: web apps (dashboard)
-- `docs/*`: MkDocs site (architecture + runbooks)
+```
+rbx-game-platform/
+├── packages/           # Shared platform packages (TypeScript → Luau)
+│   ├── shared-types/   # Core type definitions (no dependencies)
+│   ├── core/           # Logger, Janitor, Clock utilities
+│   ├── net/            # Networking, validation, rate limiting
+│   ├── config-featureflags/  # Feature flags and kill-switches
+│   └── testing/        # Test utilities and mocks for vitest
+├── games/              # Roblox-TS game projects
+│   └── starter/        # Starter game template
+├── apps/               # Web applications
+│   └── dashboard/      # Next.js admin dashboard
+├── docs/               # MkDocs documentation site
+└── tools/              # Build and development tools
+```
 
 ## Prereqs
 
-- Node.js (LTS recommended)
+- Node.js 20+ (LTS recommended)
 - Corepack (bundled with modern Node) for `pnpm`
+- [Aftman](https://github.com/LPGhatguy/aftman) for Rojo (optional, for Roblox sync)
 
 ## Install
 
@@ -24,9 +39,9 @@ pnpm install
 ## Common commands
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
+pnpm lint          # Run ESLint across all packages
+pnpm typecheck     # Run TypeScript/roblox-ts type checking
+pnpm test          # Run all tests with vitest
 ```
 
 ## Versioning + releases
@@ -52,10 +67,30 @@ pnpm run game:starter:dev
 pnpm run game:starter:rojo
 ```
 
-### Which Rojo config to use?
+### Rojo Project Files
 
-- **`games/starter/default.project.json`**: Use this for game development (recommended)
-- **`/default.project.json`**: Root project for testing monorepo structure
+This repository contains two Rojo project files:
+
+| File                                 | Purpose               | When to use                                                           |
+| ------------------------------------ | --------------------- | --------------------------------------------------------------------- |
+| `games/starter/default.project.json` | Game-specific project | **Development (recommended)** - Use this for syncing to Roblox Studio |
+| `/default.project.json`              | Monorepo root project | **CI/tooling only** - Used for sourcemap generation and validation    |
+
+> **Note**: Always use `games/starter/default.project.json` for active game development. The root project file exists primarily for monorepo-level tooling and CI checks.
+
+## Package dependency graph
+
+```
+shared-types (0 deps)       testing (vitest only, 0 runtime deps)
+     ↑
+   core ←────────┐
+     ↑           │
+config-featureflags    net
+                 ↑
+          games/starter
+```
+
+Packages follow strict dependency direction rules enforced via ESLint.
 
 ## License
 

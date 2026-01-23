@@ -47,6 +47,11 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Per-endpoint and per-player rate limits.
   - Protocol version handshake.
 
+- `testing`
+  - Shared test utilities for vitest.
+  - Roblox API mocks for Node.js.
+  - Test factories and helpers.
+
 - `security`
   - Authoritative outcome rules.
   - Detector signals and scoring.

@@ -61,7 +61,7 @@ pnpm run build:starter
 
 ### 5. Commit conventions
 
-We use conventional commits:
+We use conventional commits, enforced by **commitlint** on the `commit-msg` hook:
 
 ```
 feat: add new feature
@@ -71,14 +71,20 @@ chore: maintenance tasks
 refactor: code refactoring
 test: test additions or updates
 ci: CI/CD changes
+perf: performance improvements
+build: build system changes
+style: code style (formatting, semicolons, etc.)
+revert: revert a previous commit
 ```
 
 Examples:
 
-- `feat(net): add rate limiting to Handshake remote`
+- `feat(net): add rate limiting to handshake remote`
 - `fix(core): janitor cleanup race condition`
 - `docs(architecture): update networking diagram`
 - `chore(deps): bump roblox-ts to 3.0.1`
+
+> **Note**: Subject must be lowercase, no period at end, max 100 characters.
 
 ### 6. Open a Pull Request
 
@@ -98,10 +104,16 @@ The `main` branch is protected with the following requirements:
 
 ## Pre-commit Hooks
 
-We use `simple-git-hooks` and `lint-staged` to run checks before commits:
+We use `simple-git-hooks` to run checks automatically:
+
+**pre-commit:**
 
 - ESLint auto-fix on TypeScript/JavaScript files
 - Prettier formatting on all supported files
+
+**commit-msg:**
+
+- Commitlint validation for conventional commit format
 
 These run automatically. If they fail, fix the issues and retry your commit.
 

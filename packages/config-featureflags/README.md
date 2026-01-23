@@ -13,7 +13,7 @@ This package provides a simple feature flag system for:
 
 ## Dependencies
 
-None (currently). May add `@rbx/core` in the future.
+- `@rbx/core` - For logging utilities
 
 ## Current Status
 

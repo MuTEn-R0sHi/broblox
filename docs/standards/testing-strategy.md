@@ -60,6 +60,7 @@ Later gates:
 
 - protocol compatibility tests (N-1)
 - performance budget checks (payload size, input frequency)
+
 ## Test tooling
 
 ### Unit tests (vitest)
@@ -69,9 +70,25 @@ Pure TypeScript logic runs in Node.js via vitest:
 ```bash
 pnpm test              # all packages
 pnpm --filter @rbx/net test  # single package
+pnpm test -- --coverage      # with coverage report
 ```
 
 Coverage target: 80%+ for domain logic, 100% for security-critical validators.
+
+### @rbx/testing package
+
+The `@rbx/testing` package provides shared test utilities:
+
+- **ErrorCode enum** - Mirrors `@rbx/shared-types` for Node.js tests
+- **Result utilities** - `ok()`, `err()`, `isOk()`, `isErr()`
+- **Roblox mocks** - `mockRobloxGlobals()` for `os.clock()`, `typeOf()`, etc.
+- **Factories** - `MockRateLimiter`, `createMockPlayer()`, payload factories
+
+```typescript
+import { ErrorCode, ok, err, mockRobloxGlobals } from "@rbx/testing";
+
+beforeAll(() => mockRobloxGlobals());
+```
 
 ### Roblox runtime tests
 
@@ -111,22 +128,38 @@ const service = new RewardService(mockDataStoreAdapter);
 
 Before Phase 1 is complete, these tests must exist:
 
-### packages/shared-types
+### packages/shared-types ✅
 
-- [ ] `Result` type helper tests
-- [ ] `ErrorCode` enum is stable (snapshot test)
+- [x] `Result` type helper tests
+- [x] `ErrorCode` enum tests
+- [x] Branded type tests (24 tests)
 
-### packages/net
+### packages/core ✅
 
-- [ ] Schema validation wrapper tests:
+- [x] Logger tests
+- [x] Janitor tests
+- [x] Clock tests (20 tests)
+
+### packages/config-featureflags ✅
+
+- [x] Flag operations tests (20 tests)
+
+### packages/net ✅
+
+- [x] Schema validation wrapper tests:
   - valid payload passes
   - invalid type rejected
   - out-of-bounds number rejected
   - oversized array rejected
-- [ ] Rate limiter tests:
+- [x] Rate limiter tests:
   - under budget: allowed
   - over budget: rejected with correct code
   - budget refills over time
+- [x] 42 tests total
+
+### apps/dashboard ✅
+
+- [x] React component tests (5 tests)
 
 ### games/starter
 
@@ -134,6 +167,7 @@ Before Phase 1 is complete, these tests must exist:
   - valid intent accepted
   - invalid intent rejected
   - rate limit enforced
+
 ## Definition of done for new features
 
 A feature is not “done” unless:

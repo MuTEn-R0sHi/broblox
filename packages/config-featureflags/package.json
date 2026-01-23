@@ -10,6 +10,9 @@
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
     "test": "vitest run --passWithNoTests"
   },
+  "dependencies": {
+    "@rbx/core": "workspace:*"
+  },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.903",
