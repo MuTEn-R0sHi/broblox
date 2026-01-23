@@ -148,9 +148,17 @@ export function flatMapResult<T, U>(result: Result<T>, fn: (value: T) => Result<
 
 export type DeviceClass = "kbm" | "gamepad" | "touch";
 
+export interface HandshakePayload {
+  protocolVersion: number;
+  buildId: string;
+  deviceClass: DeviceClass;
+}
+
 // ============================================================================
 // Common DTOs
 // ============================================================================
+
+export * from "./do-action";
 
 export interface BaseRequest {
   requestId?: string;

@@ -10,28 +10,56 @@
 - **Client**
   - Collects input.
   - Predicts visuals (movement smoothing, VFX, UI).
-  - Sends *intent* to server.
+  - Sends _intent_ to server.
 
 - **Server**
   - Owns the canonical game state.
   - Validates all intents.
   - Computes all outcomes.
 
-## Startup lifecycle (planned)
+## Application Lifecycle
 
-Server boot (authoritative):
+The platform uses a unified `Application` bootstrapper to manage startup order and dependency resolution.
 
-1. Load config + feature flags
-2. Create DI container
-3. Initialize services (no player data yet)
-4. Begin player session lifecycle
+### Server Lifecycle
 
-Client boot (presentation):
+1.  **Bootstrap**: `main.server.ts` calls `Application.boot()`.
+2.  **Registration**: All `Service` objects in `services/` are collected.
+3.  **OnInit**: `onInit()` is called on all services (synchronously).
+    - Safe to register events (`PlayerAdded`, `Remotes`).
+    - Do NOT yield here.
+4.  **OnStart**: `onStart()` is called on all services (asychronously).
+    - Safe to yield/call other services.
+    - Game loop begins.
 
-1. Load replicated config snapshot
-2. Initialize controllers (UI/input/camera)
-3. Perform protocol handshake
-4. Start prediction + snapshot application
+### Client Lifecycle
+
+1.  **Bootstrap**: `main.client.ts` calls `Application.boot()`.
+2.  **Registration**: All `Controller` objects in `controllers/` are collected.
+3.  **OnInit**: `onInit()` is called on all controllers.
+4.  **OnStart**: `onStart()` is called on all controllers.
+
+## Service & Controller Pattern
+
+Logic is organized into singletons:
+
+```typescript
+// Server Service
+const MyService: Service = {
+    onInit() {
+        logger.info("Initializing");
+    },
+    onStart() {
+        logger.info("Starting");
+    }
+};
+
+// Client Controller
+const MyController: Controller = {
+    onInit() { ... },
+    onStart() { ... }
+};
+```
 
 ## Movement abstraction (multi-genre)
 
@@ -47,7 +75,7 @@ Default (broad compatibility):
 Competitive mode option:
 
 - Kinematic motor with stricter server verification
-- Humanoid used as a *presentation shell* (animations/camera), not as authority
+- Humanoid used as a _presentation shell_ (animations/camera), not as authority
 
 ## Network ownership policy (defaults)
 

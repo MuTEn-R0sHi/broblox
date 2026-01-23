@@ -2,32 +2,27 @@
 
 ## Platform lifecycle pattern
 
-Our custom framework (see ADR-0006) uses explicit lifecycle methods.
+Our custom framework uses explicit lifecycle methods via the `Application` bootstrapper.
 
 ### Service interface
 
 ```typescript
-// packages/core/src/lifecycle.ts
+// packages/core/src/application.ts
 export interface Service {
-  /** 
-   * Called during boot, before any player joins.
+  /**
+   * Called synchronously during boot.
    * Order-independent between services.
-   * Use for: setting up data structures, registering listeners.
+   * Use for: setting up events, signal connections.
+   * DO NOT YIELD here.
    */
-  init?(container: Container): void;
-  
+  onInit?(): void;
+
   /**
-   * Called after all services have initialized.
+   * Called asynchronously after all services have initialized.
    * Safe to call other services.
-   * Use for: starting loops, initial state loading.
+   * Use for: starting game loops, data loading.
    */
-  start?(): void;
-  
-  /**
-   * Called on server shutdown or when service is destroyed.
-   * Use for: cleanup, saving state, disconnecting listeners.
-   */
-  destroy?(): void;
+  onStart?(): void;
 }
 ```
 
@@ -35,27 +30,13 @@ export interface Service {
 
 ```typescript
 // games/starter/src/server/main.server.ts
-import { createContainer } from "@rbx/core";
-import { services } from "./services";
+import { Application } from "@rbx/core";
 
-const container = createContainer();
+// Import services to ensure side-effects run (loading into Application)
+import "./services/ActionService";
+import "./services/HandshakeService";
 
-// Phase 1: Initialize all services (order-independent)
-for (const service of services) {
-  service.init?.(container);
-}
-
-// Phase 2: Start all services (can now safely interact)
-for (const service of services) {
-  service.start?.();
-}
-
-// Handle shutdown
-game.BindToClose(() => {
-  for (const service of services) {
-    service.destroy?.();
-  }
-});
+Application.boot();
 ```
 
 ### Controller interface (client)
@@ -63,77 +44,68 @@ game.BindToClose(() => {
 ```typescript
 // Similar pattern for client-side controllers
 export interface Controller {
-  init?(container: Container): void;
-  start?(): void;
-  destroy?(): void;
+  onInit?(): void;
+  onStart?(): void;
 }
 ```
 
 ### Example service
 
+We prefer **Singletons** defined as objects over classes for simpler dependency management in Roblox-TS.
+
 ```typescript
 // games/starter/src/server/services/ActionService.ts
-import { Service } from "@rbx/core";
-import { registerHandler } from "@rbx/net";
-import { REMOTES } from "@rbx/net/registry";
+import { Service, createLogger } from "@rbx/core";
 
-export class ActionService implements Service {
-  private playerCounts = new Map<number, number>();
-  
-  init(container: Container) {
-    // Register remote handler
-    registerHandler(REMOTES.Intent_DoAction, (player, payload) => {
-      return this.handleDoAction(player, payload);
-    });
-  }
-  
-  start() {
-    // Service is ready, can interact with other services
-  }
-  
-  destroy() {
-    // Cleanup
-    this.playerCounts.clear();
-  }
-  
-  private handleDoAction(player: Player, payload: unknown) {
-    // ... implementation
-  }
-}
+const logger = createLogger("ActionService");
+
+export const ActionService: Service = {
+  onInit() {
+    logger.info("Initializing");
+    // Register type-safe event listeners here
+  },
+
+  onStart() {
+    logger.info("Starting");
+    // Start main logic loops here
+  },
+};
 ```
 
 ## Networking pattern
 
-- All remotes are defined in `net` registry.
-- Game code uses typed stubs, not raw `RemoteEvent` access.
-- See `docs/architecture/networking-schema-catalog.md` for the golden path example.
+- All remotes are defined in `packages/net/src/remotes.ts`.
+- `RemoteService` (Server) and `RemoteController` (Client) act as the gateways.
+- Validation is explicit and typed using `@rbxts/t`.
 
 ### Remote registration
 
 ```typescript
-// packages/net/src/server.ts
-export function registerHandler<T extends keyof RemoteRegistry>(
-  remote: T,
-  handler: RemoteHandler<T>
-) {
-  // 1. Get or create RemoteEvent
-  // 2. Apply rate limiting middleware
-  // 3. Apply validation middleware
-  // 4. Connect handler
-}
+// Server Service
+import { RemoteService } from "./RemoteService";
+import { validateMyPayload, ok, err } from "@rbx/net";
+
+RemoteService.Remotes.MyRemote.OnServerInvoke = (player, payload) => {
+  const result = validateMyPayload(payload);
+  if (!result.ok) {
+    return err(ErrorCode.InvalidPayload); // Fast fail
+  }
+
+  // Safe to use result.value
+  return ok(logic(result.value));
+};
 ```
 
 ### Client calling
 
 ```typescript
-// packages/net/src/client.ts
-export function callRemote<T extends keyof RemoteRegistry>(
-  remote: T,
-  payload: RemotePayload<T>
-): Promise<RemoteResponse<T>> {
-  // 1. Get RemoteEvent/RemoteFunction
-  // 2. Send payload
-  // 3. Await response (for request/response pattern)
+// Client Controller
+import { RemoteController } from "./RemoteController";
+import { ok } from "@rbx/net";
+
+const result = RemoteController.Remotes.MyRemote.InvokeServer(payload);
+if (result.ok) {
+  print("Success:", result.value);
 }
 ```
 
@@ -153,18 +125,18 @@ function handleRemote(player: Player, rawPayload: unknown) {
   if (!validation.ok) {
     return { ok: false, code: ErrorCode.InvalidPayload };
   }
-  
+
   // Step 2: Bounds validation
   const payload = validation.value;
   if (payload.someNumber < 0 || payload.someNumber > 100) {
     return { ok: false, code: ErrorCode.InvalidPayload };
   }
-  
+
   // Step 3: State validation
   if (!canPlayerDoThis(player)) {
     return { ok: false, code: ErrorCode.InvalidState };
   }
-  
+
   // Step 4: Execute
   return executeAction(player, payload);
 }
@@ -215,15 +187,15 @@ Always clean up connections and listeners:
 // packages/core/src/cleanup.ts
 export class Janitor {
   private items: (() => void)[] = [];
-  
+
   add(cleanup: () => void) {
     this.items.push(cleanup);
   }
-  
+
   addConnection(connection: RBXScriptConnection) {
     this.items.push(() => connection.Disconnect());
   }
-  
+
   destroy() {
     for (const cleanup of this.items) {
       cleanup();
@@ -235,13 +207,11 @@ export class Janitor {
 // Usage in a service
 class MyService implements Service {
   private janitor = new Janitor();
-  
+
   init() {
-    this.janitor.addConnection(
-      Players.PlayerAdded.Connect((player) => this.onPlayerAdded(player))
-    );
+    this.janitor.addConnection(Players.PlayerAdded.Connect((player) => this.onPlayerAdded(player)));
   }
-  
+
   destroy() {
     this.janitor.destroy();
   }

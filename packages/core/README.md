@@ -22,6 +22,26 @@ This package must NOT depend on:
 
 ## API Reference
 
+### Application
+
+Lifecycle management for Services (Server) and Controllers (Client).
+
+```typescript
+import { Application, Service } from "@rbx/core";
+
+const MyService: Service = {
+  onInit() {
+    print("Init");
+  },
+  onStart() {
+    print("Start");
+  },
+};
+
+Application.register(MyService);
+Application.boot();
+```
+
 ### Logger
 
 Structured logging with severity levels:

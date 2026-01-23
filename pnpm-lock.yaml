@@ -95,6 +95,9 @@ importers:
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../../packages/shared-types
+      "@rbxts/t":
+        specifier: ^3.2.1
+        version: 3.2.1
     devDependencies:
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
@@ -142,6 +145,9 @@ importers:
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../shared-types
+      "@rbxts/t":
+        specifier: ^3.2.1
+        version: 3.2.1
     devDependencies:
       "@rbx/testing":
         specifier: workspace:*
@@ -1162,6 +1168,12 @@ packages:
     resolution:
       {
         integrity: sha512-YH02E1/tGHeMXB0Mam8qPdAZa2fjQWdylEscSL4Zn0RIaQeByYImA2qUsXM3nBdhcyKHDwltzSznDKyCGfFEWA==,
+      }
+
+  "@rbxts/t@3.2.1":
+    resolution:
+      {
+        integrity: sha512-/fnf2QSx+TI3HSJ6QW2ikvGQk0mlx/63UXo60pLAKGqbxXiAuTJh88bpKpHw6aCzfFLJAwrVIcgCUOokLMPcag==,
       }
 
   "@rbxts/types@1.0.903":
@@ -4381,6 +4393,8 @@ snapshots:
   "@rbxts/compiler-types@3.0.0-types.0": {}
 
   "@rbxts/services@1.6.0": {}
+
+  "@rbxts/t@3.2.1": {}
 
   "@rbxts/types@1.0.903": {}
 

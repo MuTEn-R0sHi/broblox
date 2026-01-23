@@ -5,34 +5,58 @@
  */
 
 // Logger
+export * from "./application";
+
+export enum LogLevel {
+  Debug = 0,
+  Info = 1,
+  Warn = 2,
+  Error = 3,
+  None = 4,
+}
+
 export interface Logger {
   debug(message: string): void;
   info(message: string): void;
   warn(message: string): void;
   error(message: string): void;
+  setLevel(level: LogLevel): void;
 }
 
 class LoggerImpl implements Logger {
   private prefix: string;
+  private level: LogLevel = LogLevel.Info;
 
   constructor(name: string) {
     this.prefix = `[${name}]`;
   }
 
+  setLevel(level: LogLevel) {
+    this.level = level;
+  }
+
   debug(message: string): void {
-    print(`${this.prefix} [DEBUG] ${message}`);
+    if (this.level <= LogLevel.Debug) {
+      print(`${this.prefix} [DEBUG] ${message}`);
+    }
   }
 
   info(message: string): void {
-    print(`${this.prefix} [INFO] ${message}`);
+    if (this.level <= LogLevel.Info) {
+      print(`${this.prefix} [INFO] ${message}`);
+    }
   }
 
   warn(message: string): void {
-    warn(`${this.prefix} [WARN] ${message}`);
+    if (this.level <= LogLevel.Warn) {
+      warn(`${this.prefix} [WARN] ${message}`);
+    }
   }
 
   error(message: string): void {
-    warn(`${this.prefix} [ERROR] ${message}`);
+    if (this.level <= LogLevel.Error) {
+      warn(`${this.prefix} [ERROR] ${message}`);
+    }
   }
 }
 
