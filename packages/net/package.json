@@ -11,7 +11,8 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@rbx/shared-types": "workspace:*"
+    "@rbx/shared-types": "workspace:*",
+    "@rbxts/t": "^3.2.1"
   },
   "devDependencies": {
     "@rbx/testing": "workspace:*",

@@ -6,47 +6,43 @@ This page is the living catalog of every planned network message (remote), inclu
 
 This example shows how a remote is defined, validated, and handled. Use this as a template for all new remotes.
 
-### Registry definition
+### 1. Type Definition (Shared)
 
 ```typescript
-// packages/net/src/registry.ts
-import t from "@rbxts/t";
-import { ErrorCode } from "@rbx/shared-types";
+// packages/shared-types/src/index.ts
+export interface DoActionPayload {
+  actionId: string;
+  timestamp: number;
+}
+```
 
+### 2. Validation Schema (Net)
+
+```typescript
+// packages/net/src/validation.ts
+import { t } from "@rbxts/t";
+
+const doActionSchema = t.strictInterface({
+  actionId: (v) => t.string(v) && v.size() <= 50,
+  timestamp: t.number,
+});
+
+export function validateDoActionPayload(value: unknown): Result<DoActionPayload> {
+  if (!doActionSchema(value)) return err(ErrorCode.InvalidPayload);
+  return ok(value);
+}
+```
+
+### 3. Remote Registry (Net)
+
+```typescript
+// packages/net/src/remotes.ts
 export const REMOTES = {
-  Intent_DoAction: {
+  DoAction: {
     name: "Intent_DoAction",
-    direction: "client-to-server" as const,
-    
-    // Payload schema using @rbxts/t
-    payloadGuard: t.interface({
-      actionId: t.string,
-      timestamp: t.number,
-    }),
-    
-    // Response schema
-    responseGuard: t.interface({
-      ok: t.boolean,
-      newCount: t.optional(t.number),
-      code: t.optional(t.number),
-    }),
-    
-    // Rate limit config
-    rateLimit: {
-      windowMs: 1000,
-      maxRequests: 5,
-    },
-    
-    // Possible error codes
-    errorCodes: [
-      ErrorCode.InvalidPayload,
-      ErrorCode.RateLimited,
-      ErrorCode.FeatureDisabled,
-    ],
+    rateLimit: { windowMs: 1000, maxRequests: 5 },
   },
 } as const;
-
-export type RemoteRegistry = typeof REMOTES;
 ```
 
 ### Server handler
@@ -60,38 +56,32 @@ import { getFeatureFlag } from "@rbx/config-featureflags";
 
 const playerState = new Map<number, number>();
 
-export function handleDoAction(
-  player: Player,
-  rawPayload: unknown
-): Result<{ newCount: number }> {
+export function handleDoAction(player: Player, rawPayload: unknown): Result<{ newCount: number }> {
   // 1. Check kill-switch
   if (!getFeatureFlag("doAction.enabled")) {
     return { ok: false, code: ErrorCode.FeatureDisabled };
   }
-  
+
   // 2. Validate payload
-  const validation = validate(
-    REMOTES.Intent_DoAction.payloadGuard,
-    rawPayload
-  );
+  const validation = validate(REMOTES.Intent_DoAction.payloadGuard, rawPayload);
   if (!validation.ok) {
     // Log violation for security scoring
     logSecurityEvent("invalid_payload", { player, remote: "Intent_DoAction" });
     return { ok: false, code: ErrorCode.InvalidPayload };
   }
-  
+
   const payload = validation.value;
-  
+
   // 3. Bounds check (defense in depth)
   if (payload.timestamp < 0 || payload.timestamp > os.clock() * 1000 + 5000) {
     return { ok: false, code: ErrorCode.InvalidPayload };
   }
-  
+
   // 4. Apply server-authoritative state change
   const currentCount = playerState.get(player.UserId) ?? 0;
   const newCount = currentCount + 1;
   playerState.set(player.UserId, newCount);
-  
+
   // 5. Return success
   return { ok: true, value: { newCount } };
 }
@@ -109,7 +99,7 @@ export async function doAction(actionId: string): Promise<number | undefined> {
     actionId,
     timestamp: os.clock() * 1000,
   });
-  
+
   if (result.ok) {
     return result.value.newCount;
   } else {
@@ -273,24 +263,27 @@ Notation:
 ### Moderation
 
 10. `Report.Player` (C→S, request/response)
-   - Payload:
-     - `reportedUserId: number`
-     - `reasonCode: string`
-     - `freeform?: string` (length limited)
-   - Budget: strict (cooldown 30s)
+
+- Payload:
+  - `reportedUserId: number`
+  - `reasonCode: string`
+  - `freeform?: string` (length limited)
+- Budget: strict (cooldown 30s)
 
 11. `Admin.Command` (C→S, request/response)
-   - Purpose: in-experience admin actions for authorized moderators
-   - Must be RBAC gated server-side
-   - Budget: very strict
+
+- Purpose: in-experience admin actions for authorized moderators
+- Must be RBAC gated server-side
+- Budget: very strict
 
 ### Telemetry
 
 12. `Telemetry.EventBatch` (C→S, event)
-   - Purpose: client telemetry in batches
-   - Budget: strict; sample heavily
-   - Notes:
-     - must never include secrets or personal data
+
+- Purpose: client telemetry in batches
+- Budget: strict; sample heavily
+- Notes:
+  - must never include secrets or personal data
 
 ## Error code ranges (recommendation)
 

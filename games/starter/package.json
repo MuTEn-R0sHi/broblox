@@ -15,7 +15,8 @@
     "@rbx/config-featureflags": "workspace:*",
     "@rbx/core": "workspace:*",
     "@rbx/net": "workspace:*",
-    "@rbx/shared-types": "workspace:*"
+    "@rbx/shared-types": "workspace:*",
+    "@rbxts/t": "^3.2.1"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",

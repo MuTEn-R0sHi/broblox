@@ -14,12 +14,13 @@ This package provides:
 ## Dependencies
 
 - `@rbx/shared-types` - For Result type and ErrorCode enum
+- `@rbxts/t` - For runtime type checking
 
 ## Key Features
 
 ### Runtime Validation
 
-Never trust client input. Validate all incoming payloads:
+Never trust client input. Validate all incoming payloads using `@rbxts/t` schemas:
 
 ```typescript
 import { validateHandshakePayload } from "@rbx/net";

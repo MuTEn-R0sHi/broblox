@@ -31,13 +31,27 @@ Single source of truth (planned):
 
 ## Validation
 
-Server-side validation is mandatory:
+Server-side validation is mandatory. We use `@rbxts/t` to define runtime schemas for strict type checking.
 
-- type checks (numbers/strings/arrays)
-- bounds checks (clamp vectors, max array lengths)
-- state checks (cooldowns, ammo, match phase)
+1.  **Schema Validation**: Checked immediately upon network receipt.
+    - Type checks (string, number, boolean)
+    - Constraint checks (min/max length, integer bounds)
+    - Structure checks (required keys, no unknown fields)
+2.  **State Validation**: Checked during logic execution.
+    - Cooldowns, ammo, range checks.
+    - Game phase state.
 
 Reject unknown fields to reduce payload abuse.
+
+### Example Schema
+
+```typescript
+const handshakeSchema = t.strictInterface({
+  protocolVersion: t.number,
+  buildId: t.string,
+  deviceClass: t.union(t.literal("kbm"), t.literal("gamepad"), t.literal("touch")),
+});
+```
 
 ## Rate limiting
 
@@ -64,8 +78,8 @@ Token bucket per:
 
 ```typescript
 interface RateLimitConfig {
-  windowMs: number;        // e.g., 1000 (1 second)
-  maxRequests: number;     // e.g., 10
+  windowMs: number; // e.g., 1000 (1 second)
+  maxRequests: number; // e.g., 10
   burstAllowance?: number; // e.g., 3 (allow small bursts)
 }
 ```

@@ -15,5 +15,5 @@
     "declarationDir": "out"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.test.ts"]
+  "exclude": ["src/**/*.test.ts", "src/__mocks__/**/*", "test-setup.ts"]
 }
