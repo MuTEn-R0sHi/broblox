@@ -3,7 +3,7 @@ name: CI
 "on":
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   js:
@@ -32,3 +32,9 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build starter game
+        run: pnpm run build:starter

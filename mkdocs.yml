@@ -91,6 +91,7 @@ nav:
       - Configuration: reference/configuration.md
       - CLI: reference/cli.md
       - Tooling & commands: reference/tooling.md
+      - Error codes: reference/error-codes.md
       - Docs deployment: reference/docs-deployment.md
       - Troubleshooting: reference/troubleshooting.md
       - Changelog: reference/changelog.md
@@ -98,4 +99,3 @@ nav:
       - Versioning: reference/versioning.md
       - Releasing: reference/releasing.md
       - License: reference/license.md
-

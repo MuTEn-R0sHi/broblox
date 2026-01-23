@@ -9,13 +9,13 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-
+    "test:coverage": "vitest run --coverage",
     "build:packages": "pnpm --filter '@rbx/*' --filter '!@rbx/game-*' run build:roblox",
     "build:starter": "pnpm run build:packages && pnpm --filter @rbx/game-starter run build",
-    
     "game:starter:build": "pnpm run build:starter",
     "game:starter:dev": "pnpm --filter @rbx/game-starter run dev",
-    "game:starter:rojo": "pnpm --filter @rbx/game-starter run rojo:serve"
+    "game:starter:rojo": "pnpm --filter @rbx/game-starter run rojo:serve",
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
@@ -23,9 +23,23 @@
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.0.0",
+    "lint-staged": "^16.0.2",
     "prettier": "^3.8.1",
+    "simple-git-hooks": "^2.12.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1",
     "vitest": "^4.0.17"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

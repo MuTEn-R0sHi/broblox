@@ -25,7 +25,21 @@ build/
 
 # Roblox-TS
 games/**/out/
+packages/**/out/
+
+# Testing
+coverage/
+.nyc_output/
 
 # OS / editor
 .DS_Store
-.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# VSCode (allow settings.json but ignore workspace files)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json

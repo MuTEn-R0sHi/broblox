@@ -7,7 +7,7 @@
     "moduleResolution": "Node",
     "moduleDetection": "force",
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./node_modules/@rbxts"],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
     "types": ["types", "compiler-types"],
     "rootDir": "src",
     "outDir": "out",

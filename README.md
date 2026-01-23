@@ -34,9 +34,32 @@ pnpm test
 - We use SemVer tags (`vX.Y.Z`) for repo releases.
 - See `VERSIONING.md` and `RELEASING.md`.
 
+## Build workflow
+
+### Development
+
+```bash
+# Build all packages
+pnpm run build:packages
+
+# Build starter game (builds packages first)
+pnpm run build:starter
+
+# Watch mode for development
+pnpm run game:starter:dev
+
+# Run Rojo server (in separate terminal)
+pnpm run game:starter:rojo
+```
+
+### Which Rojo config to use?
+
+- **`games/starter/default.project.json`**: Use this for game development (recommended)
+- **`/default.project.json`**: Root project for testing monorepo structure
+
 ## License
 
-No license has been selected yet. Until a license is added, assume **all rights reserved**.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Docs
 
@@ -48,5 +71,3 @@ mkdocs serve
 ```
 
 Deployment is done via lima-city (FTPS) using the GitHub Actions workflow `.github/workflows/docs-deploy-limacity.yml`.
-
-

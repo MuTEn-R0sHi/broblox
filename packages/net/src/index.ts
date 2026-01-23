@@ -4,10 +4,10 @@
  * Compatible with roblox-ts.
  */
 
-import { ErrorCode, ok, err, type Result } from "./types";
+import { ErrorCode, ok, err, type Result, type Ok, type Err } from "@rbx/shared-types";
 
 // Re-export types for consumers
-export { ErrorCode, ok, err, type Result, type Ok, type Err } from "./types";
+export { ErrorCode, ok, err, type Result, type Ok, type Err };
 
 // ============================================================================
 // Types
@@ -37,22 +37,22 @@ export function validateDoActionPayload(value: unknown): Result<DoActionPayload>
   if (typeOf(value) !== "table") {
     return err(ErrorCode.InvalidType);
   }
-  
+
   const obj = value as Record<string, unknown>;
-  
+
   if (typeOf(obj.actionId) !== "string") {
     return err(ErrorCode.InvalidType);
   }
-  
+
   const actionId = obj.actionId as string;
   if (actionId.size() < 1 || actionId.size() > 50) {
     return err(ErrorCode.OutOfBounds);
   }
-  
+
   if (typeOf(obj.timestamp) !== "number") {
     return err(ErrorCode.InvalidType);
   }
-  
+
   return ok({
     actionId,
     timestamp: obj.timestamp as number,
@@ -63,22 +63,22 @@ export function validateHandshakePayload(value: unknown): Result<HandshakePayloa
   if (typeOf(value) !== "table") {
     return err(ErrorCode.InvalidType);
   }
-  
+
   const obj = value as Record<string, unknown>;
-  
+
   if (typeOf(obj.protocolVersion) !== "number") {
     return err(ErrorCode.InvalidType);
   }
-  
+
   if (typeOf(obj.buildId) !== "string") {
     return err(ErrorCode.InvalidType);
   }
-  
+
   const dc = obj.deviceClass;
   if (dc !== "kbm" && dc !== "gamepad" && dc !== "touch") {
     return err(ErrorCode.InvalidPayload);
   }
-  
+
   return ok({
     protocolVersion: obj.protocolVersion as number,
     buildId: obj.buildId as string,
@@ -106,9 +106,9 @@ export class RateLimiter {
   check(playerId: number): Result<{ remaining: number }> {
     const key = tostring(playerId);
     const now = os.clock() * 1000;
-    
+
     let bucket = this.buckets.get(key);
-    
+
     if (!bucket) {
       bucket = { tokens: this.config.maxRequests, lastRefill: now };
       this.buckets.set(key, bucket);
