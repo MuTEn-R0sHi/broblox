@@ -15,6 +15,7 @@
     "game:starter:build": "pnpm run build:starter",
     "game:starter:dev": "pnpm --filter @rbx/game-starter run dev",
     "game:starter:rojo": "pnpm --filter @rbx/game-starter run rojo:serve",
+    "rojo:kill": "pkill -f 'rojo serve' || true",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
