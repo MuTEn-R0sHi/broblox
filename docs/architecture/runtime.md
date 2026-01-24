@@ -19,25 +19,45 @@
 
 ## Application Lifecycle
 
-The platform uses a unified `Application` bootstrapper to manage startup order and dependency resolution.
+The platform uses a unified `Application` class to manage startup order, dependency resolution, and graceful shutdown.
+
+### Application API
+
+```typescript
+import { Application } from "@rbx/core";
+
+// Start the application
+await Application.start();
+
+// Check if running
+Application.isRunning(); // boolean
+
+// Graceful shutdown
+await Application.stop();
+
+// Full cleanup (stop + dispose resources)
+await Application.dispose();
+```
 
 ### Server Lifecycle
 
-1.  **Bootstrap**: `main.server.ts` calls `Application.boot()`.
+1.  **Bootstrap**: `main.server.ts` calls `Application.start()`.
 2.  **Registration**: All `Service` objects in `services/` are collected.
 3.  **OnInit**: `onInit()` is called on all services (synchronously).
     - Safe to register events (`PlayerAdded`, `Remotes`).
     - Do NOT yield here.
-4.  **OnStart**: `onStart()` is called on all services (asychronously).
+4.  **OnStart**: `onStart()` is called on all services (asynchronously).
     - Safe to yield/call other services.
     - Game loop begins.
+5.  **OnStop**: When `Application.stop()` is called, services clean up.
 
 ### Client Lifecycle
 
-1.  **Bootstrap**: `main.client.ts` calls `Application.boot()`.
+1.  **Bootstrap**: `main.client.ts` calls `Application.start()`.
 2.  **Registration**: All `Controller` objects in `controllers/` are collected.
 3.  **OnInit**: `onInit()` is called on all controllers.
 4.  **OnStart**: `onStart()` is called on all controllers.
+5.  **OnStop**: When `Application.stop()` is called, controllers clean up.
 
 ## Service & Controller Pattern
 

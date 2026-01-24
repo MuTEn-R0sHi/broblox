@@ -2,6 +2,8 @@
 
 This document is **auto-generated** from the `ErrorCode` enum in `@rbx/shared-types`.
 
+Error codes are used with the [Result type](./result-types.md) for explicit error handling across the platform.
+
 ## Error Code Ranges
 
 - **0xxx**: General errors (unknown, unspecified)

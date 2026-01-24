@@ -89,9 +89,10 @@ nav:
       - Testing strategy: standards/testing-strategy.md
   - Reference:
       - Configuration: reference/configuration.md
+      - Result types: reference/result-types.md
+      - Error codes: reference/error-codes.md
       - CLI: reference/cli.md
       - Tooling & commands: reference/tooling.md
-      - Error codes: reference/error-codes.md
       - Docs deployment: reference/docs-deployment.md
       - Troubleshooting: reference/troubleshooting.md
       - Changelog: reference/changelog.md

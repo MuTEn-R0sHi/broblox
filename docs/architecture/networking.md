@@ -99,6 +99,26 @@ interface RateLimitConfig {
   - degrade features
   - force update (incompatible)
 
+## Client utilities
+
+The `@rbx/net` package provides utilities for reliable remote calls:
+
+### Retry with backoff
+
+```typescript
+import { withRetry } from "@rbx/net";
+
+const result = await withRetry(() => Remotes.fetchInventory(), { maxAttempts: 3, backoffMs: 1000 });
+```
+
+### Timeout wrapper
+
+```typescript
+import { withTimeout } from "@rbx/net";
+
+const result = await withTimeout(() => Remotes.slowOperation(), { timeoutMs: 5000 });
+```
+
 ## PvP specifics
 
 - Inputs are sent at a fixed rate (batched), not spammed.
@@ -111,5 +131,6 @@ interface RateLimitConfig {
 
 Never throw across remotes.
 
-- Responses use `ok: boolean` and stable numeric `code`.
+- Responses use the [Result type](../reference/result-types.md) with `ok: boolean` and stable numeric `code`.
 - Messages may include `retryAfterMs` for rate limits.
+- See [Error Codes Reference](../reference/error-codes.md) for the complete list.

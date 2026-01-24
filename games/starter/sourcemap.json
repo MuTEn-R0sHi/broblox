@@ -1,1 +1,315 @@
-{"name":"starter","className":"DataModel","filePaths":["default.project.json"],"children":[{"name":"ReplicatedStorage","className":"ReplicatedStorage","children":[{"name":"rbxts_include","className":"Folder","children":[{"name":"Promise","className":"ModuleScript","filePaths":["include/Promise.lua"]},{"name":"RuntimeLib","className":"ModuleScript","filePaths":["include/RuntimeLib.lua"]},{"name":"node_modules","className":"Folder","children":[{"name":"@rbx","className":"Folder","children":[{"name":"config-featureflags","className":"Folder","children":[{"name":"out","className":"ModuleScript","filePaths":["../../packages/config-featureflags/out/init.luau"]}]},{"name":"core","className":"Folder","children":[{"name":"out","className":"ModuleScript","filePaths":["../../packages/core/out/init.luau"]}]},{"name":"net","className":"Folder","children":[{"name":"out","className":"ModuleScript","filePaths":["../../packages/net/out/init.luau"],"children":[{"name":"types","className":"ModuleScript","filePaths":["../../packages/net/out/types.luau"]}]}]},{"name":"shared-types","className":"Folder","children":[{"name":"out","className":"ModuleScript","filePaths":["../../packages/shared-types/out/init.luau"]}]}]},{"name":"@rbxts","className":"Folder","children":[{"name":"compiler-types","className":"Folder","children":[{"name":"package","className":"ModuleScript","filePaths":["node_modules/@rbxts/compiler-types/package.json"]}]},{"name":"services","className":"ModuleScript","filePaths":["node_modules/@rbxts/services/init.lua"],"children":[{"name":"package","className":"ModuleScript","filePaths":["node_modules/@rbxts/services/package.json"]}]},{"name":"types","className":"Folder","children":[{"name":"package","className":"ModuleScript","filePaths":["node_modules/@rbxts/types/package.json"]}]}]}]}]},{"name":"shared","className":"ModuleScript","filePaths":["out/shared/init.luau"]}]},{"name":"ServerScriptService","className":"ServerScriptService","children":[{"name":"server","className":"Folder","children":[{"name":"main","className":"Script","filePaths":["out/server/main.server.luau"]}]}]},{"name":"StarterPlayer","className":"StarterPlayer","children":[{"name":"StarterPlayerScripts","className":"StarterPlayerScripts","children":[{"name":"client","className":"Folder","children":[{"name":"main","className":"LocalScript","filePaths":["out/client/main.client.luau"]}]}]}]}]}
+{
+  "name": "starter",
+  "className": "DataModel",
+  "filePaths": ["default.project.json"],
+  "children": [
+    {
+      "name": "ReplicatedStorage",
+      "className": "ReplicatedStorage",
+      "children": [
+        {
+          "name": "include",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "Promise",
+              "className": "ModuleScript",
+              "filePaths": ["include/Promise.lua"]
+            },
+            {
+              "name": "RuntimeLib",
+              "className": "ModuleScript",
+              "filePaths": ["include/RuntimeLib.lua"]
+            },
+            {
+              "name": "node_modules",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "@rbx",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "config-featureflags",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "out",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbx/config-featureflags/out/init.luau"]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "constants",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "out",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbx/constants/out/init.luau"],
+                          "children": [
+                            {
+                              "name": "build",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/constants/out/build.luau"]
+                            },
+                            {
+                              "name": "limits",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/constants/out/limits.luau"]
+                            },
+                            {
+                              "name": "timeouts",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/constants/out/timeouts.luau"]
+                            },
+                            {
+                              "name": "validation",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/constants/out/validation.luau"]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "core",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "out",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbx/core/out/init.luau"],
+                          "children": [
+                            {
+                              "name": "application",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/core/out/application.luau"]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "net",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "out",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbx/net/out/init.luau"],
+                          "children": [
+                            {
+                              "name": "client",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/net/out/client.luau"]
+                            },
+                            {
+                              "name": "ratelimit",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/net/out/ratelimit.luau"]
+                            },
+                            {
+                              "name": "remotes",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/net/out/remotes.luau"]
+                            },
+                            {
+                              "name": "validation",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/net/out/validation.luau"]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "shared-types",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "out",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbx/shared-types/out/init.luau"],
+                          "children": [
+                            {
+                              "name": "do-action",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/shared-types/out/do-action.luau"]
+                            },
+                            {
+                              "name": "error-codes",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/shared-types/out/error-codes.luau"]
+                            },
+                            {
+                              "name": "result",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbx/shared-types/out/result.luau"]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "@rbxts",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "compiler-types",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbxts/compiler-types/package.json"]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "services",
+                      "className": "ModuleScript",
+                      "filePaths": ["node_modules/@rbxts/services/init.lua"],
+                      "children": [
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbxts/services/package.json"]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "t",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "lib",
+                          "className": "Folder",
+                          "children": [
+                            {
+                              "name": "ts",
+                              "className": "ModuleScript",
+                              "filePaths": ["node_modules/@rbxts/t/lib/ts.lua"]
+                            }
+                          ]
+                        },
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbxts/t/package.json"]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "types",
+                      "className": "Folder",
+                      "children": [
+                        {
+                          "name": "package",
+                          "className": "ModuleScript",
+                          "filePaths": ["node_modules/@rbxts/types/package.json"]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        { "name": "shared", "className": "ModuleScript", "filePaths": ["out/shared/init.luau"] }
+      ]
+    },
+    {
+      "name": "ServerScriptService",
+      "className": "ServerScriptService",
+      "children": [
+        {
+          "name": "server",
+          "className": "Folder",
+          "children": [
+            { "name": "main", "className": "Script", "filePaths": ["out/server/main.server.luau"] },
+            {
+              "name": "services",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "ActionService",
+                  "className": "ModuleScript",
+                  "filePaths": ["out/server/services/ActionService.luau"]
+                },
+                {
+                  "name": "HandshakeService",
+                  "className": "ModuleScript",
+                  "filePaths": ["out/server/services/HandshakeService.luau"]
+                },
+                {
+                  "name": "PlayerLifecycleService",
+                  "className": "ModuleScript",
+                  "filePaths": ["out/server/services/PlayerLifecycleService.luau"]
+                },
+                {
+                  "name": "RemoteService",
+                  "className": "ModuleScript",
+                  "filePaths": ["out/server/services/RemoteService.luau"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "StarterPlayer",
+      "className": "StarterPlayer",
+      "children": [
+        {
+          "name": "StarterPlayerScripts",
+          "className": "StarterPlayerScripts",
+          "children": [
+            {
+              "name": "client",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "controllers",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "ActionController",
+                      "className": "ModuleScript",
+                      "filePaths": ["out/client/controllers/ActionController.luau"]
+                    },
+                    {
+                      "name": "HandshakeController",
+                      "className": "ModuleScript",
+                      "filePaths": ["out/client/controllers/HandshakeController.luau"]
+                    },
+                    {
+                      "name": "RemoteController",
+                      "className": "ModuleScript",
+                      "filePaths": ["out/client/controllers/RemoteController.luau"]
+                    },
+                    {
+                      "name": "UiController",
+                      "className": "ModuleScript",
+                      "filePaths": ["out/client/controllers/UiController.luau"]
+                    }
+                  ]
+                },
+                {
+                  "name": "main",
+                  "className": "LocalScript",
+                  "filePaths": ["out/client/main.client.luau"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

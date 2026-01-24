@@ -1,6 +1,7 @@
 import { Service, createLogger } from "@rbx/core";
 import { REMOTES, RateLimiter, validateDoActionPayload, ok, err, ErrorCode } from "@rbx/net";
 import { isFlagEnabled } from "@rbx/config-featureflags";
+import { TIMESTAMP_TOLERANCE_MS } from "@rbx/constants";
 import { RemoteService } from "./RemoteService";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
@@ -38,7 +39,7 @@ export const ActionService: Service = {
 
       const action = validated.value;
       const nowMs = os.clock() * 1000;
-      if (action.timestamp < 0 || action.timestamp > nowMs + 5000) {
+      if (action.timestamp < 0 || action.timestamp > nowMs + TIMESTAMP_TOLERANCE_MS) {
         return err(ErrorCode.InvalidPayload);
       }
       logger.debug(`Action from ${player.Name}: ${action.actionId}`);

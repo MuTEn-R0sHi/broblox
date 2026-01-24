@@ -4,6 +4,12 @@
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
   "scripts": {
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
     "lint": "eslint .",

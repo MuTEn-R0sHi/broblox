@@ -11,3 +11,6 @@ export * from "@rbx/shared-types";
 export * from "./ratelimit";
 export * from "./remotes";
 export * from "./validation";
+
+// Client utilities (timeout, retry)
+export * from "./client";

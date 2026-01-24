@@ -14,6 +14,7 @@ interface Logger {
   info(message: string): void;
   warn(message: string): void;
   error(message: string): void;
+  child(name: string): Logger;
 }
 
 class LoggerImpl implements Logger {
@@ -24,25 +25,72 @@ class LoggerImpl implements Logger {
     this.prefix = `[${name}]`;
   }
 
+  child(name: string): LoggerImpl {
+    const parentName = this.prefix.slice(1, -1);
+    const childLogger = new LoggerImpl(`${parentName}/${name}`);
+    childLogger.logs = this.logs; // Share logs array for testing
+    return childLogger;
+  }
+
   debug(message: string): void {
-    this.logs.push({ level: "DEBUG", message: `${this.prefix} [DEBUG] ${message}` });
+    this.logs.push({
+      level: "DEBUG",
+      message: `${this.prefix} [DEBUG] ${message}`,
+    });
   }
 
   info(message: string): void {
-    this.logs.push({ level: "INFO", message: `${this.prefix} [INFO] ${message}` });
+    this.logs.push({
+      level: "INFO",
+      message: `${this.prefix} [INFO] ${message}`,
+    });
   }
 
   warn(message: string): void {
-    this.logs.push({ level: "WARN", message: `${this.prefix} [WARN] ${message}` });
+    this.logs.push({
+      level: "WARN",
+      message: `${this.prefix} [WARN] ${message}`,
+    });
   }
 
   error(message: string): void {
-    this.logs.push({ level: "ERROR", message: `${this.prefix} [ERROR] ${message}` });
+    this.logs.push({
+      level: "ERROR",
+      message: `${this.prefix} [ERROR] ${message}`,
+    });
   }
 }
 
 function createLogger(name: string): LoggerImpl {
   return new LoggerImpl(name);
+}
+
+function logError(
+  logger: Logger & { logs: Array<{ level: string; message: string }> },
+  message: string,
+  errorValue: unknown,
+  extraInfo?: string
+): void {
+  let errorStr: string;
+
+  if (typeof errorValue === "string") {
+    errorStr = errorValue;
+  } else if (typeof errorValue === "object" && errorValue !== null) {
+    const errObj = errorValue as { message?: string; code?: unknown };
+    if (errObj.message !== undefined) {
+      const codeStr = errObj.code !== undefined ? ` (code: ${String(errObj.code)})` : "";
+      errorStr = `${errObj.message}${codeStr}`;
+    } else {
+      errorStr = JSON.stringify(errorValue);
+    }
+  } else {
+    errorStr = String(errorValue);
+  }
+
+  const fullMessage = extraInfo
+    ? `${message}: ${errorStr} (${extraInfo})`
+    : `${message}: ${errorStr}`;
+  logger.error(fullMessage);
 }
 
 class Janitor {
@@ -151,6 +199,65 @@ describe("Logger", () => {
       expect(logger.logs[2].level).toBe("WARN");
       expect(logger.logs[3].level).toBe("ERROR");
     });
+  });
+
+  describe("child logger", () => {
+    it("creates child logger with combined prefix", () => {
+      const childLogger = logger.child("SubModule");
+      childLogger.info("Child message");
+
+      expect(logger.logs[0].message).toContain("[TestModule/SubModule]");
+    });
+
+    it("creates nested children", () => {
+      const childLogger = logger.child("Level1").child("Level2");
+      childLogger.info("Nested message");
+
+      expect(logger.logs[0].message).toContain("[TestModule/Level1/Level2]");
+    });
+
+    it("shares logs with parent for testing", () => {
+      const childLogger = logger.child("Child");
+      childLogger.info("First");
+      childLogger.warn("Second");
+
+      expect(logger.logs).toHaveLength(2);
+    });
+  });
+});
+
+describe("logError", () => {
+  let logger: LoggerImpl;
+
+  beforeEach(() => {
+    logger = createLogger("ErrorTest");
+  });
+
+  it("logs string errors", () => {
+    logError(logger, "Operation failed", "Connection timeout");
+    expect(logger.logs[0].message).toContain("Operation failed");
+    expect(logger.logs[0].message).toContain("Connection timeout");
+  });
+
+  it("logs error objects with message", () => {
+    logError(logger, "Operation failed", { message: "Invalid input" });
+    expect(logger.logs[0].message).toContain("Invalid input");
+  });
+
+  it("logs error objects with code", () => {
+    logError(logger, "Operation failed", { code: 500, message: "Server error" });
+    expect(logger.logs[0].message).toContain("Server error");
+    expect(logger.logs[0].message).toContain("(code: 500)");
+  });
+
+  it("includes extra info when provided", () => {
+    logError(logger, "Failed", "Error", "userId=123");
+    expect(logger.logs[0].message).toContain("(userId=123)");
+  });
+
+  it("handles non-object errors", () => {
+    logError(logger, "Failed", 42);
+    expect(logger.logs[0].message).toContain("42");
   });
 });
 

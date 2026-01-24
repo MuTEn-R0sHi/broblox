@@ -31,26 +31,40 @@ This project is intended to be a **monorepo** with many games sharing a common p
 
 ## Core packages (v1 target)
 
+- `constants`
+  - Pure numeric constants (no dependencies).
+  - Timeouts: remote invoke, handshake retry, session expiry.
+  - Limits: payload sizes, timestamp tolerance, vector magnitudes.
+  - Build info: version, commit hash, environment.
+  - Safe for both Roblox runtime and Node.js testing.
+
 - `core`
-  - Lifecycle: `init()`/`start()` order.
-  - Dependency injection (DI) container.
-  - Logging + correlation ids.
+  - Application lifecycle: `start()`/`stop()`/`dispose()`.
+  - Logger with child loggers and structured context.
   - Cleanup primitives (resource lifetimes).
 
 - `shared-types`
   - Branded ids: `PlayerId`, `MatchId`, `ConfigVersion`, etc.
-  - Stable error codes for networking.
+  - `Result<T>` type with `ok()`, `err()`, `isOk()`, `isErr()` helpers.
+  - Stable error codes (`ErrorCode` enum) with code ranges.
+  - `DoAction<T>` for deferred execution patterns.
 
 - `net`
   - Remote registry (single source of truth).
   - Runtime schema validation.
   - Per-endpoint and per-player rate limits.
   - Protocol version handshake.
+  - Client utilities: `withRetry()`, `withTimeout()`.
 
 - `testing`
   - Shared test utilities for vitest.
   - Roblox API mocks for Node.js.
   - Test factories and helpers.
+
+- `config-featureflags`
+  - Runtime feature flag configuration.
+  - Type-safe flag definitions.
+  - Validation with error details.
 
 - `security`
   - Authoritative outcome rules.

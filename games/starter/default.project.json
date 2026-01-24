@@ -23,6 +23,12 @@
                 "$path": "node_modules/@rbx/shared-types/out"
               }
             },
+            "constants": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/constants/out"
+              }
+            },
             "core": {
               "$className": "Folder",
               "out": {

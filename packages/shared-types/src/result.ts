@@ -1,9 +1,11 @@
 /**
- * Result type utilities for Node.js/Vitest tests.
- * Mirrors the API of @rbx/shared-types/result.ts
+ * Result type for explicit error handling.
+ * This is the canonical source of truth for Result<T> across the platform.
  *
- * Note: This is a Node.js-compatible version that throws Error
- * instead of calling Roblox's error() function.
+ * The Result pattern ensures:
+ * - Errors are explicit, not exceptions
+ * - Error codes are stable and documented
+ * - Network boundary safety (no thrown errors)
  */
 
 import { ErrorCode } from "./error-codes";
@@ -70,12 +72,14 @@ export function isErr<T>(result: Result<T>): result is Err {
 /**
  * Unwrap a result, throwing if it's an error.
  * Use sparingly - prefer pattern matching with isOk/isErr.
+ *
+ * @throws Calls error() in Roblox runtime.
  */
 export function unwrap<T>(result: Result<T>): T {
   if (isOk(result)) {
     return result.value;
   }
-  throw new Error(`Unwrap failed: code ${result.code}`);
+  error(`Unwrap failed: code ${result.code}`);
 }
 
 /**
@@ -130,6 +134,7 @@ export function mapErr(result: Result<unknown>, fn: (err: Err) => Err): Result<u
 
 /**
  * Convert a Result to a tuple [value, error] for destructuring.
+ * Similar to Go-style error handling.
  */
 export function toTuple<T>(result: Result<T>): [T | undefined, Err | undefined] {
   if (isOk(result)) {

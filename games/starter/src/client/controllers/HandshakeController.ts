@@ -1,6 +1,7 @@
 import { UserInputService } from "@rbxts/services";
 import { type Result, type HandshakePayload, PROTOCOL_VERSION } from "@rbx/net";
 import { Controller, createLogger } from "@rbx/core";
+import { BUILD_ID } from "@rbx/constants";
 import { RemoteController } from "./RemoteController";
 import { UiController } from "./UiController";
 
@@ -20,7 +21,7 @@ export const HandshakeController: Controller = {
   onStart() {
     const payload: HandshakePayload = {
       protocolVersion: PROTOCOL_VERSION,
-      buildId: "starter-0.0.0",
+      buildId: BUILD_ID,
       deviceClass: detectDeviceClass(),
     };
 

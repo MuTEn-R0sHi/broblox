@@ -2,7 +2,7 @@
  * Test data factories for creating consistent test fixtures.
  */
 
-import { ErrorCode } from "./error-codes";
+import { ErrorCode, PROTOCOL_VERSION } from "./error-codes";
 import { ok, err, type Result } from "./result";
 
 // ============================================================================
@@ -121,6 +121,12 @@ export interface HandshakePayload {
   deviceClass: "kbm" | "gamepad" | "touch";
 }
 
+export interface HandshakeResponse {
+  serverVersion: number;
+  serverTime: number;
+  minProtocolVersion?: number;
+}
+
 /**
  * Create a valid DoAction payload for testing.
  */
@@ -137,9 +143,20 @@ export function createDoActionPayload(overrides?: Partial<DoActionPayload>): DoA
  */
 export function createHandshakePayload(overrides?: Partial<HandshakePayload>): HandshakePayload {
   return {
-    protocolVersion: 1,
+    protocolVersion: PROTOCOL_VERSION,
     buildId: "test-build-0.0.0",
     deviceClass: "kbm",
+    ...overrides,
+  };
+}
+
+/**
+ * Create a valid Handshake response for testing.
+ */
+export function createHandshakeResponse(overrides?: Partial<HandshakeResponse>): HandshakeResponse {
+  return {
+    serverVersion: PROTOCOL_VERSION,
+    serverTime: Math.floor(Date.now() / 1000),
     ...overrides,
   };
 }
@@ -174,4 +191,38 @@ export function createMockPlayer(overrides?: Partial<MockPlayer>): MockPlayer {
  */
 export function resetPlayerIdCounter(): void {
   playerIdCounter = 1;
+}
+
+// ============================================================================
+// Result Factories
+// ============================================================================
+
+export interface ActionResultData {
+  effectApplied: boolean;
+  serverTime?: number;
+}
+
+/**
+ * Create a success result for action responses.
+ */
+export function createActionResult(data?: Partial<ActionResultData>): Result<ActionResultData> {
+  return ok({
+    effectApplied: true,
+    serverTime: Math.floor(Date.now() / 1000),
+    ...data,
+  });
+}
+
+/**
+ * Create an error result for testing.
+ */
+export function createErrorResult(
+  code: ErrorCode,
+  message?: string,
+  options?: { retryAfterMs?: number; field?: string }
+): Result<never> {
+  return err(code, {
+    message,
+    ...options,
+  });
 }

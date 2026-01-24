@@ -1,13 +1,4 @@
 /**
- * Error codes for Node.js/Vitest tests.
- * Re-exports from shared-types for consistency.
- *
- * Note: We maintain a separate copy here because @rbx/shared-types
- * uses roblox-ts compilation which may not be directly importable in Node.
- * These MUST stay in sync with @rbx/shared-types/src/error-codes.ts
- */
-
-/**
  * Stable error codes for remote responses.
  * Never change existing codes; only add new ones.
  *
@@ -54,16 +45,6 @@ export enum ErrorCode {
   ServiceUnavailable = 5002,
   Timeout = 5003,
 }
-
-/**
- * Protocol version - must match @rbx/shared-types
- */
-export const PROTOCOL_VERSION = 1;
-
-/**
- * Minimum supported protocol version.
- */
-export const MIN_PROTOCOL_VERSION = 1;
 
 /**
  * Get a human-readable description for an error code.

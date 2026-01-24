@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@rbx/config-featureflags": "workspace:*",
+    "@rbx/constants": "workspace:*",
     "@rbx/core": "workspace:*",
     "@rbx/net": "workspace:*",
     "@rbx/shared-types": "workspace:*",

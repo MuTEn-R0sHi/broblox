@@ -30,13 +30,22 @@ Notes:
 - **Error code reference documentation** auto-generated from ErrorCode enum.
 - **Enhanced CONTRIBUTING.md** with detailed workflow, commit conventions, and branch protection info.
 - **@rbx/testing package** - Shared test utilities, mocks, and helpers for vitest.
-- **Expanded test coverage** - 111 tests across all packages (core, config-featureflags, net, shared-types, dashboard).
+- **Expanded test coverage** - 143 tests across all packages (core, config-featureflags, net, shared-types, constants, dashboard).
 - **Commitlint** - Conventional commit enforcement with commit-msg hook.
 - **Coverage tooling** - `@vitest/coverage-v8` for test coverage reporting.
 - **Luau tooling** - Added selene (linter) and stylua (formatter) to aftman.toml with configuration.
 - **VS Code launch.json** - Debug configurations for tests, tools, and dashboard.
 - **CODEOWNERS** - Code review ownership routing for GitHub.
 - **Security scanning** - `pnpm audit` step added to CI workflow.
+- **@rbx/constants package** - Centralized timeout, limit, and build constants (zero dependencies).
+- **Result<T> type system** - Explicit error handling with `ok()`, `err()`, `isOk()`, `isErr()` helpers in shared-types.
+- **Enhanced ErrorCode enum** - Expanded error codes with code ranges (validation, business, protocol, auth, server).
+- **Application lifecycle** - `start()`/`stop()`/`dispose()` methods with proper state management in core.
+- **Client utilities** - `withRetry()` and `withTimeout()` helpers in net package.
+- **Enhanced Logger** - Child loggers with `child()` method and structured context support.
+- **Protocol compatibility tests** - Serialization round-trip tests for network types.
+- **Application integration tests** - Lifecycle and state management tests.
+- **Result types documentation** - New reference page at `docs/reference/result-types.md`.
 
 ### Changed
 
@@ -45,6 +54,11 @@ Notes:
 - **README.md** now includes MIT license info and build workflow documentation.
 - **@rbx/net** now imports types from `@rbx/shared-types` instead of duplicating them.
 - **.gitignore** updated with better patterns for coverage, VSCode settings, and build outputs.
+- **Package.json exports** - All packages now have proper `exports` field for module resolution.
+- **Configuration docs** - Updated with constants and feature flags documentation.
+- **Networking docs** - Added client utilities section and Result type references.
+- **Runtime docs** - Updated Application lifecycle with new API methods.
+- **Folders & packages docs** - Added constants package, updated package descriptions.
 
 ### Removed
 

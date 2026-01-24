@@ -86,6 +86,9 @@ importers:
       "@rbx/config-featureflags":
         specifier: workspace:*
         version: link:../../packages/config-featureflags
+      "@rbx/constants":
+        specifier: workspace:*
+        version: link:../../packages/constants
       "@rbx/core":
         specifier: workspace:*
         version: link:../../packages/core
@@ -128,6 +131,18 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
+  packages/constants:
+    devDependencies:
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.903
+        version: 1.0.903
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+
   packages/core:
     devDependencies:
       "@rbxts/compiler-types":
@@ -142,6 +157,9 @@ importers:
 
   packages/net:
     dependencies:
+      "@rbx/constants":
+        specifier: workspace:*
+        version: link:../constants
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../shared-types

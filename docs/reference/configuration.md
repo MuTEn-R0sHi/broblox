@@ -2,17 +2,70 @@
 
 ## Types of configuration
 
-- Build-time: constants compiled into the client/server
-- Runtime: fetched/replicated config snapshots
-- Feature flags: kill-switches and rollouts
+- **Build-time constants**: Numeric values compiled into the client/server via `@rbx/constants`
+- **Runtime config**: Fetched/replicated config snapshots
+- **Feature flags**: Kill-switches and rollouts via `@rbx/config-featureflags`
+
+## Constants Package (`@rbx/constants`)
+
+The constants package provides centralized, type-safe constants:
+
+```typescript
+import {
+  REMOTE_INVOKE_TIMEOUT_MS,
+  HANDSHAKE_MAX_RETRIES,
+  MAX_PAYLOAD_SIZE_BYTES,
+  BUILD_ID,
+} from "@rbx/constants";
+```
+
+### Timeout Constants
+
+| Constant                       | Value | Description             |
+| ------------------------------ | ----- | ----------------------- |
+| `REMOTES_WAIT_TIMEOUT_SECONDS` | 30    | Wait for remotes folder |
+| `REMOTE_INVOKE_TIMEOUT_MS`     | 10000 | Remote call timeout     |
+| `HANDSHAKE_RETRY_DELAY_MS`     | 2000  | Delay between retries   |
+| `HANDSHAKE_MAX_RETRIES`        | 3     | Max retry attempts      |
+| `SESSION_EXPIRY_SECONDS`       | 300   | Session timeout         |
+| `SHUTDOWN_TIMEOUT_SECONDS`     | 30    | BindToClose timeout     |
+
+### Limit Constants
+
+| Constant                 | Value | Description         |
+| ------------------------ | ----- | ------------------- |
+| `MAX_PAYLOAD_SIZE_BYTES` | 1024  | Max remote payload  |
+| `TIMESTAMP_TOLERANCE_MS` | 5000  | Allowed clock drift |
+| `TIMESTAMP_MAX_AGE_MS`   | 30000 | Max timestamp age   |
+| `MAX_POSITION_MAGNITUDE` | 10000 | Max position vector |
+| `MAX_VELOCITY_MAGNITUDE` | 1000  | Max velocity vector |
+
+## Feature Flags (`@rbx/config-featureflags`)
+
+Feature flags provide runtime toggles with type safety:
+
+```typescript
+import { FeatureFlags, validateFeatureFlags } from "@rbx/config-featureflags";
+
+const config: FeatureFlags = {
+  newMatchmaking: true,
+  maxPlayersPerServer: 50,
+  betaFeatures: false,
+};
+
+const result = validateFeatureFlags(config);
+if (!result.valid) {
+  console.error("Invalid config:", result.errors);
+}
+```
 
 ## Environment separation
 
 Recommended environments:
 
-- dev
-- stage
-- prod
+- `dev` - Local development
+- `stage` - Testing/QA
+- `prod` - Production
 
 Rules:
 
@@ -23,6 +76,7 @@ Rules:
 
 - Every config file has a schema.
 - Invalid configs fail CI and cannot be promoted.
+- Use `validateFeatureFlags()` for runtime validation.
 
 ## Sensitive data
 
