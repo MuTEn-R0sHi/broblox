@@ -1,8 +1,13 @@
 import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
+import type { AuditLog, User } from "@prisma/client";
 
-async function getAuditLogs() {
+type AuditLogWithUser = AuditLog & {
+  user: Pick<User, "name" | "email" | "image">;
+};
+
+async function getAuditLogs(): Promise<AuditLogWithUser[]> {
   return prisma.auditLog.findMany({
     include: {
       user: {
