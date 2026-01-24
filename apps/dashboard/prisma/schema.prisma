@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// NextAuth.js models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  // RBAC
+  role          Role      @default(VIEWER)
+
+  // Audit
+  auditLogs     AuditLog[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// RBAC Roles
+enum Role {
+  VIEWER
+  SUPPORT
+  MODERATOR
+  ENGINEER
+  ADMIN
+}
+
+// Audit logging
+model AuditLog {
+  id        String   @id @default(cuid())
+  timestamp DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  action    String   // e.g., "config.update", "ban.create"
+  target    String?  // e.g., player ID, config key
+  before    Json?    // State before change
+  after     Json?    // State after change
+  reason    String?  // Required for bans and prod actions
+
+  ipHash    String?  // Privacy-safe IP hash
+  userAgent String?  @db.Text
+
+  @@index([userId])
+  @@index([timestamp])
+  @@index([action])
+}
+
+// Feature flags configuration
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?  @db.Text
+
+  // Per-environment toggles
+  enabledDev   Boolean @default(false)
+  enabledStage Boolean @default(false)
+  enabledProd  Boolean @default(false)
+
+  value       Json?    // Optional JSON value for complex flags
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
