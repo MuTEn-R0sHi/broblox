@@ -61,7 +61,7 @@ jobs:
             --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
-            --version-type "Published" \
+            --version-type published \
             --filename games/starter/build.rbxl
 
       - name: Post publish notification

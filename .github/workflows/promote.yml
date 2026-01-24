@@ -84,7 +84,7 @@ jobs:
             --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
-            --version-type "Published" \
+            --version-type published \
             --filename ./build/build.rbxl
 
       - name: Create promotion record
@@ -151,7 +151,7 @@ jobs:
             --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
-            --version-type "Published" \
+            --version-type published \
             --filename ./build/build.rbxl
 
       - name: Create promotion record
