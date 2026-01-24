@@ -1,7 +1,16 @@
 node_modules
-# Keep environment variables out of version control
-.env
-
-/src/generated/prisma
+.next
 .vercel
+
+# Environment variables
+.env
 .env*.local
+
+# Build outputs
+tsconfig.tsbuildinfo
+
+# Generated Prisma client
+/src/generated/prisma
+
+# npm lockfile (we use pnpm)
+package-lock.json

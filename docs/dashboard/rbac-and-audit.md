@@ -1,104 +1,147 @@
-# Dashboard: RBAC and audit logging
+# Dashboard: RBAC and Audit Logging
 
 The dashboard is the operations control plane. It must be safe by default.
 
 ## Goals
 
-- Only authorized operators can perform privileged actions.
-- Every privileged action is recorded in an immutable audit log.
-- High-risk actions require approvals.
+- Only authorized operators can perform privileged actions
+- Every privileged action is recorded in an immutable audit log
+- High-risk actions (production changes) require elevated roles
 
 ## Authentication
 
-- Use Roblox OAuth for operator login.
-- Map Roblox identity (user id) to an internal operator record.
-- Maintain an allowlist (and/or group membership requirement).
+- **Provider**: GitHub OAuth via NextAuth.js v5
+- **Session**: Database-backed sessions with secure cookies
+- **Identity**: GitHub user ID mapped to internal User record
 
 ## Authorization (RBAC)
 
 Roles are additive; permissions are enforced server-side.
 
-### Role: Viewer
+### Role: VIEWER (default)
 
-- View match history
-- View aggregated metrics
+- View feature flags (all environments)
 - View audit logs
+- View own profile
 
-### Role: Support
+### Role: MODERATOR
 
-- View player profile snapshot (safe fields only)
-- Add internal notes to player cases
-- Initiate ban appeal workflows
+All VIEWER permissions, plus:
 
-### Role: Moderator
+- Toggle dev environment flags
+- Toggle stage environment flags
 
-- Create/modify mutes and temporary bans
-- Review player reports and evidence
-- Trigger quarantine (unranked-only)
+### Role: ENGINEER
 
-### Role: Engineer
+All MODERATOR permissions, plus:
 
-- Edit configs and feature flags (stage only by default)
-- Trigger dev publishes
-- View deploy pipeline status
+- Toggle production flags
+- Create new feature flags
+- Update flag descriptions
+- Delete feature flags
 
-### Role: Admin
+### Role: ADMIN
 
-- Promote to prod (requires approval)
-- Grant permanent bans/unbans
-- Edit economy-critical configs
-- Manage RBAC assignments
+All ENGINEER permissions, plus:
 
-## Approval workflow (high risk)
+- Manage user roles
+- Access all administrative functions
 
-Require at least one additional approver for:
+## Permission Matrix
 
-- prod promotion
-- enabling ranked matchmaking
-- changing core anti-cheat thresholds
-- changing economy grant rules
-- enabling trading
+| Action             | VIEWER | MODERATOR | ENGINEER | ADMIN |
+| ------------------ | ------ | --------- | -------- | ----- |
+| View flags         | ✅     | ✅        | ✅       | ✅    |
+| View audit logs    | ✅     | ✅        | ✅       | ✅    |
+| Toggle DEV flags   | ❌     | ✅        | ✅       | ✅    |
+| Toggle STAGE flags | ❌     | ✅        | ✅       | ✅    |
+| Toggle PROD flags  | ❌     | ❌        | ✅       | ✅    |
+| Create flags       | ❌     | ❌        | ✅       | ✅    |
+| Delete flags       | ❌     | ❌        | ✅       | ✅    |
+| Manage users       | ❌     | ❌        | ❌       | ✅    |
 
-## Audit logging (immutable)
+## Implementation
 
-### Audit event schema (minimal)
+### Server-side enforcement
 
-- `auditId` (unique)
-- `timestamp`
-- `actor`
-  - `robloxUserId`
-  - `operatorId`
-  - `roleAtTime`
-- `action`
-  - `type` (e.g., `config.update`, `ban.create`, `release.promote`)
-  - `target` (player id, config key, release id)
-- `request`
-  - `requestId`
-  - `ipHash` (privacy-safe)
-  - `userAgent` (optional)
-- `before` / `after` snapshots (redacted)
-- `reason` (required for bans and prod actions)
-- `approval`
-  - `required: boolean`
-  - `status: pending|approved|rejected`
-  - `approvers[]`
+```typescript
+// In server actions (apps/dashboard/src/app/dashboard/flags/actions.ts)
+const ROLE_HIERARCHY: Record<UserRole, number> = {
+  VIEWER: 0,
+  MODERATOR: 1,
+  ENGINEER: 2,
+  ADMIN: 3,
+};
 
-### Rules
+function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
+  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];
+}
 
-- Audit logs are append-only (no edits/deletes).
-- Redact secrets and private player fields.
-- Every Open Cloud publish/promote action must generate an audit event.
+// Permission checks per environment
+const ENV_PERMISSIONS: Record<string, UserRole> = {
+  dev: "MODERATOR",
+  stage: "MODERATOR",
+  prod: "ENGINEER",
+};
+```
 
-## Safe data exposure
+### Client-side UI
 
-The dashboard must not display sensitive data unnecessarily.
+Frontend hides controls for unauthorized actions (defense in depth):
 
-- No secrets, keys, or internal tokens.
-- Player inventory shown as IDs/names only.
-- Evidence links should be stored as references; access controlled.
+```tsx
+{
+  hasRole(user.role, "ENGINEER") && <Button onClick={handleCreateFlag}>Create Flag</Button>;
+}
+```
 
-## Operational definition of done
+## Audit Logging
 
-- Every privileged endpoint requires a permission check.
-- Every privileged endpoint emits an audit event.
-- Prod promotion and economy changes require approval.
+Every privileged action is recorded with:
+
+| Field       | Description                            |
+| ----------- | -------------------------------------- |
+| `id`        | Unique audit log ID                    |
+| `userId`    | User who performed the action          |
+| `action`    | Action type (e.g., `flag.toggle.prod`) |
+| `target`    | Target resource (e.g., flag name)      |
+| `before`    | Previous state (JSON)                  |
+| `after`     | New state (JSON)                       |
+| `timestamp` | When the action occurred               |
+| `ipHash`    | Hashed IP address (optional)           |
+| `userAgent` | Browser user agent (optional)          |
+
+### Action Types
+
+| Action              | Description                    |
+| ------------------- | ------------------------------ |
+| `flag.create`       | New feature flag created       |
+| `flag.update`       | Flag metadata updated          |
+| `flag.delete`       | Feature flag deleted           |
+| `flag.toggle.dev`   | Dev environment toggled        |
+| `flag.toggle.stage` | Stage environment toggled      |
+| `flag.toggle.prod`  | Production environment toggled |
+
+### Viewing Audit Logs
+
+All authenticated users can view audit logs at `/dashboard/audit`:
+
+- Chronological list of all actions
+- User attribution with avatar
+- Before/after state comparison
+- Relative timestamps
+
+## Security Considerations
+
+1. **Server-side only**: All permission checks happen on the server
+2. **Audit immutability**: Application code never updates or deletes audit logs
+3. **Session security**: Database-backed sessions with secure, httpOnly cookies
+4. **Input validation**: All user input validated before processing
+
+## Future Enhancements
+
+- [ ] Approval workflows for high-risk actions
+- [ ] Audit log export (CSV/JSON)
+- [ ] Anomaly detection alerts
+- [ ] IP-based access restrictions
+- [ ] Two-factor authentication

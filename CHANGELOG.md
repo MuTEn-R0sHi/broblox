@@ -11,6 +11,23 @@ Notes:
 
 ## Unreleased
 
+### Added
+
+- **Dashboard deployed to Vercel** - Live at https://rbx-dashboard.vercel.app
+- **Feature flags UI** - Per-environment toggles (dev/stage/prod) with database persistence.
+- **Audit logging** - Complete history of all privileged actions with user attribution.
+- **Role-based permissions** - VIEWER, MODERATOR, ENGINEER, ADMIN roles with server-side enforcement.
+- **Flags REST API** - `GET /api/flags/:environment` endpoint for game servers.
+- **GitHub OAuth** - Authentication via GitHub OAuth with NextAuth.js v5.
+- **MySQL/MariaDB support** - Prisma 7 with MariaDB adapter for lima-city hosting.
+
+### Changed
+
+- **Dashboard tech stack** - Updated to Next.js 16, Tailwind CSS 4, Prisma 7.
+- **Documentation** - Comprehensive updates to dashboard docs (tech-stack, rbac-and-audit).
+- **Getting started guide** - Added dashboard setup instructions.
+- **README** - Added dashboard section and live link badge.
+
 ## 0.1.0 - 2026-01-24
 
 ### Added

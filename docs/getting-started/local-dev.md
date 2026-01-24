@@ -1,35 +1,85 @@
 # Getting started: Local dev
 
-This page will expand once the code scaffold exists. For now, it defines the intended local workflow.
+This page covers local development setup for all components.
 
-## Docs workflow (already usable)
+## Docs workflow
 
 - Create a Python venv (recommended)
 - Install docs requirements
 - Run MkDocs locally
 
-Expected commands:
-
-- `python -m venv .venv`
-- `source .venv/bin/activate`
-- `pip install -r requirements-docs.txt`
-- `mkdocs serve`
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-docs.txt
+mkdocs serve
+```
 
 If you moved/renamed the repo folder and your existing `.venv` breaks (bad interpreter path), recreate it:
 
-- `rm -rf .venv`
-- `python -m venv .venv`
-- `source .venv/bin/activate`
-- `pip install -r requirements-docs.txt`
+```bash
+rm -rf .venv
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-docs.txt
+```
 
-## Game workflow (planned)
+## Dashboard workflow
 
-This is now scaffolded for the `games/starter` project.
+The dashboard is a Next.js application for managing feature flags and viewing audit logs.
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm (via corepack)
+- MySQL/MariaDB database
+
+### Setup
+
+```bash
+cd apps/dashboard
+cp .env.example .env
+# Edit .env with your credentials
+```
+
+Configure `.env`:
+
+```bash
+DATABASE_URL="mysql://user:pass@host:3306/database"
+AUTH_SECRET="$(openssl rand -base64 32)"
+GITHUB_ID="your-oauth-app-client-id"
+GITHUB_SECRET="your-oauth-app-client-secret"
+```
+
+Create a GitHub OAuth App at https://github.com/settings/developers:
+
+- Homepage URL: `http://localhost:3000`
+- Callback URL: `http://localhost:3000/api/auth/callback/github`
+
+### Database setup
+
+```bash
+npx prisma db push
+```
+
+### Run development server
+
+```bash
+pnpm dev
+# or from repo root:
+pnpm --filter @rbx/dashboard dev
+```
+
+Open http://localhost:3000
+
+## Game workflow
 
 ### 1) Install dependencies
 
-- `corepack enable`
-- `pnpm install`
+```bash
+corepack enable
+pnpm install
+```
 
 ### 2) Build / watch Roblox-TS
 
@@ -44,12 +94,12 @@ The build compiles shared packages first, then the game:
 
 Recommended: install Rojo via Aftman (toolchain pinned in `aftman.toml`).
 
-- Install tools: `aftman install`
-- Start Rojo: `pnpm game:starter:rojo`
+```bash
+aftman install
+pnpm game:starter:rojo
+```
 
-The Rojo project file is:
-
-- `games/starter/default.project.json`
+The Rojo project file is `games/starter/default.project.json`.
 
 ## Debugging principles
 

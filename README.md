@@ -2,8 +2,14 @@
 
 [![CI](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/ci.yml)
 [![Docs](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/docs-deploy-limacity.yml/badge.svg)](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/docs-deploy-limacity.yml)
+[![Dashboard](https://img.shields.io/badge/Dashboard-Live-brightgreen)](https://rbx-dashboard.vercel.app)
 
 Docs-first Roblox-TS multi-game platform + control-plane dashboard.
+
+## Quick Links
+
+- **Dashboard**: https://rbx-dashboard.vercel.app
+- **Documentation**: https://roshi.lima-city.de (or run `mkdocs serve` locally)
 
 ## Repo layout
 
@@ -24,7 +30,7 @@ rbx-game-platform/
 ├── games/                 # Roblox-TS game projects
 │   └── starter/           # Starter game template
 ├── apps/                  # Web applications
-│   └── dashboard/         # Next.js admin dashboard
+│   └── dashboard/         # Next.js admin dashboard (deployed on Vercel)
 ├── docs/                  # MkDocs documentation site
 └── tools/                 # Build and development tools
 ```
@@ -48,6 +54,27 @@ pnpm install
 pnpm lint          # Run ESLint across all packages
 pnpm typecheck     # Run TypeScript/roblox-ts type checking
 pnpm test          # Run all tests with vitest
+```
+
+## Dashboard
+
+The operations dashboard provides:
+
+- **Feature flags** with per-environment toggles (dev/stage/prod)
+- **Audit logging** for all privileged actions
+- **Role-based permissions** (VIEWER, MODERATOR, ENGINEER, ADMIN)
+- **REST API** for game servers to fetch flags
+
+See [apps/dashboard/README.md](apps/dashboard/README.md) for setup instructions.
+
+### Quick start (local)
+
+```bash
+cd apps/dashboard
+cp .env.example .env
+# Edit .env with your database and OAuth credentials
+npx prisma db push
+pnpm dev
 ```
 
 ## Versioning + releases
