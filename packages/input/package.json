@@ -1,0 +1,15 @@
+{
+  "name": "@rbx/input",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Input abstraction for Roblox games - unified keyboard, gamepad, and touch controls",
+  "main": "out/init.lua",
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.903",
+    "roblox-ts": "^3.0.0"
+  }
+}
