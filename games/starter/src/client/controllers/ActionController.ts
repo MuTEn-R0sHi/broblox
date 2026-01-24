@@ -1,8 +1,15 @@
+/**
+ * Action Controller
+ *
+ * Listens for user input and sends action intents to server.
+ */
+
 import { UserInputService } from "@rbxts/services";
 import { Controller, createLogger } from "@rbx/core";
-import { type Result, type DoActionPayload } from "@rbx/net";
+import { isOk, isErr } from "@rbx/net";
 import { RemoteController } from "./RemoteController";
 import { UiController } from "./UiController";
+import { ActionRequest } from "shared/remotes";
 
 const logger = createLogger("ActionController");
 
@@ -10,31 +17,30 @@ export const ActionController: Controller & {
   connection?: RBXScriptConnection;
 } = {
   connection: undefined,
+
   onStart() {
     logger.info("ActionController listening for input (press E)");
+    const registry = RemoteController.getRegistry();
 
     this.connection = UserInputService.InputBegan.Connect((input, gameProcessed) => {
       if (gameProcessed) return;
       if (input.KeyCode !== Enum.KeyCode.E) return;
 
-      const payload: DoActionPayload = {
+      const request: ActionRequest = {
         actionId: "intent_ping",
         timestamp: os.clock() * 1000,
       };
 
-      const result = RemoteController.Remotes.DoAction.InvokeServer(payload) as Result<{
-        actionId: string;
-        processedAt: number;
-      }>;
+      const result = registry.invoke("DoAction", request);
 
-      if (result.ok) {
-        logger.info(`Action OK: ${result.value.actionId}`);
+      if (isOk(result)) {
+        logger.info(`Action OK: ${request.actionId}`);
         UiController.showActionResult(
-          `Action: ${result.value.actionId} @ ${math.floor(result.value.processedAt)}ms`,
+          `Action: ${request.actionId} @ ${math.floor(result.value.serverTimestamp)}ms`,
           true
         );
-      } else {
-        logger.warn(`Action failed: ${result.code}`);
+      } else if (isErr(result)) {
+        logger.warn(`Action failed: ${result.code} - ${result.message}`);
         UiController.showActionResult(`Action failed: ${result.code}`, false);
       }
     });

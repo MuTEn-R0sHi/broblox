@@ -50,11 +50,26 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - `DoAction<T>` for deferred execution patterns.
 
 - `net`
-  - Remote registry (single source of truth).
-  - Runtime schema validation.
+  - Remote registry (single source of truth for all remotes).
+  - Type-safe `defineServerFunction()`, `defineServerEvent()`, `defineClientEvent()`.
+  - `ServerRemoteRegistry` and `ClientRemoteRegistry` classes.
+  - Built-in rate limiting and validation support.
   - Per-endpoint and per-player rate limits.
   - Protocol version handshake.
   - Client utilities: `withRetry()`, `withTimeout()`.
+
+- `data`
+  - `PlayerDataStore` - Type-safe DataStore wrapper.
+  - Automatic versioning and migrations.
+  - Retry with exponential backoff.
+  - `SessionManager` - Auto-save and cleanup.
+  - Dirty tracking for optimized saves.
+
+- `security`
+  - Detector signals (`checkSpeed()`, `checkTeleport()`, `reportViolation()`).
+  - Trust scoring system with factor-based calculation.
+  - Enforcement policy (`Enforcer` class with escalation).
+  - Shadow banning and kick actions.
 
 - `testing`
   - Shared test utilities for vitest.
@@ -65,21 +80,6 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Runtime feature flag configuration.
   - Type-safe flag definitions.
   - Validation with error details.
-
-- `security`
-  - Authoritative outcome rules.
-  - Detector signals and scoring.
-  - Enforcement policy (warn → throttle → kick → ban).
-
-- `movement`
-  - Motor abstraction (`IMovementController`).
-  - Humanoid compatibility layer.
-  - Competitive motor option (for ranked).
-
-- `config-featureflags`
-  - Config sources + validation.
-  - Kill-switch flags.
-  - Rollouts and targeting.
 
 - `ui-kit`
   - Components, theming, device-safe layout.

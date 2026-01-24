@@ -155,6 +155,31 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
+  packages/data:
+    dependencies:
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.849
+        version: 1.0.903
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.9)(jiti@2.6.1)(jsdom@26.1.0)(yaml@2.8.2)
+
   packages/net:
     dependencies:
       "@rbx/constants":
@@ -179,6 +204,31 @@ importers:
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
+
+  packages/security:
+    dependencies:
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.849
+        version: 1.0.903
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.9)(jiti@2.6.1)(jsdom@26.1.0)(yaml@2.8.2)
 
   packages/shared-types:
     devDependencies:
@@ -3598,6 +3648,14 @@ packages:
     engines: { node: ">=14.17" }
     hasBin: true
 
+  typescript@5.8.3:
+    resolution:
+      {
+        integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==,
+      }
+    engines: { node: ">=14.17" }
+    hasBin: true
+
   typescript@5.9.3:
     resolution:
       {
@@ -5812,6 +5870,8 @@ snapshots:
       - supports-color
 
   typescript@5.5.3: {}
+
+  typescript@5.8.3: {}
 
   typescript@5.9.3: {}
 

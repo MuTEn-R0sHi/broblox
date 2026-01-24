@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "out",
+    "types": ["node"],
+    "paths": {
+      "@rbx/*": ["../*/src"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["out", "node_modules"]
+}

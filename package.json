@@ -1,6 +1,7 @@
 {
   "name": "rbx-game-platform",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": ">=20.11.0"

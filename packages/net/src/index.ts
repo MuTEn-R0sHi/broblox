@@ -14,3 +14,6 @@ export * from "./validation";
 
 // Client utilities (timeout, retry)
 export * from "./client";
+
+// Remote Registry (type-safe remote definitions)
+export * from "./registry";

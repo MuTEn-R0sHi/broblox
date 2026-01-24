@@ -46,6 +46,15 @@ Notes:
 - **Protocol compatibility tests** - Serialization round-trip tests for network types.
 - **Application integration tests** - Lifecycle and state management tests.
 - **Result types documentation** - New reference page at `docs/reference/result-types.md`.
+- **Remote Registry** - Type-safe remote definitions with `defineServerFunction()`, `defineServerEvent()`, `defineClientEvent()` in net package.
+- **Server/Client Remote Registry** - `createServerRegistry()` and `createClientRegistry()` for automatic remote creation and connection.
+- **@rbx/data package** - Player data persistence layer with DataStore wrapper, versioning, migrations, and retry.
+- **SessionManager** - Auto-save and cleanup for player sessions with dirty tracking.
+- **@rbx/security package** - Security utilities with violation detectors, trust scoring, and enforcement.
+- **Violation Detectors** - `checkSpeed()`, `checkTeleport()`, `reportInvalidData()`, `checkRateAbuse()` functions.
+- **Trust Score System** - Factor-based trust calculation for adaptive enforcement.
+- **Enforcer** - Automatic violation handling with escalation policy (warn → kick → ban).
+- **Root package.json** - Added `"type": "module"` for ES modules support.
 
 ### Changed
 

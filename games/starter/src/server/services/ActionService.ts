@@ -1,53 +1,41 @@
+/**
+ * Action Service
+ *
+ * Handles action intents from clients.
+ */
+
 import { Service, createLogger } from "@rbx/core";
-import { REMOTES, RateLimiter, validateDoActionPayload, ok, err, ErrorCode } from "@rbx/net";
+import { ok, err, ErrorCode } from "@rbx/net";
 import { isFlagEnabled } from "@rbx/config-featureflags";
 import { TIMESTAMP_TOLERANCE_MS } from "@rbx/constants";
 import { RemoteService } from "./RemoteService";
-import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { ActionRequest } from "shared/remotes";
 
 const logger = createLogger("ActionService");
-const limiter = new RateLimiter(REMOTES.DoAction.rateLimit);
 
 export const ActionService: Service = {
-  onInit() {
-    // Subscribe to player cleanup
-    PlayerLifecycleService.onPlayerRemoving((player) => {
-      limiter.reset(player.UserId);
-    });
-  },
-
   onStart() {
     logger.info("Starting Action Listener");
+    const registry = RemoteService.getRegistry();
 
-    RemoteService.Remotes.DoAction.OnServerInvoke = (player: Player, payload: unknown) => {
-      // Rate limit
-      const rateResult = limiter.check(player.UserId);
-      if (!rateResult.ok) {
-        return rateResult;
-      }
-
+    registry.onFunction("DoAction", (player, request: ActionRequest) => {
       // Check kill-switch
       if (!isFlagEnabled("doAction.enabled")) {
-        return err(ErrorCode.FeatureDisabled);
+        return err(ErrorCode.FeatureDisabled, { message: "Action system disabled" });
       }
 
-      // Validate
-      const validated = validateDoActionPayload(payload);
-      if (!validated.ok) {
-        return validated;
-      }
-
-      const action = validated.value;
+      // Timestamp validation
       const nowMs = os.clock() * 1000;
-      if (action.timestamp < 0 || action.timestamp > nowMs + TIMESTAMP_TOLERANCE_MS) {
-        return err(ErrorCode.InvalidPayload);
+      if (request.timestamp < 0 || request.timestamp > nowMs + TIMESTAMP_TOLERANCE_MS) {
+        return err(ErrorCode.InvalidPayload, { message: "Invalid timestamp" });
       }
-      logger.debug(`Action from ${player.Name}: ${action.actionId}`);
+
+      logger.debug(`Action from ${player.Name}: ${request.actionId}`);
 
       return ok({
-        actionId: action.actionId,
-        processedAt: os.clock() * 1000,
+        accepted: true,
+        serverTimestamp: nowMs,
       });
-    };
+    });
   },
 };

@@ -1,40 +1,34 @@
+/**
+ * Remote Service
+ *
+ * Creates and manages all remotes using the type-safe registry.
+ * Other services access remotes through this service.
+ */
+
 import { Service, createLogger } from "@rbx/core";
-import { ReplicatedStorage } from "@rbxts/services";
-import { REMOTES } from "@rbx/net";
+import { createServerRegistry, ServerRemoteRegistry } from "@rbx/net";
+import { GameRemotes, GameRemotesType } from "shared/remotes";
 
 const logger = createLogger("RemoteService");
 
+// Registry instance - initialized in onInit
+let registry: ServerRemoteRegistry<GameRemotesType>;
+
 export const RemoteService: Service & {
-  Remotes: {
-    Handshake: RemoteFunction;
-    DoAction: RemoteFunction;
-  };
+  /** Access the remote registry for handlers */
+  getRegistry(): ServerRemoteRegistry<GameRemotesType>;
 } = {
-  Remotes: {
-    Handshake: undefined!,
-    DoAction: undefined!,
+  getRegistry() {
+    if (!registry) {
+      error("RemoteService not initialized");
+    }
+    return registry;
   },
 
   onInit() {
     logger.debug("Initializing remotes...");
-    // Create remotes folder
-    let folder = ReplicatedStorage.FindFirstChild("Remotes");
-    if (!folder) {
-      folder = new Instance("Folder");
-      folder.Name = "Remotes";
-      folder.Parent = ReplicatedStorage;
-    }
-
-    // Create remotes
-    const handshake = new Instance("RemoteFunction");
-    handshake.Name = REMOTES.Handshake.name;
-    handshake.Parent = folder;
-
-    const action = new Instance("RemoteFunction");
-    action.Name = REMOTES.DoAction.name;
-    action.Parent = folder;
-
-    this.Remotes.Handshake = handshake;
-    this.Remotes.DoAction = action;
+    registry = createServerRegistry(GameRemotes);
+    registry.initialize();
+    logger.debug("Remotes initialized");
   },
 };

@@ -1,55 +1,46 @@
+/**
+ * Handshake Service
+ *
+ * Handles client-server handshake for session establishment.
+ */
+
 import { Service, createLogger } from "@rbx/core";
-import {
-  REMOTES,
-  RateLimiter,
-  validateHandshakePayload,
-  ok,
-  err,
-  ErrorCode,
-  PROTOCOL_VERSION,
-} from "@rbx/net";
+import { ok, err, ErrorCode, PROTOCOL_VERSION } from "@rbx/net";
 import { RemoteService } from "./RemoteService";
-import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { HandshakeRequest } from "shared/remotes";
 
 const logger = createLogger("HandshakeService");
-const limiter = new RateLimiter(REMOTES.Handshake.rateLimit);
+
+// Simple session ID generator
+let sessionCounter = 0;
+function generateSessionId(): string {
+  sessionCounter += 1;
+  return `session_${os.time()}_${sessionCounter}`;
+}
 
 export const HandshakeService: Service = {
-  onInit() {
-    // Subscribe to player cleanup
-    PlayerLifecycleService.onPlayerRemoving((player) => {
-      limiter.reset(player.UserId);
-    });
-  },
-
   onStart() {
     logger.info("Starting Handshake Listener");
+    const registry = RemoteService.getRegistry();
 
-    RemoteService.Remotes.Handshake.OnServerInvoke = (player: Player, payload: unknown) => {
-      // Rate limit
-      const rateResult = limiter.check(player.UserId);
-      if (!rateResult.ok) {
-        return rateResult;
+    registry.onFunction("Handshake", (player, request: HandshakeRequest) => {
+      logger.info(
+        `Handshake from ${player.Name} (v${request.protocolVersion}, ${request.deviceClass})`
+      );
+
+      // Protocol version check
+      if (request.protocolVersion !== PROTOCOL_VERSION) {
+        return err(ErrorCode.ProtocolMismatch, {
+          message: `Expected v${PROTOCOL_VERSION}, got v${request.protocolVersion}`,
+        });
       }
 
-      // Validate
-      const validated = validateHandshakePayload(payload);
-      if (!validated.ok) {
-        logger.warn(`Invalid handshake from ${player.Name}`);
-        return validated;
-      }
-
-      const data = validated.value;
-      logger.info(`Handshake from ${player.Name} (v${data.protocolVersion}, ${data.deviceClass})`);
-
-      if (data.protocolVersion !== PROTOCOL_VERSION) {
-        return err(ErrorCode.ProtocolMismatch);
-      }
-
+      // Success - return session info
       return ok({
-        serverVersion: PROTOCOL_VERSION,
+        serverProtocolVersion: PROTOCOL_VERSION,
         serverTime: os.time(),
+        sessionId: generateSessionId(),
       });
-    };
+    });
   },
 };

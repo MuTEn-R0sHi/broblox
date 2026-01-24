@@ -44,6 +44,7 @@ export enum ErrorCode {
   InternalError = 5001,
   ServiceUnavailable = 5002,
   Timeout = 5003,
+  DataStoreFailed = 5004,
 }
 
 /**
@@ -95,6 +96,8 @@ export function getErrorCodeDescription(code: ErrorCode): string {
       return "Service temporarily unavailable";
     case ErrorCode.Timeout:
       return "The operation timed out";
+    case ErrorCode.DataStoreFailed:
+      return "Data store operation failed";
     default:
       return "An error occurred";
   }
@@ -109,6 +112,7 @@ export function isRetryableError(code: ErrorCode): boolean {
     case ErrorCode.Cooldown:
     case ErrorCode.ServiceUnavailable:
     case ErrorCode.Timeout:
+    case ErrorCode.DataStoreFailed:
       return true;
     default:
       return false;

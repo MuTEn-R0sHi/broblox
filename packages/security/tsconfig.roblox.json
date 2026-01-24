@@ -19,5 +19,5 @@
     "type": "package"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.test.ts", "src/__mocks__/**/*", "test-setup.ts"]
+  "exclude": ["src/**/*.test.ts", "test-setup.ts"]
 }
