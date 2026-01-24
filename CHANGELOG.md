@@ -11,8 +11,13 @@ Notes:
 
 ## Unreleased
 
+## 0.1.0 - 2026-01-24
+
 ### Added
 
+- **Open Cloud CI/CD publishing** - Automated publishing to dev on main push, manual promotion to staging/production with approval gates.
+- **Reusable build-game action** - Composite GitHub Action for DRY build steps.
+- **CI/CD secrets documentation** - Setup guide for Roblox Open Cloud API keys and GitHub Environments.
 - Initial docs site (MkDocs) and architecture plan.
 - Monorepo scaffold (pnpm workspaces) for platform packages, starter game, and dashboard.
 - CI workflows for JS checks and docs publishing.
