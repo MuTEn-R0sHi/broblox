@@ -9,7 +9,7 @@
     "dev": "rbxtsc -p tsconfig.roblox.json -w --type game",
     "rojo:serve": "rojo serve default.project.json",
     "rojo:build": "rojo build default.project.json -o build.rbxl",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
     "@rbx/config-featureflags": "workspace:*",
@@ -20,6 +20,7 @@
     "@rbxts/t": "^3.2.1"
   },
   "devDependencies": {
+    "@rbx/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/services": "^1.6.0",
     "@rbxts/types": "^1.0.903",
