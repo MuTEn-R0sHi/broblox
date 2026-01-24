@@ -4,7 +4,7 @@
  * Higher-level reusable UI components.
  */
 
-import { ColorSpec, ButtonProps, TweenConfig, Cleanup } from "./types";
+import { ColorSpec, Cleanup } from "./types";
 import {
   createFrame,
   createLabel,
@@ -19,7 +19,7 @@ import {
   centerAnchor,
   centerPosition,
 } from "./create";
-import { getTheme, toColor3, darken, lighten } from "./theme";
+import { getTheme, toColor3 } from "./theme";
 
 // Declare TweenService
 declare const game: {

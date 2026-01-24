@@ -4,7 +4,7 @@
  * Action registration and state management.
  */
 
-import { InputAction, ActionState, ActionCallback, ActionTrigger } from "./types";
+import { InputAction, ActionState, ActionCallback } from "./types";
 
 // ============================================================================
 // Action Registry

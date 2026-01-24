@@ -4,22 +4,9 @@
  * Central input processing and movement state calculation.
  */
 
-import {
-  DeviceType,
-  MovementState,
-  MoveVector,
-  InputSource,
-  InputBinding,
-  KeyboardKey,
-  GamepadButton,
-} from "./types";
-import { getCurrentDevice, initDeviceDetection, onDeviceChange } from "./device";
-import {
-  registerCommonActions,
-  updateActionState,
-  isActionActive,
-  getActionValue,
-} from "./actions";
+import { MovementState, MoveVector, InputSource } from "./types";
+import { getCurrentDevice, initDeviceDetection } from "./device";
+import { registerCommonActions, updateActionState, isActionActive } from "./actions";
 import { getBindingsForAction, initDefaultBindings } from "./bindings";
 
 // Declare Roblox services
@@ -119,7 +106,7 @@ function setupInputListeners(): void {
   cleanupFunctions.push(() => beganConnection.Disconnect());
 
   // Input ended
-  const endedConnection = UserInputService.InputEnded.Connect((input, gameProcessed) => {
+  const endedConnection = UserInputService.InputEnded.Connect((input, _gameProcessed) => {
     const keyCode = input.KeyCode.Name;
     const inputType = input.UserInputType.Name;
 
@@ -138,7 +125,7 @@ function setupInputListeners(): void {
   cleanupFunctions.push(() => endedConnection.Disconnect());
 
   // Input changed (for thumbsticks)
-  const changedConnection = UserInputService.InputChanged.Connect((input, gameProcessed) => {
+  const changedConnection = UserInputService.InputChanged.Connect((input, _gameProcessed) => {
     const keyCode = input.KeyCode.Name;
 
     if (keyCode === "Thumbstick1") {

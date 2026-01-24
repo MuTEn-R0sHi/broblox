@@ -10,7 +10,6 @@ import {
   AnchorSpec,
   ColorSpec,
   PaddingSpec,
-  CornerSpec,
   StrokeSpec,
   ListLayoutProps,
   GridLayoutProps,

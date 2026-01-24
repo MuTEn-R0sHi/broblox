@@ -4,7 +4,7 @@
  * Maps input sources to actions with device-specific defaults.
  */
 
-import { InputBinding, InputSource, KeyboardKey, GamepadButton, DeviceType } from "./types";
+import { InputBinding, InputSource, KeyboardKey, GamepadButton } from "./types";
 import { getCurrentDevice } from "./device";
 
 // ============================================================================
@@ -159,7 +159,7 @@ export function bind(action: string, primary: InputSource, secondary?: InputSour
  * Get device-appropriate display name for a binding.
  */
 export function getBindingDisplayName(binding: InputBinding): string {
-  const device = getCurrentDevice();
+  const _device = getCurrentDevice();
   const source = binding.primary;
 
   switch (source.type) {
