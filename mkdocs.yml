@@ -95,6 +95,7 @@ nav:
       - UI components: reference/ui.md
       - Error codes: reference/error-codes.md
       - CLI: reference/cli.md
+      - CI/CD secrets: reference/ci-cd-secrets.md
       - Tooling & commands: reference/tooling.md
       - Docs deployment: reference/docs-deployment.md
       - Troubleshooting: reference/troubleshooting.md

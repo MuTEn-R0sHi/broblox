@@ -1,0 +1,69 @@
+name: Publish Dev
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-dev
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.build-game.outputs.artifact-name }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build game
+        id: build-game
+        uses: ./.github/actions/build-game
+        with:
+          game: starter
+          artifact-name: starter-game-${{ github.sha }}
+
+  publish-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: starter-game-${{ github.sha }}
+          path: ./build
+
+      - name: Install Roblox CLI tools
+        run: |
+          # Install rbxcloud CLI for Open Cloud publishing
+          curl -L https://github.com/Roblox/rbxcloud/releases/latest/download/rbxcloud-linux-x86_64.tar.gz | tar xz
+          chmod +x rbxcloud
+          sudo mv rbxcloud /usr/local/bin/
+
+      - name: Publish to Dev
+        env:
+          ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
+          UNIVERSE_ID: ${{ vars.DEV_UNIVERSE_ID }}
+          PLACE_ID: ${{ vars.DEV_PLACE_ID }}
+        run: |
+          echo "Publishing to Dev environment..."
+          echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
+
+          rbxcloud experience publish \
+            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
+            --universe-id "$UNIVERSE_ID" \
+            --place-id "$PLACE_ID" \
+            --version-type "Published" \
+            --filename ./build/build.rbxl
+
+      - name: Post publish notification
+        if: success()
+        run: |
+          echo "✅ Published to Dev"
+          echo "Commit: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"

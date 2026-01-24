@@ -1,0 +1,184 @@
+name: Promote
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      source_ref:
+        description: "Git ref to promote (commit SHA or tag)"
+        required: true
+        type: string
+      reason:
+        description: "Reason for promotion"
+        required: true
+        type: string
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - name: Validate source ref
+        run: |
+          echo "Promoting: ${{ inputs.source_ref }}"
+          echo "Target: ${{ inputs.environment }}"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Requested by: ${{ github.actor }}"
+
+      - name: Check for existing artifact
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: `starter-game-${{ inputs.source_ref }}`
+            });
+            const exists = artifacts.data.total_count > 0;
+            core.setOutput('exists', exists);
+            if (!exists) {
+              core.setFailed(`No artifact found for ref: ${{ inputs.source_ref }}`);
+            }
+
+  promote-staging:
+    if: inputs.environment == 'staging'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: starter-game-${{ inputs.source_ref }}
+          path: ./build
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
+
+      - name: Install Roblox CLI tools
+        run: |
+          curl -L https://github.com/Roblox/rbxcloud/releases/latest/download/rbxcloud-linux-x86_64.tar.gz | tar xz
+          chmod +x rbxcloud
+          sudo mv rbxcloud /usr/local/bin/
+
+      - name: Publish to Staging
+        env:
+          ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
+          UNIVERSE_ID: ${{ vars.STAGING_UNIVERSE_ID }}
+          PLACE_ID: ${{ vars.STAGING_PLACE_ID }}
+        run: |
+          echo "Publishing to Staging environment..."
+
+          rbxcloud experience publish \
+            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
+            --universe-id "$UNIVERSE_ID" \
+            --place-id "$PLACE_ID" \
+            --version-type "Published" \
+            --filename ./build/build.rbxl
+
+      - name: Create promotion record
+        run: |
+          echo "📋 Promotion Record"
+          echo "==================="
+          echo "Source: ${{ inputs.source_ref }}"
+          echo "Target: staging"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  promote-production:
+    if: inputs.environment == 'production'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Verify tag exists
+        run: |
+          # For production, we require a version tag
+          if [[ ! "${{ inputs.source_ref }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Production requires a version tag (e.g., v1.0.0)"
+            echo "Received: ${{ inputs.source_ref }}"
+            exit 1
+          fi
+
+          git fetch --tags
+          if ! git tag -l | grep -q "^${{ inputs.source_ref }}$"; then
+            echo "❌ Tag ${{ inputs.source_ref }} does not exist"
+            exit 1
+          fi
+
+          echo "✅ Valid version tag: ${{ inputs.source_ref }}"
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: starter-game-${{ inputs.source_ref }}
+          path: ./build
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.run_id }}
+
+      - name: Install Roblox CLI tools
+        run: |
+          curl -L https://github.com/Roblox/rbxcloud/releases/latest/download/rbxcloud-linux-x86_64.tar.gz | tar xz
+          chmod +x rbxcloud
+          sudo mv rbxcloud /usr/local/bin/
+
+      - name: Publish to Production
+        env:
+          ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
+          UNIVERSE_ID: ${{ vars.PROD_UNIVERSE_ID }}
+          PLACE_ID: ${{ vars.PROD_PLACE_ID }}
+        run: |
+          echo "🚀 Publishing to Production environment..."
+
+          rbxcloud experience publish \
+            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
+            --universe-id "$UNIVERSE_ID" \
+            --place-id "$PLACE_ID" \
+            --version-type "Published" \
+            --filename ./build/build.rbxl
+
+      - name: Create promotion record
+        run: |
+          echo "📋 Production Promotion Record"
+          echo "=============================="
+          echo "Version: ${{ inputs.source_ref }}"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Update GitHub Release
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = '${{ inputs.source_ref }}';
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const release = releases.data.find(r => r.tag_name === tag);
+            if (release) {
+              await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.id,
+                body: release.body + `\n\n---\n✅ **Deployed to Production** by @${{ github.actor }} on ${new Date().toISOString()}\nReason: ${{ inputs.reason }}`
+              });
+            }

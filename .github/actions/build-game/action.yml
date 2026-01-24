@@ -1,0 +1,104 @@
+name: "Build Roblox Game"
+description: "Builds the Roblox game and packages it for publishing"
+
+inputs:
+  game:
+    description: "Game to build (e.g., starter)"
+    required: true
+    default: "starter"
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: "22"
+  pnpm-version:
+    description: "pnpm version"
+    required: false
+    default: "10"
+  artifact-name:
+    description: "Name for the build artifact"
+    required: false
+    default: ""
+  upload-artifact:
+    description: "Whether to upload the build as an artifact"
+    required: false
+    default: "true"
+
+outputs:
+  artifact-name:
+    description: "Name of the uploaded artifact"
+    value: ${{ steps.artifact.outputs.name }}
+  build-path:
+    description: "Path to the built .rbxl file"
+    value: ${{ steps.build.outputs.path }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.pnpm-version }}
+        run_install: false
+
+    - name: Get pnpm store directory
+      id: pnpm-cache
+      shell: bash
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Build packages
+      shell: bash
+      run: pnpm run build:packages
+
+    - name: Build game
+      id: build
+      shell: bash
+      run: |
+        pnpm run build:${{ inputs.game }}
+        echo "path=games/${{ inputs.game }}/build.rbxl" >> $GITHUB_OUTPUT
+
+    - name: Setup Aftman
+      uses: ok-nick/setup-aftman@v0.4.2
+      with:
+        token: ${{ github.token }}
+
+    - name: Build .rbxl with Rojo
+      shell: bash
+      run: |
+        cd games/${{ inputs.game }}
+        rojo build default.project.json -o build.rbxl
+
+    - name: Determine artifact name
+      id: artifact
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.artifact-name }}" ]; then
+          echo "name=${{ inputs.artifact-name }}" >> $GITHUB_OUTPUT
+        else
+          echo "name=${{ inputs.game }}-game-${{ github.sha }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Upload build artifact
+      if: inputs.upload-artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.artifact.outputs.name }}
+        path: games/${{ inputs.game }}/build.rbxl
+        retention-days: 30
+        if-no-files-found: error
