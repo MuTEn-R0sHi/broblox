@@ -10,36 +10,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      artifact-name: ${{ steps.build-game.outputs.artifact-name }}
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Build game
-        id: build-game
-        uses: ./.github/actions/build-game
-        with:
-          game: starter
-          artifact-name: starter-game-${{ github.sha }}
-
-  publish-dev:
-    needs: build
+  build-and-publish:
     runs-on: ubuntu-latest
     environment: dev
     steps:
       - uses: actions/checkout@v6
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: starter-game-${{ github.sha }}
-          path: ./build
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build starter game
+        run: pnpm run build:starter
+
+      - name: Setup Aftman (Rojo)
+        uses: ok-nick/setup-aftman@v0.4.2
+
+      - name: Build .rbxl with Rojo
+        run: |
+          cd games/starter
+          rojo build default.project.json -o build.rbxl
 
       - name: Install Roblox CLI tools
         run: |
-          # Install rbxcloud CLI for Open Cloud publishing
           curl -L https://github.com/Roblox/rbxcloud/releases/latest/download/rbxcloud-linux-x86_64.tar.gz | tar xz
           chmod +x rbxcloud
           sudo mv rbxcloud /usr/local/bin/
@@ -58,7 +61,7 @@ jobs:
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
             --version-type "Published" \
-            --filename ./build/build.rbxl
+            --filename games/starter/build.rbxl
 
       - name: Post publish notification
         if: success()
