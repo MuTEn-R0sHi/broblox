@@ -61,9 +61,6 @@ importers:
       "@prisma/client":
         specifier: ^7.3.0
         version: 7.3.0(prisma@7.3.0(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3)
-      "@rbx/shared-types":
-        specifier: workspace:*
-        version: link:../../packages/shared-types
       "@tailwindcss/postcss":
         specifier: ^4.1.18
         version: 4.1.18
@@ -125,6 +122,9 @@ importers:
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   games/starter:
     dependencies:
