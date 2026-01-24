@@ -14,7 +14,7 @@
 
     "rootDir": "src",
     "outDir": "out",
-    
+
     "baseUrl": "src",
     "paths": {
       "shared/*": ["shared/*"]
@@ -25,5 +25,5 @@
     "rojo": "default.project.json"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules/@rbx/*/src/**"]
+  "exclude": ["node_modules/@rbx/*/src/**", "**/*.test.ts", "**/__tests__/**"]
 }
