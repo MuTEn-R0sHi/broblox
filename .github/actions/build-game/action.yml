@@ -10,10 +10,6 @@ inputs:
     description: "Node.js version"
     required: false
     default: "22"
-  pnpm-version:
-    description: "pnpm version"
-    required: false
-    default: "10"
   artifact-name:
     description: "Name for the build artifact"
     required: false
@@ -41,9 +37,6 @@ runs:
 
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: ${{ inputs.pnpm-version }}
-        run_install: false
 
     - name: Get pnpm store directory
       id: pnpm-cache
