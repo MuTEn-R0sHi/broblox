@@ -41,9 +41,10 @@ jobs:
           cd games/starter
           rojo build default.project.json -o build.rbxl
 
-      - name: Install Roblox CLI tools
+      - name: Install rbxcloud CLI
         run: |
-          curl -L https://github.com/Roblox/rbxcloud/releases/latest/download/rbxcloud-linux-x86_64.tar.gz | tar xz
+          curl -L https://github.com/Sleitnick/rbxcloud/releases/latest/download/rbxcloud-0.17.0-linux.zip -o rbxcloud.zip
+          unzip rbxcloud.zip
           chmod +x rbxcloud
           sudo mv rbxcloud /usr/local/bin/
 
