@@ -205,6 +205,31 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
+  packages/observability:
+    dependencies:
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.849
+        version: 1.0.903
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.9)(jiti@2.6.1)(jsdom@26.1.0)(yaml@2.8.2)
+
   packages/security:
     dependencies:
       "@rbx/core":
