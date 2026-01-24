@@ -1,0 +1,15 @@
+{
+  "name": "@rbx/ui",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "UI component library for Roblox games",
+  "main": "out/init.lua",
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.903",
+    "roblox-ts": "^3.0.0"
+  }
+}
