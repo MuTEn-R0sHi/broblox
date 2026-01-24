@@ -2,17 +2,7 @@ import { prisma } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 
-type AuditLogWithUser = {
-  id: string;
-  action: string;
-  target: string;
-  before: string | null;
-  after: string | null;
-  timestamp: Date;
-  user: { name: string | null; email: string | null; image: string | null };
-};
-
-async function getAuditLogs(): Promise<AuditLogWithUser[]> {
+async function getAuditLogs() {
   return prisma.auditLog.findMany({
     include: {
       user: {
