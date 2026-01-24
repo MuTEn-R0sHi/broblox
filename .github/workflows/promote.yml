@@ -20,54 +20,52 @@ on:
         type: string
 
 permissions:
-  contents: read
-  actions: read
+  contents: write
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    outputs:
-      artifact-exists: ${{ steps.check.outputs.exists }}
-    steps:
-      - name: Validate source ref
-        run: |
-          echo "Promoting: ${{ inputs.source_ref }}"
-          echo "Target: ${{ inputs.environment }}"
-          echo "Reason: ${{ inputs.reason }}"
-          echo "Requested by: ${{ github.actor }}"
-
-      - name: Check for existing artifact
-        id: check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const artifacts = await github.rest.actions.listArtifactsForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: `starter-game-${{ inputs.source_ref }}`
-            });
-            const exists = artifacts.data.total_count > 0;
-            core.setOutput('exists', exists);
-            if (!exists) {
-              core.setFailed(`No artifact found for ref: ${{ inputs.source_ref }}`);
-            }
-
   promote-staging:
     if: inputs.environment == 'staging'
-    needs: validate
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - name: Checkout source ref
+        uses: actions/checkout@v6
         with:
-          name: starter-game-${{ inputs.source_ref }}
-          path: ./build
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          run-id: ${{ github.run_id }}
+          ref: ${{ inputs.source_ref }}
+
+      - name: Log promotion details
+        run: |
+          echo "📋 Promotion Details"
+          echo "==================="
+          echo "Source: ${{ inputs.source_ref }}"
+          echo "Target: staging"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Requested by: ${{ github.actor }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build starter game
+        run: pnpm run build:starter
+
+      - name: Setup Aftman (Rojo)
+        uses: ok-nick/setup-aftman@v0.4.2
+
+      - name: Build .rbxl with Rojo
+        run: |
+          cd games/starter
+          rojo build default.project.json -o build.rbxl
 
       - name: Install rbxcloud CLI
         run: |
@@ -83,17 +81,18 @@ jobs:
           PLACE_ID: ${{ vars.STAGING_PLACE_ID }}
         run: |
           echo "Publishing to Staging environment..."
+          echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
           rbxcloud experience publish \
             --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
             --version-type published \
-            --filename ./build/build.rbxl
+            --filename games/starter/build.rbxl
 
       - name: Create promotion record
         run: |
-          echo "📋 Promotion Record"
+          echo "✅ Promotion Record"
           echo "==================="
           echo "Source: ${{ inputs.source_ref }}"
           echo "Target: staging"
@@ -104,11 +103,14 @@ jobs:
 
   promote-production:
     if: inputs.environment == 'production'
-    needs: validate
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout source ref
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-tags: true
 
       - name: Verify tag exists
         run: |
@@ -118,23 +120,40 @@ jobs:
             echo "Received: ${{ inputs.source_ref }}"
             exit 1
           fi
-
-          git fetch --tags
-          if ! git tag -l | grep -q "^${{ inputs.source_ref }}$"; then
-            echo "❌ Tag ${{ inputs.source_ref }} does not exist"
-            exit 1
-          fi
-
           echo "✅ Valid version tag: ${{ inputs.source_ref }}"
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
+      - name: Log promotion details
+        run: |
+          echo "📋 Production Promotion Details"
+          echo "==============================="
+          echo "Version: ${{ inputs.source_ref }}"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Requested by: ${{ github.actor }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: starter-game-${{ inputs.source_ref }}
-          path: ./build
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          run-id: ${{ github.run_id }}
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build starter game
+        run: pnpm run build:starter
+
+      - name: Setup Aftman (Rojo)
+        uses: ok-nick/setup-aftman@v0.4.2
+
+      - name: Build .rbxl with Rojo
+        run: |
+          cd games/starter
+          rojo build default.project.json -o build.rbxl
 
       - name: Install rbxcloud CLI
         run: |
@@ -150,17 +169,18 @@ jobs:
           PLACE_ID: ${{ vars.PROD_PLACE_ID }}
         run: |
           echo "🚀 Publishing to Production environment..."
+          echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
           rbxcloud experience publish \
             --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
             --version-type published \
-            --filename ./build/build.rbxl
+            --filename games/starter/build.rbxl
 
       - name: Create promotion record
         run: |
-          echo "📋 Production Promotion Record"
+          echo "✅ Production Promotion Record"
           echo "=============================="
           echo "Version: ${{ inputs.source_ref }}"
           echo "Reason: ${{ inputs.reason }}"
