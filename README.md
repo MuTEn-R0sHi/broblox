@@ -9,18 +9,24 @@ Docs-first Roblox-TS multi-game platform + control-plane dashboard.
 
 ```
 rbx-game-platform/
-├── packages/           # Shared platform packages (TypeScript → Luau)
-│   ├── shared-types/   # Core type definitions (no dependencies)
-│   ├── core/           # Logger, Janitor, Clock utilities
-│   ├── net/            # Networking, validation, rate limiting
+├── packages/              # Shared platform packages (TypeScript → Luau)
+│   ├── shared-types/      # Core type definitions, Result<T>, ErrorCode
+│   ├── constants/         # Numeric constants (timeouts, limits, build info)
+│   ├── core/              # Application lifecycle, Logger, Cleanup utilities
+│   ├── net/               # Remote registry, validation, rate limiting
+│   ├── data/              # PlayerDataStore, SessionManager, persistence
+│   ├── security/          # Violation detectors, trust scoring, enforcement
+│   ├── observability/     # Telemetry, metrics, spans, correlation context
+│   ├── input/             # Unified input (keyboard, gamepad, touch)
+│   ├── ui/                # UI components, theming, layout utilities
 │   ├── config-featureflags/  # Feature flags and kill-switches
-│   └── testing/        # Test utilities and mocks for vitest
-├── games/              # Roblox-TS game projects
-│   └── starter/        # Starter game template
-├── apps/               # Web applications
-│   └── dashboard/      # Next.js admin dashboard
-├── docs/               # MkDocs documentation site
-└── tools/              # Build and development tools
+│   └── testing/           # Test utilities and mocks for vitest
+├── games/                 # Roblox-TS game projects
+│   └── starter/           # Starter game template
+├── apps/                  # Web applications
+│   └── dashboard/         # Next.js admin dashboard
+├── docs/                  # MkDocs documentation site
+└── tools/                 # Build and development tools
 ```
 
 ## Prereqs
@@ -81,16 +87,24 @@ This repository contains two Rojo project files:
 ## Package dependency graph
 
 ```
-shared-types (0 deps)       testing (vitest only, 0 runtime deps)
-     ↑
-   core ←────────┐
-     ↑           │
-config-featureflags    net
-                 ↑
-          games/starter
+constants (0 deps)          testing (vitest only)
+     ↓
+shared-types
+     ↓
+   core
+     ↓
+┌────┴────┬─────────┬──────────┬──────────┐
+│         │         │          │          │
+net   data    security   observability   config-featureflags
+│         │         │          │
+│    ┌────┴─────────┴──────────┘
+│    │
+input   ui
+│    │
+└────┴──→ games/starter
 ```
 
-Packages follow strict dependency direction rules enforced via ESLint.
+Packages follow strict dependency direction rules. Games compose from packages; packages never depend on games.
 
 ## License
 

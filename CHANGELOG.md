@@ -30,7 +30,7 @@ Notes:
 - **Error code reference documentation** auto-generated from ErrorCode enum.
 - **Enhanced CONTRIBUTING.md** with detailed workflow, commit conventions, and branch protection info.
 - **@rbx/testing package** - Shared test utilities, mocks, and helpers for vitest.
-- **Expanded test coverage** - 143 tests across all packages (core, config-featureflags, net, shared-types, constants, dashboard).
+- **Expanded test coverage** - 241 tests across all packages (core, config-featureflags, net, shared-types, constants, dashboard, starter game).
 - **Commitlint** - Conventional commit enforcement with commit-msg hook.
 - **Coverage tooling** - `@vitest/coverage-v8` for test coverage reporting.
 - **Luau tooling** - Added selene (linter) and stylua (formatter) to aftman.toml with configuration.
@@ -54,6 +54,22 @@ Notes:
 - **Violation Detectors** - `checkSpeed()`, `checkTeleport()`, `reportInvalidData()`, `checkRateAbuse()` functions.
 - **Trust Score System** - Factor-based trust calculation for adaptive enforcement.
 - **Enforcer** - Automatic violation handling with escalation policy (warn → kick → ban).
+- **@rbx/observability package** - Telemetry, metrics, spans, and correlation context for game instrumentation.
+- **Telemetry system** - `emit()` events with automatic context enrichment (player, session, server).
+- **Metrics collection** - `incrementCounter()`, `setGauge()`, `recordHistogram()`, `recordTiming()` functions.
+- **Span tracing** - `startSpan()`, `endSpan()`, `withSpan()` for operation tracing.
+- **Correlation context** - Request-scoped context propagation across async operations.
+- **@rbx/input package** - Unified input abstraction for keyboard, gamepad, and touch controls.
+- **Device detection** - Automatic detection of input device type with change callbacks.
+- **Action system** - Register named actions with bindings, query active state.
+- **Movement state** - Unified `getMovementState()` returning normalized move vectors.
+- **Default bindings** - Pre-configured WASD/arrow keys, gamepad sticks, touch controls.
+- **@rbx/ui package** - Reusable UI component library with theming support.
+- **Theme system** - Dark/light themes with color utilities (`rgb()`, `hex()`, `darken()`, `lighten()`).
+- **Creation utilities** - `createFrame()`, `createLabel()`, `createButton()`, `createScrollFrame()`.
+- **Layout helpers** - `addCorner()`, `addPadding()`, `addListLayout()`, `addGridLayout()`, `addStroke()`.
+- **Components** - `Dialog`, `Toast`, `ListView`, `ProgressBar`, `Spinner` higher-level components.
+- **Starter game tests** - 32 unit tests for handshake, action validation, and remote contracts.
 - **Root package.json** - Added `"type": "module"` for ES modules support.
 
 ### Changed
@@ -67,7 +83,8 @@ Notes:
 - **Configuration docs** - Updated with constants and feature flags documentation.
 - **Networking docs** - Added client utilities section and Result type references.
 - **Runtime docs** - Updated Application lifecycle with new API methods.
-- **Folders & packages docs** - Added constants package, updated package descriptions.
+- **Folders & packages docs** - Added all new packages with descriptions.
+- **tsconfig.json files** - Roblox packages now extend their tsconfig.roblox.json for proper VS Code intellisense.
 
 ### Removed
 

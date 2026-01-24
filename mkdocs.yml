@@ -90,6 +90,9 @@ nav:
   - Reference:
       - Configuration: reference/configuration.md
       - Result types: reference/result-types.md
+      - Observability: reference/observability.md
+      - Input system: reference/input.md
+      - UI components: reference/ui.md
       - Error codes: reference/error-codes.md
       - CLI: reference/cli.md
       - Tooling & commands: reference/tooling.md

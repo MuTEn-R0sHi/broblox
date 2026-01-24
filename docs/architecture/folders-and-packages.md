@@ -71,6 +71,27 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Enforcement policy (`Enforcer` class with escalation).
   - Shadow banning and kick actions.
 
+- `observability`
+  - Telemetry system with `emit()` for structured events.
+  - Metrics: `incrementCounter()`, `setGauge()`, `recordHistogram()`, `recordTiming()`.
+  - Span tracing: `startSpan()`, `endSpan()`, `withSpan()` for operation timing.
+  - Correlation context for request-scoped data propagation.
+  - Automatic context enrichment (player, session, server job ID).
+
+- `input`
+  - Unified input abstraction for keyboard, gamepad, and touch.
+  - Device detection with `getCurrentDevice()` and `onDeviceChange()`.
+  - Action system: `registerAction()`, `isActionActive()`, `getActionValue()`.
+  - Movement state: `getMovementState()` returns normalized vectors.
+  - Default bindings for WASD, arrow keys, gamepad sticks, touch.
+
+- `ui`
+  - Theme system with dark/light themes and color utilities.
+  - Creation helpers: `createFrame()`, `createLabel()`, `createButton()`.
+  - Layout utilities: `addCorner()`, `addPadding()`, `addListLayout()`.
+  - Higher-level components: `Dialog`, `Toast`, `ListView`, `ProgressBar`, `Spinner`.
+  - Device-safe sizing with `px()` and `scale()` helpers.
+
 - `testing`
   - Shared test utilities for vitest.
   - Roblox API mocks for Node.js.
@@ -80,10 +101,6 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Runtime feature flag configuration.
   - Type-safe flag definitions.
   - Validation with error details.
-
-- `ui-kit`
-  - Components, theming, device-safe layout.
-  - Localization hooks.
 
 ## Game folder expectations
 
