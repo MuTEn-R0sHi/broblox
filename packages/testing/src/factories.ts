@@ -6,6 +6,40 @@ import { ErrorCode, PROTOCOL_VERSION } from "./error-codes";
 import { ok, err, type Result } from "./result";
 
 // ============================================================================
+// Branded ID Types (Mirrors @rbx/shared-types for Node.js testing)
+// ============================================================================
+
+/** Branded type for Player IDs */
+export type PlayerId = number & { readonly __brand: "PlayerId" };
+
+/** Branded type for Match IDs */
+export type MatchId = string & { readonly __brand: "MatchId" };
+
+/** Branded type for Session IDs */
+export type SessionId = string & { readonly __brand: "SessionId" };
+
+/**
+ * Create a branded PlayerId from a number.
+ */
+export function createPlayerId(id: number): PlayerId {
+  return id as PlayerId;
+}
+
+/**
+ * Create a branded MatchId from a string.
+ */
+export function createMatchId(id: string): MatchId {
+  return id as MatchId;
+}
+
+/**
+ * Create a branded SessionId from a string.
+ */
+export function createSessionId(id: string): SessionId {
+  return id as SessionId;
+}
+
+// ============================================================================
 // Rate Limiter Mock
 // ============================================================================
 

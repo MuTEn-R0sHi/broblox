@@ -243,6 +243,31 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
+  packages/matchmaking:
+    dependencies:
+      "@rbx/constants":
+        specifier: workspace:*
+        version: link:../constants
+      "@rbx/observability":
+        specifier: workspace:*
+        version: link:../observability
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.903
+        version: 1.0.903
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+
   packages/net:
     dependencies:
       "@rbx/constants":

@@ -1,0 +1,30 @@
+{
+  "name": "@rbx/matchmaking",
+  "version": "0.0.0",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@rbx/constants": "workspace:*",
+    "@rbx/shared-types": "workspace:*",
+    "@rbx/observability": "workspace:*"
+  },
+  "devDependencies": {
+    "@rbx/testing": "workspace:*",
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.903",
+    "roblox-ts": "^3.0.0"
+  }
+}
