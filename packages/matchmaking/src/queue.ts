@@ -19,6 +19,7 @@ import type {
   QueueLeaveEvent,
   MatchFormedEvent,
 } from "./types";
+import { registerMatch } from "./match";
 
 // ============================================================================
 // Queue State
@@ -397,6 +398,9 @@ export function tryFormMatch(gameMode: GameMode, config?: MatchConfig): Match | 
   for (const listener of matchListeners) {
     listener(event);
   }
+
+  // Register match for lifecycle management
+  registerMatch(match);
 
   return match;
 }

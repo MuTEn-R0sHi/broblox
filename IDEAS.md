@@ -23,8 +23,14 @@ Transcendent/Zenith/Radiant/Cosmic: 1/10T to 1/10Qn
 
 ## Mutations
 
+## Worlds
+
 ### Common features
 
 ## Mounting system
 
 Players can ride on pets. All kind of movement like riding, flying, swimming, diving etc. is possible on the back of fitting pets.
+
+## Generators
+
+We have powerfull generators to create the terrain and objects for the game, like buildings, roads. villages, landscapes with elevations and rivers, etc. all things like skyboxes, fog, light etc and the generated stuff is playing together nicely with a theme system.
