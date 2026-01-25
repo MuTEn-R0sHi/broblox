@@ -57,6 +57,11 @@
                       "filePaths": ["packages/net/out/client.luau"]
                     },
                     {
+                      "name": "protocol",
+                      "className": "ModuleScript",
+                      "filePaths": ["packages/net/out/protocol.luau"]
+                    },
+                    {
                       "name": "ratelimit",
                       "className": "ModuleScript",
                       "filePaths": ["packages/net/out/ratelimit.luau"]
@@ -92,11 +97,6 @@
                       "name": "validation",
                       "className": "ModuleScript",
                       "filePaths": ["packages/net/out/validation.luau"]
-                    },
-                    {
-                      "name": "protocol",
-                      "className": "ModuleScript",
-                      "filePaths": ["packages/net/out/protocol.luau"]
                     }
                   ]
                 }
