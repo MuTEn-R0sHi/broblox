@@ -2,12 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Flag, Users, Shield, FileText, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Flag,
+  Users,
+  Shield,
+  FileText,
+  Settings,
+  LogOut,
+  Trophy,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Matches", href: "/dashboard/matches", icon: Trophy },
   { name: "Feature Flags", href: "/dashboard/flags", icon: Flag },
   { name: "Players", href: "/dashboard/players", icon: Users },
   { name: "Moderation", href: "/dashboard/moderation", icon: Shield },

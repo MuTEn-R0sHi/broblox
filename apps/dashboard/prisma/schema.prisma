@@ -112,3 +112,84 @@ model FeatureFlag {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Match history
+enum MatchStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ERRORED
+}
+
+enum MatchOutcome {
+  TEAM_A_WIN
+  TEAM_B_WIN
+  DRAW
+  CANCELLED
+  INCOMPLETE
+}
+
+model Match {
+  id           String      @id @default(cuid())
+  matchId      String      @unique  // Game-generated match ID
+  serverId     String?     // Roblox server JobId
+  placeId      BigInt?     // Roblox place ID
+
+  gameMode     String      // e.g., "deathmatch", "ctf", "ranked"
+  mapName      String?
+
+  status       MatchStatus @default(PENDING)
+  outcome      MatchOutcome?
+
+  // Timing
+  startedAt    DateTime?
+  endedAt      DateTime?
+  durationSecs Int?
+
+  // Scores
+  teamAScore   Int         @default(0)
+  teamBScore   Int         @default(0)
+
+  // Metadata
+  metadata     Json?       // Additional match data (settings, etc.)
+
+  // Relations
+  players      MatchPlayer[]
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([status])
+  @@index([gameMode])
+  @@index([startedAt])
+  @@index([createdAt])
+}
+
+model MatchPlayer {
+  id          String   @id @default(cuid())
+  matchId     String
+  match       Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  playerId    BigInt   // Roblox UserId
+  playerName  String?  // Cached display name
+
+  team        String?  // "A", "B", or null for FFA
+  isWinner    Boolean  @default(false)
+
+  // Stats
+  kills       Int      @default(0)
+  deaths      Int      @default(0)
+  assists     Int      @default(0)
+  score       Int      @default(0)
+
+  // Timing
+  joinedAt    DateTime @default(now())
+  leftAt      DateTime?
+
+  // Additional stats
+  stats       Json?    // Game-specific stats
+
+  @@unique([matchId, playerId])
+  @@index([playerId])
+}
