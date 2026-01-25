@@ -92,6 +92,11 @@
                       "name": "validation",
                       "className": "ModuleScript",
                       "filePaths": ["packages/net/out/validation.luau"]
+                    },
+                    {
+                      "name": "protocol",
+                      "className": "ModuleScript",
+                      "filePaths": ["packages/net/out/protocol.luau"]
                     }
                   ]
                 }

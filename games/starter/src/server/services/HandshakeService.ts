@@ -2,10 +2,11 @@
  * Handshake Service
  *
  * Handles client-server handshake for session establishment.
+ * Implements protocol versioning per ADR-0002.
  */
 
 import { Service, createLogger } from "@rbx/core";
-import { ok, err, ErrorCode, PROTOCOL_VERSION } from "@rbx/net";
+import { ok, err, ErrorCode, validateProtocolVersion, getCurrentProtocolVersion } from "@rbx/net";
 import { RemoteService } from "./RemoteService";
 import { HandshakeRequest } from "shared/remotes";
 
@@ -28,16 +29,30 @@ export const HandshakeService: Service = {
         `Handshake from ${player.Name} (v${request.protocolVersion}, ${request.deviceClass})`
       );
 
-      // Protocol version check
-      if (request.protocolVersion !== PROTOCOL_VERSION) {
+      // Protocol version check with N-1 compatibility
+      const validation = validateProtocolVersion(request.protocolVersion);
+
+      if (!validation.compatible) {
+        logger.warn(`Protocol mismatch for ${player.Name}: ${validation.reason}`);
         return err(ErrorCode.ProtocolMismatch, {
-          message: `Expected v${PROTOCOL_VERSION}, got v${request.protocolVersion}`,
+          message: validation.reason,
+          context: {
+            minVersion: validation.minVersion,
+            serverVersion: validation.serverVersion,
+          },
         });
+      }
+
+      // Log if using legacy version (for deprecation tracking)
+      if (request.protocolVersion < getCurrentProtocolVersion()) {
+        logger.info(
+          `${player.Name} using legacy protocol v${request.protocolVersion} (current: v${getCurrentProtocolVersion()})`
+        );
       }
 
       // Success - return session info
       return ok({
-        serverProtocolVersion: PROTOCOL_VERSION,
+        serverProtocolVersion: validation.serverVersion,
         serverTime: os.time(),
         sessionId: generateSessionId(),
       });

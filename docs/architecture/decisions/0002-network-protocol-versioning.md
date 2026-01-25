@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+**Implemented** ✅
 
 ## Context
 
@@ -22,7 +22,7 @@ We will implement explicit network protocol versioning.
 - Server supports a `minProtocolVersion` and `maxProtocolVersion` range.
 - Client performs a handshake on join:
   - if client version is within range: proceed
-  - if not: show “update required” UX and prevent gameplay
+  - if not: show "update required" UX and prevent gameplay
 
 Compatibility rules:
 
@@ -44,9 +44,53 @@ Compatibility rules:
 - Rollouts become safer: you can deploy server first, then clients, with a compatibility window.
 - Adds ongoing discipline: breaking changes require a deliberate bump.
 
-## Rollout plan
+## Implementation
 
-1. Add shared `PROTOCOL_VERSION` constant.
-2. Add handshake flow in the `net` package.
-3. Log handshake outcomes (accepted/rejected) for rollout monitoring.
-4. Add a “compatible client required” gate for ranked matchmaking.
+### Constants (\`@rbx/shared-types\`)
+
+\`\`\`typescript
+export const PROTOCOL_VERSION = 1;
+export const MIN_PROTOCOL_VERSION = 1;
+\`\`\`
+
+### Validation (\`@rbx/net/protocol.ts\`)
+
+\`\`\`typescript
+import { validateProtocolVersion } from "@rbx/net";
+
+const result = validateProtocolVersion(clientVersion);
+if (!result.compatible) {
+// Reject with minVersion in error context
+}
+\`\`\`
+
+Key functions:
+
+- \`validateProtocolVersion(version, config?)\` - Validates with N-1 support
+- \`isExactVersion(version)\` - Strict match (for ranked)
+- \`isLegacyVersion(version)\` - Detects N-1 clients
+- \`getCurrentProtocolVersion()\` - Current server version
+- \`getMinProtocolVersion()\` - Minimum supported version
+
+### Handshake Flow
+
+1. Client sends \`HandshakeRequest\` with \`protocolVersion\`
+2. Server calls \`validateProtocolVersion()\`
+3. If incompatible: return \`ErrorCode.ProtocolMismatch\` with version context
+4. If legacy: log for deprecation tracking
+5. If compatible: proceed with session
+
+### Test Coverage
+
+- 21 unit tests in \`packages/net/src/protocol.test.ts\`
+- Covers: version ranges, N-1 compatibility, edge cases, invalid inputs
+
+## Rollout checklist
+
+- [x] Add shared \`PROTOCOL_VERSION\` constant
+- [x] Add \`validateProtocolVersion()\` in net package
+- [x] Handshake validates protocol version
+- [x] N-1 compatibility with \`allowLegacy\` option
+- [x] Error response includes \`minVersion\` context
+- [x] Log legacy version usage for monitoring
+- [ ] Add "compatible client required" gate for ranked matchmaking (Phase 2)
