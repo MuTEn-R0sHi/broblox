@@ -212,6 +212,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -274,6 +277,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -299,6 +305,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0

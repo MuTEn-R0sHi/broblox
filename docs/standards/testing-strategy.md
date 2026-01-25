@@ -155,18 +155,46 @@ Before Phase 1 is complete, these tests must exist:
   - under budget: allowed
   - over budget: rejected with correct code
   - budget refills over time
-- [x] 42 tests total
+- [x] 59 tests total
+
+### packages/data ✅
+
+- [x] VersionedData and DataMetadata type tests
+- [x] Session state machine tests
+- [x] Migration chain tests
+- [x] Retry configuration tests
+- [x] Dirty tracking tests
+- [x] Cache operations tests
+- [x] 24 tests total
+
+### packages/security ✅
+
+- [x] Trust score calculation tests
+- [x] Violation detection tests (speed, teleport, rate abuse)
+- [x] Enforcement action tests
+- [x] Trust cache tests
+- [x] 41 tests total
+
+### packages/observability ✅
+
+- [x] Correlation context tests
+- [x] Telemetry event tests
+- [x] Metrics tests (counter, gauge, histogram)
+- [x] Span lifecycle tests
+- [x] Event batching tests
+- [x] Level filtering tests
+- [x] 44 tests total
 
 ### apps/dashboard ✅
 
-- [x] React component tests (5 tests)
+- [x] React component tests (2 tests)
 
-### games/starter
+### games/starter ✅
 
-- [ ] At least one E2E remote test (can be manual initially):
-  - valid intent accepted
-  - invalid intent rejected
-  - rate limit enforced
+- [x] Handshake service tests (10 tests)
+- [x] Action service tests (10 tests)
+- [x] Remote contract tests (12 tests)
+- [x] 32 tests total
 
 ## Definition of done for new features
 

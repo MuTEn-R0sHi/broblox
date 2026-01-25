@@ -13,6 +13,10 @@ Notes:
 
 ### Added
 
+- **Phase 1 test coverage complete** - 305 total tests across all packages.
+- **@rbx/data tests** - 24 unit tests for data persistence layer (versioning, sessions, migrations, retry, cache).
+- **@rbx/security tests** - 41 unit tests for security package (trust scoring, violation detection, enforcement).
+- **@rbx/observability tests** - 44 unit tests for observability package (telemetry, metrics, spans, context).
 - **Dashboard deployed to Vercel** - Live at https://rbx-dashboard.vercel.app
 - **Feature flags UI** - Per-environment toggles (dev/stage/prod) with database persistence.
 - **Audit logging** - Complete history of all privileged actions with user attribution.
