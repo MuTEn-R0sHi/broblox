@@ -13,6 +13,12 @@ Notes:
 
 ### Added
 
+- **Phase 2 PvP Alpha complete** - Server-authoritative combat and match tracking.
+- **Combat system** - Weapon definitions, hit validation, damage calculation, cooldown management.
+- **Match system** - Full match lifecycle (waiting → starting → in-progress → ended) with team scores and player stats.
+- **Server allocation** - Reserved server provisioning with health monitoring and graceful shutdown.
+- **Match history dashboard** - List and detail views with filtering by status and game mode.
+- **Match/MatchPlayer database tables** - Prisma schema for match persistence.
 - **Phase 1 test coverage complete** - 305 total tests across all packages.
 - **@rbx/data tests** - 24 unit tests for data persistence layer (versioning, sessions, migrations, retry, cache).
 - **@rbx/security tests** - 41 unit tests for security package (trust scoring, violation detection, enforcement).

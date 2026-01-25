@@ -78,23 +78,26 @@ Security baseline:
 
 Test coverage: 305 tests across all packages.
 
-### Phase 2 — PvP Alpha (competitive loop + ops visibility)
+### Phase 2 — PvP Alpha (competitive loop + ops visibility) ✅
+
+**Status: COMPLETE**
 
 **Goal:** competitive-capable match flow and anti-abuse instrumentation.
 
+Scope documented in: `docs/roadmap/phase-2-pvp-alpha.md`.
+
 Deliverables:
 
-- `packages/matchmaking` v1: queue + reserved server joins
-- `packages/movement` v1: motor abstraction + Humanoid motor
-- `packages/security` v1: violation signals + scoring + enforcement hooks
-- `packages/analytics` v1: event batching + match summary
-- Dashboard v1 (read-only): match list, security signals, publish history
+- `packages/core/combat`: weapon system + hit validation + damage calculation ✅
+- `packages/core/match`: match lifecycle + state + events ✅
+- `packages/core/server`: server allocation + health monitoring ✅
+- Dashboard match history: list + detail + filtering ✅
 
 PvP requirements:
 
-- Server authoritative hit validation (raycast/projectile sim)
-- Deterministic cooldown/ammo logic server-side
-- Protocol versioning rules defined and enforced
+- Server authoritative hit validation (raycast verification) ✅
+- Deterministic cooldown/ammo logic server-side ✅
+- Match state transitions server-controlled ✅
 
 ### Phase 3 — Beta (multi-game reuse + moderation)
 

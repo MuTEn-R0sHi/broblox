@@ -36,6 +36,7 @@ nav:
   - Roadmap:
       - Overview: roadmap/overview.md
       - Phase 1 (Platform MVP): roadmap/phase-1-platform-mvp.md
+      - Phase 2 (PvP Alpha): roadmap/phase-2-pvp-alpha.md
   - Getting started:
       - Overview: getting-started/overview.md
       - Prereqs: getting-started/prereqs.md
