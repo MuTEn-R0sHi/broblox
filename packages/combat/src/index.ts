@@ -30,3 +30,28 @@ export {
   // Testing
   resetCooldowns,
 } from "./cooldown";
+
+// Hit validation
+export {
+  // Configuration
+  configureHitValidation,
+  getHitValidationConfig,
+  resetHitValidationConfig,
+  // Player management
+  updatePlayerPosition,
+  getPlayerPosition,
+  clearPlayerPosition,
+  setInvulnerable,
+  isInvulnerable,
+  // Core validation
+  validateHit,
+  isInLagWindow,
+  // Suspicious pattern tracking
+  getSuspiciousHitCount,
+  resetSuspiciousHitCount,
+  // Event listeners
+  onSuspiciousHit,
+  onValidHit,
+  // Testing
+  resetHitValidation,
+} from "./hit-validation";
