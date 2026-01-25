@@ -52,7 +52,9 @@ async function getUsers() {
   });
 }
 
-function getActionColor(action: string): string {
+function getActionColor(
+  action: string
+): "default" | "secondary" | "destructive" | "outline" | "success" | "warning" {
   if (action.includes("delete") || action.includes("kill") || action.includes("ban"))
     return "destructive";
   if (action.includes("create") || action.includes("approve")) return "success";

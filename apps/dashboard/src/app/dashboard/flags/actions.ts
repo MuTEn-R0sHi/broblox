@@ -121,7 +121,7 @@ export async function createFlag(data: {
   await logAudit(user.id, "flag.create", flag.key, null, flag);
 
   revalidatePath("/dashboard/flags");
-  return flag;
+  return flag as FeatureFlag;
 }
 
 export async function updateFlag(
@@ -154,7 +154,7 @@ export async function updateFlag(
   await logAudit(user.id, "flag.update", flag.key, before, flag);
 
   revalidatePath("/dashboard/flags");
-  return flag;
+  return flag as FeatureFlag;
 }
 
 export async function toggleFlagEnvironment(
@@ -185,7 +185,7 @@ export async function toggleFlagEnvironment(
   await logAudit(user.id, `flag.toggle.${environment}`, flag.key, before, flag);
 
   revalidatePath("/dashboard/flags");
-  return flag;
+  return flag as FeatureFlag;
 }
 
 export async function deleteFlag(id: string): Promise<void> {

@@ -2,7 +2,13 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -87,27 +93,35 @@ export function MatchFilters({
       <div className="flex gap-2">
         <Select
           value={currentStatus ?? ""}
-          onChange={(e) => updateFilters({ status: e.target.value || undefined })}
-          className="w-[140px]"
+          onValueChange={(value: string) => updateFilters({ status: value || undefined })}
         >
-          {STATUS_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="All Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value || "all"}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
 
         <Select
           value={currentGameMode ?? ""}
-          onChange={(e) => updateFilters({ gameMode: e.target.value || undefined })}
-          className="w-[140px]"
+          onValueChange={(value: string) => updateFilters({ gameMode: value || undefined })}
         >
-          <option value="">All Modes</option>
-          {gameModes.map((mode) => (
-            <option key={mode} value={mode}>
-              {mode}
-            </option>
-          ))}
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="All Modes" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Modes</SelectItem>
+            {gameModes.map((mode) => (
+              <SelectItem key={mode} value={mode}>
+                {mode}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
 
         {hasFilters && (
