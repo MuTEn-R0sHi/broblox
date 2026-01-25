@@ -82,14 +82,20 @@ function formatDateTime(date: Date | null): string {
 export default async function MatchDetailPage({ params }: MatchDetailPageProps) {
   const { id } = await params;
 
-  const match = await prisma.match.findUnique({
-    where: { id },
-    include: {
-      players: {
-        orderBy: [{ team: "asc" }, { score: "desc" }],
+  let match;
+  try {
+    match = await prisma.match.findUnique({
+      where: { id },
+      include: {
+        players: {
+          orderBy: [{ team: "asc" }, { score: "desc" }],
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Failed to fetch match:", error);
+    notFound();
+  }
 
   if (!match) {
     notFound();

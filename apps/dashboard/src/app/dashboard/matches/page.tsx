@@ -1,7 +1,14 @@
 import { prisma } from "@/lib/db";
-import { MatchStatus, type Prisma } from "@prisma/client";
+import { MatchStatus, type Prisma, type Match, type MatchPlayer } from "@prisma/client";
 import { MatchesTable } from "./matches-table";
 import { MatchFilters } from "./match-filters";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertTriangle } from "lucide-react";
+
+type MatchWithPlayers = Match & {
+  players: Pick<MatchPlayer, "playerId" | "playerName" | "team" | "isWinner">[];
+  _count: { players: number };
+};
 
 interface SearchParams {
   page?: string;
@@ -42,33 +49,46 @@ export default async function MatchesPage({
     ];
   }
 
-  // Fetch matches with pagination
-  const [matches, totalCount, gameModes] = await Promise.all([
-    prisma.match.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      include: {
-        players: {
-          select: {
-            playerId: true,
-            playerName: true,
-            team: true,
-            isWinner: true,
+  // Fetch matches with pagination - with error handling for missing tables
+  let matches: MatchWithPlayers[] = [];
+  let totalCount = 0;
+  let gameModes: { gameMode: string }[] = [];
+  let dbError: string | null = null;
+
+  try {
+    [matches, totalCount, gameModes] = await Promise.all([
+      prisma.match.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+        include: {
+          players: {
+            select: {
+              playerId: true,
+              playerName: true,
+              team: true,
+              isWinner: true,
+            },
+          },
+          _count: {
+            select: { players: true },
           },
         },
-        _count: {
-          select: { players: true },
-        },
-      },
-    }),
-    prisma.match.count({ where }),
-    prisma.match.findMany({
-      select: { gameMode: true },
-      distinct: ["gameMode"],
-    }),
-  ]);
+      }),
+      prisma.match.count({ where }),
+      prisma.match.findMany({
+        select: { gameMode: true },
+        distinct: ["gameMode"],
+      }),
+    ]);
+  } catch (error) {
+    console.error("Failed to fetch matches:", error);
+    dbError =
+      error instanceof Error
+        ? error.message
+        : "Database query failed. The Match table may not exist yet.";
+  }
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -81,19 +101,39 @@ export default async function MatchesPage({
         </p>
       </div>
 
-      <MatchFilters
-        currentStatus={status}
-        currentGameMode={gameMode}
-        currentSearch={search}
-        gameModes={gameModes.map((m) => m.gameMode)}
-      />
+      {dbError ? (
+        <Card className="border-yellow-500/50 bg-yellow-500/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-yellow-600">
+              <AlertTriangle className="h-5 w-5" />
+              Database Setup Required
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">
+            <p>
+              The Match table has not been created yet. Run database migrations to enable match
+              history:
+            </p>
+            <pre className="mt-2 rounded bg-muted p-2 text-xs">pnpm prisma db push</pre>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <MatchFilters
+            currentStatus={status}
+            currentGameMode={gameMode}
+            currentSearch={search}
+            gameModes={gameModes.map((m) => m.gameMode)}
+          />
 
-      <MatchesTable
-        matches={matches}
-        currentPage={page}
-        totalPages={totalPages}
-        totalCount={totalCount}
-      />
+          <MatchesTable
+            matches={matches}
+            currentPage={page}
+            totalPages={totalPages}
+            totalCount={totalCount}
+          />
+        </>
+      )}
     </div>
   );
 }
