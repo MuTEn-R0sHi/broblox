@@ -37,6 +37,10 @@ Transcendent/Zenith/Radiant/Cosmic: 1/10T to 1/10Qn
 
 ## Worlds
 
+## Games Taxonomy
+
+## Admin abuse events
+
 # Common features
 
 ## Mounting system

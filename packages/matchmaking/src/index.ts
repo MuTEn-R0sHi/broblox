@@ -69,3 +69,46 @@ export type {
   MatchStartedEvent,
   MatchEndedEvent,
 } from "./match";
+
+// Server allocation
+export {
+  // Service injection
+  setTeleportService,
+  // Configuration
+  configureServerAllocation,
+  getServerAllocationConfig,
+  resetServerAllocationConfig,
+  // Server allocation
+  allocateServer,
+  getReservedServer,
+  releaseServer,
+  getActiveServers,
+  // Teleportation
+  teleportToMatch,
+  getTeleportRequest,
+  getTeleportRequestsForMatch,
+  // Player tracking
+  recordPlayerJoined,
+  allPlayersJoined,
+  getMissingPlayers,
+  // Cleanup
+  cleanupExpiredServers,
+  // Event listeners
+  onServerAllocated,
+  onTeleportInitiated,
+  onTeleportFailure,
+  // Testing
+  resetServerAllocation,
+} from "./server-allocation";
+
+// Re-export server allocation types
+export type {
+  ITeleportService,
+  ReservedServer,
+  TeleportRequest,
+  TeleportStatus,
+  ServerAllocationConfig,
+  ServerAllocatedEvent,
+  TeleportInitiatedEvent,
+  TeleportFailureEvent,
+} from "./server-allocation";
