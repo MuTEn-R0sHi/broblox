@@ -2,6 +2,22 @@
 
 > **Purpose:** Capture feature ideas, monetization patterns, and game mechanics for future development phases.
 > Some items already have docs in `docs/modules/` — this file is for early brainstorming.
+>
+> **Aligned with:** [Roadmap Overview](docs/roadmap/overview.md)
+
+---
+
+## Roadmap Alignment Summary
+
+| Phase       | Status      | Focus             | Key Features from This Doc                |
+| ----------- | ----------- | ----------------- | ----------------------------------------- |
+| **Phase 1** | ✅ Complete | Platform MVP      | Core packages, networking, validation     |
+| **Phase 2** | ✅ Complete | PvP Alpha         | Combat, matchmaking, hit validation       |
+| **Phase 3** | 🔜 Next     | Beta / Multi-game | Moderation, RBAC, second game template    |
+| **Phase 4** | 📅 Planned  | Production        | CI/CD, worker jobs, performance budgets   |
+| **Phase 5** | 💡 Ideas    | Gameplay Modules  | Progression, pets, cosmetics, battle pass |
+| **Phase 6** | 💡 Ideas    | Economy & Social  | Trading, guilds, global currency          |
+| **Phase 7** | 💡 Ideas    | Genre Templates   | Obby, fishing, horror, anime games        |
 
 ---
 
@@ -543,18 +559,112 @@ Based on current Roblox trends and top-performing games:
 
 ---
 
-## Priority Candidates for Phase 3+
+## Phase-Aligned Feature Roadmap
 
-1. **Pet System** — High engagement, proven monetization
-2. **Egg/Gacha System** — Drives retention loops
-3. **Guild System** — Social stickiness
-4. **Procedural Worlds** — Replayability
-5. **Global BroCoins** — Cross-game ecosystem lock-in
-6. **Fishing/Collection Game** — Trending genre, relaxing gameplay
-7. **Obby Generator** — Low dev cost, high replayability
-8. **Fashion/Social Hub** — Appeals to broader audience
-9. **Lucky Block System** — Engagement loop, monetizable
-10. **Rebirth/Prestige** — Core retention mechanic
+### Phase 3 — Beta / Multi-game (Next Up)
+
+> **Goal:** Second game adopts platform; moderation + ops tooling.
+
+**From this doc — candidates:**
+
+| Feature                 | Priority    | Effort | Notes                       |
+| ----------------------- | ----------- | ------ | --------------------------- |
+| Moderation system       | 🔴 Critical | Medium | Bans, mutes, evidence model |
+| RBAC + Audit logs       | 🔴 Critical | Medium | Dashboard v2 requirement    |
+| Second game template    | 🔴 Critical | High   | Proves multi-game reuse     |
+| Feature flag rollouts   | 🟡 High     | Low    | Kill-switch enforcement     |
+| Rebirth/Prestige system | 🟡 High     | Medium | Core retention mechanic     |
+
+---
+
+### Phase 4 — Production (Ops Excellence)
+
+> **Goal:** CI/CD pipeline, worker jobs, performance budgets.
+
+**From this doc — candidates:**
+
+| Feature                 | Priority    | Effort | Notes                         |
+| ----------------------- | ----------- | ------ | ----------------------------- |
+| Open Cloud publish      | 🔴 Critical | High   | Roblox environment promotion  |
+| Scheduled events system | 🟡 High     | Medium | Events section implementation |
+| Performance monitoring  | 🟡 High     | Medium | Budgets + alerts              |
+| Daily login rewards     | 🟢 Medium   | Low    | Retention hook                |
+| Quest/mission system    | 🟢 Medium   | Medium | Engagement driver             |
+
+---
+
+### Phase 5 — Gameplay Modules (Progression)
+
+> **Goal:** Reusable gameplay systems for any game.
+
+**From this doc — candidates:**
+
+| Feature          | Priority    | Effort | Notes                               |
+| ---------------- | ----------- | ------ | ----------------------------------- |
+| Pet system       | 🔴 Critical | High   | Proven monetization                 |
+| Egg/Gacha system | 🔴 Critical | High   | Drives retention loops              |
+| Battle pass      | 🟡 High     | Medium | See `docs/modules/battle-pass.md`   |
+| Cosmetics system | 🟡 High     | Medium | See `docs/modules/cosmetics.md`     |
+| Daily rewards    | 🟢 Medium   | Low    | See `docs/modules/daily-rewards.md` |
+| Crafting system  | 🟢 Medium   | Medium | Item depth                          |
+| Skill trees      | 🟢 Medium   | High   | Class customization                 |
+
+---
+
+### Phase 6 — Economy & Social
+
+> **Goal:** Cross-game economy, guilds, social features.
+
+**From this doc — candidates:**
+
+| Feature               | Priority    | Effort | Notes                         |
+| --------------------- | ----------- | ------ | ----------------------------- |
+| Trading system        | 🔴 Critical | High   | See `docs/modules/trading.md` |
+| Guild/Clan system     | 🔴 Critical | High   | Social stickiness             |
+| Global BroCoins       | 🟡 High     | High   | Cross-game currency           |
+| Auction house         | 🟢 Medium   | High   | Optional, exploit-prone       |
+| Friend invite rewards | 🟢 Medium   | Low    | Social hooks                  |
+| Leaderboards          | 🟢 Medium   | Low    | Competition driver            |
+
+---
+
+### Phase 7 — Genre Templates
+
+> **Goal:** Pre-built game templates for common Roblox genres.
+
+**From this doc — candidates:**
+
+| Template          | Priority    | Effort | Based On                     |
+| ----------------- | ----------- | ------ | ---------------------------- |
+| PvP Arena         | 🔴 Critical | Low    | Phase 2 combat already done  |
+| Obby Generator    | 🟡 High     | Medium | Procedural obstacle courses  |
+| Fishing Simulator | 🟡 High     | High   | Trending genre (Fisch-style) |
+| Tower Defense     | 🟢 Medium   | High   | Wave-based gameplay          |
+| Horror Escape     | 🟢 Medium   | High   | Doors/Piggy style            |
+| Fashion/Social    | 🟢 Medium   | Medium | Dress To Impress style       |
+| Tycoon            | 🟢 Medium   | High   | Restaurant/business sim      |
+| Anime Combat      | 🔵 Future   | High   | Blox Fruits/JJK style        |
+
+---
+
+## Quick Reference: Feature → Phase Mapping
+
+| Feature                           | Phase | Status     |
+| --------------------------------- | ----- | ---------- |
+| Core packages (net, config, etc.) | 1     | ✅ Done    |
+| Combat + hit validation           | 2     | ✅ Done    |
+| Matchmaking + match lifecycle     | 2     | ✅ Done    |
+| Dashboard match history           | 2     | ✅ Done    |
+| Moderation system                 | 3     | 🔜 Next    |
+| RBAC + audit logs                 | 3     | 🔜 Next    |
+| Rebirth/prestige                  | 3     | 🔜 Next    |
+| Pet system                        | 5     | 💡 Planned |
+| Egg/gacha system                  | 5     | 💡 Planned |
+| Battle pass                       | 5     | 💡 Planned |
+| Trading                           | 6     | 💡 Planned |
+| Guilds                            | 6     | 💡 Planned |
+| Global BroCoins                   | 6     | 💡 Planned |
+| Genre templates                   | 7     | 💡 Planned |
 
 ---
 
