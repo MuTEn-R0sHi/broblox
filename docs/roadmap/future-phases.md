@@ -16,18 +16,20 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 - Second game template created from the platform
 - `packages/moderation` v1: bans/mutes + evidence model
+- `packages/movement` v1: server-authoritative movement + lag compensation
 - Dashboard v2 (control plane): RBAC + audit logs + ban workflow
 - Feature flags: staged rollouts + kill-switch enforcement
 
 ### Feature Candidates
 
-| Feature                 | Priority    | Effort | Notes                       |
-| ----------------------- | ----------- | ------ | --------------------------- |
-| Moderation system       | 🔴 Critical | Medium | Bans, mutes, evidence model |
-| RBAC + Audit logs       | 🔴 Critical | Medium | Dashboard v2 requirement    |
-| Second game template    | 🔴 Critical | High   | Proves multi-game reuse     |
-| Feature flag rollouts   | 🟡 High     | Low    | Kill-switch enforcement     |
-| Rebirth/Prestige system | 🟡 High     | Medium | Core retention mechanic     |
+| Feature                 | Priority    | Effort | Notes                                 |
+| ----------------------- | ----------- | ------ | ------------------------------------- |
+| Moderation system       | 🔴 Critical | Medium | Bans, mutes, evidence model           |
+| Movement package        | 🔴 Critical | High   | Server-auth movement, anti-speed-hack |
+| RBAC + Audit logs       | 🔴 Critical | Medium | Dashboard v2 requirement              |
+| Second game template    | 🔴 Critical | High   | Proves multi-game reuse               |
+| Feature flag rollouts   | 🟡 High     | Low    | Kill-switch enforcement               |
+| Rebirth/Prestige system | 🟡 High     | Medium | Core retention mechanic               |
 
 ### Reliability Requirements
 
@@ -46,18 +48,22 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 - Open Cloud publish/promote pipeline for Roblox environments
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
+- `packages/analytics` v1: player behavior events, funnels, retention
+- `packages/notifications` v1: in-game toasts, announcements, news
 - Performance budgets enforced in CI where possible
 - Regular ADR + security review cadence
 
 ### Feature Candidates
 
-| Feature                 | Priority    | Effort | Notes                         |
-| ----------------------- | ----------- | ------ | ----------------------------- |
-| Open Cloud publish      | 🔴 Critical | High   | Roblox environment promotion  |
-| Scheduled events system | 🟡 High     | Medium | Events section implementation |
-| Performance monitoring  | 🟡 High     | Medium | Budgets + alerts              |
-| Daily login rewards     | 🟢 Medium   | Low    | Retention hook                |
-| Quest/mission system    | 🟢 Medium   | Medium | Engagement driver             |
+| Feature                 | Priority    | Effort | Notes                            |
+| ----------------------- | ----------- | ------ | -------------------------------- |
+| Open Cloud publish      | 🔴 Critical | High   | Roblox environment promotion     |
+| Analytics package       | 🔴 Critical | Medium | Player behavior, funnels, events |
+| Notifications package   | 🟡 High     | Medium | Toasts, announcements, news      |
+| Scheduled events system | 🟡 High     | Medium | Events section implementation    |
+| Performance monitoring  | 🟡 High     | Medium | Budgets + alerts                 |
+| Daily login rewards     | 🟢 Medium   | Low    | Retention hook                   |
+| Quest/mission system    | 🟢 Medium   | Medium | Engagement driver                |
 
 ---
 
@@ -71,30 +77,40 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 Build platform-level packages that any BroBlox game can consume:
 
+- Base inventory system (prerequisite for all collection features)
 - Progression systems (levels, XP, prestige)
 - Collection systems (pets, items, cosmetics)
 - Reward systems (battle pass, daily rewards)
+- Support systems (localization, audio, tutorial)
 
 ### Feature Candidates
 
-| Feature          | Priority    | Effort | Notes                               |
-| ---------------- | ----------- | ------ | ----------------------------------- |
-| Pet system       | 🔴 Critical | High   | Proven monetization                 |
-| Egg/Gacha system | 🔴 Critical | High   | Drives retention loops              |
-| Battle pass      | 🟡 High     | Medium | See `docs/modules/battle-pass.md`   |
-| Cosmetics system | 🟡 High     | Medium | See `docs/modules/cosmetics.md`     |
-| Daily rewards    | 🟢 Medium   | Low    | See `docs/modules/daily-rewards.md` |
-| Crafting system  | 🟢 Medium   | Medium | Item depth                          |
-| Skill trees      | 🟢 Medium   | High   | Class customization                 |
+| Feature             | Priority    | Effort | Notes                               |
+| ------------------- | ----------- | ------ | ----------------------------------- |
+| Inventory package   | 🔴 Critical | High   | Base for pets, cosmetics, equipment |
+| Pet system          | 🔴 Critical | High   | Proven monetization                 |
+| Egg/Gacha system    | 🔴 Critical | High   | Drives retention loops              |
+| Localization (i18n) | 🟡 High     | Medium | Multi-language support              |
+| Battle pass         | 🟡 High     | Medium | See `docs/modules/battle-pass.md`   |
+| Cosmetics system    | 🟡 High     | Medium | See `docs/modules/cosmetics.md`     |
+| Audio package       | 🟡 High     | Medium | SFX, music, spatial audio           |
+| Tutorial/FTUE       | 🟡 High     | Medium | Guided onboarding framework         |
+| Daily rewards       | 🟢 Medium   | Low    | See `docs/modules/daily-rewards.md` |
+| Crafting system     | 🟢 Medium   | Medium | Item depth                          |
+| Skill trees         | 🟢 Medium   | High   | Class customization                 |
 
 ### Package Structure (proposed)
 
 ```
 packages/
+  inventory/       # Base item/slot system (prerequisite)
   progression/     # XP, levels, prestige/rebirth
   pets/            # Pet system, evolution, equipment
   gacha/           # Eggs, hatching, pity system
   rewards/         # Daily login, battle pass, achievements
+  localization/    # i18n, string tables, language switching
+  audio/           # SFX manager, music system, spatial audio
+  tutorial/        # FTUE framework, step-by-step guides
 ```
 
 ---
@@ -183,13 +199,20 @@ games/
 | Matchmaking + match lifecycle     | 2     | ✅ Done    |
 | Dashboard match history           | 2     | ✅ Done    |
 | Moderation system                 | 3     | 🔜 Next    |
+| Movement package                  | 3     | 🔜 Next    |
 | RBAC + audit logs                 | 3     | 🔜 Next    |
 | Rebirth/prestige                  | 3     | 🔜 Next    |
 | Open Cloud publish                | 4     | 📅 Planned |
+| Analytics package                 | 4     | 📅 Planned |
+| Notifications package             | 4     | 📅 Planned |
 | Scheduled events                  | 4     | 📅 Planned |
+| Inventory package                 | 5     | 💡 Planned |
 | Pet system                        | 5     | 💡 Planned |
 | Egg/gacha system                  | 5     | 💡 Planned |
 | Battle pass                       | 5     | 💡 Planned |
+| Localization (i18n)               | 5     | 💡 Planned |
+| Audio package                     | 5     | 💡 Planned |
+| Tutorial/FTUE                     | 5     | 💡 Planned |
 | Trading                           | 6     | 💡 Planned |
 | Guilds                            | 6     | 💡 Planned |
 | Global BroCoins                   | 6     | 💡 Planned |

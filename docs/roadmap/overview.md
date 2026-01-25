@@ -128,6 +128,24 @@ Deliverables:
 
 ## Milestone mapping (packages)
 
-- Security-critical first: `net`, `security`, `shared-types`
-- Live-ops next: `config-featureflags`, `analytics`, `moderation`
-- Gameplay modules later: progression, cosmetics, battle pass, trading
+### Phase 1–2 (Complete ✅)
+
+- `core`, `shared-types`, `net`, `security`, `config-featureflags`
+- `input`, `ui`, `data`, `observability`
+- `combat`, `matchmaking`
+
+### Phase 3–4 (Next)
+
+- `moderation`: bans/mutes, enforcement hooks
+- `movement`: server-authoritative movement, lag compensation
+- `analytics`: player behavior events, funnels
+- `notifications`: in-game toasts, announcements
+
+### Phase 5+ (Future)
+
+- `inventory`: base item/slot system (prerequisite for collections)
+- `progression`, `pets`, `gacha`, `rewards`
+- `localization`, `audio`, `tutorial`
+- `trading`, `guilds`, `economy`, `social`
+
+> **Full roadmap:** See [Future Phases (3–7)](future-phases.md) for detailed planning.
