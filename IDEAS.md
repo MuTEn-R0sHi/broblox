@@ -307,6 +307,242 @@ Expand beyond docs site:
 
 ---
 
+## 12. Trending Game Genres (2025-2026)
+
+Based on current Roblox trends and top-performing games:
+
+### Obby / Platformer Games
+
+- **Tower of Hell style** — No-checkpoint obstacle courses
+- **Difficulty scaling** — Easy → Nightmare modes
+- **Procedural obbies** — Randomly generated obstacle sections
+- **Speedrun leaderboards** — Time-based competition
+
+### Horror / Escape Games
+
+- **Doors style** — Procedural rooms with monster AI
+- **Piggy style** — Escape room with killer NPCs
+- **Rainbow Friends style** — Survival with color-coded threats
+- **Co-op survival** — Team-based horror experiences
+
+### Anime-Inspired Games
+
+- **Blox Fruits / Devil Fruit** — One Piece inspired powers
+- **Jujutsu games** — Curse techniques and domain expansion
+- **Blue Lock** — Anime sports (soccer/volleyball)
+- **Shonen combat** — Power scaling, special moves, transformations
+
+### Fishing / Collection Simulators
+
+- **Fisch style** — Fishing with rod upgrades, enchants, rare catches
+- **Creature collection** — Catch, evolve, trade creatures
+- **Exploration-based** — Discover islands, biomes, secrets
+
+### Roleplay (RP) Games
+
+- **Brookhaven style** — Life simulation with houses, vehicles, jobs
+- **School RP** — Royale High style with magic/fantasy elements
+- **Work simulators** — Pizza Place, Restaurant Tycoon
+- **City RP** — Open world with careers, economy
+
+### Tower Defense
+
+- **SpongeBob TD style** — Licensed character defenders
+- **Anime TD** — Gacha-style unit collection
+- **Co-op TD** — Multiplayer wave defense
+
+### Competitive Shooters
+
+- **Rivals / Arsenal style** — Fast-paced FPS
+- **Counter Blox** — CS-like tactical shooters
+- **Bed Wars** — Base defense + PvP hybrid
+
+### Survival Games
+
+- **Dead Rails style** — Zombie co-op survival
+- **Natural Disaster** — Environmental hazard survival
+- **Medieval survival** — Resource gathering, base building
+
+### Fashion / Social Games
+
+- **Dress To Impress** — Competitive fashion shows
+- **Runway competitions** — Theme-based outfit contests
+- **Social hubs** — Hangout spaces with minigames
+
+---
+
+## 13. Core Mechanic Patterns
+
+### Rebirth / Prestige System
+
+- Reset progress for permanent multipliers
+- Prestige currency for exclusive upgrades
+- Rebirth milestones with cosmetic rewards
+- Multiple prestige layers (rebirth → ascension → transcendence)
+
+### Idle / AFK Mechanics
+
+- Auto-collect resources while offline
+- AFK zones for passive gains
+- Auto-clickers / auto-farmers (controlled)
+- Sleep bonuses for returning players
+
+### Lucky Block / Loot Box Mechanics
+
+- Break blocks for random rewards
+- Visible drop tables with percentages
+- Lucky multipliers and boosters
+- Event-exclusive lucky blocks
+
+### Quest / Mission Systems
+
+- Daily, weekly, seasonal quests
+- Quest chains with story progression
+- Bounty board with varying difficulty
+- Achievement-based progression
+
+### Skill Trees / Class Systems
+
+- Multiple class paths (warrior, mage, rogue)
+- Respec options (free or paid)
+- Hybrid builds allowed
+- Skill point allocation
+
+### Crafting Systems
+
+- Recipe discovery
+- Material gathering from world
+- Quality tiers based on materials
+- Blueprint unlocks from bosses/events
+
+### Enchanting / Upgrading
+
+- Weapon/armor enhancement levels
+- Risk-based upgrading (fail = destroy)
+- Safe enhancement items (cash shop)
+- Enchant scrolls with random stats
+
+---
+
+## 14. Engagement & Retention Hooks
+
+### First-Time User Experience (FTUE)
+
+- Guided tutorial with skip option
+- Immediate reward for completing intro
+- Mentor/buddy system with veterans
+- Progressive complexity unlock
+
+### Daily Login Rewards
+
+- Calendar-style rewards
+- Streak protection (miss 1-2 days)
+- VIP/Premium bonus track
+- Monthly reset with grand prize
+
+### Limited-Time Offers (LTO)
+
+- Flash sales with countdown
+- Exclusive bundles
+- Returning player offers
+- Milestone purchase bonuses
+
+### Social Hooks
+
+- Friend invite rewards
+- Group/guild bonuses
+- Social challenges (play with friends)
+- Referral tracking
+
+### FOMO Mitigation (Ethical)
+
+- Archive system for past content
+- "Catch-up" mechanics for new players
+- No permanent exclusives (rotate back)
+- Fair pricing for returning items
+
+---
+
+## 15. Virtual Economy Best Practices
+
+### Sink / Faucet Balance
+
+- Clear currency sinks (upgrades, cosmetics, repairs)
+- Controlled faucets (daily limits, diminishing returns)
+- Anti-inflation mechanics
+- Economy monitoring dashboard
+
+### Trading Safeguards
+
+- Trade confirmation delays
+- Value warnings for unequal trades
+- Scam report system
+- Trade rollback for exploits
+
+### Premium Currency Ethics
+
+- Clear Robux → in-game conversion
+- No pay-to-win advantages
+- Cosmetic-only premium exclusives
+- Earnable premium currency (slow)
+
+---
+
+## 16. Accessibility Features
+
+### Input Options
+
+- Controller support (already in `@rbx/input`)
+- Touch-friendly UI
+- Keyboard remapping
+- One-handed mode option
+
+### Visual Accessibility
+
+- Colorblind modes
+- High contrast options
+- Scalable UI
+- Screen reader hints
+
+### Difficulty Options
+
+- Assist modes for younger players
+- Invincibility toggles (for story content)
+- Adjustable game speed
+
+---
+
+## 17. Platform Integration Ideas
+
+### Roblox Moments
+
+- Auto-detect highlight moments (rare drops, wins)
+- Custom thumbnail generation
+- Share with game branding
+- Clip leaderboards
+
+### UGC (User-Generated Content)
+
+- Custom skins/cosmetics marketplace
+- Level/map creator tools
+- Community voting on content
+- Revenue share with creators
+
+### Voice Chat Integration
+
+- Proximity voice for social games
+- Team voice channels for competitive
+- Voice moderation tools
+- Opt-in only with parental controls
+
+### Cross-Platform Sync
+
+- Seamless PC ↔ Mobile ↔ Console
+- Cloud save with conflict resolution
+- Platform-specific UI adaptations
+
+---
+
 ## Priority Candidates for Phase 3+
 
 1. **Pet System** — High engagement, proven monetization
@@ -314,6 +550,11 @@ Expand beyond docs site:
 3. **Guild System** — Social stickiness
 4. **Procedural Worlds** — Replayability
 5. **Global BroCoins** — Cross-game ecosystem lock-in
+6. **Fishing/Collection Game** — Trending genre, relaxing gameplay
+7. **Obby Generator** — Low dev cost, high replayability
+8. **Fashion/Social Hub** — Appeals to broader audience
+9. **Lucky Block System** — Engagement loop, monetizable
+10. **Rebirth/Prestige** — Core retention mechanic
 
 ---
 
