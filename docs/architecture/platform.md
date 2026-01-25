@@ -25,6 +25,7 @@ A reusable set of packages and conventions that every game uses.
 - `moderation`: reports, bans/mutes, enforcement hooks (Phase 3)
 - `notifications`: in-game toasts, announcements, news panel (Phase 4)
 - `inventory`: base item/slot system for pets, cosmetics, equipment (Phase 5)
+- `bro-companion`: cross-game mascot system — The Bro follows players everywhere (Phase 5)
 - `localization`: i18n support, multi-language strings (Phase 5)
 - `audio`: SFX management, music system, spatial audio (Phase 5)
 - `tutorial`: FTUE framework, guided onboarding (Phase 5)

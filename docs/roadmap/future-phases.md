@@ -82,12 +82,14 @@ Build platform-level packages that any BroBlox game can consume:
 - Collection systems (pets, items, cosmetics)
 - Reward systems (battle pass, daily rewards)
 - Support systems (localization, audio, tutorial)
+- **The Bro** — Cross-game mascot companion system
 
 ### Feature Candidates
 
 | Feature             | Priority    | Effort | Notes                               |
 | ------------------- | ----------- | ------ | ----------------------------------- |
 | Inventory package   | 🔴 Critical | High   | Base for pets, cosmetics, equipment |
+| Bro Companion       | 🔴 Critical | High   | Cross-game mascot, brand identity   |
 | Pet system          | 🔴 Critical | High   | Proven monetization                 |
 | Egg/Gacha system    | 🔴 Critical | High   | Drives retention loops              |
 | Localization (i18n) | 🟡 High     | Medium | Multi-language support              |
@@ -104,6 +106,7 @@ Build platform-level packages that any BroBlox game can consume:
 ```
 packages/
   inventory/       # Base item/slot system (prerequisite)
+  bro-companion/   # Cross-game mascot system (The Bro)
   progression/     # XP, levels, prestige/rebirth
   pets/            # Pet system, evolution, equipment
   gacha/           # Eggs, hatching, pity system
@@ -166,6 +169,7 @@ Provide starter templates that demonstrate platform capabilities for popular Rob
 | Template          | Priority    | Effort | Based On                            |
 | ----------------- | ----------- | ------ | ----------------------------------- |
 | PvP Arena         | 🔴 Critical | Low    | Phase 2 combat already done         |
+| BroStars          | 🔴 Critical | High   | Pet band game, tests pets + audio   |
 | Obby Generator    | 🟡 High     | Medium | Procedural obstacle courses         |
 | Fishing Simulator | 🟡 High     | High   | Trending genre (Fisch-style)        |
 | Tower Defense     | 🟢 Medium   | High   | Wave-based gameplay                 |
@@ -180,6 +184,7 @@ Provide starter templates that demonstrate platform capabilities for popular Rob
 games/
   starter/           # Current: basic platform demo
   pvp-arena/         # Ranked PvP with matchmaking
+  brostars/          # Pet band music game (showcase for pets + audio)
   obby/              # Procedural obstacle courses
   fishing-sim/       # Collection + exploration
   tower-defense/     # Wave-based co-op
@@ -207,6 +212,7 @@ games/
 | Notifications package             | 4     | 📅 Planned |
 | Scheduled events                  | 4     | 📅 Planned |
 | Inventory package                 | 5     | 💡 Planned |
+| Bro Companion (The Bro)           | 5     | 💡 Planned |
 | Pet system                        | 5     | 💡 Planned |
 | Egg/gacha system                  | 5     | 💡 Planned |
 | Battle pass                       | 5     | 💡 Planned |
@@ -217,6 +223,7 @@ games/
 | Guilds                            | 6     | 💡 Planned |
 | Global BroCoins                   | 6     | 💡 Planned |
 | Genre templates                   | 7     | 💡 Planned |
+| BroStars game                     | 7     | 💡 Planned |
 
 ---
 
