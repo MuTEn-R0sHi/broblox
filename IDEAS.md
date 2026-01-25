@@ -1,5 +1,13 @@
 ### Adapt common trending roblox game features
 
+## Ranking Tiers (Items/Characters)
+
+S+ / S (Meta/God Tier): Extremely powerful, dominant, or top-rated.
+A Tier (Strong): Very good, high performance, high investment.
+B Tier (Decent): Average, niche, or solid.
+C Tier (Below Average): Mediocre or early-game filler.
+D/F Tier (Worst/Fodder): Weakest, situational, or useless.
+
 ## Rarity Hierarchy
 
 Common (Gray/White): Easiest to find, low value.
@@ -34,3 +42,13 @@ Players can ride on pets. All kind of movement like riding, flying, swimming, di
 ## Generators
 
 We have powerfull generators to create the terrain and objects for the game, like buildings, roads. villages, landscapes with elevations and rivers, etc. all things like skyboxes, fog, light etc and the generated stuff is playing together nicely with a theme system.
+
+### Unified BroBlox features
+
+## Global BroCoins currency
+
+All games will have their specific currencies, but every game has and displays the global BroBlox currency as well in a unified way.
+
+## BroPortal
+
+All games have a unified interface to the BroPortal - where all BroBlox games are listed.

@@ -163,6 +163,27 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
+  packages/combat:
+    devDependencies:
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.903
+        version: 1.0.903
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      vitest:
+        specifier: ^4.0.17
+        version: 4.0.17(@types/node@25.0.9)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(yaml@2.8.2)
+
   packages/config-featureflags:
     dependencies:
       "@rbx/core":

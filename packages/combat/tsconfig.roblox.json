@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "strict": true,
+    "noLib": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "types": ["types", "compiler-types"],
+    "rootDir": "src",
+    "outDir": "out",
+    "declaration": true,
+    "declarationDir": "out"
+  },
+  "rbxts": {
+    "type": "package"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts", "src/__mocks__/**/*", "test-setup.ts"]
+}
