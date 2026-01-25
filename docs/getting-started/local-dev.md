@@ -74,6 +74,11 @@ Open http://localhost:3000
 
 ## Game workflow
 
+### Available Games
+
+- **starter** - Base template game for new projects
+- **obby** - Obstacle course game with stages, checkpoints, and coins
+
 ### 1) Install dependencies
 
 ```bash
@@ -85,8 +90,15 @@ pnpm install
 
 The build compiles shared packages first, then the game:
 
+**Starter Game:**
+
 - Build once: `pnpm game:starter:build`
 - Watch: `pnpm game:starter:dev`
+
+**Obby Game:**
+
+- Build once: `pnpm --filter @rbx/game-obby build`
+- Watch: `pnpm --filter @rbx/game-obby dev`
 
 > **Note:** `build:starter` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @rbx/game-starter build` directly.
 
@@ -94,9 +106,18 @@ The build compiles shared packages first, then the game:
 
 Recommended: install Rojo via Aftman (toolchain pinned in `aftman.toml`).
 
+**Starter Game:**
+
 ```bash
 aftman install
 pnpm game:starter:rojo
+```
+
+**Obby Game:**
+
+```bash
+aftman install
+cd games/obby && pnpm rojo:serve
 ```
 
 The Rojo project file is `games/starter/default.project.json`.

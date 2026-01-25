@@ -1,0 +1,10 @@
+{
+  "className": "SpawnLocation",
+  "properties": {
+    "Anchored": true,
+    "Size": [6, 1, 6],
+    "Position": [0, 2, 5],
+    "Neutral": true,
+    "AllowTeamChangeOnTouch": false
+  }
+}

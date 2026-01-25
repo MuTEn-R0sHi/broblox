@@ -5,7 +5,7 @@
  * These test the business logic without importing Roblox packages.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 
 // Constants mirroring @rbx/constants
 const TIMESTAMP_TOLERANCE_MS = 5000; // 5 second tolerance

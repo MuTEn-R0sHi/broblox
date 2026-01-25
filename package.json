@@ -13,9 +13,13 @@
     "test:coverage": "vitest run --coverage",
     "build:packages": "pnpm --filter '@rbx/*' --filter '!@rbx/game-*' run build:roblox",
     "build:starter": "pnpm run build:packages && pnpm --filter @rbx/game-starter run build",
+    "build:obby": "pnpm run build:packages && pnpm --filter @rbx/game-obby run build",
     "game:starter:build": "pnpm run build:starter",
     "game:starter:dev": "pnpm --filter @rbx/game-starter run dev",
     "game:starter:rojo": "pnpm --filter @rbx/game-starter run rojo:serve",
+    "game:obby:build": "pnpm run build:obby",
+    "game:obby:dev": "pnpm --filter @rbx/game-obby run dev",
+    "game:obby:rojo": "pnpm --filter @rbx/game-obby run rojo:serve",
     "rojo:kill": "pkill -f 'rojo serve' || true",
     "prepare": "simple-git-hooks"
   },

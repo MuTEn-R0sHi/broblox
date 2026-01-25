@@ -1,0 +1,36 @@
+/**
+ * @rbx/movement
+ *
+ * Server-authoritative movement system for Roblox games.
+ * Provides:
+ * - Server-side movement validation
+ * - Client-side prediction and reconciliation
+ * - Anomaly detection (speed hacks, teleports, flying)
+ * - Integration with @rbx/security
+ */
+
+// Types
+export type {
+  MovementConfig,
+  MovementState,
+  MovementInput,
+  MovementViolation,
+  ValidationResult,
+  MovementAbility,
+  PhysicsParams,
+  AbilityState,
+} from "./types";
+
+// Constants
+export {
+  DEFAULT_MOVEMENT_CONFIG,
+  DEFAULT_PHYSICS,
+  VALIDATION_THRESHOLDS,
+  NETWORK_CONSTANTS,
+} from "./constants";
+
+// State management
+export { PlayerMovementState, MovementStateManager } from "./state";
+
+// Validator
+export { MovementValidator, getMovementValidator } from "./validator";

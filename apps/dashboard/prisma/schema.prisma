@@ -52,6 +52,13 @@ model User {
   // Audit
   auditLogs     AuditLog[]
 
+  // Moderation relations
+  bansIssued    Ban[]     @relation("BansIssued")
+  bansRevoked   Ban[]     @relation("BansRevoked")
+  mutesIssued   Mute[]    @relation("MutesIssued")
+  evidenceUploaded Evidence[]
+  appealsResolved Appeal[]
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -95,6 +102,145 @@ model AuditLog {
   @@index([action])
 }
 
+// ============================================================================
+// Moderation System
+// ============================================================================
+
+enum BanType {
+  TEMPORARY
+  PERMANENT
+}
+
+enum BanStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+  APPEALED
+}
+
+enum MuteType {
+  CHAT
+  VOICE
+  ALL
+}
+
+model Ban {
+  id          String    @id @default(cuid())
+
+  playerId    BigInt    // Roblox UserId
+  playerName  String?   // Cached display name
+
+  type        BanType   @default(TEMPORARY)
+  status      BanStatus @default(ACTIVE)
+
+  reason      String    @db.Text
+  internalNote String?  @db.Text  // Staff-only notes
+
+  // Duration (null = permanent)
+  durationHours Int?
+  expiresAt   DateTime?
+
+  // Moderator who issued the ban
+  issuedById  String
+  issuedBy    User      @relation("BansIssued", fields: [issuedById], references: [id])
+
+  // Revocation details
+  revokedAt   DateTime?
+  revokedById String?
+  revokedBy   User?     @relation("BansRevoked", fields: [revokedById], references: [id])
+  revokeReason String?  @db.Text
+
+  // Evidence
+  evidence    Evidence[]
+
+  // Appeals
+  appeals     Appeal[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([playerId])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([issuedById])
+}
+
+model Mute {
+  id          String    @id @default(cuid())
+
+  playerId    BigInt    // Roblox UserId
+  playerName  String?   // Cached display name
+
+  type        MuteType  @default(CHAT)
+  isActive    Boolean   @default(true)
+
+  reason      String    @db.Text
+
+  // Duration
+  durationMinutes Int
+  expiresAt   DateTime
+
+  // Moderator who issued the mute
+  issuedById  String
+  issuedBy    User      @relation("MutesIssued", fields: [issuedById], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@index([playerId])
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
+model Evidence {
+  id          String    @id @default(cuid())
+
+  banId       String
+  ban         Ban       @relation(fields: [banId], references: [id], onDelete: Cascade)
+
+  type        String    // "text", "screenshot", "video", "log"
+  content     String    @db.Text  // Text content or URL
+  description String?
+
+  uploadedById String
+  uploadedBy  User      @relation(fields: [uploadedById], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@index([banId])
+}
+
+enum AppealStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+model Appeal {
+  id          String       @id @default(cuid())
+
+  banId       String
+  ban         Ban          @relation(fields: [banId], references: [id], onDelete: Cascade)
+
+  playerId    BigInt       // Roblox UserId (for verification)
+  playerName  String?
+
+  status      AppealStatus @default(PENDING)
+  reason      String       @db.Text  // Player's appeal reason
+
+  // Resolution
+  resolvedAt  DateTime?
+  resolvedById String?
+  resolvedBy  User?        @relation(fields: [resolvedById], references: [id])
+  resolution  String?      @db.Text
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([banId])
+  @@index([status])
+  @@index([playerId])
+}
+
 // Feature flags configuration
 model FeatureFlag {
   id          String   @id @default(cuid())
@@ -106,6 +252,19 @@ model FeatureFlag {
   enabledDev   Boolean @default(false)
   enabledStage Boolean @default(false)
   enabledProd  Boolean @default(false)
+
+  // Rollout configuration
+  rolloutPercentage Int      @default(100)  // 0-100
+  segments          Json?    // Array of segment IDs
+
+  // Scheduling
+  startsAt     DateTime?
+  endsAt       DateTime?
+
+  // Kill switch (overrides everything)
+  isKilled     Boolean  @default(false)
+  killedAt     DateTime?
+  killedById   String?
 
   value       Json?    // Optional JSON value for complex flags
 

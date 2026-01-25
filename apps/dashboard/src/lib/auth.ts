@@ -21,7 +21,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    async signIn({ user, profile }) {
+    async signIn({ user: _user, profile }) {
       // Optional: Restrict to specific GitHub users
       const allowedUsersEnv = process.env.ALLOWED_GITHUB_USERS?.trim();
       if (allowedUsersEnv && allowedUsersEnv.length > 0 && profile?.login) {

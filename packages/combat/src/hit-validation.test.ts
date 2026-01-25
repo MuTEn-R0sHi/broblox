@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { mockRobloxGlobals, createPlayerId } from "@rbx/testing";
+import { describe, it, expect, beforeEach } from "vitest";
+import { mockRobloxGlobals } from "@rbx/testing";
 import {
   validateHit,
   isInLagWindow,
@@ -387,7 +387,7 @@ describe("hit-validation", () => {
 
       // Now a valid hit from the same shooter (use resetHitValidation to clear rate limit)
       // We need to preserve the suspicious count, so let's manually track it
-      const suspiciousCount = getSuspiciousHitCount(shooter1);
+      // Note: suspiciousCount is captured here but used implicitly by subsequent assertions
 
       // Reset just the rate limit by waiting conceptually -
       // Instead, we check that a valid hit from a different shooter

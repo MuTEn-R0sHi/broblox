@@ -3,6 +3,14 @@ name: Promote
 on:
   workflow_dispatch:
     inputs:
+      game:
+        description: "Game to promote"
+        required: true
+        type: choice
+        options:
+          - starter
+          - obby
+        default: starter
       environment:
         description: "Target environment"
         required: true
@@ -33,10 +41,29 @@ jobs:
         with:
           ref: ${{ inputs.source_ref }}
 
+      - name: Set game variables
+        id: game
+        run: |
+          GAME="${{ inputs.game }}"
+          echo "name=$GAME" >> $GITHUB_OUTPUT
+
+          if [ "$GAME" = "starter" ]; then
+            echo "universe_id=${{ vars.STARTER_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.STARTER_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
+            echo "game_path=games/starter" >> $GITHUB_OUTPUT
+          elif [ "$GAME" = "obby" ]; then
+            echo "universe_id=${{ vars.OBBY_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.OBBY_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
+            echo "game_path=games/obby" >> $GITHUB_OUTPUT
+          fi
+
       - name: Log promotion details
         run: |
           echo "📋 Promotion Details"
           echo "==================="
+          echo "Game: ${{ inputs.game }}"
           echo "Source: ${{ inputs.source_ref }}"
           echo "Target: staging"
           echo "Reason: ${{ inputs.reason }}"
@@ -56,15 +83,15 @@ jobs:
       - name: Build packages
         run: pnpm run build:packages
 
-      - name: Build starter game
-        run: pnpm run build:starter
+      - name: Build game
+        run: ${{ steps.game.outputs.build_cmd }}
 
       - name: Setup Aftman (Rojo)
         uses: ok-nick/setup-aftman@v0.4.2
 
       - name: Build .rbxl with Rojo
         run: |
-          cd games/starter
+          cd ${{ steps.game.outputs.game_path }}
           rojo build default.project.json -o build.rbxl
 
       - name: Install rbxcloud CLI
@@ -77,10 +104,10 @@ jobs:
       - name: Publish to Staging
         env:
           ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
-          UNIVERSE_ID: ${{ vars.STAGING_UNIVERSE_ID }}
-          PLACE_ID: ${{ vars.STAGING_PLACE_ID }}
+          UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
+          PLACE_ID: ${{ steps.game.outputs.place_id }}
         run: |
-          echo "Publishing to Staging environment..."
+          echo "Publishing ${{ steps.game.outputs.name }} to Staging environment..."
           echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
           rbxcloud experience publish \
@@ -88,12 +115,13 @@ jobs:
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
             --version-type published \
-            --filename games/starter/build.rbxl
+            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
 
       - name: Create promotion record
         run: |
           echo "✅ Promotion Record"
           echo "==================="
+          echo "Game: ${{ inputs.game }}"
           echo "Source: ${{ inputs.source_ref }}"
           echo "Target: staging"
           echo "Reason: ${{ inputs.reason }}"
@@ -112,6 +140,24 @@ jobs:
           ref: ${{ inputs.source_ref }}
           fetch-tags: true
 
+      - name: Set game variables
+        id: game
+        run: |
+          GAME="${{ inputs.game }}"
+          echo "name=$GAME" >> $GITHUB_OUTPUT
+
+          if [ "$GAME" = "starter" ]; then
+            echo "universe_id=${{ vars.STARTER_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.STARTER_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
+            echo "game_path=games/starter" >> $GITHUB_OUTPUT
+          elif [ "$GAME" = "obby" ]; then
+            echo "universe_id=${{ vars.OBBY_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.OBBY_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
+            echo "game_path=games/obby" >> $GITHUB_OUTPUT
+          fi
+
       - name: Verify tag exists
         run: |
           # For production, we require a version tag
@@ -126,6 +172,7 @@ jobs:
         run: |
           echo "📋 Production Promotion Details"
           echo "==============================="
+          echo "Game: ${{ inputs.game }}"
           echo "Version: ${{ inputs.source_ref }}"
           echo "Reason: ${{ inputs.reason }}"
           echo "Requested by: ${{ github.actor }}"
@@ -144,15 +191,15 @@ jobs:
       - name: Build packages
         run: pnpm run build:packages
 
-      - name: Build starter game
-        run: pnpm run build:starter
+      - name: Build game
+        run: ${{ steps.game.outputs.build_cmd }}
 
       - name: Setup Aftman (Rojo)
         uses: ok-nick/setup-aftman@v0.4.2
 
       - name: Build .rbxl with Rojo
         run: |
-          cd games/starter
+          cd ${{ steps.game.outputs.game_path }}
           rojo build default.project.json -o build.rbxl
 
       - name: Install rbxcloud CLI
@@ -165,10 +212,10 @@ jobs:
       - name: Publish to Production
         env:
           ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
-          UNIVERSE_ID: ${{ vars.PROD_UNIVERSE_ID }}
-          PLACE_ID: ${{ vars.PROD_PLACE_ID }}
+          UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
+          PLACE_ID: ${{ steps.game.outputs.place_id }}
         run: |
-          echo "🚀 Publishing to Production environment..."
+          echo "🚀 Publishing ${{ steps.game.outputs.name }} to Production environment..."
           echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
           rbxcloud experience publish \
@@ -176,12 +223,13 @@ jobs:
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
             --version-type published \
-            --filename games/starter/build.rbxl
+            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
 
       - name: Create promotion record
         run: |
           echo "✅ Production Promotion Record"
           echo "=============================="
+          echo "Game: ${{ inputs.game }}"
           echo "Version: ${{ inputs.source_ref }}"
           echo "Reason: ${{ inputs.reason }}"
           echo "Actor: ${{ github.actor }}"
@@ -194,6 +242,7 @@ jobs:
         with:
           script: |
             const tag = '${{ inputs.source_ref }}';
+            const game = '${{ inputs.game }}';
             const releases = await github.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -205,6 +254,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 release_id: release.id,
-                body: release.body + `\n\n---\n✅ **Deployed to Production** by @${{ github.actor }} on ${new Date().toISOString()}\nReason: ${{ inputs.reason }}`
+                body: release.body + `\n\n---\n✅ **${game} Deployed to Production** by @${{ github.actor }} on ${new Date().toISOString()}\nReason: ${{ inputs.reason }}`
               });
             }

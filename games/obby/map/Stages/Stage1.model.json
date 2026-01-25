@@ -1,0 +1,178 @@
+{
+  "className": "Model",
+  "attributes": {
+    "StageNumber": 1
+  },
+  "children": [
+    {
+      "name": "StartPlatform",
+      "className": "Part",
+      "attributes": {
+        "StageNumber": 1
+      },
+      "properties": {
+        "Anchored": true,
+        "Size": [20, 2, 20],
+        "Position": [0, 0, 0],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Platform1",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "Size": [8, 2, 8],
+        "Position": [0, 1, 18],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Platform2",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "Size": [7, 2, 7],
+        "Position": [8, 3, 30],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Platform3",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "Size": [7, 2, 7],
+        "Position": [0, 5, 42],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Platform4",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "Size": [6, 2, 6],
+        "Position": [-8, 7, 54],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Platform5",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "Size": [6, 2, 6],
+        "Position": [0, 9, 66],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Platform6",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "Size": [6, 2, 6],
+        "Position": [8, 11, 78],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "EndPlatform",
+      "className": "Part",
+      "attributes": {
+        "StageNumber": 1
+      },
+      "properties": {
+        "Anchored": true,
+        "Size": [20, 2, 20],
+        "Position": [0, 13, 95],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "KillZone",
+      "className": "Part",
+      "attributes": {
+        "KillZone": true
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Size": [200, 1, 200],
+        "Position": [0, -20, 50],
+        "Material": "Neon",
+        "Transparency": 0.3
+      }
+    },
+    {
+      "name": "Coin1",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 5
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [0, 4, 18],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin2",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 5
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [8, 6, 30],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin3",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 10
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [-8, 10, 54],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin4",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 15
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [3, 3, 3],
+        "Position": [0, 16, 95],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    }
+  ]
+}

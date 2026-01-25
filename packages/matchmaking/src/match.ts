@@ -13,7 +13,7 @@
  */
 
 import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@rbx/shared-types";
-import type { Match, MatchStatus, MatchConfig, GameMode, Team } from "./types";
+import type { Match, MatchStatus, GameMode, Team } from "./types";
 
 // ============================================================================
 // Match State

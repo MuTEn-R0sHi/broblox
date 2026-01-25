@@ -1,0 +1,115 @@
+{
+  "name": "obby",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "shared": {
+        "$path": "out/shared"
+      },
+      "include": {
+        "$path": "include",
+        "node_modules": {
+          "$className": "Folder",
+          "@rbxts": {
+            "$path": "node_modules/@rbxts"
+          },
+          "@rbx": {
+            "$className": "Folder",
+            "shared-types": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/shared-types/out"
+              }
+            },
+            "constants": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/constants/out"
+              }
+            },
+            "core": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/core/out"
+              }
+            },
+            "config-featureflags": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/config-featureflags/out"
+              }
+            },
+            "net": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/net/out"
+              }
+            },
+            "data": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/data/out"
+              }
+            },
+            "input": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/input/out"
+              }
+            },
+            "observability": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/observability/out"
+              }
+            },
+            "moderation": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/moderation/out"
+              }
+            },
+            "movement": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/movement/out"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "server": {
+        "$path": "out/server"
+      }
+    },
+
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "client": {
+          "$path": "out/client"
+        }
+      }
+    },
+
+    "Workspace": {
+      "$className": "Workspace",
+      "Stages": {
+        "$path": "map/Stages"
+      },
+      "Checkpoints": {
+        "$path": "map/Checkpoints"
+      },
+      "Spawn": {
+        "$path": "map/Spawn.model.json"
+      }
+    }
+  }
+}

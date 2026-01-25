@@ -12,7 +12,6 @@
  */
 
 import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@rbx/shared-types";
-import type { Match } from "./types";
 
 // ============================================================================
 // Types

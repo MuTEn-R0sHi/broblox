@@ -3,7 +3,7 @@
  * Provides timeout, retry, and error handling for RemoteFunction calls.
  */
 
-import { ErrorCode, Result, ok, err, isRetryableError } from "@rbx/shared-types";
+import { ErrorCode, Result, err, isRetryableError } from "@rbx/shared-types";
 import { REMOTE_INVOKE_TIMEOUT_MS } from "@rbx/constants";
 
 // ============================================================================

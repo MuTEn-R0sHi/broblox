@@ -4,9 +4,18 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      game:
+        description: "Game to publish"
+        required: true
+        type: choice
+        options:
+          - starter
+          - obby
+        default: starter
 
 concurrency:
-  group: publish-dev
+  group: publish-dev-${{ inputs.game || 'starter' }}
   cancel-in-progress: true
 
 jobs:
@@ -15,6 +24,24 @@ jobs:
     environment: dev
     steps:
       - uses: actions/checkout@v6
+
+      - name: Set game variables
+        id: game
+        run: |
+          GAME="${{ inputs.game || 'starter' }}"
+          echo "name=$GAME" >> $GITHUB_OUTPUT
+
+          if [ "$GAME" = "starter" ]; then
+            echo "universe_id=${{ vars.STARTER_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.STARTER_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
+            echo "game_path=games/starter" >> $GITHUB_OUTPUT
+          elif [ "$GAME" = "obby" ]; then
+            echo "universe_id=${{ vars.OBBY_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.OBBY_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
+            echo "game_path=games/obby" >> $GITHUB_OUTPUT
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,15 +57,15 @@ jobs:
       - name: Build packages
         run: pnpm run build:packages
 
-      - name: Build starter game
-        run: pnpm run build:starter
+      - name: Build game
+        run: ${{ steps.game.outputs.build_cmd }}
 
       - name: Setup Aftman (Rojo)
         uses: ok-nick/setup-aftman@v0.4.2
 
       - name: Build .rbxl with Rojo
         run: |
-          cd games/starter
+          cd ${{ steps.game.outputs.game_path }}
           rojo build default.project.json -o build.rbxl
 
       - name: Install rbxcloud CLI
@@ -51,10 +78,10 @@ jobs:
       - name: Publish to Dev
         env:
           ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
-          UNIVERSE_ID: ${{ vars.DEV_UNIVERSE_ID }}
-          PLACE_ID: ${{ vars.DEV_PLACE_ID }}
+          UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
+          PLACE_ID: ${{ steps.game.outputs.place_id }}
         run: |
-          echo "Publishing to Dev environment..."
+          echo "Publishing ${{ steps.game.outputs.name }} to Dev environment..."
           echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
           rbxcloud experience publish \
@@ -62,12 +89,12 @@ jobs:
             --universe-id "$UNIVERSE_ID" \
             --place-id "$PLACE_ID" \
             --version-type published \
-            --filename games/starter/build.rbxl
+            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
 
       - name: Post publish notification
         if: success()
         run: |
-          echo "✅ Published to Dev"
+          echo "✅ Published ${{ steps.game.outputs.name }} to Dev"
           echo "Commit: ${{ github.sha }}"
           echo "Actor: ${{ github.actor }}"
           echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"

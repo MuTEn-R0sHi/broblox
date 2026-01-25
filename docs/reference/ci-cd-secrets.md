@@ -83,12 +83,29 @@ For each environment, add the following:
 
 #### Variables (visible)
 
-| Name                                                           | Description                     |
-| -------------------------------------------------------------- | ------------------------------- |
-| `DEV_UNIVERSE_ID` / `STAGING_UNIVERSE_ID` / `PROD_UNIVERSE_ID` | Universe ID for the environment |
-| `DEV_PLACE_ID` / `STAGING_PLACE_ID` / `PROD_PLACE_ID`          | Place ID for the environment    |
+The workflows support multiple games (starter, obby, etc.). Each game needs its own set of environment variables:
 
-> **Note**: Use repository-level variables with environment-specific prefixes (DEV*, STAGING*, PROD\_) so workflows can reference them based on the target environment.
+**Starter Game:**
+| Name | Description |
+| ---------------------------- | ------------------------------ |
+| `STARTER_DEV_UNIVERSE_ID` | Universe ID for dev |
+| `STARTER_DEV_PLACE_ID` | Place ID for dev |
+| `STARTER_STAGING_UNIVERSE_ID`| Universe ID for staging |
+| `STARTER_STAGING_PLACE_ID` | Place ID for staging |
+| `STARTER_PROD_UNIVERSE_ID` | Universe ID for production |
+| `STARTER_PROD_PLACE_ID` | Place ID for production |
+
+**Obby Game:**
+| Name | Description |
+| ------------------------- | ------------------------------ |
+| `OBBY_DEV_UNIVERSE_ID` | Universe ID for dev |
+| `OBBY_DEV_PLACE_ID` | Place ID for dev |
+| `OBBY_STAGING_UNIVERSE_ID`| Universe ID for staging |
+| `OBBY_STAGING_PLACE_ID` | Place ID for staging |
+| `OBBY_PROD_UNIVERSE_ID` | Universe ID for production |
+| `OBBY_PROD_PLACE_ID` | Place ID for production |
+
+> **Note**: Use repository-level variables with game-specific prefixes (STARTER*\*, OBBY*\*) so workflows can reference them based on the selected game.
 
 ## Step 4: Verify Setup
 

@@ -13,7 +13,7 @@
  * @note Uses roblox-ts compatible patterns for Luau compilation.
  */
 
-import { Result, ok, err, ErrorCode, PlayerId } from "@rbx/shared-types";
+import { Result, ok, PlayerId } from "@rbx/shared-types";
 import type {
   HitIntent,
   HitValidationResult,
@@ -126,7 +126,7 @@ function subtract(a: Vector3Like, b: Vector3Like): Vector3Like {
 /**
  * Check if a value is within a range.
  */
-function inRange(value: number, min: number, max: number): boolean {
+function _inRange(value: number, min: number, max: number): boolean {
   return value >= min && value <= max;
 }
 

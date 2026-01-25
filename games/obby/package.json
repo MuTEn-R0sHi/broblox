@@ -1,0 +1,35 @@
+{
+  "name": "@rbx/game-obby",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Obby (obstacle course) game template using rbx-game-platform",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude",
+    "build": "rbxtsc -p tsconfig.roblox.json --type game",
+    "dev": "rbxtsc -p tsconfig.roblox.json -w --type game",
+    "rojo:serve": "rojo serve default.project.json",
+    "rojo:build": "rojo build default.project.json -o build.rbxl",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rbx/config-featureflags": "workspace:*",
+    "@rbx/constants": "workspace:*",
+    "@rbx/core": "workspace:*",
+    "@rbx/data": "workspace:*",
+    "@rbx/input": "workspace:*",
+    "@rbx/moderation": "workspace:*",
+    "@rbx/movement": "workspace:*",
+    "@rbx/net": "workspace:*",
+    "@rbx/observability": "workspace:*",
+    "@rbx/shared-types": "workspace:*",
+    "@rbxts/t": "^3.2.1"
+  },
+  "devDependencies": {
+    "@rbx/testing": "workspace:*",
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/services": "^1.6.0",
+    "@rbxts/types": "^1.0.903",
+    "roblox-ts": "^3.0.0"
+  }
+}

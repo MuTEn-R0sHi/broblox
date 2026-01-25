@@ -2,9 +2,17 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { toggleFlagEnvironment, deleteFlag, updateFlag, type FeatureFlag } from "./actions";
+import { Trash2, Zap, ZapOff, Settings } from "lucide-react";
+import {
+  toggleFlagEnvironment,
+  deleteFlag,
+  updateFlag,
+  killFlag,
+  unkillFlag,
+  type FeatureFlag,
+} from "./actions";
 
 function EnvironmentToggle({
   flag,
@@ -136,6 +144,7 @@ export function FlagCard({ flag }: { flag: FeatureFlag }) {
           <EnvironmentToggle flag={flag} environment="dev" label="Dev" />
           <EnvironmentToggle flag={flag} environment="stage" label="Stage" />
           <EnvironmentToggle flag={flag} environment="prod" label="Prod" />
+          <KillSwitchButton flag={flag} />
           <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
             Edit
           </Button>
@@ -150,11 +159,87 @@ export function FlagCard({ flag }: { flag: FeatureFlag }) {
           </Button>
         </div>
       </CardHeader>
+
+      {/* Kill switch indicator */}
+      {flag.isKilled && (
+        <CardContent className="pt-0 pb-2">
+          <Badge variant="destructive" className="gap-1">
+            <ZapOff className="h-3 w-3" />
+            KILLED
+          </Badge>
+        </CardContent>
+      )}
+
       {flag.description && (
         <CardContent className="pt-0 pb-4">
           <p className="text-sm text-muted-foreground">{flag.description}</p>
         </CardContent>
       )}
+
+      {/* Rollout info */}
+      {(flag.rolloutPercentage < 100 || flag.segments?.length) && (
+        <CardContent className="pt-0 pb-4">
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            {flag.rolloutPercentage < 100 && (
+              <span className="flex items-center gap-1">
+                <Settings className="h-3 w-3" />
+                {flag.rolloutPercentage}% rollout
+              </span>
+            )}
+            {flag.segments && flag.segments.length > 0 && (
+              <span>Segments: {flag.segments.join(", ")}</span>
+            )}
+          </div>
+        </CardContent>
+      )}
     </Card>
+  );
+}
+
+function KillSwitchButton({ flag }: { flag: FeatureFlag }) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleKill() {
+    if (flag.isKilled) {
+      if (!confirm("Re-enable this flag?")) return;
+    } else {
+      if (!confirm("KILL this flag immediately? This will disable it across ALL environments."))
+        return;
+    }
+
+    setLoading(true);
+    try {
+      if (flag.isKilled) {
+        await unkillFlag(flag.id);
+      } else {
+        await killFlag(flag.id);
+      }
+    } catch (err) {
+      console.error("Failed to toggle kill switch:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Button
+      variant={flag.isKilled ? "outline" : "destructive"}
+      size="sm"
+      onClick={handleKill}
+      disabled={loading}
+      className="gap-1"
+    >
+      {flag.isKilled ? (
+        <>
+          <Zap className="h-4 w-4" />
+          Revive
+        </>
+      ) : (
+        <>
+          <ZapOff className="h-4 w-4" />
+          Kill
+        </>
+      )}
+    </Button>
   );
 }

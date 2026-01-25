@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "strict": true,
+
+    "noLib": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "types": ["types", "compiler-types"],
+
+    "rootDir": "src",
+    "outDir": "out",
+
+    "baseUrl": "src",
+    "paths": {
+      "shared/*": ["shared/*"]
+    }
+  },
+  "rbxts": {
+    "includePath": "include",
+    "rojo": "default.project.json"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules/@rbx/*/src/**", "**/*.test.ts", "**/__tests__/**"]
+}

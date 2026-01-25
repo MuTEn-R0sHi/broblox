@@ -35,8 +35,6 @@ import {
   resetServerAllocation,
   // Types
   type ITeleportService,
-  type ReservedServer,
-  type TeleportRequest,
   type ServerAllocatedEvent,
   type TeleportInitiatedEvent,
   type TeleportFailureEvent,
@@ -53,7 +51,7 @@ function createMockTeleportService(options?: {
 }): ITeleportService {
   let accessCodeCounter = 0;
   return {
-    reserveServer: (placeId: number): Result<string> => {
+    reserveServer: (_placeId: number): Result<string> => {
       if (options?.reserveServerFails) {
         return err(ErrorCode.ServiceUnavailable, { message: "Reserve server failed" });
       }
@@ -61,10 +59,10 @@ function createMockTeleportService(options?: {
       return ok(options?.accessCode ?? `access-code-${accessCodeCounter}`);
     },
     teleportToPrivateServer: (
-      placeId: number,
-      accessCode: string,
-      players: PlayerId[],
-      teleportData?: Record<string, unknown>
+      _placeId: number,
+      _accessCode: string,
+      _players: PlayerId[],
+      _teleportData?: Record<string, unknown>
     ): Result<void> => {
       if (options?.teleportFails) {
         return err(ErrorCode.ServiceUnavailable, { message: "Teleport failed" });

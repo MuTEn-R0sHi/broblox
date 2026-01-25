@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { auditFlagDelete, auditFlagKill } from "@/lib/audit";
 import type { Role } from "@prisma/client";
 
 export type FeatureFlag = {
@@ -13,6 +14,15 @@ export type FeatureFlag = {
   enabledDev: boolean;
   enabledStage: boolean;
   enabledProd: boolean;
+  // Rollout fields
+  rolloutPercentage: number;
+  segments: string[] | null;
+  startsAt: Date | null;
+  endsAt: Date | null;
+  // Kill switch
+  isKilled: boolean;
+  killedAt: Date | null;
+  killedById: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -23,6 +33,8 @@ const PROD_ROLES: Role[] = ["ADMIN", "ENGINEER"];
 const STAGE_ROLES: Role[] = ["ADMIN", "ENGINEER", "MODERATOR"];
 // Roles that can modify dev (everyone authenticated)
 const DEV_ROLES: Role[] = ["ADMIN", "ENGINEER", "MODERATOR", "SUPPORT", "VIEWER"];
+// Roles that can use kill switch
+const KILL_ROLES: Role[] = ["ADMIN", "ENGINEER"];
 
 async function getSessionWithRole() {
   const session = await auth();
@@ -48,6 +60,10 @@ function canModifyEnvironment(role: Role, environment: "dev" | "stage" | "prod")
   }
 }
 
+function canKillFlag(role: Role): boolean {
+  return KILL_ROLES.includes(role);
+}
+
 async function logAudit(
   userId: string,
   action: string,
@@ -70,9 +86,14 @@ export async function getFlags(): Promise<FeatureFlag[]> {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");
 
-  return prisma.featureFlag.findMany({
+  const flags = await prisma.featureFlag.findMany({
     orderBy: { name: "asc" },
   });
+
+  return flags.map((f) => ({
+    ...f,
+    segments: f.segments as string[] | null,
+  }));
 }
 
 export async function createFlag(data: {
@@ -179,7 +200,101 @@ export async function deleteFlag(id: string): Promise<void> {
 
   await prisma.featureFlag.delete({ where: { id } });
 
-  await logAudit(user.id, "flag.delete", flag?.key ?? id, flag, null);
+  await auditFlagDelete(user.id, flag?.key ?? id, flag);
 
   revalidatePath("/dashboard/flags");
+}
+
+/**
+ * Kill switch - immediately disable a flag across all environments
+ */
+export async function killFlag(id: string): Promise<FeatureFlag> {
+  const { user } = await getSessionWithRole();
+
+  if (!canKillFlag(user.role)) {
+    throw new Error("Insufficient permissions to use kill switch");
+  }
+
+  const flag = await prisma.featureFlag.update({
+    where: { id },
+    data: {
+      isKilled: true,
+      killedAt: new Date(),
+      killedById: user.id,
+    },
+  });
+
+  await auditFlagKill(user.id, flag.key, true);
+
+  revalidatePath("/dashboard/flags");
+  return { ...flag, segments: flag.segments as string[] | null };
+}
+
+/**
+ * Un-kill a flag (re-enable normal operation)
+ */
+export async function unkillFlag(id: string): Promise<FeatureFlag> {
+  const { user } = await getSessionWithRole();
+
+  if (!canKillFlag(user.role)) {
+    throw new Error("Insufficient permissions to un-kill flag");
+  }
+
+  const flag = await prisma.featureFlag.update({
+    where: { id },
+    data: {
+      isKilled: false,
+      killedAt: null,
+      killedById: null,
+    },
+  });
+
+  await auditFlagKill(user.id, flag.key, false);
+
+  revalidatePath("/dashboard/flags");
+  return { ...flag, segments: flag.segments as string[] | null };
+}
+
+/**
+ * Update rollout configuration
+ */
+export async function updateRollout(
+  id: string,
+  data: {
+    rolloutPercentage?: number;
+    segments?: string[];
+    startsAt?: Date | null;
+    endsAt?: Date | null;
+  }
+): Promise<FeatureFlag> {
+  const { user } = await getSessionWithRole();
+
+  // Only admins and engineers can modify rollout
+  if (!PROD_ROLES.includes(user.role)) {
+    throw new Error("Insufficient permissions to modify rollout configuration");
+  }
+
+  // Validate percentage
+  if (data.rolloutPercentage !== undefined) {
+    if (data.rolloutPercentage < 0 || data.rolloutPercentage > 100) {
+      throw new Error("Rollout percentage must be between 0 and 100");
+    }
+  }
+
+  const before = await prisma.featureFlag.findUnique({ where: { id } });
+
+  const flag = await prisma.featureFlag.update({
+    where: { id },
+    data: {
+      rolloutPercentage: data.rolloutPercentage,
+      segments: data.segments,
+      startsAt: data.startsAt,
+      endsAt: data.endsAt,
+    },
+  });
+
+  await logAudit(user.id, "flag.rollout.update", flag.key, before, flag);
+
+  revalidatePath("/dashboard/flags");
+  return { ...flag, segments: flag.segments as string[] | null };
 }
