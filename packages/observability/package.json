@@ -31,7 +31,7 @@
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.849",
     "roblox-ts": "^3.0.0",
-    "typescript": "5.8.3",
+    "typescript": "5.9.3",
     "vitest": "^4.0.17"
   },
   "dependencies": {
