@@ -23,9 +23,13 @@ export async function GET(
     return NextResponse.json({ error: "Invalid environment" }, { status: 400 });
   }
 
-  // Check API key (optional - remove if you want public access)
+  // Check API key (required)
+  if (!API_KEY) {
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
+
   const apiKey = request.headers.get("x-api-key");
-  if (API_KEY && apiKey !== API_KEY) {
+  if (!apiKey || apiKey !== API_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

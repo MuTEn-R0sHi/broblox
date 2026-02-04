@@ -50,6 +50,9 @@ AUTH_SECRET="$(openssl rand -base64 32)"
 GITHUB_ID="your-oauth-app-client-id"
 GITHUB_SECRET="your-oauth-app-client-secret"
 
+# Required: API key for game servers fetching feature flags from the dashboard
+FLAGS_API_KEY="change-me"
+
 # Optional: restrict logins to specific GitHub usernames (comma-separated)
 # ALLOWED_GITHUB_USERS="your-github-handle,teammate-handle"
 
