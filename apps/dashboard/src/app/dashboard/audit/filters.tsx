@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 
@@ -60,6 +60,15 @@ export function AuditFilters({ users }: AuditFiltersProps) {
 
   const hasFilters = currentAction || currentTarget || currentUser;
 
+  function exportHref(format: "csv" | "json") {
+    const params = new URLSearchParams();
+    if (currentAction) params.set("action", currentAction);
+    if (currentTarget) params.set("target", currentTarget);
+    if (currentUser) params.set("user", currentUser);
+    params.set("format", format);
+    return `/api/audit/export?${params.toString()}`;
+  }
+
   return (
     <div className="flex items-center gap-4 flex-wrap">
       <Select
@@ -108,6 +117,13 @@ export function AuditFilters({ users }: AuditFiltersProps) {
           Clear filters
         </Button>
       )}
+
+      <a href={exportHref("csv")} className={buttonVariants({ variant: "outline", size: "sm" })}>
+        Export CSV
+      </a>
+      <a href={exportHref("json")} className={buttonVariants({ variant: "outline", size: "sm" })}>
+        Export JSON
+      </a>
     </div>
   );
 }

@@ -173,6 +173,10 @@ Filters:
 - **Target contains**: Substring match over the `target` field (useful for player IDs, flag names, or record IDs)
 - **User**: Filter to actions performed by a specific operator
 
+Exports:
+
+- Use **Export CSV** / **Export JSON** to download the currently filtered view.
+
 ## Security Considerations
 
 1. **Server-side only**: All permission checks happen on the server
