@@ -12,20 +12,24 @@ function csvEscape(value: unknown): string {
 function buildWhere(params: URLSearchParams): {
   action?: { startsWith: string };
   target?: { contains: string };
+  reason?: { contains: string };
   userId?: string;
 } {
   const where: {
     action?: { startsWith: string };
     target?: { contains: string };
+    reason?: { contains: string };
     userId?: string;
   } = {};
 
   const action = params.get("action");
   const target = params.get("target");
+  const reason = params.get("reason");
   const user = params.get("user");
 
   if (action) where.action = { startsWith: action };
   if (target) where.target = { contains: target };
+  if (reason) where.reason = { contains: reason };
   if (user) where.userId = user;
 
   return where;

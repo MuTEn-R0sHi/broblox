@@ -8,6 +8,7 @@ import { AuditFilters } from "./filters";
 interface SearchParams {
   action?: string;
   target?: string;
+  reason?: string;
   user?: string;
   page?: string;
 }
@@ -19,6 +20,7 @@ async function getAuditLogs(params: SearchParams) {
   const where: {
     action?: { startsWith: string } | { contains: string };
     target?: { contains: string };
+    reason?: { contains: string };
     userId?: string;
   } = {};
 
@@ -28,6 +30,9 @@ async function getAuditLogs(params: SearchParams) {
   }
   if (params.target) {
     where.target = { contains: params.target };
+  }
+  if (params.reason) {
+    where.reason = { contains: params.reason };
   }
   if (params.user) {
     where.userId = params.user;
@@ -105,7 +110,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">No audit logs found.</p>
             <p className="text-sm text-muted-foreground mt-1">
-              {params.action || params.target || params.user
+              {params.action || params.target || params.reason || params.user
                 ? "Try adjusting your filters."
                 : "Actions will appear here as users make changes."}
             </p>
@@ -181,7 +186,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                 <div className="flex gap-2">
                   {page > 1 && (
                     <a
-                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.user ? `&user=${params.user}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Previous
@@ -189,7 +194,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                   )}
                   {page < totalPages && (
                     <a
-                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.user ? `&user=${params.user}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Next
