@@ -155,12 +155,22 @@ export async function auditBanRevoke(
 export async function auditAppealResolve(
   userId: string,
   appealId: string,
-  status: "APPROVED" | "DENIED"
+  status: "APPROVED" | "DENIED",
+  resolution?: string
 ): Promise<void> {
+  const normalizedResolution = resolution?.trim();
+  const resolutionSummary = normalizedResolution
+    ? normalizedResolution.length > 180
+      ? `${normalizedResolution.slice(0, 177)}...`
+      : normalizedResolution
+    : undefined;
+
   await audit({
     userId,
     action: `appeal.${status.toLowerCase()}`,
     target: appealId,
+    after: normalizedResolution ? { resolution: normalizedResolution } : undefined,
+    reason: resolutionSummary,
   });
 }
 

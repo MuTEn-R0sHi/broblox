@@ -60,7 +60,7 @@ export async function resolveAppeal(
     await auditBanRevoke(auth.user.id, appeal.ban.playerId, banId, revokeReason);
   }
 
-  await auditAppealResolve(auth.user.id, appealId, status);
+  await auditAppealResolve(auth.user.id, appealId, status, normalizedResolution);
 
   return { success: true };
 }
