@@ -167,6 +167,12 @@ All authenticated users can view audit logs at `/dashboard/audit`:
 - Before/after state comparison
 - Relative timestamps
 
+Filters:
+
+- **Action**: Filter by action category (e.g., `flag.*`, `ban.*`, `mute.*`, `evidence.*`, `auth.*`)
+- **Target contains**: Substring match over the `target` field (useful for player IDs, flag names, or record IDs)
+- **User**: Filter to actions performed by a specific operator
+
 ## Security Considerations
 
 1. **Server-side only**: All permission checks happen on the server
