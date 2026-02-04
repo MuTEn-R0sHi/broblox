@@ -150,6 +150,12 @@ Every privileged action is recorded with:
 | `flag.toggle.dev`   | Dev environment toggled        |
 | `flag.toggle.stage` | Stage environment toggled      |
 | `flag.toggle.prod`  | Production environment toggled |
+| `mute.create`       | New mute issued                |
+| `mute.revoke`       | Mute revoked/deactivated       |
+| `ban.create`        | New ban issued                 |
+| `ban.revoke`        | Ban revoked                    |
+| `appeal.approved`   | Appeal approved                |
+| `appeal.denied`     | Appeal denied                  |
 
 ### Viewing Audit Logs
 

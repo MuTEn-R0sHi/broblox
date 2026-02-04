@@ -74,12 +74,17 @@ export default async function ModerationPage() {
           <h1 className="text-3xl font-bold tracking-tight">Moderation</h1>
           <p className="text-muted-foreground">Manage player bans, mutes, and appeals</p>
         </div>
-        <Link href="/dashboard/moderation/bans/new">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            New Ban
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/moderation/bans/new">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Ban
+            </Button>
+          </Link>
+          <Link href="/dashboard/moderation/mutes/new">
+            <Button variant="outline">New Mute</Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -119,6 +124,14 @@ export default async function ModerationPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.recentMutes}</div>
+            {stats.recentMutes > 0 && (
+              <Link
+                href="/dashboard/moderation/mutes"
+                className="text-xs text-muted-foreground hover:underline"
+              >
+                View mutes →
+              </Link>
+            )}
           </CardContent>
         </Card>
       </div>

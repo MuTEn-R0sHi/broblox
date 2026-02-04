@@ -182,6 +182,23 @@ export async function auditMuteCreate(
 }
 
 /**
+ * Audit a mute revocation/deactivation.
+ */
+export async function auditMuteRevoke(
+  userId: string,
+  playerId: bigint,
+  muteId: string,
+  reason: string
+): Promise<void> {
+  await audit({
+    userId,
+    action: "mute.revoke",
+    target: `${playerId}/${muteId}`,
+    reason,
+  });
+}
+
+/**
  * Audit a role change.
  */
 export async function auditRoleChange(
