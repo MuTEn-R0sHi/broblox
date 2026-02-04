@@ -165,6 +165,28 @@ export async function auditAppealResolve(
 }
 
 /**
+ * Audit evidence creation.
+ *
+ * Intentionally avoids duplicating evidence `content` into audit logs.
+ */
+export async function auditEvidenceCreate(
+  userId: string,
+  banId: string,
+  evidence: { type: string; description?: string | null; contentLength: number }
+): Promise<void> {
+  await audit({
+    userId,
+    action: "evidence.create",
+    target: banId,
+    after: {
+      type: evidence.type,
+      hasDescription: Boolean(evidence.description && evidence.description.trim().length > 0),
+      contentLength: evidence.contentLength,
+    },
+  });
+}
+
+/**
  * Audit a mute creation.
  */
 export async function auditMuteCreate(

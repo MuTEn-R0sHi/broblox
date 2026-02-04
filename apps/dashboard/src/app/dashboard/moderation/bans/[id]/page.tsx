@@ -8,6 +8,8 @@ import { formatDistanceToNow, format } from "date-fns";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Shield, FileText } from "lucide-react";
 import { RevokeBanButton } from "./revoke-button";
+import { EvidenceForm } from "./evidence-form";
+import { hasPermission } from "@/lib/rbac";
 
 async function getBan(id: string) {
   return prisma.ban.findUnique({
@@ -47,7 +49,7 @@ function getBanStatusColor(status: string): "destructive" | "secondary" | "warni
 }
 
 export default async function BanDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await requirePermission("moderation:view");
+  const { user: actor } = await requirePermission("moderation:view");
 
   const { id } = await params;
   const ban = await getBan(id);
@@ -57,6 +59,7 @@ export default async function BanDetailPage({ params }: { params: Promise<{ id: 
   }
 
   const isExpired = ban.expiresAt && ban.expiresAt < new Date();
+  const canEdit = hasPermission(actor.role, "moderation:ban");
 
   return (
     <div className="space-y-8">
@@ -184,10 +187,13 @@ export default async function BanDetailPage({ params }: { params: Promise<{ id: 
       {/* Evidence */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Evidence ({ban.evidence.length})
-          </CardTitle>
+          <div className="flex items-center justify-between gap-4">
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Evidence ({ban.evidence.length})
+            </CardTitle>
+            {canEdit ? <EvidenceForm banId={ban.id} /> : null}
+          </div>
         </CardHeader>
         <CardContent>
           {ban.evidence.length === 0 ? (
