@@ -36,6 +36,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const allowedUsers = allowedUsersEnv.split(",").map((u) => u.trim());
         return allowedUsers.includes(profile.login as string);
       }
+
+      // Optional: Bootstrap admin role via env var (comma-separated GitHub usernames).
+      // This avoids getting stuck with a default VIEWER user and no way to grant roles.
+      const adminUsersEnv = process.env.ADMIN_GITHUB_USERS?.trim();
+      if (adminUsersEnv && adminUsersEnv.length > 0 && profile?.login && _user.id) {
+        const adminUsers = adminUsersEnv.split(",").map((u) => u.trim());
+        if (adminUsers.includes(profile.login as string)) {
+          try {
+            await prisma.user.update({
+              where: { id: _user.id },
+              data: { role: "ADMIN" },
+            });
+          } catch (error) {
+            console.error("Failed to bootstrap ADMIN role for user", _user.id, error);
+          }
+        }
+      }
       return true;
     },
   },
