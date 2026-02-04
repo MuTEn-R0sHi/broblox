@@ -23,7 +23,7 @@
     "@rbxts/types": "^1.0.841",
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@rbx/core": "workspace:*",
