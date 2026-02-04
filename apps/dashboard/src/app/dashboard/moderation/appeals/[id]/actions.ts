@@ -15,7 +15,8 @@ export async function resolveAppeal(
     return { error: "Unauthorized" };
   }
 
-  if (!resolution || resolution.length < 5) {
+  const normalizedResolution = resolution?.trim();
+  if (!normalizedResolution || normalizedResolution.length < 5) {
     return { error: "Resolution must be at least 5 characters" };
   }
 
@@ -37,7 +38,7 @@ export async function resolveAppeal(
     where: { id: appealId },
     data: {
       status,
-      resolution,
+      resolution: normalizedResolution,
       resolvedAt: new Date(),
       resolvedById: auth.user.id,
     },
@@ -45,22 +46,18 @@ export async function resolveAppeal(
 
   // If approved, revoke the ban
   if (status === "APPROVED") {
+    const revokeReason = `Appeal approved: ${normalizedResolution}`;
     await prisma.ban.update({
       where: { id: banId },
       data: {
         status: "APPEALED",
         revokedAt: new Date(),
         revokedById: auth.user.id,
-        revokeReason: `Appeal approved: ${resolution}`,
+        revokeReason,
       },
     });
 
-    await auditBanRevoke(
-      auth.user.id,
-      appeal.ban.playerId,
-      banId,
-      `Appeal approved: ${resolution}`
-    );
+    await auditBanRevoke(auth.user.id, appeal.ban.playerId, banId, revokeReason);
   }
 
   await auditAppealResolve(auth.user.id, appealId, status);

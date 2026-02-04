@@ -17,8 +17,9 @@ export function ResolveAppealForm({ appealId, banId }: ResolveAppealFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   async function handleResolve(status: "APPROVED" | "DENIED") {
-    if (!resolution.trim()) {
-      setError("Please provide a resolution message");
+    const normalizedResolution = resolution.trim();
+    if (normalizedResolution.length < 5) {
+      setError("Resolution must be at least 5 characters");
       return;
     }
 
@@ -26,7 +27,7 @@ export function ResolveAppealForm({ appealId, banId }: ResolveAppealFormProps) {
     setError(null);
 
     try {
-      const result = await resolveAppeal(appealId, banId, status, resolution);
+      const result = await resolveAppeal(appealId, banId, status, normalizedResolution);
       if (result.error) {
         setError(result.error);
       } else {
@@ -54,7 +55,7 @@ export function ResolveAppealForm({ appealId, banId }: ResolveAppealFormProps) {
           value={resolution}
           onChange={(e) => setResolution(e.target.value)}
           placeholder="Explain your decision..."
-          className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex min-h-25 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
 
