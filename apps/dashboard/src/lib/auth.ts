@@ -14,7 +14,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   events: {
     async signIn({ user }) {
-      await auditLogin(user.id);
+      if (user.id) {
+        await auditLogin(user.id);
+      }
     },
   },
   callbacks: {
