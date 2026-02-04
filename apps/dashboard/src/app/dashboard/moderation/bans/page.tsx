@@ -10,7 +10,12 @@ import { BanFilters } from "./filters";
 
 interface SearchParams {
   status?: string;
+  /** Legacy combined search (player name/id + reason). Prefer `target`/`reason`. */
   search?: string;
+  /** Player identifier filters */
+  target?: string;
+  /** Reason text filter */
+  reason?: string;
   page?: string;
 }
 
@@ -20,10 +25,10 @@ async function getBans(params: SearchParams) {
 
   const where: {
     status?: "ACTIVE" | "EXPIRED" | "REVOKED" | "APPEALED";
+    reason?: { contains: string };
     OR?: Array<{
       playerName?: { contains: string };
       playerId?: bigint;
-      reason?: { contains: string };
     }>;
   } = {};
 
@@ -31,15 +36,29 @@ async function getBans(params: SearchParams) {
     where.status = params.status as "ACTIVE" | "EXPIRED" | "REVOKED" | "APPEALED";
   }
 
-  if (params.search) {
-    const searchNum = BigInt(params.search).valueOf?.() || null;
-    where.OR = [
-      { playerName: { contains: params.search } },
-      { reason: { contains: params.search } },
-    ];
-    if (searchNum) {
-      where.OR.push({ playerId: searchNum });
+  const targetQuery = (params.target ?? "").trim();
+  const reasonQuery = (params.reason ?? "").trim();
+  const legacySearch = (params.search ?? "").trim();
+
+  const effectiveTarget = targetQuery || (!reasonQuery ? legacySearch : "");
+  const effectiveReason = reasonQuery || (!targetQuery ? legacySearch : "");
+
+  if (effectiveTarget) {
+    let targetId: bigint | null = null;
+    try {
+      if (/^\d+$/.test(effectiveTarget)) {
+        targetId = BigInt(effectiveTarget);
+      }
+    } catch {
+      targetId = null;
     }
+
+    where.OR = [{ playerName: { contains: effectiveTarget } }];
+    if (targetId) where.OR.push({ playerId: targetId });
+  }
+
+  if (effectiveReason) {
+    where.reason = { contains: effectiveReason };
   }
 
   const [bans, total] = await Promise.all([
@@ -80,6 +99,16 @@ export default async function BansPage({ searchParams }: { searchParams: Promise
   const params = await searchParams;
   const { bans, total, page, perPage } = await getBans(params);
   const totalPages = Math.ceil(total / perPage);
+
+  function pageHref(nextPage: number) {
+    const query = new URLSearchParams();
+    query.set("page", String(nextPage));
+    if (params.status) query.set("status", params.status);
+    if (params.target) query.set("target", params.target);
+    if (params.reason) query.set("reason", params.reason);
+    if (params.search) query.set("search", params.search);
+    return `?${query.toString()}`;
+  }
 
   return (
     <div className="space-y-8">
@@ -184,18 +213,14 @@ export default async function BansPage({ searchParams }: { searchParams: Promise
               </p>
               <div className="flex gap-2">
                 {page > 1 && (
-                  <Link
-                    href={`?page=${page - 1}${params.status ? `&status=${params.status}` : ""}${params.search ? `&search=${params.search}` : ""}`}
-                  >
+                  <Link href={pageHref(page - 1)}>
                     <Button variant="outline" size="sm">
                       Previous
                     </Button>
                   </Link>
                 )}
                 {page < totalPages && (
-                  <Link
-                    href={`?page=${page + 1}${params.status ? `&status=${params.status}` : ""}${params.search ? `&search=${params.search}` : ""}`}
-                  >
+                  <Link href={pageHref(page + 1)}>
                     <Button variant="outline" size="sm">
                       Next
                     </Button>

@@ -18,40 +18,53 @@ export function BanFilters() {
   const searchParams = useSearchParams();
 
   const currentStatus = searchParams.get("status") ?? "";
-  const currentSearch = searchParams.get("search") ?? "";
-  const [search, setSearch] = useState(currentSearch);
+  const currentTarget = searchParams.get("target") ?? "";
+  const currentReason = searchParams.get("reason") ?? "";
+  const legacySearch = searchParams.get("search") ?? "";
 
-  function updateFilters(status?: string, searchQuery?: string) {
+  const [target, setTarget] = useState(currentTarget || legacySearch);
+  const [reason, setReason] = useState(currentReason);
+
+  function updateFilters(next: { status?: string; target?: string; reason?: string }) {
     const params = new URLSearchParams();
-    const newStatus = status ?? currentStatus;
-    const newSearch = searchQuery ?? currentSearch;
+    const newStatus = next.status ?? currentStatus;
+    const newTarget = next.target ?? currentTarget;
+    const newReason = next.reason ?? currentReason;
 
     if (newStatus && newStatus !== "all") params.set("status", newStatus);
-    if (newSearch) params.set("search", newSearch);
+    if (newTarget) params.set("target", newTarget);
+    if (newReason) params.set("reason", newReason);
 
     router.push(`/dashboard/moderation/bans?${params.toString()}`);
   }
 
   function clearFilters() {
-    setSearch("");
+    setTarget("");
+    setReason("");
     router.push("/dashboard/moderation/bans");
   }
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    updateFilters(undefined, search);
+    updateFilters({ target, reason });
   }
 
-  const hasFilters = currentStatus || currentSearch;
+  const hasFilters = currentStatus || currentTarget || currentReason || legacySearch;
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
-      <form onSubmit={handleSearch} className="flex items-center gap-2">
+      <form onSubmit={handleSearch} className="flex items-center gap-2 flex-wrap">
         <Input
-          placeholder="Search player name or ID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-[250px]"
+          placeholder="Target contains… (player name or ID)"
+          value={target}
+          onChange={(e) => setTarget(e.target.value)}
+          className="w-64"
+        />
+        <Input
+          placeholder="Reason contains…"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="w-64"
         />
         <Button type="submit" variant="outline" size="icon">
           <Search className="h-4 w-4" />
@@ -60,9 +73,9 @@ export function BanFilters() {
 
       <Select
         value={currentStatus || "all"}
-        onValueChange={(value) => updateFilters(value, undefined)}
+        onValueChange={(value) => updateFilters({ status: value })}
       >
-        <SelectTrigger className="w-[150px]">
+        <SelectTrigger className="w-36">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
