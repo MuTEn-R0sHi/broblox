@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 
 interface User {
@@ -27,6 +28,7 @@ const ACTION_TYPES = [
   { value: "ban", label: "Bans" },
   { value: "mute", label: "Mutes" },
   { value: "appeal", label: "Appeals" },
+  { value: "evidence", label: "Evidence" },
   { value: "user.role", label: "Role Changes" },
   { value: "auth", label: "Authentication" },
 ];
@@ -36,29 +38,35 @@ export function AuditFilters({ users }: AuditFiltersProps) {
   const searchParams = useSearchParams();
 
   const currentAction = searchParams.get("action") ?? "";
+  const currentTarget = searchParams.get("target") ?? "";
   const currentUser = searchParams.get("user") ?? "";
 
-  function updateFilters(action?: string, user?: string) {
+  function updateFilters(next: { action?: string; target?: string; user?: string }) {
     const params = new URLSearchParams();
-    const newAction = action ?? currentAction;
-    const newUser = user ?? currentUser;
+    const newAction = next.action ?? currentAction;
+    const newTarget = next.target ?? currentTarget;
+    const newUser = next.user ?? currentUser;
 
     if (newAction) params.set("action", newAction);
+    if (newTarget) params.set("target", newTarget);
     if (newUser) params.set("user", newUser);
 
-    router.push(`/dashboard/audit?${params.toString()}`);
+    router.replace(`/dashboard/audit?${params.toString()}`);
   }
 
   function clearFilters() {
     router.push("/dashboard/audit");
   }
 
-  const hasFilters = currentAction || currentUser;
+  const hasFilters = currentAction || currentTarget || currentUser;
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
-      <Select value={currentAction} onValueChange={(value) => updateFilters(value, undefined)}>
-        <SelectTrigger className="w-[180px]">
+      <Select
+        value={currentAction || "all"}
+        onValueChange={(value) => updateFilters({ action: value === "all" ? "" : value })}
+      >
+        <SelectTrigger className="w-45">
           <SelectValue placeholder="Filter by action" />
         </SelectTrigger>
         <SelectContent>
@@ -70,11 +78,18 @@ export function AuditFilters({ users }: AuditFiltersProps) {
         </SelectContent>
       </Select>
 
+      <Input
+        value={currentTarget}
+        onChange={(e) => updateFilters({ target: e.target.value })}
+        placeholder="Target contains…"
+        className="w-55"
+      />
+
       <Select
-        value={currentUser}
-        onValueChange={(value) => updateFilters(undefined, value === "all" ? "" : value)}
+        value={currentUser || "all"}
+        onValueChange={(value) => updateFilters({ user: value === "all" ? "" : value })}
       >
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-50">
           <SelectValue placeholder="Filter by user" />
         </SelectTrigger>
         <SelectContent>

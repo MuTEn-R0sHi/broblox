@@ -7,6 +7,7 @@ import { AuditFilters } from "./filters";
 
 interface SearchParams {
   action?: string;
+  target?: string;
   user?: string;
   page?: string;
 }
@@ -16,12 +17,17 @@ async function getAuditLogs(params: SearchParams) {
   const perPage = 50;
 
   const where: {
-    action?: { contains: string };
+    action?: { startsWith: string } | { contains: string };
+    target?: { contains: string };
     userId?: string;
   } = {};
 
   if (params.action) {
-    where.action = { contains: params.action };
+    // Default to category-style filtering.
+    where.action = { startsWith: params.action };
+  }
+  if (params.target) {
+    where.target = { contains: params.target };
   }
   if (params.user) {
     where.userId = params.user;
@@ -99,7 +105,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">No audit logs found.</p>
             <p className="text-sm text-muted-foreground mt-1">
-              {params.action || params.user
+              {params.action || params.target || params.user
                 ? "Try adjusting your filters."
                 : "Actions will appear here as users make changes."}
             </p>
@@ -175,7 +181,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                 <div className="flex gap-2">
                   {page > 1 && (
                     <a
-                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.user ? `&user=${params.user}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Previous
@@ -183,7 +189,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                   )}
                   {page < totalPages && (
                     <a
-                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.user ? `&user=${params.user}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Next
