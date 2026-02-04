@@ -49,6 +49,13 @@ DATABASE_URL="mysql://user:pass@host:3306/database"
 AUTH_SECRET="$(openssl rand -base64 32)"
 GITHUB_ID="your-oauth-app-client-id"
 GITHUB_SECRET="your-oauth-app-client-secret"
+
+# Optional: restrict logins to specific GitHub usernames (comma-separated)
+# ALLOWED_GITHUB_USERS="your-github-handle,teammate-handle"
+
+# Optional: bootstrap ADMIN role for initial setup (comma-separated)
+# This is useful when you're the only operator and all new users default to VIEWER.
+ADMIN_GITHUB_USERS="your-github-handle"
 ```
 
 Create a GitHub OAuth App at https://github.com/settings/developers:
@@ -71,6 +78,12 @@ pnpm --filter @rbx/dashboard dev
 ```
 
 Open http://localhost:3000
+
+### First login and roles
+
+- New users default to `VIEWER`, which only shows basic navigation.
+- If you set `ADMIN_GITHUB_USERS`, sign out/in after setting it so the role is applied.
+- Once you're Admin, manage roles at `/dashboard/users`.
 
 ## Game workflow
 

@@ -18,72 +18,101 @@ The dashboard is the operations control plane. It must be safe by default.
 
 Roles are additive; permissions are enforced server-side.
 
+The source of truth for the permission matrix is the dashboard RBAC module: `apps/dashboard/src/lib/rbac.ts`.
+
 ### Role: VIEWER (default)
 
-- View feature flags (all environments)
-- View audit logs
-- View own profile
+- View dashboard
+- View matches
+- View players
+- View feature flags (read-only)
 
-### Role: MODERATOR
+### Role: SUPPORT
 
 All VIEWER permissions, plus:
 
-- Toggle dev environment flags
-- Toggle stage environment flags
+- View audit logs
+- View moderation pages (read-only)
+
+### Role: MODERATOR
+
+All SUPPORT permissions, plus:
+
+- Issue moderation actions (ban/mute)
+- Review appeals
+- Perform bulk moderation
 
 ### Role: ENGINEER
 
 All MODERATOR permissions, plus:
 
-- Toggle production flags
-- Create new feature flags
-- Update flag descriptions
-- Delete feature flags
+- Toggle feature flags in dev/stage
+- Create feature flags
+- View settings (read-only)
 
 ### Role: ADMIN
 
 All ENGINEER permissions, plus:
 
+- Toggle feature flags in production
+- Delete/kill feature flags
 - Manage user roles
-- Access all administrative functions
+- Edit settings
+
+## Bootstrapping an admin (local/dev)
+
+New users default to `VIEWER`, which hides privileged navigation items and blocks privileged routes.
+For local/dev bootstrapping, you can promote specific GitHub usernames to `ADMIN` on sign-in.
+
+Set the environment variable `ADMIN_GITHUB_USERS` (comma-separated GitHub usernames) for the dashboard server:
+
+```bash
+ADMIN_GITHUB_USERS="your-github-handle"
+```
+
+Notes:
+
+- This is checked during GitHub sign-in; you may need to sign out/in after setting it.
+- Recommended usage: keep this enabled during solo development as a safety net, then remove or tighten it once roles are managed in the database.
+
+## Managing roles
+
+Admins can manage roles from `/dashboard/users`:
+
+- Select a role from the dropdown on a user row
+- Click **Save** to apply
+- The app prevents changing your own role from the UI to avoid lockouts
+- Role changes are written to the audit log
 
 ## Permission Matrix
 
-| Action             | VIEWER | MODERATOR | ENGINEER | ADMIN |
-| ------------------ | ------ | --------- | -------- | ----- |
-| View flags         | ✅     | ✅        | ✅       | ✅    |
-| View audit logs    | ✅     | ✅        | ✅       | ✅    |
-| Toggle DEV flags   | ❌     | ✅        | ✅       | ✅    |
-| Toggle STAGE flags | ❌     | ✅        | ✅       | ✅    |
-| Toggle PROD flags  | ❌     | ❌        | ✅       | ✅    |
-| Create flags       | ❌     | ❌        | ✅       | ✅    |
-| Delete flags       | ❌     | ❌        | ✅       | ✅    |
-| Manage users       | ❌     | ❌        | ❌       | ✅    |
+| Action             | VIEWER | SUPPORT | MODERATOR | ENGINEER | ADMIN |
+| ------------------ | ------ | ------- | --------- | -------- | ----- |
+| View dashboard     | ✅     | ✅      | ✅        | ✅       | ✅    |
+| View matches       | ✅     | ✅      | ✅        | ✅       | ✅    |
+| View players       | ✅     | ✅      | ✅        | ✅       | ✅    |
+| View flags         | ✅     | ✅      | ✅        | ✅       | ✅    |
+| View audit logs    | ❌     | ✅      | ✅        | ✅       | ✅    |
+| View moderation    | ❌     | ✅      | ✅        | ✅       | ✅    |
+| Moderation actions | ❌     | ❌      | ✅        | ✅       | ✅    |
+| Toggle DEV flags   | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Toggle STAGE flags | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Toggle PROD flags  | ❌     | ❌      | ❌        | ❌       | ✅    |
+| Create flags       | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Delete/kill flags  | ❌     | ❌      | ❌        | ❌       | ✅    |
+| Manage roles       | ❌     | ❌      | ❌        | ❌       | ✅    |
 
 ## Implementation
 
 ### Server-side enforcement
 
-```typescript
-// In server actions (apps/dashboard/src/app/dashboard/flags/actions.ts)
-const ROLE_HIERARCHY: Record<UserRole, number> = {
-  VIEWER: 0,
-  MODERATOR: 1,
-  ENGINEER: 2,
-  ADMIN: 3,
-};
+Use permission checks (not client-side role checks) in server components and server actions.
 
-function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
-  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];
-}
+Examples:
 
-// Permission checks per environment
-const ENV_PERMISSIONS: Record<string, UserRole> = {
-  dev: "MODERATOR",
-  stage: "MODERATOR",
-  prod: "ENGINEER",
-};
-```
+- Server pages: `requirePermission("view:flags")`
+- Server actions: `checkPermission("flags:create")`
+- API routes: `requireApiPermission("view:matches")`
 
 ### Client-side UI
 
@@ -91,7 +120,7 @@ Frontend hides controls for unauthorized actions (defense in depth):
 
 ```tsx
 {
-  hasRole(user.role, "ENGINEER") && <Button onClick={handleCreateFlag}>Create Flag</Button>;
+  /* UI can hide controls, but server is the authority */
 }
 ```
 
