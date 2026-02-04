@@ -16,7 +16,7 @@
     "@prisma/adapter-mariadb": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "@tailwindcss/postcss": "^4.1.18",
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
