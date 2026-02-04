@@ -25,7 +25,8 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
     return { error: "Invalid player ID" };
   }
 
-  if (!input.reason || input.reason.length < 5) {
+  const reason = input.reason?.trim();
+  if (!reason || reason.length < 5) {
     return { error: "Reason must be at least 5 characters" };
   }
 
@@ -52,7 +53,7 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
       playerId: playerIdBigInt,
       playerName: input.playerName,
       type: input.type,
-      reason: input.reason,
+      reason,
       durationMinutes: input.durationMinutes,
       expiresAt,
       issuedById: auth.user.id,
@@ -61,7 +62,7 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
 
   await auditMuteCreate(auth.user.id, playerIdBigInt, {
     type: input.type,
-    reason: input.reason,
+    reason,
     durationMinutes: input.durationMinutes,
   });
 

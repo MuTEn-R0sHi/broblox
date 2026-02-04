@@ -26,13 +26,20 @@ export function CreateBanForm() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    const reasonRaw = (formData.get("reason") as string | null) ?? "";
+    const reason = reasonRaw.trim();
+    if (reason.length < 5) {
+      setError("Reason must be at least 5 characters");
+      setLoading(false);
+      return;
+    }
 
     try {
       const result = await createBan({
         playerId: formData.get("playerId") as string,
         playerName: (formData.get("playerName") as string) || undefined,
         type: banType,
-        reason: formData.get("reason") as string,
+        reason,
         durationHours: banType === "TEMPORARY" ? Number(duration) : undefined,
         internalNote: (formData.get("internalNote") as string) || undefined,
       });
@@ -114,7 +121,7 @@ export function CreateBanForm() {
           name="reason"
           required
           placeholder="Reason for the ban (shown to the player)"
-          className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex min-h-25 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 
@@ -123,7 +130,7 @@ export function CreateBanForm() {
         <textarea
           name="internalNote"
           placeholder="Additional notes for staff (not shown to player)"
-          className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 

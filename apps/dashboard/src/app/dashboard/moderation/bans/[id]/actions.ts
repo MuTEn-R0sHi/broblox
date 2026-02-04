@@ -14,8 +14,16 @@ export async function revokeBan(
     return { error: "Unauthorized" };
   }
 
-  if (!reason || reason.length < 3) {
+  const revokeReason = reason?.trim();
+  if (!revokeReason || revokeReason.length < 3) {
     return { error: "Reason must be at least 3 characters" };
+  }
+
+  let playerIdBigInt: bigint;
+  try {
+    playerIdBigInt = BigInt(playerId);
+  } catch {
+    return { error: "Invalid player ID" };
   }
 
   const ban = await prisma.ban.findUnique({
@@ -36,11 +44,11 @@ export async function revokeBan(
       status: "REVOKED",
       revokedAt: new Date(),
       revokedById: auth.user.id,
-      revokeReason: reason,
+      revokeReason,
     },
   });
 
-  await auditBanRevoke(auth.user.id, BigInt(playerId), banId, reason);
+  await auditBanRevoke(auth.user.id, playerIdBigInt, banId, revokeReason);
 
   return { success: true };
 }

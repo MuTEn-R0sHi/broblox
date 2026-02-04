@@ -14,7 +14,8 @@ export async function revokeMute(
     return { error: "Unauthorized" };
   }
 
-  if (!reason || reason.trim().length < 3) {
+  const revokeReason = reason?.trim();
+  if (!revokeReason || revokeReason.length < 3) {
     return { error: "Reason must be at least 3 characters" };
   }
 
@@ -44,7 +45,7 @@ export async function revokeMute(
     },
   });
 
-  await auditMuteRevoke(auth.user.id, playerIdBigInt, muteId, reason);
+  await auditMuteRevoke(auth.user.id, playerIdBigInt, muteId, revokeReason);
 
   return { success: true };
 }

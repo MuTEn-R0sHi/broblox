@@ -28,7 +28,8 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
   }
 
   // Validate reason
-  if (!input.reason || input.reason.length < 5) {
+  const reason = input.reason?.trim();
+  if (!reason || reason.length < 5) {
     return { error: "Reason must be at least 5 characters" };
   }
 
@@ -56,7 +57,7 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
       playerId: playerIdBigInt,
       playerName: input.playerName,
       type: input.type,
-      reason: input.reason,
+      reason,
       internalNote: input.internalNote,
       durationHours: input.durationHours,
       expiresAt,
@@ -67,7 +68,7 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
   // Audit log
   await auditBanCreate(auth.user.id, playerIdBigInt, {
     type: input.type,
-    reason: input.reason,
+    reason,
     durationHours: input.durationHours,
   });
 
