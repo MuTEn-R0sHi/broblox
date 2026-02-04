@@ -8,7 +8,7 @@ The dashboard is the control plane for:
 
 - **Feature flags** - Per-environment toggles for game features
 - **Audit logging** - Complete history of privileged actions
-- **Role-based access** - VIEWER, MODERATOR, ENGINEER, ADMIN roles
+- **Role-based access** - VIEWER, SUPPORT, MODERATOR, ENGINEER, ADMIN roles
 - **Configuration API** - REST endpoint for game servers
 
 **Live Dashboard**: https://rbx-dashboard.vercel.app
@@ -51,14 +51,15 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          UserRole  @default(VIEWER)
+  role          Role      @default(VIEWER)
   accounts      Account[]
   sessions      Session[]
   auditLogs     AuditLog[]
 }
 
-enum UserRole {
+enum Role {
   VIEWER
+  SUPPORT
   MODERATOR
   ENGINEER
   ADMIN
