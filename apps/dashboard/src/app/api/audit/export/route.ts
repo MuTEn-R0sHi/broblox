@@ -4,7 +4,7 @@ import { requireApiPermission } from "@/lib/authorize";
 function csvEscape(value: unknown): string {
   if (value === null || value === undefined) return "";
   const text = typeof value === "string" ? value : JSON.stringify(value);
-  const needsQuotes = /[\n\r,\"]/u.test(text);
+  const needsQuotes = /[\n\r,"]/u.test(text);
   const escaped = text.replace(/"/gu, '""');
   return needsQuotes ? `"${escaped}"` : escaped;
 }
