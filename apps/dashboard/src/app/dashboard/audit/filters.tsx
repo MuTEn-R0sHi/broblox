@@ -40,23 +40,27 @@ export function AuditFilters({ users }: AuditFiltersProps) {
   const currentAction = searchParams.get("action") ?? "";
   const currentTarget = searchParams.get("target") ?? "";
   const currentReason = searchParams.get("reason") ?? "";
+  const currentDetails = searchParams.get("details") ?? "";
   const currentUser = searchParams.get("user") ?? "";
 
   function updateFilters(next: {
     action?: string;
     target?: string;
     reason?: string;
+    details?: string;
     user?: string;
   }) {
     const params = new URLSearchParams();
     const newAction = next.action ?? currentAction;
     const newTarget = next.target ?? currentTarget;
     const newReason = next.reason ?? currentReason;
+    const newDetails = next.details ?? currentDetails;
     const newUser = next.user ?? currentUser;
 
     if (newAction) params.set("action", newAction);
     if (newTarget) params.set("target", newTarget);
     if (newReason) params.set("reason", newReason);
+    if (newDetails) params.set("details", newDetails);
     if (newUser) params.set("user", newUser);
 
     router.replace(`/dashboard/audit?${params.toString()}`);
@@ -66,13 +70,15 @@ export function AuditFilters({ users }: AuditFiltersProps) {
     router.push("/dashboard/audit");
   }
 
-  const hasFilters = currentAction || currentTarget || currentReason || currentUser;
+  const hasFilters =
+    currentAction || currentTarget || currentReason || currentDetails || currentUser;
 
   function exportHref(format: "csv" | "json") {
     const params = new URLSearchParams();
     if (currentAction) params.set("action", currentAction);
     if (currentTarget) params.set("target", currentTarget);
     if (currentReason) params.set("reason", currentReason);
+    if (currentDetails) params.set("details", currentDetails);
     if (currentUser) params.set("user", currentUser);
     params.set("format", format);
     return `/api/audit/export?${params.toString()}`;
@@ -107,6 +113,13 @@ export function AuditFilters({ users }: AuditFiltersProps) {
         value={currentReason}
         onChange={(e) => updateFilters({ reason: e.target.value })}
         placeholder="Reason contains…"
+        className="w-60"
+      />
+
+      <Input
+        value={currentDetails}
+        onChange={(e) => updateFilters({ details: e.target.value })}
+        placeholder="Details contains…"
         className="w-60"
       />
 

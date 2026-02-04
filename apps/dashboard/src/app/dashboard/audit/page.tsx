@@ -4,11 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { AuditFilters } from "./filters";
+import { CopyTargetButton } from "./copy-target-button";
 
 interface SearchParams {
   action?: string;
   target?: string;
   reason?: string;
+  details?: string;
   user?: string;
   page?: string;
 }
@@ -18,7 +20,7 @@ async function getAuditLogs(params: SearchParams) {
   const perPage = 50;
 
   const where: {
-    action?: { startsWith: string } | { contains: string };
+    action?: { startsWith: string };
     target?: { contains: string };
     reason?: { contains: string };
     userId?: string;
@@ -38,20 +40,53 @@ async function getAuditLogs(params: SearchParams) {
     where.userId = params.user;
   }
 
-  const [logs, total] = await Promise.all([
-    prisma.auditLog.findMany({
-      where,
-      include: {
-        user: {
-          select: { id: true, name: true, email: true, image: true },
-        },
-      },
-      orderBy: { timestamp: "desc" },
-      skip: (page - 1) * perPage,
-      take: perPage,
-    }),
-    prisma.auditLog.count({ where }),
-  ]);
+  const detailsQuery = params.details?.trim();
+
+  const [logs, total] = await Promise.all(
+    detailsQuery
+      ? [
+          prisma.auditLog.findMany({
+            where: {
+              ...where,
+              OR: [
+                { before: { string_contains: detailsQuery } },
+                { after: { string_contains: detailsQuery } },
+              ],
+            },
+            include: {
+              user: {
+                select: { id: true, name: true, email: true, image: true },
+              },
+            },
+            orderBy: { timestamp: "desc" },
+            skip: (page - 1) * perPage,
+            take: perPage,
+          }),
+          prisma.auditLog.count({
+            where: {
+              ...where,
+              OR: [
+                { before: { string_contains: detailsQuery } },
+                { after: { string_contains: detailsQuery } },
+              ],
+            },
+          }),
+        ]
+      : [
+          prisma.auditLog.findMany({
+            where,
+            include: {
+              user: {
+                select: { id: true, name: true, email: true, image: true },
+              },
+            },
+            orderBy: { timestamp: "desc" },
+            skip: (page - 1) * perPage,
+            take: perPage,
+          }),
+          prisma.auditLog.count({ where }),
+        ]
+  );
 
   return { logs, total, page, perPage };
 }
@@ -110,7 +145,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">No audit logs found.</p>
             <p className="text-sm text-muted-foreground mt-1">
-              {params.action || params.target || params.reason || params.user
+              {params.action || params.target || params.reason || params.details || params.user
                 ? "Try adjusting your filters."
                 : "Actions will appear here as users make changes."}
             </p>
@@ -136,9 +171,12 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                       <span className="font-medium text-sm">{log.user.name ?? log.user.email}</span>
                       <Badge variant={getActionColor(log.action)}>{formatAction(log.action)}</Badge>
                       {log.target && (
-                        <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded">
-                          {log.target}
-                        </code>
+                        <span className="inline-flex items-center gap-1">
+                          <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded">
+                            {log.target}
+                          </code>
+                          <CopyTargetButton text={log.target} />
+                        </span>
                       )}
                     </div>
                     {log.reason && (
@@ -186,7 +224,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                 <div className="flex gap-2">
                   {page > 1 && (
                     <a
-                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.details ? `&details=${params.details}` : ""}${params.user ? `&user=${params.user}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Previous
@@ -194,7 +232,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                   )}
                   {page < totalPages && (
                     <a
-                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.details ? `&details=${params.details}` : ""}${params.user ? `&user=${params.user}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Next

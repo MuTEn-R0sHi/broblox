@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireApiPermission } from "@/lib/authorize";
+import type { Prisma } from "@prisma/client";
 
 function csvEscape(value: unknown): string {
   if (value === null || value === undefined) return "";
@@ -9,28 +10,23 @@ function csvEscape(value: unknown): string {
   return needsQuotes ? `"${escaped}"` : escaped;
 }
 
-function buildWhere(params: URLSearchParams): {
-  action?: { startsWith: string };
-  target?: { contains: string };
-  reason?: { contains: string };
-  userId?: string;
-} {
-  const where: {
-    action?: { startsWith: string };
-    target?: { contains: string };
-    reason?: { contains: string };
-    userId?: string;
-  } = {};
+function buildWhere(params: URLSearchParams): Prisma.AuditLogWhereInput {
+  const where: Prisma.AuditLogWhereInput = {};
 
   const action = params.get("action");
   const target = params.get("target");
   const reason = params.get("reason");
+  const details = params.get("details")?.trim();
   const user = params.get("user");
 
   if (action) where.action = { startsWith: action };
   if (target) where.target = { contains: target };
   if (reason) where.reason = { contains: reason };
   if (user) where.userId = user;
+
+  if (details) {
+    where.OR = [{ before: { string_contains: details } }, { after: { string_contains: details } }];
+  }
 
   return where;
 }
