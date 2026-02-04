@@ -105,14 +105,15 @@ What is implemented:
 - ✅ Docs deploy: GitHub Actions → lima-city
 - ✅ Build verification: `pnpm game:starter:build` runs in CI
 - ✅ Quality gates: lint, typecheck, test
+- ✅ Optional Open Cloud workflows: publish dev + promote to staging/production (requires GitHub environment secrets/vars)
 
-What is NOT implemented (deferred):
+What requires configuration (repo-level setup):
 
-- ❌ Automated game publish to Roblox (Phase 2+)
-- ❌ Environment promotion (dev → stage → prod) (Phase 2+)
-- ❌ Open Cloud integration (Phase 2+)
+- Open Cloud API key secret(s) in GitHub Environments
+- Universe/place IDs per environment as GitHub Environment variables
+- Environment protection rules (required reviewers) for staging/production
 
-Publishing to Roblox in Phase 1 is **manual via Studio** (acceptable for a single test game).
+Publishing from Studio is still fine for local development; CI publishing is intended for the shared environments.
 
 ## Explicit non-goals (out of scope)
 
@@ -125,7 +126,7 @@ These are intentionally deferred to later phases:
 - Moderation workflows
 - Cosmetics/battle pass/trading
 - Full weapon/hit validation loop
-- Open Cloud publish/promote pipeline automation
+- Open Cloud publish/promote hardening (artifact retention, notifications, runbooks)
 
 ## Notes
 

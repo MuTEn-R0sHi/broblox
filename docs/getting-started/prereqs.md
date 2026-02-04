@@ -32,7 +32,7 @@ That installs the pinned tools (including Rojo) into `.aftman/`.
 ## CI prerequisites (GitHub)
 
 - Repository has GitHub Actions enabled
-- Secrets / environment variables will be configured later for Open Cloud publishing
+- Secrets / environment variables must be configured for Open Cloud publishing (see `docs/reference/ci-cd-secrets.md`)
 
 ## Roblox prerequisites
 

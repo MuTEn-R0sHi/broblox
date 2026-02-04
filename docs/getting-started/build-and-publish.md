@@ -1,6 +1,6 @@
 # Getting started: Build & publish
 
-This page defines the release model, even before code exists.
+This page defines the release model used by this repo.
 
 ## Environments
 

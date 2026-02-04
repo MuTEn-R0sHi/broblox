@@ -88,9 +88,9 @@ Scope documented in: `docs/roadmap/phase-2-pvp-alpha.md`.
 
 Deliverables:
 
-- `packages/core/combat`: weapon system + hit validation + damage calculation ✅
-- `packages/core/match`: match lifecycle + state + events ✅
-- `packages/core/server`: server allocation + health monitoring ✅
+- `packages/combat`: weapon system + hit validation + damage calculation ✅
+- `packages/matchmaking`: match lifecycle + state + events ✅
+- `packages/matchmaking`: server allocation + health monitoring ✅
 - Dashboard match history: list + detail + filtering ✅
 
 PvP requirements:
@@ -121,7 +121,7 @@ Reliability requirements:
 
 Deliverables:
 
-- Open Cloud publish/promote pipeline for Roblox environments
+- Open Cloud publish/promote pipeline for Roblox environments (baseline implemented; hardening + ops maturity in Phase 4)
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible (lint/test + scripted checks)
 - Regular ADR + security review cadence

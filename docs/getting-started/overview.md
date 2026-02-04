@@ -7,10 +7,10 @@ This project is a **docs-first** platform. The docs define the architecture; the
 - Roblox game code: **Roblox-TS** (TypeScript → Luau)
 - Project sync/build: Rojo (filesystem → DataModel)
 - Dependencies: npm/pnpm (and optionally Wally later for Luau packages)
-- Formatting/linting/testing: ESLint/Prettier + (later) Roblox-side tests
+- Formatting/linting/testing: ESLint/Prettier + vitest
 - CI/CD: GitHub Actions + Roblox **Open Cloud**
 - Docs hosting: static MkDocs site deployed to external hosting (not GitHub Pages)
-- Web dashboard: Next.js + Postgres (audit logs, config history, moderation workflow)
+- Web dashboard: Next.js + MySQL/MariaDB (audit logs, config history, moderation workflow)
 
 ## Key constraints (Roblox reality)
 

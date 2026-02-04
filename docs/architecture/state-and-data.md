@@ -22,7 +22,7 @@ Roblox-side:
 
 Web-side (dashboard):
 
-- Postgres for audit logs and config history
+- MySQL/MariaDB for audit logs and config history
 - Optional: Redis for queues/caching
 
 ## DataStore reliability patterns

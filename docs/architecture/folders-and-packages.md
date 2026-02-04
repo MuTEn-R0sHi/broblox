@@ -16,7 +16,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
 - `apps/`
   - Non-Roblox apps (web dashboard, backend API, workers).
 
-- `tooling/`
+- `tools/`
   - Scripts and templates for scaffolding, publishing, validation.
 
 - `docs/`

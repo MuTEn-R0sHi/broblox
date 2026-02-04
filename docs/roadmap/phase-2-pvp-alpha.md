@@ -13,7 +13,7 @@ This page documents the scope for **Phase 2**: competitive PvP gameplay with ser
 
 ## Delivered
 
-### Combat Package (`packages/core/src/combat/`)
+### Combat Package (`packages/combat/`)
 
 - **Weapon System** — Type-safe weapon definitions with stats (damage, fire rate, range, ammo)
 - **Hit Validation** — Server-authoritative raycast validation with sanity checks
@@ -21,14 +21,14 @@ This page documents the scope for **Phase 2**: competitive PvP gameplay with ser
 - **Cooldown Manager** — Server-enforced ability cooldowns
 - **Combat State** — Centralized combat state with health, armor, status effects
 
-### Match System (`packages/core/src/match/`)
+### Match System (`packages/matchmaking/`)
 
 - **Match Manager** — Full lifecycle management (waiting → starting → in-progress → ended)
 - **Match State** — Team scores, player stats, time remaining
 - **Match Events** — Typed events for kills, assists, round changes
 - **Auto-balancing** — Team assignment with balance considerations
 
-### Server Allocation (`packages/core/src/server/`)
+### Server Allocation (`packages/matchmaking/`)
 
 - **Server Allocator** — Reserved server provisioning via Roblox TeleportService
 - **Health Monitoring** — Server health checks with player counts

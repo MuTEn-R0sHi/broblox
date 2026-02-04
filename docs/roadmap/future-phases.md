@@ -2,7 +2,7 @@
 
 This document outlines planned phases beyond the current roadmap, with feature candidates drawn from platform research and industry trends.
 
-> **Source:** Feature research in [IDEAS.md](../../IDEAS.md) (brainstorm reference)
+> **Source:** Feature research in [ideas/IDEAS.md](../../ideas/IDEAS.md) (brainstorm reference)
 
 ---
 
@@ -46,7 +46,7 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 ### Deliverables (from overview.md)
 
-- Open Cloud publish/promote pipeline for Roblox environments
+- Open Cloud publish/promote pipeline for Roblox environments (baseline implemented; Phase 4 focuses on hardening + operational excellence)
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - `packages/analytics` v1: player behavior events, funnels, retention
 - `packages/notifications` v1: in-game toasts, announcements, news
@@ -55,15 +55,15 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 ### Feature Candidates
 
-| Feature                 | Priority    | Effort | Notes                            |
-| ----------------------- | ----------- | ------ | -------------------------------- |
-| Open Cloud publish      | 🔴 Critical | High   | Roblox environment promotion     |
-| Analytics package       | 🔴 Critical | Medium | Player behavior, funnels, events |
-| Notifications package   | 🟡 High     | Medium | Toasts, announcements, news      |
-| Scheduled events system | 🟡 High     | Medium | Events section implementation    |
-| Performance monitoring  | 🟡 High     | Medium | Budgets + alerts                 |
-| Daily login rewards     | 🟢 Medium   | Low    | Retention hook                   |
-| Quest/mission system    | 🟢 Medium   | Medium | Engagement driver                |
+| Feature                 | Priority    | Effort | Notes                                   |
+| ----------------------- | ----------- | ------ | --------------------------------------- |
+| Open Cloud publish      | 🔴 Critical | High   | Baseline implemented; hardening remains |
+| Analytics package       | 🔴 Critical | Medium | Player behavior, funnels, events        |
+| Notifications package   | 🟡 High     | Medium | Toasts, announcements, news             |
+| Scheduled events system | 🟡 High     | Medium | Events section implementation           |
+| Performance monitoring  | 🟡 High     | Medium | Budgets + alerts                        |
+| Daily login rewards     | 🟢 Medium   | Low    | Retention hook                          |
+| Quest/mission system    | 🟢 Medium   | Medium | Engagement driver                       |
 
 ---
 
@@ -197,33 +197,33 @@ games/
 
 ## Quick Reference: Feature → Phase Mapping
 
-| Feature                           | Phase | Status     |
-| --------------------------------- | ----- | ---------- |
-| Core packages (net, config, etc.) | 1     | ✅ Done    |
-| Combat + hit validation           | 2     | ✅ Done    |
-| Matchmaking + match lifecycle     | 2     | ✅ Done    |
-| Dashboard match history           | 2     | ✅ Done    |
-| Moderation system                 | 3     | 🔜 Next    |
-| Movement package                  | 3     | 🔜 Next    |
-| RBAC + audit logs                 | 3     | 🔜 Next    |
-| Rebirth/prestige                  | 3     | 🔜 Next    |
-| Open Cloud publish                | 4     | 📅 Planned |
-| Analytics package                 | 4     | 📅 Planned |
-| Notifications package             | 4     | 📅 Planned |
-| Scheduled events                  | 4     | 📅 Planned |
-| Inventory package                 | 5     | 💡 Planned |
-| Bro Companion (The Bro)           | 5     | 💡 Planned |
-| Pet system                        | 5     | 💡 Planned |
-| Egg/gacha system                  | 5     | 💡 Planned |
-| Battle pass                       | 5     | 💡 Planned |
-| Localization (i18n)               | 5     | 💡 Planned |
-| Audio package                     | 5     | 💡 Planned |
-| Tutorial/FTUE                     | 5     | 💡 Planned |
-| Trading                           | 6     | 💡 Planned |
-| Guilds                            | 6     | 💡 Planned |
-| Global BroCoins                   | 6     | 💡 Planned |
-| Genre templates                   | 7     | 💡 Planned |
-| BroStars game                     | 7     | 💡 Planned |
+| Feature                           | Phase | Status       |
+| --------------------------------- | ----- | ------------ |
+| Core packages (net, config, etc.) | 1     | ✅ Done      |
+| Combat + hit validation           | 2     | ✅ Done      |
+| Matchmaking + match lifecycle     | 2     | ✅ Done      |
+| Dashboard match history           | 2     | ✅ Done      |
+| Moderation system                 | 3     | 🔜 Next      |
+| Movement package                  | 3     | 🔜 Next      |
+| RBAC + audit logs                 | 3     | 🔜 Next      |
+| Rebirth/prestige                  | 3     | 🔜 Next      |
+| Open Cloud publish/promote        | 4     | 🟡 Hardening |
+| Analytics package                 | 4     | 📅 Planned   |
+| Notifications package             | 4     | 📅 Planned   |
+| Scheduled events                  | 4     | 📅 Planned   |
+| Inventory package                 | 5     | 💡 Planned   |
+| Bro Companion (The Bro)           | 5     | 💡 Planned   |
+| Pet system                        | 5     | 💡 Planned   |
+| Egg/gacha system                  | 5     | 💡 Planned   |
+| Battle pass                       | 5     | 💡 Planned   |
+| Localization (i18n)               | 5     | 💡 Planned   |
+| Audio package                     | 5     | 💡 Planned   |
+| Tutorial/FTUE                     | 5     | 💡 Planned   |
+| Trading                           | 6     | 💡 Planned   |
+| Guilds                            | 6     | 💡 Planned   |
+| Global BroCoins                   | 6     | 💡 Planned   |
+| Genre templates                   | 7     | 💡 Planned   |
+| BroStars game                     | 7     | 💡 Planned   |
 
 ---
 
@@ -239,4 +239,4 @@ games/
 
 ---
 
-_See [IDEAS.md](../../IDEAS.md) for detailed feature research, mechanic patterns, and genre analysis._
+_See [ideas/IDEAS.md](../../ideas/IDEAS.md) for detailed feature research, mechanic patterns, and genre analysis._
