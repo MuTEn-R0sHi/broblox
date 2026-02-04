@@ -2,9 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
-import { auth } from "@/lib/auth";
-import { auditFlagDelete, auditFlagKill } from "@/lib/audit";
-import type { Role } from "@prisma/client";
+import { audit, auditFlagCreate, auditFlagDelete, auditFlagKill } from "@/lib/audit";
+import { checkPermission } from "@/lib/authorize";
 
 export type FeatureFlag = {
   id: string;
@@ -27,64 +26,9 @@ export type FeatureFlag = {
   updatedAt: Date;
 };
 
-// Roles that can modify production
-const PROD_ROLES: Role[] = ["ADMIN", "ENGINEER"];
-// Roles that can modify staging
-const STAGE_ROLES: Role[] = ["ADMIN", "ENGINEER", "MODERATOR"];
-// Roles that can modify dev (everyone authenticated)
-const DEV_ROLES: Role[] = ["ADMIN", "ENGINEER", "MODERATOR", "SUPPORT", "VIEWER"];
-// Roles that can use kill switch
-const KILL_ROLES: Role[] = ["ADMIN", "ENGINEER"];
-
-async function getSessionWithRole() {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, role: true, name: true },
-  });
-
-  if (!user) throw new Error("User not found");
-  return { session, user };
-}
-
-function canModifyEnvironment(role: Role, environment: "dev" | "stage" | "prod"): boolean {
-  switch (environment) {
-    case "prod":
-      return PROD_ROLES.includes(role);
-    case "stage":
-      return STAGE_ROLES.includes(role);
-    case "dev":
-      return DEV_ROLES.includes(role);
-  }
-}
-
-function canKillFlag(role: Role): boolean {
-  return KILL_ROLES.includes(role);
-}
-
-async function logAudit(
-  userId: string,
-  action: string,
-  target: string,
-  before: unknown,
-  after: unknown
-) {
-  await prisma.auditLog.create({
-    data: {
-      userId,
-      action,
-      target,
-      before: before as object,
-      after: after as object,
-    },
-  });
-}
-
 export async function getFlags(): Promise<FeatureFlag[]> {
-  const session = await auth();
-  if (!session) throw new Error("Unauthorized");
+  const auth = await checkPermission("view:flags");
+  if (!auth) throw new Error("Unauthorized");
 
   const flags = await prisma.featureFlag.findMany({
     orderBy: { name: "asc" },
@@ -101,7 +45,8 @@ export async function createFlag(data: {
   name: string;
   description?: string;
 }): Promise<FeatureFlag> {
-  const { user } = await getSessionWithRole();
+  const auth = await checkPermission("flags:create");
+  if (!auth) throw new Error("Unauthorized");
 
   // Validate key format (lowercase, underscores only)
   if (!/^[a-z][a-z0-9_]*$/.test(data.key)) {
@@ -118,7 +63,7 @@ export async function createFlag(data: {
     },
   });
 
-  await logAudit(user.id, "flag.create", flag.key, null, flag);
+  await auditFlagCreate(auth.user.id, flag.key, flag);
 
   revalidatePath("/dashboard/flags");
   return flag as FeatureFlag;
@@ -134,14 +79,22 @@ export async function updateFlag(
     enabledProd?: boolean;
   }
 ): Promise<FeatureFlag> {
-  const { user } = await getSessionWithRole();
+  const auth = await checkPermission("flags:create");
+  if (!auth) throw new Error("Unauthorized");
 
-  // Check permissions for environment changes
-  if (data.enabledProd !== undefined && !canModifyEnvironment(user.role, "prod")) {
-    throw new Error("Only Admins and Engineers can modify production flags");
+  if (data.enabledDev !== undefined) {
+    const envAuth = await checkPermission("flags:toggle:dev");
+    if (!envAuth) throw new Error("Insufficient permissions to modify dev flags");
   }
-  if (data.enabledStage !== undefined && !canModifyEnvironment(user.role, "stage")) {
-    throw new Error("Insufficient permissions to modify staging flags");
+
+  if (data.enabledStage !== undefined) {
+    const envAuth = await checkPermission("flags:toggle:stage");
+    if (!envAuth) throw new Error("Insufficient permissions to modify staging flags");
+  }
+
+  if (data.enabledProd !== undefined) {
+    const envAuth = await checkPermission("flags:toggle:prod");
+    if (!envAuth) throw new Error("Insufficient permissions to modify production flags");
   }
 
   const before = await prisma.featureFlag.findUnique({ where: { id } });
@@ -151,7 +104,13 @@ export async function updateFlag(
     data,
   });
 
-  await logAudit(user.id, "flag.update", flag.key, before, flag);
+  await audit({
+    userId: auth.user.id,
+    action: "flag.update",
+    target: flag.key,
+    before,
+    after: flag,
+  });
 
   revalidatePath("/dashboard/flags");
   return flag as FeatureFlag;
@@ -162,12 +121,15 @@ export async function toggleFlagEnvironment(
   environment: "dev" | "stage" | "prod",
   enabled: boolean
 ): Promise<FeatureFlag> {
-  const { user } = await getSessionWithRole();
+  const requiredPermission =
+    environment === "dev"
+      ? "flags:toggle:dev"
+      : environment === "stage"
+        ? "flags:toggle:stage"
+        : "flags:toggle:prod";
 
-  // Check role permissions
-  if (!canModifyEnvironment(user.role, environment)) {
-    throw new Error(`Insufficient permissions to modify ${environment} flags`);
-  }
+  const auth = await checkPermission(requiredPermission);
+  if (!auth) throw new Error(`Insufficient permissions to modify ${environment} flags`);
 
   const fieldMap = {
     dev: "enabledDev",
@@ -182,25 +144,27 @@ export async function toggleFlagEnvironment(
     data: { [fieldMap[environment]]: enabled },
   });
 
-  await logAudit(user.id, `flag.toggle.${environment}`, flag.key, before, flag);
+  await audit({
+    userId: auth.user.id,
+    action: `flag.toggle.${environment}`,
+    target: flag.key,
+    before,
+    after: flag,
+  });
 
   revalidatePath("/dashboard/flags");
   return flag as FeatureFlag;
 }
 
 export async function deleteFlag(id: string): Promise<void> {
-  const { user } = await getSessionWithRole();
-
-  // Only admins can delete flags
-  if (user.role !== "ADMIN") {
-    throw new Error("Only Admins can delete feature flags");
-  }
+  const auth = await checkPermission("flags:delete");
+  if (!auth) throw new Error("Forbidden");
 
   const flag = await prisma.featureFlag.findUnique({ where: { id } });
 
   await prisma.featureFlag.delete({ where: { id } });
 
-  await auditFlagDelete(user.id, flag?.key ?? id, flag);
+  await auditFlagDelete(auth.user.id, flag?.key ?? id, flag);
 
   revalidatePath("/dashboard/flags");
 }
@@ -209,22 +173,19 @@ export async function deleteFlag(id: string): Promise<void> {
  * Kill switch - immediately disable a flag across all environments
  */
 export async function killFlag(id: string): Promise<FeatureFlag> {
-  const { user } = await getSessionWithRole();
-
-  if (!canKillFlag(user.role)) {
-    throw new Error("Insufficient permissions to use kill switch");
-  }
+  const auth = await checkPermission("flags:kill");
+  if (!auth) throw new Error("Forbidden");
 
   const flag = await prisma.featureFlag.update({
     where: { id },
     data: {
       isKilled: true,
       killedAt: new Date(),
-      killedById: user.id,
+      killedById: auth.user.id,
     },
   });
 
-  await auditFlagKill(user.id, flag.key, true);
+  await auditFlagKill(auth.user.id, flag.key, true);
 
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };
@@ -234,11 +195,8 @@ export async function killFlag(id: string): Promise<FeatureFlag> {
  * Un-kill a flag (re-enable normal operation)
  */
 export async function unkillFlag(id: string): Promise<FeatureFlag> {
-  const { user } = await getSessionWithRole();
-
-  if (!canKillFlag(user.role)) {
-    throw new Error("Insufficient permissions to un-kill flag");
-  }
+  const auth = await checkPermission("flags:kill");
+  if (!auth) throw new Error("Forbidden");
 
   const flag = await prisma.featureFlag.update({
     where: { id },
@@ -249,7 +207,7 @@ export async function unkillFlag(id: string): Promise<FeatureFlag> {
     },
   });
 
-  await auditFlagKill(user.id, flag.key, false);
+  await auditFlagKill(auth.user.id, flag.key, false);
 
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };
@@ -267,12 +225,8 @@ export async function updateRollout(
     endsAt?: Date | null;
   }
 ): Promise<FeatureFlag> {
-  const { user } = await getSessionWithRole();
-
-  // Only admins and engineers can modify rollout
-  if (!PROD_ROLES.includes(user.role)) {
-    throw new Error("Insufficient permissions to modify rollout configuration");
-  }
+  const auth = await checkPermission("flags:create");
+  if (!auth) throw new Error("Forbidden");
 
   // Validate percentage
   if (data.rolloutPercentage !== undefined) {
@@ -293,7 +247,13 @@ export async function updateRollout(
     },
   });
 
-  await logAudit(user.id, "flag.rollout.update", flag.key, before, flag);
+  await audit({
+    userId: auth.user.id,
+    action: "flag.rollout.update",
+    target: flag.key,
+    before,
+    after: flag,
+  });
 
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };

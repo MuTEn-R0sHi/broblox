@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./db";
+import { auditLogin } from "./audit";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -11,6 +12,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GITHUB_SECRET!,
     }),
   ],
+  events: {
+    async signIn({ user }) {
+      await auditLogin(user.id);
+    },
+  },
   callbacks: {
     async session({ session, user }) {
       // Add user ID and role to session

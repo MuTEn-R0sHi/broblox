@@ -1,8 +1,10 @@
 import { getFlags } from "./actions";
 import { FlagCard } from "./flag-card";
 import { CreateFlagButton } from "./create-flag";
+import { requirePermission } from "@/lib/authorize";
 
 export default async function FlagsPage() {
+  await requirePermission("view:flags");
   const flags = await getFlags();
 
   return (

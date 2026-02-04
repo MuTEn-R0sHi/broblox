@@ -152,3 +152,32 @@ export function unauthorizedResponse(message = "Unauthorized"): Response {
 export function forbiddenResponse(message = "Forbidden"): Response {
   return Response.json({ error: message }, { status: 403 });
 }
+
+/**
+ * Require a permission for API routes.
+ * Returns an AuthResult on success, otherwise a Response (401/403).
+ */
+export async function requireApiPermission(permission: Permission): Promise<AuthResult | Response> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return unauthorizedResponse();
+  }
+
+  const role = (session.user as AuthUser).role ?? "VIEWER";
+  const result: AuthResult = {
+    user: {
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+      image: session.user.image,
+      role,
+    },
+  };
+
+  if (!hasPermission(result.user.role, permission)) {
+    return forbiddenResponse();
+  }
+
+  return result;
+}

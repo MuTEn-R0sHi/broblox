@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Flag,
   Users,
+  UserCog,
   Shield,
   FileText,
   Settings,
@@ -14,15 +15,27 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
+import { hasPermission, type Permission, type Role } from "@/lib/rbac";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Matches", href: "/dashboard/matches", icon: Trophy },
-  { name: "Feature Flags", href: "/dashboard/flags", icon: Flag },
-  { name: "Players", href: "/dashboard/players", icon: Users },
-  { name: "Moderation", href: "/dashboard/moderation", icon: Shield },
-  { name: "Audit Log", href: "/dashboard/audit", icon: FileText },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+const navigation: Array<{
+  name: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+  permission: Permission;
+}> = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
+  { name: "Matches", href: "/dashboard/matches", icon: Trophy, permission: "view:matches" },
+  { name: "Feature Flags", href: "/dashboard/flags", icon: Flag, permission: "view:flags" },
+  { name: "Players", href: "/dashboard/players", icon: Users, permission: "view:players" },
+  {
+    name: "Moderation",
+    href: "/dashboard/moderation",
+    icon: Shield,
+    permission: "moderation:view",
+  },
+  { name: "Audit Log", href: "/dashboard/audit", icon: FileText, permission: "view:audit" },
+  { name: "Users", href: "/dashboard/users", icon: UserCog, permission: "users:view" },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings, permission: "settings:view" },
 ];
 
 interface SidebarProps {
@@ -30,11 +43,13 @@ interface SidebarProps {
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    role?: Role | null;
   };
 }
 
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const role = user.role ?? "VIEWER";
 
   return (
     <div className="flex h-full w-64 flex-col bg-sidebar-background border-r border-sidebar-border">
@@ -48,24 +63,26 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.name}
-            </Link>
-          );
-        })}
+        {navigation
+          .filter((item) => hasPermission(role, item.permission))
+          .map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.name}
+              </Link>
+            );
+          })}
       </nav>
 
       {/* User */}

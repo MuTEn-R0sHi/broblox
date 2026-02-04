@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
+import { requireApiPermission } from "@/lib/authorize";
 
 // Schema for updating match
 const updateMatchSchema = z.object({
@@ -53,6 +54,11 @@ interface RouteParams {
  * Get match details
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  if (!validateApiKey(request)) {
+    const authResult = await requireApiPermission("view:matches");
+    if (authResult instanceof Response) return authResult;
+  }
+
   const { id } = await params;
 
   const match = await prisma.match.findUnique({

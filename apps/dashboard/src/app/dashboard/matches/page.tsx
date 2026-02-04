@@ -4,6 +4,7 @@ import { MatchesTable } from "./matches-table";
 import { MatchFilters } from "./match-filters";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
+import { requirePermission } from "@/lib/authorize";
 
 type MatchWithPlayers = Match & {
   players: Pick<MatchPlayer, "playerId" | "playerName" | "team" | "isWinner">[];
@@ -24,6 +25,8 @@ export default async function MatchesPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  await requirePermission("view:matches");
+
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10));
   const status = params.status as MatchStatus | undefined;

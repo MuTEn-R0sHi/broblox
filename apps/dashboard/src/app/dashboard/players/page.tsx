@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Construction } from "lucide-react";
+import { requirePermission } from "@/lib/authorize";
 
-export default function PlayersPage() {
+export default async function PlayersPage() {
+  await requirePermission("view:players");
+
   return (
     <div className="space-y-8">
       <div>

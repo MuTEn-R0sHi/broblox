@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { requirePermission } from "@/lib/authorize";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flag, Users, Shield, Activity } from "lucide-react";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const { user } = await requirePermission("view:dashboard");
 
   // Fetch real stats from database
   const flagCount = await prisma.featureFlag.count();
@@ -30,7 +30,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {session?.user?.name ?? "Operator"}</p>
+        <p className="text-muted-foreground">Welcome back, {user.name ?? "Operator"}</p>
       </div>
 
       {/* Stats Grid */}

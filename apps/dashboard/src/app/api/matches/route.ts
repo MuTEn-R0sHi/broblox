@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
+import { requireApiPermission } from "@/lib/authorize";
 
 // Schema for creating a match
 const createMatchSchema = z.object({
@@ -25,6 +26,12 @@ function validateApiKey(request: NextRequest): boolean {
  * List matches with optional filters
  */
 export async function GET(request: NextRequest) {
+  // Allow either a server API key or an authenticated dashboard user.
+  if (!validateApiKey(request)) {
+    const authResult = await requireApiPermission("view:matches");
+    if (authResult instanceof Response) return authResult;
+  }
+
   const searchParams = request.nextUrl.searchParams;
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10)));
