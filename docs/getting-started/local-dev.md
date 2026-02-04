@@ -47,11 +47,17 @@ Configure `.env`:
 ```bash
 DATABASE_URL="mysql://user:pass@host:3306/database"
 AUTH_SECRET="$(openssl rand -base64 32)"
+
+# Production URL (required for OAuth redirects in production)
+# For local dev you can usually omit this.
+# AUTH_URL="http://localhost:3000"
+
 GITHUB_ID="your-oauth-app-client-id"
 GITHUB_SECRET="your-oauth-app-client-secret"
 
-# Required: API key for game servers fetching feature flags from the dashboard
-FLAGS_API_KEY="change-me"
+# Optional: API key for game servers fetching feature flags from the dashboard
+# Recommended for production.
+# FLAGS_API_KEY="$(openssl rand -base64 32)"
 
 # Optional: restrict logins to specific GitHub usernames (comma-separated)
 # ALLOWED_GITHUB_USERS="your-github-handle,teammate-handle"

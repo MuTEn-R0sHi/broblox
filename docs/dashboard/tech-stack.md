@@ -166,14 +166,16 @@ end
 
 ### Environment Variables
 
-| Variable        | Required  | Description                        |
-| --------------- | --------- | ---------------------------------- |
-| `DATABASE_URL`  | ✅        | MySQL connection string            |
-| `AUTH_SECRET`   | ✅        | NextAuth secret (32+ chars)        |
-| `AUTH_URL`      | ✅ (prod) | Production URL for OAuth callbacks |
-| `GITHUB_ID`     | ✅        | GitHub OAuth App client ID         |
-| `GITHUB_SECRET` | ✅        | GitHub OAuth App client secret     |
-| `FLAGS_API_KEY` | ❌        | Optional API key for flag endpoint |
+| Variable               | Required  | Description                                                    |
+| ---------------------- | --------- | -------------------------------------------------------------- |
+| `DATABASE_URL`         | ✅        | MySQL connection string                                        |
+| `AUTH_SECRET`          | ✅        | NextAuth secret (32+ chars)                                    |
+| `AUTH_URL`             | ✅ (prod) | Production URL for OAuth callbacks                             |
+| `GITHUB_ID`            | ✅        | GitHub OAuth App client ID                                     |
+| `GITHUB_SECRET`        | ✅        | GitHub OAuth App client secret                                 |
+| `ALLOWED_GITHUB_USERS` | ❌        | Optional login allowlist (comma-separated GitHub usernames)    |
+| `ADMIN_GITHUB_USERS`   | ❌        | Optional admin bootstrap (comma-separated GitHub usernames)    |
+| `FLAGS_API_KEY`        | ❌        | Optional API key for flag endpoint (recommended in production) |
 
 ### Vercel Setup
 
