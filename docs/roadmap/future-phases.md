@@ -2,7 +2,7 @@
 
 This document outlines planned phases beyond the current roadmap, with feature candidates drawn from platform research and industry trends.
 
-> **Source:** Feature research in [ideas/IDEAS.md](../../ideas/IDEAS.md) (brainstorm reference)
+> **Source:** Feature research in [Ideas (brainstorm reference)](ideas.md)
 
 ---
 
@@ -239,4 +239,4 @@ games/
 
 ---
 
-_See [ideas/IDEAS.md](../../ideas/IDEAS.md) for detailed feature research, mechanic patterns, and genre analysis._
+_See [Ideas (brainstorm reference)](ideas.md) for detailed feature research, mechanic patterns, and genre analysis._

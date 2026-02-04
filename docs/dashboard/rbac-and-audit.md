@@ -128,39 +128,45 @@ Frontend hides controls for unauthorized actions (defense in depth):
 
 Every privileged action is recorded with:
 
-| Field       | Description                            |
-| ----------- | -------------------------------------- |
-| `id`        | Unique audit log ID                    |
-| `userId`    | User who performed the action          |
-| `action`    | Action type (e.g., `flag.toggle.prod`) |
-| `target`    | Target resource (e.g., flag name)      |
-| `before`    | Previous state (JSON)                  |
-| `after`     | New state (JSON)                       |
-| `timestamp` | When the action occurred               |
-| `ipHash`    | Hashed IP address (optional)           |
-| `userAgent` | Browser user agent (optional)          |
+| Field       | Description                              |
+| ----------- | ---------------------------------------- |
+| `id`        | Unique audit log ID                      |
+| `userId`    | User who performed the action            |
+| `action`    | Action type (e.g., `flag.toggle.prod`)   |
+| `target`    | Target resource (e.g., flag name)        |
+| `reason`    | Human-readable reason/context (optional) |
+| `before`    | Previous state (JSON)                    |
+| `after`     | New state (JSON)                         |
+| `timestamp` | When the action occurred                 |
+| `ipHash`    | Hashed IP address (optional)             |
+| `userAgent` | Browser user agent (optional)            |
 
 ### Action Types
 
-| Action              | Description                    |
-| ------------------- | ------------------------------ |
-| `flag.create`       | New feature flag created       |
-| `flag.update`       | Flag metadata updated          |
-| `flag.delete`       | Feature flag deleted           |
-| `flag.toggle.dev`   | Dev environment toggled        |
-| `flag.toggle.stage` | Stage environment toggled      |
-| `flag.toggle.prod`  | Production environment toggled |
-| `evidence.create`   | Evidence attached to a ban     |
-| `mute.create`       | New mute issued                |
-| `mute.revoke`       | Mute revoked/deactivated       |
-| `ban.create`        | New ban issued                 |
-| `ban.revoke`        | Ban revoked                    |
-| `appeal.approved`   | Appeal approved                |
-| `appeal.denied`     | Appeal denied                  |
+| Action                | Description                    |
+| --------------------- | ------------------------------ |
+| `flag.create`         | New feature flag created       |
+| `flag.update`         | Flag metadata updated          |
+| `flag.delete`         | Feature flag deleted           |
+| `flag.toggle.dev`     | Dev environment toggled        |
+| `flag.toggle.stage`   | Stage environment toggled      |
+| `flag.toggle.prod`    | Production environment toggled |
+| `flag.kill`           | Kill switch activated          |
+| `flag.unkill`         | Kill switch deactivated        |
+| `flag.rollout.update` | Flag rollout updated           |
+| `evidence.create`     | Evidence attached to a ban     |
+| `mute.create`         | New mute issued                |
+| `mute.revoke`         | Mute revoked/deactivated       |
+| `ban.create`          | New ban issued                 |
+| `ban.revoke`          | Ban revoked                    |
+| `appeal.approved`     | Appeal approved                |
+| `appeal.denied`       | Appeal denied                  |
+| `user.role.change`    | User role changed              |
+| `auth.login`          | User signed in                 |
 
 ### Viewing Audit Logs
 
-All authenticated users can view audit logs at `/dashboard/audit`:
+Users with `SUPPORT` (or higher) can view audit logs at `/dashboard/audit`:
 
 - Chronological list of all actions
 - User attribution with avatar
@@ -171,7 +177,13 @@ Filters:
 
 - **Action**: Filter by action category (e.g., `flag.*`, `ban.*`, `mute.*`, `evidence.*`, `auth.*`)
 - **Target contains**: Substring match over the `target` field (useful for player IDs, flag names, or record IDs)
+- **Reason contains**: Substring match over `reason` (useful for moderation reasons, revoke reasons, and appeal resolutions)
+- **Details contains**: Substring match over serialized `before` / `after` JSON (useful for finding specific changed fields)
 - **User**: Filter to actions performed by a specific operator
+
+UX:
+
+- **Copy target**: Quickly copy the `target` value to your clipboard from the results list.
 
 Exports:
 
@@ -187,7 +199,6 @@ Exports:
 ## Future Enhancements
 
 - [ ] Approval workflows for high-risk actions
-- [ ] Audit log export (CSV/JSON)
 - [ ] Anomaly detection alerts
 - [ ] IP-based access restrictions
 - [ ] Two-factor authentication
