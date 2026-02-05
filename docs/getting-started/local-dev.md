@@ -65,6 +65,10 @@ GITHUB_SECRET="your-oauth-app-client-secret"
 # Optional: bootstrap ADMIN role for initial setup (comma-separated)
 # This is useful when you're the only operator and all new users default to VIEWER.
 ADMIN_GITHUB_USERS="your-github-handle"
+
+# Optional: restrict operator access by IP (comma-separated)
+# Supports exact IPs and IPv4 CIDR ranges.
+# DASHBOARD_ALLOWED_IPS="203.0.113.10,198.51.100.0/24"
 ```
 
 Create a GitHub OAuth App at https://github.com/settings/developers:
