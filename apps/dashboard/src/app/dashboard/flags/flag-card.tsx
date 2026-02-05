@@ -34,7 +34,19 @@ function EnvironmentToggle({
   async function handleToggle() {
     setLoading(true);
     try {
-      await toggleFlagEnvironment(flag.id, environment, !enabled);
+      if (environment !== "prod") {
+        await toggleFlagEnvironment(flag.id, environment, !enabled);
+        return;
+      }
+
+      const reason = window.prompt("Reason for PROD flag toggle (min 5 chars):");
+      if (!reason) return;
+
+      const expected = `toggle prod ${flag.key} ${!enabled ? "on" : "off"}`;
+      const confirmation = window.prompt(`Type '${expected}' to confirm:`);
+      if (!confirmation) return;
+
+      await toggleFlagEnvironment(flag.id, environment, !enabled, { reason, confirmation });
     } catch {
       console.error("Failed to toggle flag");
     } finally {
@@ -207,12 +219,20 @@ function KillSwitchButton({ flag }: { flag: FeatureFlag }) {
         return;
     }
 
+    const verb = flag.isKilled ? "unkill" : "kill";
+    const reason = window.prompt(`Reason for ${verb} (min 5 chars):`);
+    if (!reason) return;
+
+    const expected = `${verb} ${flag.key}`;
+    const confirmation = window.prompt(`Type '${expected}' to confirm:`);
+    if (!confirmation) return;
+
     setLoading(true);
     try {
       if (flag.isKilled) {
-        await unkillFlag(flag.id);
+        await unkillFlag(flag.id, { reason, confirmation });
       } else {
-        await killFlag(flag.id);
+        await killFlag(flag.id, { reason, confirmation });
       }
     } catch (err) {
       console.error("Failed to toggle kill switch:", err);

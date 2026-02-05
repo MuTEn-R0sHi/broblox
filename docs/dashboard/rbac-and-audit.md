@@ -84,6 +84,12 @@ Admins can manage roles from `/dashboard/users`:
 - The app prevents changing your own role from the UI to avoid lockouts
 - Role changes are written to the audit log
 
+For safety, role changes require:
+
+- A human-readable **reason** (min 5 characters)
+- A typed **confirmation phrase** that must exactly match:
+  - `set role <userId> <role>`
+
 ## Permission Matrix
 
 | Action             | VIEWER | SUPPORT | MODERATOR | ENGINEER | ADMIN |
@@ -128,18 +134,18 @@ Frontend hides controls for unauthorized actions (defense in depth):
 
 Every privileged action is recorded with:
 
-| Field       | Description                              |
-| ----------- | ---------------------------------------- |
-| `id`        | Unique audit log ID                      |
-| `userId`    | User who performed the action            |
-| `action`    | Action type (e.g., `flag.toggle.prod`)   |
-| `target`    | Target resource (e.g., flag name)        |
-| `reason`    | Human-readable reason/context (optional) |
-| `before`    | Previous state (JSON)                    |
-| `after`     | New state (JSON)                         |
-| `timestamp` | When the action occurred                 |
-| `ipHash`    | Hashed IP address (optional)             |
-| `userAgent` | Browser user agent (optional)            |
+| Field       | Description                                                         |
+| ----------- | ------------------------------------------------------------------- |
+| `id`        | Unique audit log ID                                                 |
+| `userId`    | User who performed the action                                       |
+| `action`    | Action type (e.g., `flag.toggle.prod`)                              |
+| `target`    | Target resource (e.g., flag name)                                   |
+| `reason`    | Human-readable reason/context (required for some high-risk actions) |
+| `before`    | Previous state (JSON)                                               |
+| `after`     | New state (JSON)                                                    |
+| `timestamp` | When the action occurred                                            |
+| `ipHash`    | Hashed IP address (optional)                                        |
+| `userAgent` | Browser user agent (optional)                                       |
 
 ### Action Types
 
@@ -163,6 +169,16 @@ Every privileged action is recorded with:
 | `appeal.denied`       | Appeal denied                  |
 | `user.role.change`    | User role changed              |
 | `auth.login`          | User signed in                 |
+
+### High-risk confirmations
+
+Some actions require both a **reason** (min 5 characters) and a typed confirmation phrase.
+This is enforced server-side and the reason is stored in the audit log `reason` field.
+
+- Toggle PROD flag: `toggle prod <flagKey> on` / `toggle prod <flagKey> off`
+- Kill switch: `kill <flagKey>`
+- Un-kill flag: `unkill <flagKey>`
+- Change user role: `set role <userId> <role>`
 
 ### Viewing Audit Logs
 
@@ -200,5 +216,5 @@ Exports:
 
 - [ ] Approval workflows for high-risk actions
 - [ ] Anomaly detection alerts
-- [ ] IP-based access restrictions
+- [ ] More granular access restrictions (e.g., per-route allowlists)
 - [ ] Two-factor authentication

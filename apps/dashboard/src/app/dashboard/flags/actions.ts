@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { audit, auditFlagCreate, auditFlagDelete, auditFlagKill } from "@/lib/audit";
 import { checkPermission } from "@/lib/authorize";
+import { assertHighRiskConfirmation, normalizeHighRiskReason } from "@/lib/high-risk";
 
 export type FeatureFlag = {
   id: string;
@@ -119,7 +120,8 @@ export async function updateFlag(
 export async function toggleFlagEnvironment(
   id: string,
   environment: "dev" | "stage" | "prod",
-  enabled: boolean
+  enabled: boolean,
+  opts?: { reason?: string; confirmation?: string }
 ): Promise<FeatureFlag> {
   const requiredPermission =
     environment === "dev"
@@ -138,6 +140,18 @@ export async function toggleFlagEnvironment(
   } as const;
 
   const before = await prisma.featureFlag.findUnique({ where: { id } });
+  if (!before) throw new Error("Flag not found");
+
+  let reason: string | undefined;
+  if (environment === "prod") {
+    reason = normalizeHighRiskReason(opts?.reason);
+    const expected = `toggle prod ${before.key} ${enabled ? "on" : "off"}`;
+    assertHighRiskConfirmation(
+      opts?.confirmation,
+      expected,
+      `Confirmation must match: ${expected}`
+    );
+  }
 
   const flag = await prisma.featureFlag.update({
     where: { id },
@@ -150,6 +164,7 @@ export async function toggleFlagEnvironment(
     target: flag.key,
     before,
     after: flag,
+    reason,
   });
 
   revalidatePath("/dashboard/flags");
@@ -172,9 +187,19 @@ export async function deleteFlag(id: string): Promise<void> {
 /**
  * Kill switch - immediately disable a flag across all environments
  */
-export async function killFlag(id: string): Promise<FeatureFlag> {
+export async function killFlag(
+  id: string,
+  opts?: { reason?: string; confirmation?: string }
+): Promise<FeatureFlag> {
   const auth = await checkPermission("flags:kill");
   if (!auth) throw new Error("Forbidden");
+
+  const before = await prisma.featureFlag.findUnique({ where: { id } });
+  if (!before) throw new Error("Flag not found");
+
+  const reason = normalizeHighRiskReason(opts?.reason);
+  const expected = `kill ${before.key}`;
+  assertHighRiskConfirmation(opts?.confirmation, expected, `Confirmation must match: ${expected}`);
 
   const flag = await prisma.featureFlag.update({
     where: { id },
@@ -185,7 +210,7 @@ export async function killFlag(id: string): Promise<FeatureFlag> {
     },
   });
 
-  await auditFlagKill(auth.user.id, flag.key, true);
+  await auditFlagKill(auth.user.id, flag.key, true, reason);
 
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };
@@ -194,9 +219,19 @@ export async function killFlag(id: string): Promise<FeatureFlag> {
 /**
  * Un-kill a flag (re-enable normal operation)
  */
-export async function unkillFlag(id: string): Promise<FeatureFlag> {
+export async function unkillFlag(
+  id: string,
+  opts?: { reason?: string; confirmation?: string }
+): Promise<FeatureFlag> {
   const auth = await checkPermission("flags:kill");
   if (!auth) throw new Error("Forbidden");
+
+  const before = await prisma.featureFlag.findUnique({ where: { id } });
+  if (!before) throw new Error("Flag not found");
+
+  const reason = normalizeHighRiskReason(opts?.reason);
+  const expected = `unkill ${before.key}`;
+  assertHighRiskConfirmation(opts?.confirmation, expected, `Confirmation must match: ${expected}`);
 
   const flag = await prisma.featureFlag.update({
     where: { id },
@@ -207,7 +242,7 @@ export async function unkillFlag(id: string): Promise<FeatureFlag> {
     },
   });
 
-  await auditFlagKill(auth.user.id, flag.key, false);
+  await auditFlagKill(auth.user.id, flag.key, false, reason);
 
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };

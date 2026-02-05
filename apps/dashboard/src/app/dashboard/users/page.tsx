@@ -10,8 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { updateUserRole } from "./actions";
+import { RoleChangeForm } from "./role-change-form";
 
 async function getUsers() {
   return prisma.user.findMany({
@@ -39,6 +38,10 @@ export default async function UsersPage({
   const errorMessage = params.error ? ERROR_MESSAGES[params.error] : null;
 
   const canEditRoles = hasPermission(actor.role, "users:roles");
+  const roleOptions = Object.values(Role).map((role) => ({
+    value: role,
+    label: getRoleDisplayName(role),
+  }));
 
   return (
     <div className="space-y-8">
@@ -94,24 +97,12 @@ export default async function UsersPage({
                     </TableCell>
                     <TableCell className="text-muted-foreground">{u.email ?? "—"}</TableCell>
                     <TableCell>
-                      <form action={updateUserRole} className="flex items-center gap-2">
-                        <input type="hidden" name="userId" value={u.id} />
-                        <select
-                          name="role"
-                          defaultValue={u.role}
-                          disabled={!canChangeThisUser}
-                          className="h-9 w-44 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          {Object.values(Role).map((role) => (
-                            <option key={role} value={role}>
-                              {getRoleDisplayName(role)}
-                            </option>
-                          ))}
-                        </select>
-                        <Button type="submit" variant="secondary" disabled={!canChangeThisUser}>
-                          Save
-                        </Button>
-                      </form>
+                      <RoleChangeForm
+                        userId={u.id}
+                        defaultRole={u.role}
+                        roleOptions={roleOptions}
+                        disabled={!canChangeThisUser}
+                      />
                     </TableCell>
                     <TableCell className="text-right text-xs text-muted-foreground">
                       {u.id}

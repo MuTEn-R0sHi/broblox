@@ -106,12 +106,14 @@ export async function auditFlagDelete(
 export async function auditFlagKill(
   userId: string,
   flagKey: string,
-  isKilled: boolean
+  isKilled: boolean,
+  reason?: string
 ): Promise<void> {
   await audit({
     userId,
     action: isKilled ? "flag.kill" : "flag.unkill",
     target: flagKey,
+    reason,
   });
 }
 
@@ -237,7 +239,8 @@ export async function auditRoleChange(
   actorId: string,
   targetUserId: string,
   oldRole: string,
-  newRole: string
+  newRole: string,
+  reason?: string
 ): Promise<void> {
   await audit({
     userId: actorId,
@@ -245,6 +248,7 @@ export async function auditRoleChange(
     target: targetUserId,
     before: { role: oldRole },
     after: { role: newRole },
+    reason,
   });
 }
 

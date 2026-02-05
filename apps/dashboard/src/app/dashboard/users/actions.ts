@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
 import { auditRoleChange } from "@/lib/audit";
+import { assertHighRiskConfirmation, normalizeHighRiskReason } from "@/lib/high-risk";
 import { canModifyRole, Role } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -15,6 +16,8 @@ export async function updateUserRole(formData: FormData): Promise<void> {
 
   const targetUserId = String(formData.get("userId") ?? "").trim();
   const newRole = String(formData.get("role") ?? "").trim() as Role;
+  const providedReason = String(formData.get("reason") ?? "");
+  const providedConfirmation = String(formData.get("confirmation") ?? "");
 
   if (!targetUserId) {
     redirect("/dashboard/users?error=invalid_request");
@@ -45,12 +48,20 @@ export async function updateUserRole(formData: FormData): Promise<void> {
     return;
   }
 
+  const reason = normalizeHighRiskReason(providedReason);
+  const expectedConfirmation = `set role ${targetUserId} ${newRole}`;
+  assertHighRiskConfirmation(
+    providedConfirmation,
+    expectedConfirmation,
+    `Confirmation must match: ${expectedConfirmation}`
+  );
+
   await prisma.user.update({
     where: { id: targetUserId },
     data: { role: newRole },
   });
 
-  await auditRoleChange(auth.user.id, targetUserId, target.role, newRole);
+  await auditRoleChange(auth.user.id, targetUserId, target.role, newRole, reason);
 
   revalidatePath("/dashboard/users");
 }
