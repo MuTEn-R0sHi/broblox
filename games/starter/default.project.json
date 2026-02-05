@@ -46,6 +46,12 @@
               "out": {
                 "$path": "node_modules/@rbx/net/out"
               }
+            },
+            "moderation": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/moderation/out"
+              }
             }
           }
         }

@@ -5,6 +5,7 @@
 
 import { Application, createLogger } from "@rbx/core";
 import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
+import { ModerationEnforcementService } from "./services/ModerationEnforcementService";
 import { RemoteService } from "./services/RemoteService";
 import { HandshakeService } from "./services/HandshakeService";
 import { ActionService } from "./services/ActionService";
@@ -18,6 +19,7 @@ logger.info("Starting server...");
 // PlayerLifecycleService must be first (others depend on it)
 app
   .register(PlayerLifecycleService)
+  .register(ModerationEnforcementService)
   .register(RemoteService)
   .register(HandshakeService)
   .register(ActionService);
