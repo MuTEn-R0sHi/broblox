@@ -1,6 +1,18 @@
 import { defineConfig } from "vitest/config";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      // Workspace packages compile to .luau in `out/`, which Node/Vitest can't import.
+      // For tests, resolve to TS sources instead.
+      "@rbx/core": resolve(__dirname, "packages/core/src/index.ts"),
+    },
+  },
   test: {
     globals: true,
     coverage: {
