@@ -55,6 +55,10 @@ export default async function UsersPage({
           <CardTitle>Role Management</CardTitle>
         </CardHeader>
         <CardContent>
+          <p className="mb-4 text-xs text-muted-foreground">
+            Role changes require a reason and an exact typed confirmation phrase (you’ll be prompted
+            on save).
+          </p>
           {errorMessage ? (
             <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm">
               {errorMessage}

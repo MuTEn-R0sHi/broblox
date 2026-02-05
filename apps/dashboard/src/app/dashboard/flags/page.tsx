@@ -13,6 +13,9 @@ export default async function FlagsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Feature Flags</h1>
           <p className="text-muted-foreground">Manage feature flags across all environments</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            PROD toggles and kill/unkill require a reason and an exact typed confirmation phrase.
+          </p>
         </div>
         <CreateFlagButton />
       </div>
