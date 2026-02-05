@@ -26,6 +26,7 @@ export class UIController {
   private timerLabel?: TextLabel;
   private notificationFrame?: Frame;
   private leaderboardFrame?: Frame;
+  private leaderboardUpdatedLabel?: TextLabel;
   private leaderboardList?: Frame;
 
   // State
@@ -142,7 +143,7 @@ export class UIController {
 
     const title = new Instance("TextLabel");
     title.Name = "Title";
-    title.Size = new UDim2(1, -16, 0, 28);
+    title.Size = new UDim2(1, -16, 0, 20);
     title.Position = new UDim2(0, 8, 0, 6);
     title.BackgroundTransparency = 1;
     title.TextColor3 = new Color3(1, 1, 1);
@@ -152,10 +153,23 @@ export class UIController {
     title.Text = "Leaderboard";
     title.Parent = this.leaderboardFrame;
 
+    this.leaderboardUpdatedLabel = new Instance("TextLabel");
+    this.leaderboardUpdatedLabel.Name = "Updated";
+    this.leaderboardUpdatedLabel.Size = new UDim2(1, -16, 0, 16);
+    this.leaderboardUpdatedLabel.Position = new UDim2(0, 8, 0, 26);
+    this.leaderboardUpdatedLabel.BackgroundTransparency = 1;
+    this.leaderboardUpdatedLabel.TextColor3 = new Color3(1, 1, 1);
+    this.leaderboardUpdatedLabel.TextTransparency = 0.35;
+    this.leaderboardUpdatedLabel.TextSize = 12;
+    this.leaderboardUpdatedLabel.Font = Enum.Font.Gotham;
+    this.leaderboardUpdatedLabel.TextXAlignment = Enum.TextXAlignment.Left;
+    this.leaderboardUpdatedLabel.Text = "Updated --:--:--";
+    this.leaderboardUpdatedLabel.Parent = this.leaderboardFrame;
+
     const divider = new Instance("Frame");
     divider.Name = "Divider";
     divider.Size = new UDim2(1, -16, 0, 1);
-    divider.Position = new UDim2(0, 8, 0, 36);
+    divider.Position = new UDim2(0, 8, 0, 46);
     divider.BackgroundColor3 = new Color3(1, 1, 1);
     divider.BackgroundTransparency = 0.85;
     divider.BorderSizePixel = 0;
@@ -163,8 +177,8 @@ export class UIController {
 
     this.leaderboardList = new Instance("Frame");
     this.leaderboardList.Name = "List";
-    this.leaderboardList.Size = new UDim2(1, -16, 1, -46);
-    this.leaderboardList.Position = new UDim2(0, 8, 0, 42);
+    this.leaderboardList.Size = new UDim2(1, -16, 1, -56);
+    this.leaderboardList.Position = new UDim2(0, 8, 0, 52);
     this.leaderboardList.BackgroundTransparency = 1;
     this.leaderboardList.Parent = this.leaderboardFrame;
 
@@ -275,6 +289,12 @@ export class UIController {
   private onLeaderboardUpdate(payload: LeaderboardUpdatePayload): void {
     if (!this.leaderboardList) return;
 
+    if (this.leaderboardUpdatedLabel) {
+      // payload.updatedAt is seconds since epoch (os.time()).
+      const timeText = os.date("%H:%M:%S", payload.updatedAt);
+      this.leaderboardUpdatedLabel.Text = `Updated ${timeText}`;
+    }
+
     // Clear old rows (keep UIListLayout)
     for (const child of this.leaderboardList.GetChildren()) {
       if (child.IsA("TextLabel")) {
@@ -308,6 +328,12 @@ export class UIController {
       row.TextSize = 14;
       row.Font = Enum.Font.Gotham;
       row.TextXAlignment = Enum.TextXAlignment.Left;
+
+      if (e.userId === this.player.UserId) {
+        row.BackgroundTransparency = 0.8;
+        row.BackgroundColor3 = new Color3(0.2, 0.4, 1);
+        row.Font = Enum.Font.GothamBold;
+      }
 
       const timeText = e.bestTime !== undefined ? ` • ${string.format("%.2f", e.bestTime)}s` : "";
       row.Text = `#${e.rank} ${e.playerName} • ${e.completions} win${e.completions === 1 ? "" : "s"}${timeText}`;

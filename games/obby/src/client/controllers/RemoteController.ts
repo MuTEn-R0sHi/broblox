@@ -23,6 +23,21 @@ type DataSyncCallback = (data: {
   currentCheckpoint: number;
 }) => void;
 
+function parsePlayerDataSyncPayload(
+  data: unknown
+): { coins: number; currentStage: number; currentCheckpoint: number } | undefined {
+  if (!typeIs(data, "table")) return undefined;
+  const raw = data as { coins?: unknown; currentStage?: unknown; currentCheckpoint?: unknown };
+  if (!typeIs(raw.coins, "number")) return undefined;
+  if (!typeIs(raw.currentStage, "number")) return undefined;
+  if (!typeIs(raw.currentCheckpoint, "number")) return undefined;
+  return {
+    coins: raw.coins,
+    currentStage: raw.currentStage,
+    currentCheckpoint: raw.currentCheckpoint,
+  };
+}
+
 function parseLeaderboardUpdatePayload(data: unknown): LeaderboardUpdatePayload | undefined {
   if (!typeIs(data, "table")) return undefined;
   const raw = data as { updatedAt?: unknown; entries?: unknown };
@@ -110,9 +125,12 @@ export class RemoteController {
     });
 
     this.playerDataSync.OnClientEvent.Connect((data: unknown) => {
-      this.onPlayerDataSync(
-        data as { coins: number; currentStage: number; currentCheckpoint: number }
-      );
+      const parsed = parsePlayerDataSyncPayload(data);
+      if (!parsed) {
+        logger.warn("Invalid player data sync payload");
+        return;
+      }
+      this.onPlayerDataSync(parsed);
     });
 
     logger.info("RemoteController booted.");
