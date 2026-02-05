@@ -7,6 +7,7 @@ import { ReplicatedStorage } from "@rbxts/services";
 import { createLogger } from "@rbx/core";
 import {
   CheckpointReachedEvent,
+  LeaderboardEntryDto,
   LeaderboardUpdatePayload,
   StageCompletedEvent,
 } from "shared/types";
@@ -27,7 +28,46 @@ function parseLeaderboardUpdatePayload(data: unknown): LeaderboardUpdatePayload 
   const raw = data as { updatedAt?: unknown; entries?: unknown };
   if (!typeIs(raw.updatedAt, "number")) return undefined;
   if (!typeIs(raw.entries, "table")) return undefined;
-  return data as LeaderboardUpdatePayload;
+
+  const entriesOut: LeaderboardEntryDto[] = [];
+  for (const entry of raw.entries as unknown[]) {
+    const parsedEntry = parseLeaderboardEntryDto(entry);
+    if (!parsedEntry) {
+      logger.warn("Invalid leaderboard entry in payload");
+      continue;
+    }
+    entriesOut.push(parsedEntry);
+  }
+
+  return {
+    updatedAt: raw.updatedAt,
+    entries: entriesOut,
+  };
+}
+
+function parseLeaderboardEntryDto(data: unknown): LeaderboardEntryDto | undefined {
+  if (!typeIs(data, "table")) return undefined;
+  const raw = data as {
+    userId?: unknown;
+    playerName?: unknown;
+    completions?: unknown;
+    bestTime?: unknown;
+    rank?: unknown;
+  };
+
+  if (!typeIs(raw.userId, "number")) return undefined;
+  if (!typeIs(raw.playerName, "string")) return undefined;
+  if (!typeIs(raw.completions, "number")) return undefined;
+  if (!typeIs(raw.rank, "number")) return undefined;
+  if (raw.bestTime !== undefined && !typeIs(raw.bestTime, "number")) return undefined;
+
+  return {
+    userId: raw.userId,
+    playerName: raw.playerName,
+    completions: raw.completions,
+    bestTime: raw.bestTime as number | undefined,
+    rank: raw.rank,
+  };
 }
 
 export class RemoteController {
