@@ -2,6 +2,8 @@
 
 This guide covers setting up the required secrets and variables for the automated publishing workflows.
 
+It also covers optional dashboard integrations that use Open Cloud (for example, propagating moderation actions to live servers).
+
 ## Overview
 
 The publishing workflows use [Roblox Open Cloud API](https://create.roblox.com/docs/cloud/open-cloud) to publish games directly from GitHub Actions. This enables:
@@ -26,6 +28,9 @@ For each environment (dev, staging, production), create a separate API key:
    - **Name**: `GitHub-{env}-Publish` (e.g., `GitHub-Dev-Publish`)
    - **Experience Operations**: Add your experience
      - Select **Write** permission for "Place"
+     - If using the dashboard moderation bridge, also grant:
+       - **Data Stores**: Write (standard DataStores)
+       - **Messaging Service**: Publish (cross-server messaging)
    - **IP Restrictions**: For GitHub Actions, either:
      - Leave unrestricted (simpler but less secure)
      - Use [GitHub's IP ranges](https://api.github.com/meta) (more secure)
@@ -188,6 +193,26 @@ staging:
 
 production:
   - ROBLOX_OPEN_CLOUD_API_KEY
+
+### Dashboard Moderation Bridge (Optional)
+
+The dashboard can optionally propagate bans/unbans to live servers using Open Cloud.
+
+Required environment variables for the dashboard runtime:
+
+```
+
+MODERATION_OPEN_CLOUD_ENABLED=true
+ROBLOX_OPEN_CLOUD_API_KEY=...
+ROBLOX_UNIVERSE_ID=...
+ROBLOX_MODERATION_DATASTORE_NAME=StarterModeration
+ROBLOX_MODERATION_DATASTORE_SCOPE=global # optional
+ROBLOX_MODERATION_BAN_TOPIC=ModBanSync # optional
+ROBLOX_MODERATION_MUTE_TOPIC=ModMuteSync # optional
+
+```
+
+Important: `ROBLOX_MODERATION_DATASTORE_NAME` must match the value passed to `getModeration(...)` in the game server (for starter, this is currently `StarterModeration`).
 ```
 
 ### Required Variables (Repository Level)

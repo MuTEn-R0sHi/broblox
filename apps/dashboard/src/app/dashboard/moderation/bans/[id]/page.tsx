@@ -48,10 +48,17 @@ function getBanStatusColor(status: string): "destructive" | "secondary" | "warni
   }
 }
 
-export default async function BanDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function BanDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ sync?: string }>;
+}) {
   const { user: actor } = await requirePermission("moderation:view");
 
   const { id } = await params;
+  const sp = searchParams ? await searchParams : undefined;
   const ban = await getBan(id);
 
   if (!ban) {
@@ -63,6 +70,12 @@ export default async function BanDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="space-y-8">
+      {sp?.sync === "failed" ? (
+        <div className="bg-yellow-500/10 border border-yellow-500/40 rounded-lg p-4 text-yellow-200 text-sm">
+          Ban was created, but failed to propagate to live servers. Check the audit logs for
+          details, and retry if needed.
+        </div>
+      ) : null}
       <div className="flex items-center gap-4">
         <Link href="/dashboard/moderation/bans">
           <Button variant="ghost" size="icon">

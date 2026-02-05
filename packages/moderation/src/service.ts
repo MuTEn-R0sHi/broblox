@@ -22,6 +22,7 @@ const logger = createLogger("Moderation.Service");
 // Declare Roblox services
 declare const game: {
   GetService(name: "MessagingService"): MessagingService;
+  GetService(name: "HttpService"): HttpService;
 };
 
 interface MessagingService {
@@ -30,6 +31,10 @@ interface MessagingService {
     topic: string,
     callback: (message: { Data: unknown; Sent: number }) => void
   ): RBXScriptConnection;
+}
+
+interface HttpService {
+  JSONDecode(input: string): unknown;
 }
 
 // ============================================================================
@@ -42,6 +47,7 @@ export class ModerationService {
   private banStore: BanStore;
   private muteStore: MuteStore;
   private messaging: MessagingService;
+  private http: HttpService;
   private onBanCallbacks: Array<(record: BanRecord) => void> = [];
   private onMuteCallbacks: Array<(record: MuteRecord) => void> = [];
 
@@ -49,6 +55,7 @@ export class ModerationService {
     this.banStore = new BanStore(datastoreName);
     this.muteStore = new MuteStore(datastoreName);
     this.messaging = game.GetService("MessagingService");
+    this.http = game.GetService("HttpService");
 
     this.subscribeToSync();
     logger.info("ModerationService initialized");
@@ -70,7 +77,20 @@ export class ModerationService {
   private subscribeToSync(): void {
     // Ban sync
     this.messaging.SubscribeAsync("ModBanSync", (message) => {
-      const ban = message.Data as BanRecord;
+      const raw = message.Data;
+      let ban: BanRecord | undefined;
+
+      if (typeOf(raw) === "string") {
+        try {
+          ban = this.http.JSONDecode(raw as string) as BanRecord;
+        } catch (err) {
+          logger.warn(`Failed to decode ban sync message: ${tostring(err)}`);
+          return;
+        }
+      } else if (typeOf(raw) === "table") {
+        ban = raw as BanRecord;
+      }
+
       if (ban?.playerId) {
         this.banStore.invalidateCache(ban.playerId);
         logger.debug(`Received ban sync for player ${ban.playerId}`);
@@ -83,7 +103,20 @@ export class ModerationService {
 
     // Mute sync
     this.messaging.SubscribeAsync("ModMuteSync", (message) => {
-      const mute = message.Data as MuteRecord;
+      const raw = message.Data;
+      let mute: MuteRecord | undefined;
+
+      if (typeOf(raw) === "string") {
+        try {
+          mute = this.http.JSONDecode(raw as string) as MuteRecord;
+        } catch (err) {
+          logger.warn(`Failed to decode mute sync message: ${tostring(err)}`);
+          return;
+        }
+      } else if (typeOf(raw) === "table") {
+        mute = raw as MuteRecord;
+      }
+
       if (mute?.playerId) {
         this.muteStore.invalidateCache(mute.playerId);
         logger.debug(`Received mute sync for player ${mute.playerId}`);

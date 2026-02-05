@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
-import { auditBanCreate } from "@/lib/audit";
+import { auditBanCreate, auditBanSync } from "@/lib/audit";
+import { bridgeCreateBanToRoblox } from "@/lib/moderation-bridge";
 
 interface CreateBanInput {
   playerId: string;
@@ -71,6 +72,29 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
     reason,
     durationHours: input.durationHours,
   });
+
+  const syncResult = await bridgeCreateBanToRoblox({
+    banId: ban.id,
+    playerId: playerIdBigInt,
+    playerName: ban.playerName,
+    type: ban.type,
+    reason: ban.reason,
+    internalNote: ban.internalNote,
+    durationHours: ban.durationHours,
+    expiresAt: ban.expiresAt,
+    moderatorId: auth.user.id,
+    createdAt: ban.createdAt,
+  });
+
+  await auditBanSync(auth.user.id, playerIdBigInt, ban.id, syncResult);
+
+  if (!syncResult.ok) {
+    return {
+      id: ban.id,
+      error:
+        "Ban created, but failed to propagate to live servers. Check dashboard audit logs for details.",
+    };
+  }
 
   return { id: ban.id };
 }

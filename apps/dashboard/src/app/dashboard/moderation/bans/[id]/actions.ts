@@ -2,13 +2,14 @@
 
 import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
-import { auditBanRevoke, auditEvidenceCreate } from "@/lib/audit";
+import { auditBanRevoke, auditBanSync, auditEvidenceCreate } from "@/lib/audit";
+import { bridgeRevokeBanToRoblox } from "@/lib/moderation-bridge";
 
 export async function revokeBan(
   banId: string,
   playerId: string,
   reason: string
-): Promise<{ success?: boolean; error?: string }> {
+): Promise<{ success?: boolean; warning?: string; error?: string }> {
   const auth = await checkPermission("moderation:ban");
   if (!auth) {
     return { error: "Unauthorized" };
@@ -38,7 +39,7 @@ export async function revokeBan(
     return { error: "Ban is not active" };
   }
 
-  await prisma.ban.update({
+  const updated = await prisma.ban.update({
     where: { id: banId },
     data: {
       status: "REVOKED",
@@ -49,6 +50,23 @@ export async function revokeBan(
   });
 
   await auditBanRevoke(auth.user.id, playerIdBigInt, banId, revokeReason);
+
+  const syncResult = await bridgeRevokeBanToRoblox({
+    banId,
+    playerId: playerIdBigInt,
+    revokedById: auth.user.id,
+    revokeReason,
+    revokedAt: updated.revokedAt ?? new Date(),
+  });
+  await auditBanSync(auth.user.id, playerIdBigInt, banId, syncResult);
+
+  if (!syncResult.ok) {
+    return {
+      success: true,
+      warning:
+        "Ban revoked, but failed to propagate to live servers. Check dashboard audit logs for details.",
+    };
+  }
 
   return { success: true };
 }

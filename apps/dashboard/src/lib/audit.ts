@@ -152,6 +152,31 @@ export async function auditBanRevoke(
 }
 
 /**
+ * Audit an attempt to sync a ban change to live game servers.
+ */
+export async function auditBanSync(
+  userId: string,
+  playerId: bigint,
+  banId: string,
+  result: { ok: true } | { ok: false; error: string }
+): Promise<void> {
+  const errorSummary =
+    !result.ok && result.error
+      ? result.error.length > 180
+        ? `${result.error.slice(0, 177)}...`
+        : result.error
+      : undefined;
+
+  await audit({
+    userId,
+    action: result.ok ? "ban.sync" : "ban.sync_failed",
+    target: `${playerId}/${banId}`,
+    after: result.ok ? { ok: true } : { ok: false },
+    reason: errorSummary,
+  });
+}
+
+/**
  * Audit an appeal resolution.
  */
 export async function auditAppealResolve(
