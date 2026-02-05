@@ -109,6 +109,7 @@ describe("ModerationService sync handling", () => {
 
     setGlobal("tostring", (value: unknown) => String(value));
     setGlobal("task", { spawn: (fn: () => void) => fn() });
+    setGlobal("os", { time: vi.fn(() => 0) });
     setGlobal("game", {
       GetService: (name: string) => {
         if (name === "MessagingService") return messaging;
@@ -207,6 +208,7 @@ describe("ModerationService sync handling", () => {
 
     setGlobal("tostring", (value: unknown) => String(value));
     setGlobal("task", { spawn: (fn: () => void) => fn() });
+    setGlobal("os", { time: vi.fn(() => 0) });
     setGlobal("game", {
       GetService: (name: string) => {
         if (name === "MessagingService") return messaging;
@@ -300,6 +302,7 @@ describe("ModerationService sync handling", () => {
     });
     setGlobal("tostring", (value: unknown) => String(value));
     setGlobal("task", { spawn: (fn: () => void) => fn() });
+    setGlobal("os", { time: vi.fn(() => 0) });
     setGlobal("game", {
       GetService: (name: string) => {
         if (name === "MessagingService") return messaging;

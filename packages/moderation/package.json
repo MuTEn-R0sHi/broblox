@@ -37,6 +37,7 @@
     "@rbx/core": "workspace:*",
     "@rbx/data": "workspace:*",
     "@rbx/net": "workspace:*",
+    "@rbx/observability": "workspace:*",
     "@rbx/shared-types": "workspace:*"
   },
   "peerDependencies": {

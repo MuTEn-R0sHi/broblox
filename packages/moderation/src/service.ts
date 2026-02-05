@@ -6,6 +6,7 @@
  */
 
 import { createLogger } from "@rbx/core";
+import { createCounter, createHistogram } from "@rbx/observability";
 import { BanStore } from "./ban-store";
 import { MuteStore } from "./mute-store";
 import {
@@ -35,6 +36,56 @@ interface MessagingService {
 
 interface HttpService {
   JSONDecode(input: string): unknown;
+}
+
+const messageAgeBucketsMs = {
+  boundaries: [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 30000, 60000, 120000],
+};
+
+const moderationSyncMetrics = {
+  ban: {
+    received: createCounter("moderation_sync_received_total", { topic: "ModBanSync" }),
+    payloadString: createCounter("moderation_sync_payload_string_total", { topic: "ModBanSync" }),
+    payloadTable: createCounter("moderation_sync_payload_table_total", { topic: "ModBanSync" }),
+    payloadOther: createCounter("moderation_sync_payload_other_total", { topic: "ModBanSync" }),
+    decodeError: createCounter("moderation_sync_decode_errors_total", { topic: "ModBanSync" }),
+    cacheInvalidations: createCounter("moderation_sync_cache_invalidations_total", {
+      topic: "ModBanSync",
+    }),
+    callbacks: createCounter("moderation_sync_callbacks_total", { topic: "ModBanSync" }),
+    messageAgeMs: createHistogram(
+      "moderation_sync_message_age_ms",
+      { topic: "ModBanSync" },
+      messageAgeBucketsMs
+    ),
+    published: createCounter("moderation_sync_published_total", { topic: "ModBanSync" }),
+  },
+  mute: {
+    received: createCounter("moderation_sync_received_total", { topic: "ModMuteSync" }),
+    payloadString: createCounter("moderation_sync_payload_string_total", { topic: "ModMuteSync" }),
+    payloadTable: createCounter("moderation_sync_payload_table_total", { topic: "ModMuteSync" }),
+    payloadOther: createCounter("moderation_sync_payload_other_total", { topic: "ModMuteSync" }),
+    decodeError: createCounter("moderation_sync_decode_errors_total", { topic: "ModMuteSync" }),
+    cacheInvalidations: createCounter("moderation_sync_cache_invalidations_total", {
+      topic: "ModMuteSync",
+    }),
+    callbacks: createCounter("moderation_sync_callbacks_total", { topic: "ModMuteSync" }),
+    messageAgeMs: createHistogram(
+      "moderation_sync_message_age_ms",
+      { topic: "ModMuteSync" },
+      messageAgeBucketsMs
+    ),
+    published: createCounter("moderation_sync_published_total", { topic: "ModMuteSync" }),
+  },
+};
+
+function recordMessageAgeMs(
+  histogram: ReturnType<typeof createHistogram>,
+  sentTimestampSec: number
+): void {
+  const ageSec = os.time() - sentTimestampSec;
+  if (ageSec < 0) return;
+  histogram.observe(ageSec * 1000);
 }
 
 // ============================================================================
@@ -77,25 +128,35 @@ export class ModerationService {
   private subscribeToSync(): void {
     // Ban sync
     this.messaging.SubscribeAsync("ModBanSync", (message) => {
+      moderationSyncMetrics.ban.received.inc();
+      recordMessageAgeMs(moderationSyncMetrics.ban.messageAgeMs, message.Sent);
+
       const raw = message.Data;
       let ban: BanRecord | undefined;
 
       if (typeOf(raw) === "string") {
+        moderationSyncMetrics.ban.payloadString.inc();
         try {
           ban = this.http.JSONDecode(raw as string) as BanRecord;
         } catch (err) {
+          moderationSyncMetrics.ban.decodeError.inc();
           logger.warn(`Failed to decode ban sync message: ${tostring(err)}`);
           return;
         }
       } else if (typeOf(raw) === "table") {
+        moderationSyncMetrics.ban.payloadTable.inc();
         ban = raw as BanRecord;
+      } else {
+        moderationSyncMetrics.ban.payloadOther.inc();
       }
 
       if (ban?.playerId) {
         this.banStore.invalidateCache(ban.playerId);
+        moderationSyncMetrics.ban.cacheInvalidations.inc();
         logger.debug(`Received ban sync for player ${ban.playerId}`);
 
         for (const callback of this.onBanCallbacks) {
+          moderationSyncMetrics.ban.callbacks.inc();
           task.spawn(() => callback(ban));
         }
       }
@@ -103,25 +164,35 @@ export class ModerationService {
 
     // Mute sync
     this.messaging.SubscribeAsync("ModMuteSync", (message) => {
+      moderationSyncMetrics.mute.received.inc();
+      recordMessageAgeMs(moderationSyncMetrics.mute.messageAgeMs, message.Sent);
+
       const raw = message.Data;
       let mute: MuteRecord | undefined;
 
       if (typeOf(raw) === "string") {
+        moderationSyncMetrics.mute.payloadString.inc();
         try {
           mute = this.http.JSONDecode(raw as string) as MuteRecord;
         } catch (err) {
+          moderationSyncMetrics.mute.decodeError.inc();
           logger.warn(`Failed to decode mute sync message: ${tostring(err)}`);
           return;
         }
       } else if (typeOf(raw) === "table") {
+        moderationSyncMetrics.mute.payloadTable.inc();
         mute = raw as MuteRecord;
+      } else {
+        moderationSyncMetrics.mute.payloadOther.inc();
       }
 
       if (mute?.playerId) {
         this.muteStore.invalidateCache(mute.playerId);
+        moderationSyncMetrics.mute.cacheInvalidations.inc();
         logger.debug(`Received mute sync for player ${mute.playerId}`);
 
         for (const callback of this.onMuteCallbacks) {
+          moderationSyncMetrics.mute.callbacks.inc();
           task.spawn(() => callback(mute));
         }
       }
@@ -167,6 +238,7 @@ export class ModerationService {
     const record = this.banStore.createBan(input);
 
     // Sync to other servers
+    moderationSyncMetrics.ban.published.inc();
     this.messaging.PublishAsync("ModBanSync", record);
 
     // Notify callbacks
@@ -188,6 +260,7 @@ export class ModerationService {
       const bans = this.banStore.getBans(playerId);
       for (const ban of bans) {
         if (ban.id === banId) {
+          moderationSyncMetrics.ban.published.inc();
           this.messaging.PublishAsync("ModBanSync", ban);
           break;
         }
@@ -222,6 +295,7 @@ export class ModerationService {
     const record = this.muteStore.createMute(input);
 
     // Sync to other servers
+    moderationSyncMetrics.mute.published.inc();
     this.messaging.PublishAsync("ModMuteSync", record);
 
     // Notify callbacks
@@ -243,6 +317,7 @@ export class ModerationService {
       const mutes = this.muteStore.getMutes(playerId);
       for (const mute of mutes) {
         if (mute.id === muteId) {
+          moderationSyncMetrics.mute.published.inc();
           this.messaging.PublishAsync("ModMuteSync", mute);
           break;
         }

@@ -365,6 +365,9 @@ importers:
       "@rbx/net":
         specifier: workspace:*
         version: link:../net
+      "@rbx/observability":
+        specifier: workspace:*
+        version: link:../observability
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../shared-types
