@@ -52,6 +52,8 @@ export interface CheckpointData {
 // ============================================================================
 
 export interface ObbyPlayerData {
+  /** Data schema version for persistence */
+  readonly __version: number;
   /** Current checkpoint (highest reached) */
   currentCheckpoint: number;
   /** Current stage number */
@@ -65,7 +67,7 @@ export interface ObbyPlayerData {
   /** Best full run time (seconds) */
   bestFullRunTime?: number;
   /** Stage-by-stage progress */
-  stageProgress: Map<number, StageProgress>;
+  stageProgress: Record<string, StageProgress>;
   /** Unlocked cosmetics/trails */
   unlockedItems: string[];
   /** Equipped trail */
@@ -122,6 +124,19 @@ export interface RespawnRequestPayload {
 export interface StageDataPayload {
   stageNumber: number;
   progress: StageProgress;
+}
+
+export interface LeaderboardEntryDto {
+  userId: number;
+  playerName: string;
+  completions: number;
+  bestTime?: number;
+  rank: number;
+}
+
+export interface LeaderboardUpdatePayload {
+  updatedAt: number;
+  entries: LeaderboardEntryDto[];
 }
 
 // ============================================================================

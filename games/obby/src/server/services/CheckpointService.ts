@@ -15,9 +15,21 @@ const logger = createLogger("CheckpointService");
 const checkpoints = new Map<string, CheckpointData>();
 const lastCheckpointTouch = new Map<number, number>();
 const pendingRespawns = new Set<number>(); // Track players who died and need checkpoint respawn
+const lastRespawnRequest = new Map<number, number>();
 
 // Anti-spam cooldown (seconds)
 const CHECKPOINT_COOLDOWN = 0.5;
+
+function parseRespawnRequestPayload(payload: unknown): { toCheckpoint?: number } | undefined {
+  if (payload === undefined) return {};
+  if (!typeIs(payload, "table")) return undefined;
+
+  const raw = payload as { toCheckpoint?: unknown };
+  if (raw.toCheckpoint === undefined) return {};
+  if (!typeIs(raw.toCheckpoint, "number")) return undefined;
+
+  return { toCheckpoint: raw.toCheckpoint };
+}
 
 // Helper to get checkpoint key
 function getCheckpointKey(stageNumber: number, checkpointIndex: number): string {
@@ -173,10 +185,68 @@ export const CheckpointService: Service & {
     }
 
     logger.debug(`Respawned player ${player.Name} at checkpoint ${data.currentCheckpoint}`);
+
+    // Timing rules:
+    // - If respawning to the start of the stage, restart the stage timer.
+    // - If respawning to the start of the whole run (stage 1 checkpoint 0), restart the run timer.
+    if (data.currentCheckpoint === 0) {
+      DataService.startStageTimer(player);
+      if (data.currentStage === 1) {
+        DataService.startRunTimer(player);
+      }
+    }
   },
 
   onInit() {
     logger.debug("Initializing checkpoint service...");
+
+    // Handle client-requested respawns (e.g. reset keybind).
+    // Note: main.server registers RemoteService before CheckpointService, so the RemoteEvent exists.
+    RemoteService.requestRespawn().OnServerEvent.Connect((player: Player, payload: unknown) => {
+      const now = os.clock();
+      const last = lastRespawnRequest.get(player.UserId) ?? -math.huge;
+      if (now - last < OBBY_CONSTANTS.RESPAWN_DELAY) {
+        return;
+      }
+      lastRespawnRequest.set(player.UserId, now);
+
+      const data = DataService.getData(player);
+      if (!data) return;
+
+      const parsed = parseRespawnRequestPayload(payload);
+      if (!parsed) {
+        logger.warn(`Invalid respawn payload from ${player.Name}`);
+        return;
+      }
+
+      if (parsed.toCheckpoint !== undefined) {
+        // Only allow respawning to already-reached checkpoints (including 0 = stage start).
+        const target = math.floor(parsed.toCheckpoint);
+        if (target >= 0 && target <= data.currentCheckpoint) {
+          DataService.updateData(player, { currentCheckpoint: target });
+        }
+      }
+
+      // If the character is present, just teleport. Otherwise request a new character spawn and
+      // teleport after it appears (same flow as death respawn).
+      const character = player.Character;
+      const hasRoot =
+        character !== undefined &&
+        (character.FindFirstChild("HumanoidRootPart") as BasePart | undefined) !== undefined;
+
+      if (hasRoot) {
+        this.respawnPlayer(player);
+        return;
+      }
+
+      pendingRespawns.add(player.UserId);
+      task.spawn(() => {
+        const [ok, err] = pcall(() => player.LoadCharacter());
+        if (!ok) {
+          logger.warn(`Failed to LoadCharacter() for ${player.Name}: ${tostring(err)}`);
+        }
+      });
+    });
 
     // Helper to setup checkpoint touch detection
     const setupCheckpoint = (part: BasePart, cpData: CheckpointData) => {
@@ -272,6 +342,7 @@ export const CheckpointService: Service & {
     // Clean up pending respawns when player leaves
     Players.PlayerRemoving.Connect((player) => {
       pendingRespawns.delete(player.UserId);
+      lastRespawnRequest.delete(player.UserId);
     });
 
     // Helper to setup kill zone
@@ -441,5 +512,6 @@ export const CheckpointService: Service & {
   onDestroy() {
     checkpoints.clear();
     lastCheckpointTouch.clear();
+    lastRespawnRequest.clear();
   },
 };

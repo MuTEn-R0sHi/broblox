@@ -88,13 +88,16 @@ export const StageService: Service & {
 
     logger.info(`Player ${player.Name} completed stage ${stageNumber}!`);
 
-    // Calculate completion time (TODO: track actual stage start time)
-    const completionTime = 0; // Placeholder
-    const isNewBest = false; // TODO: compare with best time
+    // Calculate stage completion time
+    const completionTime = DataService.getStageElapsedSeconds(player) ?? 0;
+    const existingProgress = data.stageProgress[tostring(stageNumber)];
+    const priorBest = existingProgress?.bestTime;
+    const isNewBest = priorBest === undefined || completionTime < priorBest;
 
     // Update stage progress
     DataService.updateStageProgress(player, stageNumber, {
       completions: 1,
+      bestTime: isNewBest ? completionTime : undefined,
     });
 
     // Award coins
@@ -117,17 +120,55 @@ export const StageService: Service & {
         currentCheckpoint: 0,
       });
 
+      // Reset stage timer for the new stage
+      DataService.startStageTimer(player);
+
       // Notify client
       RemoteService.fireClient(player, events.stageCompleted, completedEvent);
+
+      // Sync current HUD state (coins/stage/checkpoint).
+      const updated = DataService.getData(player);
+      if (updated) {
+        RemoteService.fireClient(player, events.playerDataSync, {
+          coins: updated.coins,
+          currentStage: updated.currentStage,
+          currentCheckpoint: updated.currentCheckpoint,
+        });
+      }
     } else {
+      // Full run completion time
+      const totalTime = DataService.getRunElapsedSeconds(player) ?? 0;
+      const priorRunBest = data.bestFullRunTime;
+      const isNewRunBest = priorRunBest === undefined || totalTime < priorRunBest;
+
       // Game completed! Reset to start for another run
-      DataService.updateData(player, {
+      const updates = {
         totalCompletions: data.totalCompletions + 1,
         currentStage: 1,
         currentCheckpoint: 0,
-      });
+      } as Parameters<typeof DataService.updateData>[1];
+
+      if (isNewRunBest) {
+        updates.bestFullRunTime = totalTime;
+      }
+
+      DataService.updateData(player, updates);
+
+      // New run starts now
+      DataService.startRunTimer(player);
+      DataService.startStageTimer(player);
+
       RemoteService.fireClient(player, events.stageCompleted, completedEvent);
       logger.info(`Player ${player.Name} completed the entire obby!`);
+
+      const updated = DataService.getData(player);
+      if (updated) {
+        RemoteService.fireClient(player, events.playerDataSync, {
+          coins: updated.coins,
+          currentStage: updated.currentStage,
+          currentCheckpoint: updated.currentCheckpoint,
+        });
+      }
 
       // Teleport player back to start after a short delay
       task.delay(1.5, () => {
