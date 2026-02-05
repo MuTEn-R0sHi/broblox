@@ -21,38 +21,56 @@ pnpm add @rbx/movement
 ### Server Setup
 
 ```typescript
-import { MovementServer } from "@rbx/movement";
+import { getMovementValidator, MovementStateManager } from "@rbx/movement";
 
-// Initialize on server
-MovementServer.init({
-  maxWalkSpeed: 16,
-  maxRunSpeed: 24,
+const stateManager = new MovementStateManager();
+const validator = getMovementValidator({
+  walkSpeed: 16,
+  runSpeed: 24,
   jumpPower: 50,
-  acceptanceWindow: 200, // ms tolerance for lag
-  onViolation: (player, violation) => {
-    // Handle movement violations (integrates with @rbx/security)
-    print(`${player.Name} violated movement: ${violation.type}`);
-  },
 });
 
-// Player setup
-Players.PlayerAdded.Connect((player) => {
-  player.CharacterAdded.Connect((character) => {
-    MovementServer.registerCharacter(player, character);
-  });
+// Example validation loop (server-sampled):
+RunService.Heartbeat.Connect((dt) => {
+  for (const player of Players.GetPlayers()) {
+    const character = player.Character;
+    const hrp = character?.FindFirstChild("HumanoidRootPart");
+    const humanoid = character?.FindFirstChildOfClass("Humanoid");
+    if (!hrp?.IsA("BasePart") || !humanoid) continue;
+
+    const state = stateManager.getState(player.UserId, hrp.Position);
+    const input = {
+      position: hrp.Position,
+      velocity: hrp.AssemblyLinearVelocity,
+      isGrounded: humanoid.FloorMaterial !== Enum.Material.Air,
+      isJumping: humanoid.GetState() === Enum.HumanoidStateType.Jumping,
+      isRunning: humanoid.WalkSpeed > 16,
+      timestamp: os.clock(),
+      sequenceNumber: state.incrementSequence(),
+    };
+
+    const result = validator.validate(input, state, dt);
+    if (!result.isValid) {
+      // react to violations, optionally correct
+    }
+
+    state.updateState({
+      position: result.correctedPosition ?? input.position,
+      velocity: result.correctedVelocity ?? input.velocity,
+      isGrounded: input.isGrounded,
+      isJumping: input.isJumping,
+      isRunning: input.isRunning,
+      sequenceNumber: input.sequenceNumber,
+    });
+  }
 });
 ```
 
 ### Client Setup
 
 ```typescript
-import { MovementClient } from "@rbx/movement";
-
-// Initialize on client
-MovementClient.init({
-  reconciliationMode: "smooth", // "instant" or "smooth"
-  predictionEnabled: true,
-});
+// Client prediction/reconciliation is not shipped as a stable API yet.
+// Current package exports focus on server-side validation primitives.
 ```
 
 ### Movement Validation
@@ -60,52 +78,29 @@ MovementClient.init({
 The server validates all movement inputs:
 
 ```typescript
-// Movement is automatically validated, but you can query state:
-const state = MovementServer.getPlayerState(player);
+// You can query the server-side state you're tracking:
+const state = stateManager.getState(player.UserId).getState();
 
-print(state.position); // Current validated position
-print(state.velocity); // Current velocity
-print(state.isGrounded); // Is player on ground
-print(state.trustScore); // Movement trust score (0-100)
+print(state.position);
+print(state.velocity);
+print(state.isGrounded);
 ```
 
 ### Custom Movement Abilities
 
 ```typescript
-import { MovementServer } from "@rbx/movement";
-
-// Register a custom movement ability (e.g., dash)
-MovementServer.registerAbility("dash", {
-  maxSpeed: 80, // Higher than normal max
-  duration: 0.3, // seconds
-  cooldown: 2, // seconds
-  validator: (player, input) => {
-    // Custom validation logic
-    return player.Character?.FindFirstChild("DashAbility") !== undefined;
-  },
-});
-
-// Use ability
-MovementServer.useAbility(player, "dash", {
-  direction: new Vector3(1, 0, 0),
-});
+// Ability tracking hooks exist in types, but a public ability runtime is not shipped yet.
+// If you need this, build on top of `MovementConfig.abilities` and `PlayerMovementState`.
 ```
 
 ## Architecture
 
 ```
 @rbx/movement
-├── types.ts           - Type definitions
-├── server/
-│   ├── index.ts       - MovementServer API
-│   ├── validator.ts   - Movement validation logic
-│   └── state.ts       - Player state management
-├── client/
-│   ├── index.ts       - MovementClient API
-│   └── predictor.ts   - Client-side prediction
-└── shared/
-    ├── physics.ts     - Physics calculations
-    └── constants.ts   - Movement constants
+├── types.ts       - Type definitions
+├── constants.ts   - Movement constants + thresholds
+├── validator.ts   - Movement validation logic
+└── state.ts       - Player state management
 ```
 
 ## Anti-Cheat Integration

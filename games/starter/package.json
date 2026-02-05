@@ -15,6 +15,7 @@
     "@rbx/config-featureflags": "workspace:*",
     "@rbx/constants": "workspace:*",
     "@rbx/core": "workspace:*",
+    "@rbx/movement": "workspace:*",
     "@rbx/moderation": "workspace:*",
     "@rbx/net": "workspace:*",
     "@rbx/shared-types": "workspace:*",
