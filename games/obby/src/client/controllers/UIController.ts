@@ -34,6 +34,20 @@ export class UIController {
   private coins = 0;
   private stageStartTime = os.clock();
 
+  private formatLeaderboardPlayerName(userId: number, playerName: string): string {
+    const MAX_LEN = 16;
+    let nameOut = playerName;
+    if (nameOut.size() > MAX_LEN) {
+      nameOut = `${nameOut.sub(1, MAX_LEN - 1)}…`;
+    }
+
+    if (userId === this.player.UserId) {
+      return `${nameOut} (You)`;
+    }
+
+    return nameOut;
+  }
+
   constructor(remote: RemoteController) {
     this.remote = remote;
   }
@@ -336,7 +350,8 @@ export class UIController {
       }
 
       const timeText = e.bestTime !== undefined ? ` • ${string.format("%.2f", e.bestTime)}s` : "";
-      row.Text = `#${e.rank} ${e.playerName} • ${e.completions} win${e.completions === 1 ? "" : "s"}${timeText}`;
+      const nameText = this.formatLeaderboardPlayerName(e.userId, e.playerName);
+      row.Text = `#${e.rank} ${nameText} • ${e.completions} win${e.completions === 1 ? "" : "s"}${timeText}`;
       row.Parent = this.leaderboardList;
     }
   }
