@@ -282,6 +282,27 @@ export async function auditMuteRevoke(
 }
 
 /**
+ * Audit an attempt to sync a mute change to live game servers.
+ */
+export async function auditMuteSync(
+  userId: string,
+  playerId: bigint,
+  muteId: string,
+  result: { ok: true } | { ok: false; error: string }
+): Promise<void> {
+  await audit({
+    userId,
+    action: result.ok ? "mute.sync" : "mute.sync_failed",
+    target: `${playerId}/${muteId}`,
+    after: result.ok
+      ? undefined
+      : {
+          error: truncateAuditValue(result.error),
+        },
+  });
+}
+
+/**
  * Audit a role change.
  */
 export async function auditRoleChange(

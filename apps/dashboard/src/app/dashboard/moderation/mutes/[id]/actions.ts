@@ -2,13 +2,14 @@
 
 import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
-import { auditMuteRevoke } from "@/lib/audit";
+import { auditMuteRevoke, auditMuteSync } from "@/lib/audit";
+import { bridgeRevokeMuteToRoblox } from "@/lib/moderation-bridge";
 
 export async function revokeMute(
   muteId: string,
   playerId: string,
   reason: string
-): Promise<{ success?: boolean; error?: string }> {
+): Promise<{ success?: boolean; warning?: string; error?: string }> {
   const auth = await checkPermission("moderation:mute");
   if (!auth) {
     return { error: "Unauthorized" };
@@ -46,6 +47,23 @@ export async function revokeMute(
   });
 
   await auditMuteRevoke(auth.user.id, playerIdBigInt, muteId, revokeReason);
+
+  const syncResult = await bridgeRevokeMuteToRoblox({
+    muteId,
+    playerId: playerIdBigInt,
+    revokedById: auth.user.id,
+    revokedAt: new Date(),
+  });
+
+  await auditMuteSync(auth.user.id, playerIdBigInt, muteId, syncResult);
+
+  if (!syncResult.ok) {
+    return {
+      success: true,
+      warning:
+        "Mute revoked, but failed to propagate to live servers. Check dashboard audit logs for details.",
+    };
+  }
 
   return { success: true };
 }

@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
-import { auditMuteCreate } from "@/lib/audit";
+import { auditMuteCreate, auditMuteSync } from "@/lib/audit";
+import { bridgeCreateMuteToRoblox } from "@/lib/moderation-bridge";
 
 interface CreateMuteInput {
   playerId: string;
@@ -65,6 +66,27 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
     reason,
     durationMinutes: input.durationMinutes,
   });
+
+  const syncResult = await bridgeCreateMuteToRoblox({
+    muteId: mute.id,
+    playerId: playerIdBigInt,
+    type: mute.type,
+    reason: mute.reason,
+    durationMinutes: mute.durationMinutes,
+    expiresAt: mute.expiresAt,
+    moderatorId: auth.user.id,
+    createdAt: mute.createdAt,
+  });
+
+  await auditMuteSync(auth.user.id, playerIdBigInt, mute.id, syncResult);
+
+  if (!syncResult.ok) {
+    return {
+      id: mute.id,
+      error:
+        "Mute created, but failed to propagate to live servers. Check dashboard audit logs for details.",
+    };
+  }
 
   return { id: mute.id };
 }

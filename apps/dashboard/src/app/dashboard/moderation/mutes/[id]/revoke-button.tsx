@@ -16,6 +16,7 @@ export function RevokeMuteButton({ muteId, playerId }: RevokeMuteButtonProps) {
   const [showForm, setShowForm] = useState(false);
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
   async function handleRevoke() {
     if (!reason.trim()) {
@@ -25,12 +26,14 @@ export function RevokeMuteButton({ muteId, playerId }: RevokeMuteButtonProps) {
 
     setLoading(true);
     setError(null);
+    setWarning(null);
 
     try {
       const result = await revokeMute(muteId, playerId.toString(), reason);
       if (result.error) {
         setError(result.error);
       } else {
+        if (result.warning) setWarning(result.warning);
         router.refresh();
         setShowForm(false);
       }
@@ -54,6 +57,12 @@ export function RevokeMuteButton({ muteId, playerId }: RevokeMuteButtonProps) {
       {error && (
         <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-500 text-sm">
           {error}
+        </div>
+      )}
+
+      {warning && (
+        <div className="bg-yellow-500/10 border border-yellow-500/40 rounded-lg p-3 text-yellow-200 text-sm">
+          {warning}
         </div>
       )}
 

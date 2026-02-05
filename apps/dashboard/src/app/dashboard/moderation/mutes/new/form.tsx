@@ -46,7 +46,13 @@ export function CreateMuteForm() {
       });
 
       if (result.error) {
-        setError(result.error);
+        // If the mute was created but the live-server propagation failed, still take the
+        // operator to the mute page and show a warning banner there.
+        if (result.id) {
+          router.push(`/dashboard/moderation/mutes/${result.id}?sync=failed`);
+        } else {
+          setError(result.error);
+        }
       } else {
         router.push(`/dashboard/moderation/mutes/${result.id}`);
       }

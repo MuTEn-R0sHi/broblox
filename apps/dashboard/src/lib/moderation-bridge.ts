@@ -24,6 +24,18 @@ type BanRecord = {
   revokeReason?: string;
 };
 
+type MuteRecord = {
+  id: string;
+  playerId: number;
+  type: "chat" | "voice" | "all";
+  isActive: boolean;
+  reason: string;
+  durationMinutes: number;
+  expiresAt: number;
+  moderatorId: string;
+  createdAt: number;
+};
+
 function toSafeNumber(value: bigint): number {
   const n = Number(value);
   if (!Number.isSafeInteger(n) || BigInt(n) !== value) {
@@ -40,6 +52,19 @@ function sanitizeText(input: string | undefined, maxLen: number): string | undef
 }
 
 export type BanBridgeResult = { ok: true } | { ok: false; error: string };
+
+export type MuteBridgeResult = { ok: true } | { ok: false; error: string };
+
+function toMuteType(value: "CHAT" | "VOICE" | "ALL"): MuteRecord["type"] {
+  switch (value) {
+    case "CHAT":
+      return "chat";
+    case "VOICE":
+      return "voice";
+    case "ALL":
+      return "all";
+  }
+}
 
 export async function bridgeCreateBanToRoblox(opts: {
   banId: string;
@@ -175,6 +200,130 @@ export async function bridgeRevokeBanToRoblox(opts: {
 
     await publishMessagingService({
       topic: cfg.banTopic,
+      message: JSON.stringify(publishRecord),
+    });
+
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error: summarizeOpenCloudError(error) };
+  }
+}
+
+export async function bridgeCreateMuteToRoblox(opts: {
+  muteId: string;
+  playerId: bigint;
+  type: "CHAT" | "VOICE" | "ALL";
+  reason: string;
+  durationMinutes: number;
+  expiresAt: Date;
+  moderatorId: string;
+  createdAt: Date;
+}): Promise<MuteBridgeResult> {
+  const cfg = getOpenCloudModerationBridgeConfig();
+  if (!cfg.enabled) {
+    return {
+      ok: false,
+      error:
+        "Moderation bridge is disabled (set MODERATION_OPEN_CLOUD_ENABLED=true to propagate mutes to live servers)",
+    };
+  }
+
+  try {
+    const playerId = toSafeNumber(opts.playerId);
+    const nowUnix = Math.floor(opts.createdAt.getTime() / 1000);
+
+    const record: MuteRecord = {
+      id: opts.muteId,
+      playerId,
+      type: toMuteType(opts.type),
+      isActive: true,
+      reason: sanitizeText(opts.reason, 500) ?? "(no reason)",
+      durationMinutes: opts.durationMinutes,
+      expiresAt: Math.floor(opts.expiresAt.getTime() / 1000),
+      moderatorId: opts.moderatorId,
+      createdAt: nowUnix,
+    };
+
+    await updateStandardDataStoreEntry<MuteRecord[], MuteRecord[]>({
+      datastore: {
+        datastoreName: `${cfg.datastoreName}_Mutes`,
+        scope: cfg.scope,
+      },
+      entryKey: `mutes_${playerId}`,
+      update: (current) => {
+        const mutes = Array.isArray(current) ? [...current] : [];
+        mutes.push(record);
+        return mutes;
+      },
+    });
+
+    await publishMessagingService({
+      topic: cfg.muteTopic,
+      message: JSON.stringify(record),
+    });
+
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error: summarizeOpenCloudError(error) };
+  }
+}
+
+export async function bridgeRevokeMuteToRoblox(opts: {
+  muteId: string;
+  playerId: bigint;
+  revokedById: string;
+  revokedAt: Date;
+}): Promise<MuteBridgeResult> {
+  const cfg = getOpenCloudModerationBridgeConfig();
+  if (!cfg.enabled) {
+    return {
+      ok: false,
+      error:
+        "Moderation bridge is disabled (set MODERATION_OPEN_CLOUD_ENABLED=true to propagate mute revocations to live servers)",
+    };
+  }
+
+  try {
+    const playerId = toSafeNumber(opts.playerId);
+    const revokedAtUnix = Math.floor(opts.revokedAt.getTime() / 1000);
+
+    let updatedRecord: MuteRecord | undefined;
+
+    await updateStandardDataStoreEntry<MuteRecord[], MuteRecord[]>({
+      datastore: {
+        datastoreName: `${cfg.datastoreName}_Mutes`,
+        scope: cfg.scope,
+      },
+      entryKey: `mutes_${playerId}`,
+      update: (current) => {
+        const mutes = Array.isArray(current) ? [...current] : [];
+        for (const mute of mutes) {
+          if (mute.id === opts.muteId) {
+            mute.isActive = false;
+            updatedRecord = mute;
+            break;
+          }
+        }
+        return mutes;
+      },
+    });
+
+    const publishRecord: MuteRecord =
+      updatedRecord ??
+      ({
+        id: opts.muteId,
+        playerId,
+        type: "chat",
+        isActive: false,
+        reason: "",
+        durationMinutes: 0,
+        expiresAt: revokedAtUnix,
+        moderatorId: opts.revokedById,
+        createdAt: revokedAtUnix,
+      } satisfies MuteRecord);
+
+    await publishMessagingService({
+      topic: cfg.muteTopic,
       message: JSON.stringify(publishRecord),
     });
 
