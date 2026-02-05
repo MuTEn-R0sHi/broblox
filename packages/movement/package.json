@@ -2,10 +2,18 @@
   "name": "@rbx/movement",
   "version": "0.1.0",
   "description": "Server-authoritative movement system for Roblox games",
-  "main": "out/init.lua",
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
   "scripts": {
     "build": "rbxtsc",
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
     "watch": "rbxtsc -w",
     "test": "vitest run",
     "lint": "eslint src/"

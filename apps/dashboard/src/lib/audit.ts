@@ -21,6 +21,11 @@ export interface AuditContext {
   reason?: string;
 }
 
+function truncateAuditValue(value: string, maxLen = 500): string {
+  if (value.length <= maxLen) return value;
+  return `${value.slice(0, maxLen)}…`;
+}
+
 // ============================================================================
 // Audit Functions
 // ============================================================================
