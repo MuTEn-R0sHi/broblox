@@ -2,7 +2,14 @@
   "name": "@rbx/moderation",
   "version": "0.1.0",
   "description": "Moderation system for Roblox games - bans, mutes, enforcement",
-  "main": "out/init.lua",
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
   "scripts": {
     "build": "rbxtsc",
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",

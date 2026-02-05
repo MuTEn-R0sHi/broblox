@@ -1,6 +1,6 @@
 import { Service, createLogger } from "@rbx/core";
 import { Players } from "@rbxts/services";
-import { getModeration } from "@rbx/moderation";
+import { getModeration, type BanRecord, type MuteRecord } from "@rbx/moderation";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const logger = createLogger("ModerationEnforcementService");
@@ -57,7 +57,7 @@ export const ModerationEnforcementService: Service = {
     });
 
     // React to cross-server ban events.
-    moderation.onBan((record) => {
+    moderation.onBan((record: BanRecord) => {
       const player = Players.GetPlayerByUserId(record.playerId);
       if (player) {
         enforceBan(player);
@@ -65,7 +65,7 @@ export const ModerationEnforcementService: Service = {
     });
 
     // React to cross-server mute events.
-    moderation.onMute((record) => {
+    moderation.onMute((record: MuteRecord) => {
       const player = Players.GetPlayerByUserId(record.playerId);
       if (player) {
         applyMuteState(player);
