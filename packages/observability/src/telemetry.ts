@@ -12,6 +12,7 @@ import {
   CorrelationContext,
 } from "./types";
 import { getContext, getPlayerContext } from "./context";
+import { rbxSize } from "./runtime";
 
 // Declare Roblox globals for JSON encoding
 declare const game: {
@@ -216,13 +217,13 @@ export class BatchedSink implements TelemetrySink {
   emit(event: TelemetryEvent): void {
     this.buffer.push(event);
 
-    if (this.buffer.size() >= this.maxBatchSize) {
+    if (rbxSize(this.buffer) >= this.maxBatchSize) {
       this.flush();
     }
   }
 
   flush(): void {
-    if (this.buffer.size() === 0) {
+    if (rbxSize(this.buffer) === 0) {
       return;
     }
 

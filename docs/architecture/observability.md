@@ -107,6 +107,7 @@ Review process: Manual review via Studio output or Roblox Developer Console.
 - P50/P95/P99 latency (by remote)
 - Rate limit hit rate
 - Server memory and tick rate
+- Moderation sync propagation health (e.g. received count, decode errors, message age)
 
 ### Client-side (sampled)
 

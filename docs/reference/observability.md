@@ -13,48 +13,27 @@ pnpm add @rbx/observability
 Emit structured events for analytics and debugging.
 
 ```typescript
-import { emit, TelemetryEvent } from "@rbx/observability";
+import { emit, emitPlayer } from "@rbx/observability";
 
 // Basic event
-emit({
-  name: "player_joined",
-  category: "lifecycle",
-  data: { region: "us-east" },
-});
+emit("game", "player_joined", { region: "us-east" });
 
 // With player context (auto-enriched)
-emit({
-  name: "item_purchased",
-  category: "economy",
-  data: { itemId: "sword_001", price: 100 },
-});
+emitPlayer(player, "item_purchased", { itemId: "sword_001", price: 100 });
 ```
 
 ### Event Structure
 
 ```typescript
 interface TelemetryEvent {
-  name: string; // Event name (e.g., "player_joined")
-  category: string; // Category for grouping
-  data?: unknown; // Event-specific payload
-  timestamp?: number; // Auto-filled if not provided
-  sessionId?: string; // Auto-filled from context
-  playerId?: string; // Auto-filled from context
-  serverJobId?: string; // Auto-filled from context
+  category: string;
+  name: string;
+  level: "debug" | "info" | "warn" | "error";
+  timestamp: number;
+  clock: number;
+  context: unknown;
+  data: Record<string, unknown>;
 }
-```
-
-### Configuring Telemetry
-
-```typescript
-import { configureTelemetry } from "@rbx/observability";
-
-configureTelemetry({
-  enabled: true,
-  sampleRate: 0.1, // Sample 10% of events
-  batchSize: 50, // Batch events before flush
-  flushIntervalMs: 5000, // Flush every 5 seconds
-});
 ```
 
 ## Metrics
@@ -62,22 +41,23 @@ configureTelemetry({
 Track numeric measurements over time.
 
 ```typescript
-import { incrementCounter, setGauge, recordHistogram, recordTiming } from "@rbx/observability";
+import { createCounter, createGauge, createHistogram, time } from "@rbx/observability";
 
-// Counters - monotonically increasing values
-incrementCounter("requests_total", { endpoint: "handshake" });
-incrementCounter("errors_total", { type: "validation" }, 1);
+const requests = createCounter("requests_total", { endpoint: "handshake" });
+const errors = createCounter("errors_total", { type: "validation" });
 
-// Gauges - point-in-time values
-setGauge("players_online", 42);
-setGauge("memory_mb", 256.5);
+const playersOnline = createGauge("players_online");
 
-// Histograms - distribution of values
-recordHistogram("request_size_bytes", 1024);
-recordHistogram("damage_dealt", 25, { weapon: "sword" });
+const requestSize = createHistogram("request_size_bytes");
+const handlerLatency = createHistogram("request_duration_ms", { endpoint: "action" });
 
-// Timing - convenience for duration measurements
-recordTiming("request_duration_ms", 45.2, { endpoint: "action" });
+requests.inc();
+playersOnline.set(42);
+requestSize.observe(1024);
+
+time(handlerLatency, () => {
+  // ... do work ...
+});
 ```
 
 ### Metric Types
@@ -94,17 +74,18 @@ recordTiming("request_duration_ms", 45.2, { endpoint: "action" });
 Track operation timing and nested calls.
 
 ```typescript
-import { startSpan, endSpan, withSpan } from "@rbx/observability";
+import { startSpan, withSpan } from "@rbx/observability";
 
 // Manual span management
-const spanId = startSpan("process_action", { actionId: "jump" });
+const span = startSpan("process_action");
+span.setAttributes({ actionId: "jump" });
 // ... do work ...
-endSpan(spanId);
+span.end();
 
 // Automatic span management (recommended)
-withSpan("load_player_data", { playerId: "123" }, () => {
+withSpan("load_player_data", (span) => {
+  span.setAttribute("playerId", 123);
   // ... do work ...
-  // Span automatically ends when function returns
 });
 
 // Nested spans create a trace tree
@@ -121,49 +102,26 @@ withSpan("handle_request", {}, () => {
 });
 ```
 
-### Span Attributes
-
-```typescript
-startSpan("operation_name", {
-  // Custom attributes
-  playerId: "123",
-  actionType: "attack",
-  targetId: "enemy_456",
-});
-```
-
 ## Correlation Context
 
 Propagate request-scoped data across async operations.
 
 ```typescript
-import {
-  setCorrelationContext,
-  getCorrelationContext,
-  withCorrelationContext,
-  clearCorrelationContext,
-} from "@rbx/observability";
+import { initContext, getContext, setContext, getPlayerContext } from "@rbx/observability";
 
-// Set context for current scope
-setCorrelationContext({
-  requestId: "req_abc123",
-  playerId: "player_456",
-  sessionId: "session_789",
-});
+// Initialize once at startup
+initContext();
+
+// Update global context (server/client)
+setContext({ tags: { region: "us-east" } });
 
 // Get context anywhere in the call chain
-const ctx = getCorrelationContext();
-print(ctx.requestId); // "req_abc123"
+const ctx = getContext();
+print(ctx.serverId);
 
-// Scoped context (automatically restored after)
-withCorrelationContext({ traceId: "trace_xyz" }, () => {
-  // Context includes traceId here
-  doSomething();
-  // Context automatically restored after this block
-});
-
-// Clear context when done
-clearCorrelationContext();
+// Player contexts are per-user
+const playerCtx = getPlayerContext(player);
+print(playerCtx.playerId);
 ```
 
 ### Automatic Context Enrichment
@@ -217,6 +175,18 @@ withSpan("handle_remote", { remote: "DoAction" }, () => {
   withSpan("respond", {}, () => sendResponse(result));
 });
 ```
+
+## Node/Vitest compatibility
+
+`@rbx/observability` is written in a roblox-ts style, where strings/arrays often use Luau idioms like `.size()`. The implementation includes internal fallbacks so it can execute under Node-based unit tests (Vitest) without requiring global prototype polyfills.
+
+## Built-in metrics
+
+Some packages emit standardized metrics via `createCounter` / `createHistogram`. For moderation sync propagation, runtime publishes:
+
+- `moderation_sync_received_total` (labels: `topic`)
+- `moderation_sync_decode_errors_total` (labels: `topic`)
+- `moderation_sync_message_age_ms` histogram (labels: `topic`)
 
 ### 4. Sample High-Volume Events
 

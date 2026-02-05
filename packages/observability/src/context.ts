@@ -5,6 +5,7 @@
  */
 
 import { CorrelationContext } from "./types";
+import { rbxSize } from "./runtime";
 
 // Declare Roblox globals
 declare const game: {
@@ -154,7 +155,7 @@ export function generateSpanId(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
   for (let i = 0; i < 8; i++) {
-    const idx = math.random(1, chars.size());
+    const idx = math.random(1, rbxSize(chars));
     result += chars.sub(idx, idx);
   }
   return result;

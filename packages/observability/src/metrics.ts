@@ -5,6 +5,7 @@
  */
 
 import { MetricPoint, MetricSink, HistogramBuckets } from "./types";
+import { rbxSize } from "./runtime";
 
 // ============================================================================
 // Sink Management
@@ -189,7 +190,7 @@ export class Histogram {
     this.buckets = bucketConfig?.boundaries ?? DEFAULT_BUCKETS;
     // Initialize counts array with zeros
     this.counts = [];
-    for (let i = 0; i <= this.buckets.size(); i++) {
+    for (let i = 0; i <= rbxSize(this.buckets); i++) {
       this.counts.push(0);
     }
   }
@@ -202,8 +203,8 @@ export class Histogram {
     this.count += 1;
 
     // Find bucket
-    let bucketIdx = this.buckets.size();
-    for (let i = 0; i < this.buckets.size(); i++) {
+    let bucketIdx = rbxSize(this.buckets);
+    for (let i = 0; i < rbxSize(this.buckets); i++) {
       if (value <= this.buckets[i]) {
         bucketIdx = i;
         break;
@@ -278,7 +279,7 @@ export class ConsoleMetricSink implements MetricSink {
       for (const [k, v] of pairs(point.labels)) {
         parts.push(`${k}="${v}"`);
       }
-      if (parts.size() > 0) {
+      if (rbxSize(parts) > 0) {
         labelStr = ` {${parts.join(",")}}`;
       }
     }
