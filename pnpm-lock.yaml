@@ -199,6 +199,9 @@ importers:
       "@rbx/moderation":
         specifier: workspace:*
         version: link:../../packages/moderation
+      "@rbx/movement":
+        specifier: workspace:*
+        version: link:../../packages/movement
       "@rbx/net":
         specifier: workspace:*
         version: link:../../packages/net
