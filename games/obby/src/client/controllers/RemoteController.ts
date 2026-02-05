@@ -89,6 +89,7 @@ export class RemoteController {
   private remoteFolder?: Folder;
   private checkpointReached?: RemoteEvent;
   private requestRespawn?: RemoteEvent;
+  private requestLeaderboard?: RemoteEvent;
   private stageCompleted?: RemoteEvent;
   private leaderboardUpdate?: RemoteEvent;
   private playerDataSync?: RemoteEvent;
@@ -107,6 +108,7 @@ export class RemoteController {
     // Get remote events
     this.checkpointReached = this.remoteFolder.WaitForChild("CheckpointReached") as RemoteEvent;
     this.requestRespawn = this.remoteFolder.WaitForChild("RequestRespawn") as RemoteEvent;
+    this.requestLeaderboard = this.remoteFolder.WaitForChild("RequestLeaderboard") as RemoteEvent;
     this.stageCompleted = this.remoteFolder.WaitForChild("StageCompleted") as RemoteEvent;
     this.leaderboardUpdate = this.remoteFolder.WaitForChild("LeaderboardUpdate") as RemoteEvent;
     this.playerDataSync = this.remoteFolder.WaitForChild("PlayerDataSync") as RemoteEvent;
@@ -141,6 +143,13 @@ export class RemoteController {
    */
   requestRespawnAtCheckpoint(checkpointId?: number): void {
     this.requestRespawn?.FireServer({ toCheckpoint: checkpointId });
+  }
+
+  /**
+   * Request an immediate leaderboard snapshot from the server.
+   */
+  requestLeaderboardRefresh(): void {
+    this.requestLeaderboard?.FireServer();
   }
 
   /**

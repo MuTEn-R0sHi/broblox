@@ -28,6 +28,7 @@ export class UIController {
   private leaderboardFrame?: Frame;
   private leaderboardUpdatedLabel?: TextLabel;
   private leaderboardList?: Frame;
+  private leaderboardRefreshButton?: TextButton;
 
   // State
   private currentStage = 1;
@@ -166,6 +167,32 @@ export class UIController {
     title.TextXAlignment = Enum.TextXAlignment.Left;
     title.Text = "Leaderboard";
     title.Parent = this.leaderboardFrame;
+
+    this.leaderboardRefreshButton = new Instance("TextButton");
+    this.leaderboardRefreshButton.Name = "Refresh";
+    this.leaderboardRefreshButton.Size = new UDim2(0, 72, 0, 20);
+    this.leaderboardRefreshButton.Position = new UDim2(1, -80, 0, 6);
+    this.leaderboardRefreshButton.BackgroundColor3 = new Color3(0.2, 0.2, 0.2);
+    this.leaderboardRefreshButton.BackgroundTransparency = 0.2;
+    this.leaderboardRefreshButton.BorderSizePixel = 0;
+    this.leaderboardRefreshButton.TextColor3 = new Color3(1, 1, 1);
+    this.leaderboardRefreshButton.TextTransparency = 0.15;
+    this.leaderboardRefreshButton.TextSize = 12;
+    this.leaderboardRefreshButton.Font = Enum.Font.GothamBold;
+    this.leaderboardRefreshButton.Text = "Refresh";
+    this.leaderboardRefreshButton.AutoButtonColor = true;
+    this.leaderboardRefreshButton.Parent = this.leaderboardFrame;
+
+    const refreshCorner = new Instance("UICorner");
+    refreshCorner.CornerRadius = new UDim(0, 6);
+    refreshCorner.Parent = this.leaderboardRefreshButton;
+
+    this.leaderboardRefreshButton.MouseButton1Click.Connect(() => {
+      if (this.leaderboardUpdatedLabel) {
+        this.leaderboardUpdatedLabel.Text = "Refreshing...";
+      }
+      this.remote.requestLeaderboardRefresh();
+    });
 
     this.leaderboardUpdatedLabel = new Instance("TextLabel");
     this.leaderboardUpdatedLabel.Name = "Updated";

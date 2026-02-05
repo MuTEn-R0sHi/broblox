@@ -32,6 +32,9 @@ let lastCacheUpdate = 0;
 let lastBroadcastAt = 0;
 const BROADCAST_MIN_INTERVAL = 2; // seconds
 
+const lastRefreshRequestAt = new Map<number, number>();
+const REFRESH_REQUEST_MIN_INTERVAL = 1; // seconds
+
 // Roblox service typings (kept local to avoid importing runtime globals at module eval time)
 interface DataStorePages {
   GetCurrentPage(): Array<{ key: string; value: number }>;
@@ -180,6 +183,15 @@ function broadcastLeaderboard(force = false): void {
   RemoteService.leaderboardUpdate().FireAllClients(payload);
 }
 
+function sendLeaderboardToPlayer(player: Player, force = false): void {
+  const now = os.clock();
+  const last = lastRefreshRequestAt.get(player.UserId) ?? -math.huge;
+  if (!force && now - last < REFRESH_REQUEST_MIN_INTERVAL) return;
+  lastRefreshRequestAt.set(player.UserId, now);
+
+  RemoteService.leaderboardUpdate().FireClient(player, buildLeaderboardPayload());
+}
+
 export const LeaderboardService: Service & {
   getLeaderboard(limit?: number): LeaderboardEntry[];
   getPlayerRank(player: Player): number | undefined;
@@ -290,6 +302,13 @@ export const LeaderboardService: Service & {
       RemoteService.leaderboardUpdate().FireClient(player, buildLeaderboardPayload());
     });
 
+    // Allow clients to request an immediate snapshot (useful for a manual refresh button).
+    RemoteService.requestLeaderboard().OnServerEvent.Connect((player: Player) => {
+      // Best-effort refresh: this will schedule a DataStore reload if applicable.
+      this.refreshLeaderboard();
+      sendLeaderboardToPlayer(player);
+    });
+
     // Update leaderboard when players leave
     PlayerLifecycleService.onPlayerRemoving((player) => {
       this.updatePlayerEntry(player);
@@ -317,5 +336,7 @@ export const LeaderboardService: Service & {
         logger.warn(`Failed to flush leaderboard entry for ${entry.userId}: ${tostring(errFlush)}`);
       }
     }
+
+    lastRefreshRequestAt.clear();
   },
 };
