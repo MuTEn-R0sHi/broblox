@@ -18,6 +18,14 @@ export type OpenCloudModerationBridgeConfig = {
   muteTopic: string;
 };
 
+export type OpenCloudFeatureFlagsBridgeConfig = {
+  enabled: boolean;
+  datastoreName: string;
+  scope?: string;
+  topic: string;
+  entryKeyPrefix: string;
+};
+
 const OPEN_CLOUD_BASE_URL = "https://apis.roblox.com";
 
 function getOpenCloudConfig(): OpenCloudConfig | null {
@@ -41,6 +49,18 @@ export function getOpenCloudModerationBridgeConfig(): OpenCloudModerationBridgeC
     scope: process.env.ROBLOX_MODERATION_DATASTORE_SCOPE?.trim() || undefined,
     banTopic: process.env.ROBLOX_MODERATION_BAN_TOPIC?.trim() || "ModBanSync",
     muteTopic: process.env.ROBLOX_MODERATION_MUTE_TOPIC?.trim() || "ModMuteSync",
+  };
+}
+
+export function getOpenCloudFeatureFlagsBridgeConfig(): OpenCloudFeatureFlagsBridgeConfig {
+  const enabled = process.env.FEATUREFLAGS_OPEN_CLOUD_ENABLED?.trim() === "true";
+
+  return {
+    enabled,
+    datastoreName: process.env.ROBLOX_FEATUREFLAGS_DATASTORE_NAME?.trim() || "StarterFeatureFlags",
+    scope: process.env.ROBLOX_FEATUREFLAGS_DATASTORE_SCOPE?.trim() || undefined,
+    topic: process.env.ROBLOX_FEATUREFLAGS_TOPIC?.trim() || "FeatureFlagsSync",
+    entryKeyPrefix: process.env.ROBLOX_FEATUREFLAGS_ENTRY_KEY_PREFIX?.trim() || "featureflags_",
   };
 }
 

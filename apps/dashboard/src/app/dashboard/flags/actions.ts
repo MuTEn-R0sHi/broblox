@@ -2,9 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
-import { audit, auditFlagCreate, auditFlagDelete, auditFlagKill } from "@/lib/audit";
+import { audit, auditFlagCreate, auditFlagDelete, auditFlagKill, auditFlagSync } from "@/lib/audit";
 import { checkPermission } from "@/lib/authorize";
 import { assertHighRiskConfirmation, normalizeHighRiskReason } from "@/lib/high-risk";
+import {
+  bridgeSyncFeatureFlagsToRoblox,
+  type DashboardFeatureFlagRecord,
+} from "@/lib/featureflags-bridge";
 
 export type FeatureFlag = {
   id: string;
@@ -41,6 +45,33 @@ export async function getFlags(): Promise<FeatureFlag[]> {
   }));
 }
 
+async function bestEffortSyncFlagsToRoblox(opts: {
+  userId: string;
+  environments: Array<"dev" | "stage" | "prod">;
+}): Promise<void> {
+  const flags = await prisma.featureFlag.findMany({
+    select: {
+      key: true,
+      enabledDev: true,
+      enabledStage: true,
+      enabledProd: true,
+      rolloutPercentage: true,
+      isKilled: true,
+      value: true,
+    },
+  });
+
+  const result = await bridgeSyncFeatureFlagsToRoblox({
+    environments: opts.environments,
+    flags: flags as DashboardFeatureFlagRecord[],
+  });
+
+  const envLabel: "dev" | "stage" | "prod" | "all" =
+    opts.environments.length === 3 ? "all" : opts.environments[0]!;
+
+  await auditFlagSync(opts.userId, envLabel, result.ok ? { ok: true } : result);
+}
+
 export async function createFlag(data: {
   key: string;
   name: string;
@@ -65,6 +96,11 @@ export async function createFlag(data: {
   });
 
   await auditFlagCreate(auth.user.id, flag.key, flag);
+
+  await bestEffortSyncFlagsToRoblox({
+    userId: auth.user.id,
+    environments: ["dev", "stage", "prod"],
+  });
 
   revalidatePath("/dashboard/flags");
   return flag as FeatureFlag;
@@ -111,6 +147,11 @@ export async function updateFlag(
     target: flag.key,
     before,
     after: flag,
+  });
+
+  await bestEffortSyncFlagsToRoblox({
+    userId: auth.user.id,
+    environments: ["dev", "stage", "prod"],
   });
 
   revalidatePath("/dashboard/flags");
@@ -167,6 +208,8 @@ export async function toggleFlagEnvironment(
     reason,
   });
 
+  await bestEffortSyncFlagsToRoblox({ userId: auth.user.id, environments: [environment] });
+
   revalidatePath("/dashboard/flags");
   return flag as FeatureFlag;
 }
@@ -180,6 +223,11 @@ export async function deleteFlag(id: string): Promise<void> {
   await prisma.featureFlag.delete({ where: { id } });
 
   await auditFlagDelete(auth.user.id, flag?.key ?? id, flag);
+
+  await bestEffortSyncFlagsToRoblox({
+    userId: auth.user.id,
+    environments: ["dev", "stage", "prod"],
+  });
 
   revalidatePath("/dashboard/flags");
 }
@@ -212,6 +260,11 @@ export async function killFlag(
 
   await auditFlagKill(auth.user.id, flag.key, true, reason);
 
+  await bestEffortSyncFlagsToRoblox({
+    userId: auth.user.id,
+    environments: ["dev", "stage", "prod"],
+  });
+
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };
 }
@@ -243,6 +296,11 @@ export async function unkillFlag(
   });
 
   await auditFlagKill(auth.user.id, flag.key, false, reason);
+
+  await bestEffortSyncFlagsToRoblox({
+    userId: auth.user.id,
+    environments: ["dev", "stage", "prod"],
+  });
 
   revalidatePath("/dashboard/flags");
   return { ...flag, segments: flag.segments as string[] | null };
@@ -288,6 +346,11 @@ export async function updateRollout(
     target: flag.key,
     before,
     after: flag,
+  });
+
+  await bestEffortSyncFlagsToRoblox({
+    userId: auth.user.id,
+    environments: ["dev", "stage", "prod"],
   });
 
   revalidatePath("/dashboard/flags");

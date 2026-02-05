@@ -56,6 +56,15 @@ const flagDefinitions = new Map<string, FlagDefinition>();
 /** Current flag values (overrides defaults) */
 const flagOverrides = new Map<string, FlagValue>();
 
+/** Enabled overrides for boolean flags (used for environment toggles) */
+const flagEnabledOverrides = new Map<string, boolean>();
+
+/** Rollout overrides for boolean flags (0-100) */
+const flagRolloutOverrides = new Map<string, number>();
+
+/** Kill-switch overrides (forces boolean flags off) */
+const killedFlags = new Set<string>();
+
 /** Flag change listeners */
 const changeListeners: FlagChangeListener[] = [];
 
@@ -119,8 +128,20 @@ export function getFlagValue<T extends FlagValue>(name: string): T | undefined {
     return flagOverrides.get(name) as T;
   }
 
-  // Fall back to definition default
   const definition = flagDefinitions.get(name);
+  const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
+
+  if (isBoolean) {
+    if (killedFlags.has(name)) {
+      return false as T;
+    }
+
+    if (flagEnabledOverrides.has(name)) {
+      return flagEnabledOverrides.get(name) as unknown as T;
+    }
+  }
+
+  // Fall back to definition default
   if (definition) {
     return definition.defaultValue as T;
   }
@@ -163,6 +184,9 @@ export function clearFlagOverride(name: string): void {
  */
 export function clearAllOverrides(): void {
   flagOverrides.clear();
+  flagEnabledOverrides.clear();
+  flagRolloutOverrides.clear();
+  killedFlags.clear();
 }
 
 // ============================================================================
@@ -195,14 +219,34 @@ export function isFlagEnabledForUser(name: string, userId: number): boolean {
     return flagOverrides.get(name) === true;
   }
 
+  if (typeOf(definition.defaultValue as unknown) !== "boolean") {
+    return false;
+  }
+
+  if (killedFlags.has(name)) {
+    return false;
+  }
+
+  const baseEnabled = flagEnabledOverrides.has(name)
+    ? (flagEnabledOverrides.get(name) as boolean)
+    : definition.defaultValue === true;
+
+  if (!baseEnabled) {
+    return false;
+  }
+
+  const rolloutPercentage = flagRolloutOverrides.has(name)
+    ? (flagRolloutOverrides.get(name) as number)
+    : definition.rolloutPercentage;
+
   // If no rollout percentage, use default value
-  if (definition.rolloutPercentage === undefined) {
-    return definition.defaultValue === true;
+  if (rolloutPercentage === undefined) {
+    return true;
   }
 
   // Deterministic percentage check based on userId and flag name
   const bucket = hashUserFlag(userId, name) % 100;
-  return bucket < definition.rolloutPercentage;
+  return bucket < rolloutPercentage;
 }
 
 /**
@@ -243,8 +287,110 @@ export function triggerKillSwitch(name: string): boolean {
     warn(`[FeatureFlags] "${name}" is not a kill-switch`);
     return false;
   }
-  setFlagValue(name, false);
+  setFlagKilled(name, true);
   return true;
+}
+
+// ============================================================================
+// Remote/Environment Overrides
+// ============================================================================
+
+export type RemoteBooleanFlagOverride = {
+  enabled?: boolean;
+  rolloutPercentage?: number;
+  isKilled?: boolean;
+  value?: FlagValue;
+};
+
+export type RemoteFeatureFlagSnapshot = {
+  updatedAt?: number;
+  flags: Record<string, RemoteBooleanFlagOverride>;
+};
+
+function clampPercentage(value: number): number {
+  if (value < 0) return 0;
+  if (value > 100) return 100;
+  return math.floor(value);
+}
+
+export function setFlagEnabledOverride(name: string, enabled: boolean): void {
+  const definition = flagDefinitions.get(name);
+  const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
+  if (!isBoolean) return;
+
+  const oldValue = getFlagValue(name);
+  flagEnabledOverrides.set(name, enabled);
+  const newValue = getFlagValue(name);
+  if (oldValue !== newValue) {
+    notifyListeners(name, newValue as FlagValue, oldValue as FlagValue | undefined);
+  }
+}
+
+export function clearFlagEnabledOverride(name: string): void {
+  const oldValue = getFlagValue(name);
+  flagEnabledOverrides.delete(name);
+  const newValue = getFlagValue(name);
+  if (oldValue !== newValue) {
+    notifyListeners(name, newValue as FlagValue, oldValue as FlagValue | undefined);
+  }
+}
+
+export function setFlagRolloutPercentageOverride(name: string, rolloutPercentage: number): void {
+  const definition = flagDefinitions.get(name);
+  const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
+  if (!isBoolean) return;
+
+  flagRolloutOverrides.set(name, clampPercentage(rolloutPercentage));
+}
+
+export function clearFlagRolloutPercentageOverride(name: string): void {
+  flagRolloutOverrides.delete(name);
+}
+
+export function setFlagKilled(name: string, killed: boolean): void {
+  const definition = flagDefinitions.get(name);
+  const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
+  if (!isBoolean) return;
+
+  const oldValue = getFlagValue(name);
+  if (killed) {
+    killedFlags.add(name);
+  } else {
+    killedFlags.delete(name);
+  }
+  const newValue = getFlagValue(name);
+  if (oldValue !== newValue) {
+    notifyListeners(name, newValue as FlagValue, oldValue as FlagValue | undefined);
+  }
+}
+
+/**
+ * Apply a remote snapshot (e.g. from the dashboard). This will replace the
+ * current enabled/rollout/kill overrides for the provided keys.
+ */
+export function applyRemoteFeatureFlagSnapshot(snapshot: RemoteFeatureFlagSnapshot): void {
+  // Replace all remote-managed overrides.
+  flagEnabledOverrides.clear();
+  flagRolloutOverrides.clear();
+  killedFlags.clear();
+
+  for (const [key, override] of pairs(snapshot.flags)) {
+    if (override.isKilled !== undefined) {
+      setFlagKilled(key, override.isKilled);
+    }
+
+    if (override.enabled !== undefined) {
+      setFlagEnabledOverride(key, override.enabled);
+    }
+
+    if (override.rolloutPercentage !== undefined) {
+      setFlagRolloutPercentageOverride(key, override.rolloutPercentage);
+    }
+
+    if (override.value !== undefined) {
+      setFlagValue(key, override.value);
+    }
+  }
 }
 
 // ============================================================================

@@ -215,6 +215,26 @@ ROBLOX_MODERATION_MUTE_TOPIC=ModMuteSync # optional
 Important: `ROBLOX_MODERATION_DATASTORE_NAME` must match the value passed to `getModeration(...)` in the game server (for starter, this is currently `StarterModeration`).
 ```
 
+### Dashboard Feature Flags Bridge (Optional)
+
+The dashboard can optionally propagate feature flag changes to live servers using Open Cloud.
+
+Required environment variables for the dashboard runtime:
+
+```
+
+FEATUREFLAGS_OPEN_CLOUD_ENABLED=true
+ROBLOX_OPEN_CLOUD_API_KEY=...
+ROBLOX_UNIVERSE_ID=...
+ROBLOX_FEATUREFLAGS_DATASTORE_NAME=StarterFeatureFlags
+ROBLOX_FEATUREFLAGS_DATASTORE_SCOPE=global # optional
+ROBLOX_FEATUREFLAGS_TOPIC=FeatureFlagsSync # optional
+ROBLOX_FEATUREFLAGS_ENTRY_KEY_PREFIX=featureflags_ # optional
+
+```
+
+Important: `ROBLOX_FEATUREFLAGS_DATASTORE_NAME` must match what the game server uses when initializing feature flag sync.
+
 ### Required Variables (Repository Level)
 
 ```

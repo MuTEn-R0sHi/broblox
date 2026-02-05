@@ -18,7 +18,14 @@
                 {
                   "name": "out",
                   "className": "ModuleScript",
-                  "filePaths": ["packages/config-featureflags/out/init.luau"]
+                  "filePaths": ["packages/config-featureflags/out/init.luau"],
+                  "children": [
+                    {
+                      "name": "sync",
+                      "className": "ModuleScript",
+                      "filePaths": ["packages/config-featureflags/out/sync.luau"]
+                    }
+                  ]
                 }
               ]
             },
@@ -274,6 +281,23 @@
                   "name": "RemoteService",
                   "className": "ModuleScript",
                   "filePaths": ["games/starter/out/server/services/RemoteService.luau"]
+                },
+                {
+                  "name": "ModerationEnforcementService",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "games/starter/out/server/services/ModerationEnforcementService.luau"
+                  ]
+                },
+                {
+                  "name": "ChatModerationService",
+                  "className": "ModuleScript",
+                  "filePaths": ["games/starter/out/server/services/ChatModerationService.luau"]
+                },
+                {
+                  "name": "FeatureFlagSyncService",
+                  "className": "ModuleScript",
+                  "filePaths": ["games/starter/out/server/services/FeatureFlagSyncService.luau"]
                 }
               ]
             }

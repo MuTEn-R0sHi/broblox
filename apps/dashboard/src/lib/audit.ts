@@ -118,6 +118,30 @@ export async function auditFlagKill(
 }
 
 /**
+ * Audit an attempt to sync feature flag changes to live game servers.
+ */
+export async function auditFlagSync(
+  userId: string,
+  environment: "dev" | "stage" | "prod" | "all",
+  result: { ok: true } | { ok: false; error: string }
+): Promise<void> {
+  const errorSummary =
+    !result.ok && result.error
+      ? result.error.length > 180
+        ? `${result.error.slice(0, 177)}...`
+        : result.error
+      : undefined;
+
+  await audit({
+    userId,
+    action: result.ok ? "flag.sync" : "flag.sync_failed",
+    target: environment,
+    after: result.ok ? { ok: true } : { ok: false },
+    reason: errorSummary,
+  });
+}
+
+/**
  * Audit a ban creation.
  */
 export async function auditBanCreate(
