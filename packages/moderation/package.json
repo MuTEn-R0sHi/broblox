@@ -13,6 +13,7 @@
   "scripts": {
     "build": "rbxtsc",
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
     "watch": "rbxtsc -w",
     "test": "vitest run",
     "lint": "eslint src/"
