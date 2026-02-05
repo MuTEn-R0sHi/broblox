@@ -5,18 +5,30 @@
 
 import { ReplicatedStorage } from "@rbxts/services";
 import { createLogger } from "@rbx/core";
-import { CheckpointReachedEvent, StageCompletedEvent } from "shared/types";
+import {
+  CheckpointReachedEvent,
+  LeaderboardUpdatePayload,
+  StageCompletedEvent,
+} from "shared/types";
 
 const logger = createLogger("RemoteController");
 
 type CheckpointCallback = (event: CheckpointReachedEvent) => void;
 type StageCallback = (event: StageCompletedEvent) => void;
-type LeaderboardCallback = (data: unknown) => void;
+type LeaderboardCallback = (data: LeaderboardUpdatePayload) => void;
 type DataSyncCallback = (data: {
   coins: number;
   currentStage: number;
   currentCheckpoint: number;
 }) => void;
+
+function parseLeaderboardUpdatePayload(data: unknown): LeaderboardUpdatePayload | undefined {
+  if (!typeIs(data, "table")) return undefined;
+  const raw = data as { updatedAt?: unknown; entries?: unknown };
+  if (!typeIs(raw.updatedAt, "number")) return undefined;
+  if (!typeIs(raw.entries, "table")) return undefined;
+  return data as LeaderboardUpdatePayload;
+}
 
 export class RemoteController {
   private remoteFolder?: Folder;
@@ -116,8 +128,14 @@ export class RemoteController {
   }
 
   private onLeaderboardUpdate(data: unknown): void {
+    const parsed = parseLeaderboardUpdatePayload(data);
+    if (!parsed) {
+      logger.warn("Invalid leaderboard payload");
+      return;
+    }
+
     for (const cb of this.leaderboardCallbacks) {
-      cb(data);
+      cb(parsed);
     }
   }
 

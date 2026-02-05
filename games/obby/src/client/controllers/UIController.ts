@@ -6,7 +6,11 @@
 import { Players } from "@rbxts/services";
 import { createLogger } from "@rbx/core";
 import { RemoteController } from "./RemoteController";
-import { StageCompletedEvent, CheckpointReachedEvent } from "shared/types";
+import {
+  StageCompletedEvent,
+  CheckpointReachedEvent,
+  LeaderboardUpdatePayload,
+} from "shared/types";
 
 const logger = createLogger("UIController");
 
@@ -21,6 +25,8 @@ export class UIController {
   private coinsLabel?: TextLabel;
   private timerLabel?: TextLabel;
   private notificationFrame?: Frame;
+  private leaderboardFrame?: Frame;
+  private leaderboardList?: Frame;
 
   // State
   private currentStage = 1;
@@ -44,6 +50,7 @@ export class UIController {
     this.remote.onCheckpoint((event) => this.onCheckpointReached(event));
     this.remote.onStage((event) => this.onStageCompleted(event));
     this.remote.onDataSync((data) => this.onDataSync(data));
+    this.remote.onLeaderboard((data) => this.onLeaderboardUpdate(data));
 
     // Start timer update loop
     task.spawn(() => this.timerLoop());
@@ -118,6 +125,53 @@ export class UIController {
     listLayout.SortOrder = Enum.SortOrder.LayoutOrder;
     listLayout.Padding = new UDim(0, 10);
     listLayout.Parent = this.notificationFrame;
+
+    // Leaderboard panel (right side)
+    this.leaderboardFrame = new Instance("Frame");
+    this.leaderboardFrame.Name = "Leaderboard";
+    this.leaderboardFrame.Size = new UDim2(0, 260, 0, 280);
+    this.leaderboardFrame.Position = new UDim2(1, -270, 0, 60);
+    this.leaderboardFrame.BackgroundColor3 = new Color3(0.1, 0.1, 0.1);
+    this.leaderboardFrame.BackgroundTransparency = 0.35;
+    this.leaderboardFrame.BorderSizePixel = 0;
+    this.leaderboardFrame.Parent = this.mainGui;
+
+    const lbCorner = new Instance("UICorner");
+    lbCorner.CornerRadius = new UDim(0, 10);
+    lbCorner.Parent = this.leaderboardFrame;
+
+    const title = new Instance("TextLabel");
+    title.Name = "Title";
+    title.Size = new UDim2(1, -16, 0, 28);
+    title.Position = new UDim2(0, 8, 0, 6);
+    title.BackgroundTransparency = 1;
+    title.TextColor3 = new Color3(1, 1, 1);
+    title.TextSize = 18;
+    title.Font = Enum.Font.GothamBold;
+    title.TextXAlignment = Enum.TextXAlignment.Left;
+    title.Text = "Leaderboard";
+    title.Parent = this.leaderboardFrame;
+
+    const divider = new Instance("Frame");
+    divider.Name = "Divider";
+    divider.Size = new UDim2(1, -16, 0, 1);
+    divider.Position = new UDim2(0, 8, 0, 36);
+    divider.BackgroundColor3 = new Color3(1, 1, 1);
+    divider.BackgroundTransparency = 0.85;
+    divider.BorderSizePixel = 0;
+    divider.Parent = this.leaderboardFrame;
+
+    this.leaderboardList = new Instance("Frame");
+    this.leaderboardList.Name = "List";
+    this.leaderboardList.Size = new UDim2(1, -16, 1, -46);
+    this.leaderboardList.Position = new UDim2(0, 8, 0, 42);
+    this.leaderboardList.BackgroundTransparency = 1;
+    this.leaderboardList.Parent = this.leaderboardFrame;
+
+    const lbLayout = new Instance("UIListLayout");
+    lbLayout.SortOrder = Enum.SortOrder.LayoutOrder;
+    lbLayout.Padding = new UDim(0, 4);
+    lbLayout.Parent = this.leaderboardList;
   }
 
   private onCheckpointReached(event: CheckpointReachedEvent): void {
@@ -203,15 +257,62 @@ export class UIController {
     currentCheckpoint: number;
   }): void {
     logger.debug(`Data sync received: coins=${data.coins}`);
+    const coinDelta = data.coins - this.coins;
     this.coins = data.coins;
+    this.currentStage = data.currentStage;
     this.updateCoinsDisplay();
 
-    // Show notification for coin collection
-    this.showNotification(
-      `+${data.coins - this.coins || data.coins} coins!`,
-      new Color3(1, 0.8, 0),
-      1.5
-    );
+    if (this.stageLabel) {
+      this.stageLabel.Text = `Stage ${this.currentStage}`;
+    }
+
+    // Only show a coin notification when we actually gained coins.
+    if (coinDelta > 0) {
+      this.showNotification(`+${coinDelta} coins!`, new Color3(1, 0.8, 0), 1.5);
+    }
+  }
+
+  private onLeaderboardUpdate(payload: LeaderboardUpdatePayload): void {
+    if (!this.leaderboardList) return;
+
+    // Clear old rows (keep UIListLayout)
+    for (const child of this.leaderboardList.GetChildren()) {
+      if (child.IsA("TextLabel")) {
+        child.Destroy();
+      }
+    }
+
+    const entries = payload.entries;
+    const count = entries.size();
+    if (count === 0) {
+      const empty = new Instance("TextLabel");
+      empty.Size = new UDim2(1, 0, 0, 22);
+      empty.BackgroundTransparency = 1;
+      empty.TextColor3 = new Color3(1, 1, 1);
+      empty.TextTransparency = 0.25;
+      empty.TextSize = 14;
+      empty.Font = Enum.Font.Gotham;
+      empty.TextXAlignment = Enum.TextXAlignment.Left;
+      empty.Text = "No entries yet";
+      empty.Parent = this.leaderboardList;
+      return;
+    }
+
+    for (let i = 0; i < count; i++) {
+      const e = entries[i];
+      const row = new Instance("TextLabel");
+      row.Name = "Row";
+      row.Size = new UDim2(1, 0, 0, 22);
+      row.BackgroundTransparency = 1;
+      row.TextColor3 = new Color3(1, 1, 1);
+      row.TextSize = 14;
+      row.Font = Enum.Font.Gotham;
+      row.TextXAlignment = Enum.TextXAlignment.Left;
+
+      const timeText = e.bestTime !== undefined ? ` • ${string.format("%.2f", e.bestTime)}s` : "";
+      row.Text = `#${e.rank} ${e.playerName} • ${e.completions} win${e.completions === 1 ? "" : "s"}${timeText}`;
+      row.Parent = this.leaderboardList;
+    }
   }
 
   private updateCoinsDisplay(): void {
