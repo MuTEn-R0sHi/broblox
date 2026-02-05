@@ -47,6 +47,12 @@
                 "$path": "node_modules/@rbx/net/out"
               }
             },
+            "movement": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/movement/out"
+              }
+            },
             "moderation": {
               "$className": "Folder",
               "out": {
