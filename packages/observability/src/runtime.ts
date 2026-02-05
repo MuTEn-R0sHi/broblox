@@ -8,15 +8,21 @@
  * - In Node/JS, Arrays use `.length` and strings use `.length`.
  */
 export function rbxSize(value: unknown): number {
-  const v = value as { size?: () => number; length?: number } | undefined | null;
-  if (v === undefined || v === null) return 0;
+  if (value === undefined) return 0;
 
-  if (typeof v.size === "function") {
-    return v.size();
+  const v = value as unknown as {
+    size?: () => number;
+    length?: number;
+  };
+
+  const maybeSize = (v as unknown as Record<string, unknown>)["size"];
+  if (typeOf(maybeSize) === "function") {
+    return (maybeSize as () => number)();
   }
 
-  if (typeof v.length === "number") {
-    return v.length;
+  const maybeLength = (v as unknown as Record<string, unknown>)["length"];
+  if (typeOf(maybeLength) === "number") {
+    return maybeLength as number;
   }
 
   return 0;

@@ -11,6 +11,7 @@ export default defineConfig({
       // Workspace packages compile to .luau in `out/`, which Node/Vitest can't import.
       // For tests, resolve to TS sources instead.
       "@rbx/core": resolve(__dirname, "packages/core/src/index.ts"),
+      "@rbx/observability": resolve(__dirname, "packages/observability/src/index.ts"),
     },
   },
   test: {
