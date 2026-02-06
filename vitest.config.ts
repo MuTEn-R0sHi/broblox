@@ -27,7 +27,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    setupFiles: ["./test-setup.ts"],
+    setupFiles: [resolve(__dirname, "test-setup.ts")],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],
