@@ -91,7 +91,7 @@ export const AnalyticsService: Service = {
     logger.info("AnalyticsService started.");
   },
 
-  onStop() {
+  onDestroy() {
     logger.info("AnalyticsService stopped.");
   },
 };

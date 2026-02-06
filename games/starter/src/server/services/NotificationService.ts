@@ -66,7 +66,7 @@ export const NotificationService: Service = {
     logger.info("NotificationService started.");
   },
 
-  onStop() {
+  onDestroy() {
     notificationStore?.clearAll();
     logger.info("NotificationService stopped.");
   },

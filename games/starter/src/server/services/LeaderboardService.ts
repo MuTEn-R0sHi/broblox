@@ -62,7 +62,7 @@ export const LeaderboardService: Service = {
     logger.info("LeaderboardService started.");
   },
 
-  onStop() {
+  onDestroy() {
     leaderboardStore?.clearCache();
     logger.info("LeaderboardService stopped.");
   },
