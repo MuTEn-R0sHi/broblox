@@ -60,13 +60,13 @@ export class LocalizationService {
     if (!localeMap.has(ns)) {
       localeMap.set(ns, new Map<string, string>());
     }
-    const table = localeMap.get(ns)!;
+    const nsMap = localeMap.get(ns)!;
 
     // Use manual key iteration (roblox-ts compatible)
     const keys = this.objectKeys(entries);
     for (let i = 0; i < keys.size(); i++) {
       const k = keys[i];
-      table.set(k, entries[k]);
+      nsMap.set(k, entries[k]);
     }
   }
 
@@ -238,9 +238,9 @@ export class LocalizationService {
   private lookupKey(localeKey: string, ns: string, key: string): string | undefined {
     const localeMap = this.strings.get(localeKey);
     if (!localeMap) return undefined;
-    const table = localeMap.get(ns);
-    if (!table) return undefined;
-    return table.get(key);
+    const nsMap = localeMap.get(ns);
+    if (!nsMap) return undefined;
+    return nsMap.get(key);
   }
 
   private interpolate(text: string, params?: InterpolationParams): string {
