@@ -12,6 +12,7 @@ import { ChatModerationService } from "./services/ChatModerationService";
 import { RemoteService } from "./services/RemoteService";
 import { HandshakeService } from "./services/HandshakeService";
 import { ActionService } from "./services/ActionService";
+import { CodeRedemptionService } from "./services/CodeRedemptionService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -28,7 +29,8 @@ app
   .register(ChatModerationService)
   .register(RemoteService)
   .register(HandshakeService)
-  .register(ActionService);
+  .register(ActionService)
+  .register(CodeRedemptionService);
 
 app.boot();
 logger.info("Server booted.");

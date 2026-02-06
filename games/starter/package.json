@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@rbx/config-featureflags": "workspace:*",
+    "@rbx/codes": "workspace:*",
     "@rbx/constants": "workspace:*",
     "@rbx/core": "workspace:*",
     "@rbx/movement": "workspace:*",
