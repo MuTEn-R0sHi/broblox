@@ -321,23 +321,23 @@ export class WorldManager {
         break;
       }
     }
-    const next = defs[nextIndex];
+    const nextDef = defs[nextIndex];
     const prevWeather = this.currentWeather;
-    this.currentWeather = next.type;
-    this.weatherIntensity = next.intensity;
-    this.weatherDurationLeft = (next.durationRange[0] + next.durationRange[1]) / 2;
+    this.currentWeather = nextDef.type;
+    this.weatherIntensity = nextDef.intensity;
+    this.weatherDurationLeft = (nextDef.durationRange[0] + nextDef.durationRange[1]) / 2;
     this.lastWeatherChange = os.time();
     this.isTransitioning = true;
 
     const evt: WeatherChangedEvent = {
       previousWeather: prevWeather,
-      newWeather: next.type,
-      intensity: next.intensity,
+      newWeather: nextDef.type,
+      intensity: nextDef.intensity,
     };
     for (let i = 0; i < this.weatherCallbacks.size(); i++) {
       this.weatherCallbacks[i](evt);
     }
-    this.logger?.info(`Weather: ${next.type}`);
+    this.logger?.info(`Weather: ${nextDef.type}`);
   }
 
   private advanceDay(): void {
