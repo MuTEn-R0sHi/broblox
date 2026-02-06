@@ -313,7 +313,7 @@ export function isFlagEnabledForUser(name: string, userId: number): boolean {
 
   // Segment check: if segments are defined, user must match at least one
   const segments = flagSegmentOverrides.get(name) ?? definition.segments;
-  if (segments !== undefined && segments.length > 0) {
+  if (segments !== undefined && segments.size() > 0) {
     if (!matchesAnySegment(userId, segments)) {
       return definition.defaultValue === true;
     }
@@ -346,9 +346,8 @@ export function isFlagEnabledForUser(name: string, userId: number): boolean {
  */
 function hashUserFlag(userId: number, flagName: string): number {
   let hash = userId;
-  for (let i = 0; i < flagName.length; i++) {
-    // charCodeAt works in both Node and roblox-ts
-    const char = flagName.charCodeAt(i);
+  for (let i = 0; i < flagName.size(); i++) {
+    const char = flagName.byte(i + 1)[0];
     hash = (hash * 31 + char) % 10000000;
   }
   return math.abs(hash);
@@ -370,7 +369,7 @@ function matchesAnySegment(userId: number, segments: FlagSegment[]): boolean {
 
 function matchesSegment(userId: number, segment: FlagSegment): boolean {
   // Check explicit user-ID list
-  if (segment.userIds !== undefined && segment.userIds.length > 0) {
+  if (segment.userIds !== undefined && segment.userIds.size() > 0) {
     for (const id of segment.userIds) {
       if (id === userId) return true;
     }
@@ -479,8 +478,8 @@ function recordHistory(
   };
   rolloutHistory.push(record);
   // Cap history length
-  while (rolloutHistory.length > MAX_HISTORY_SIZE) {
-    rolloutHistory.shift();
+  while (rolloutHistory.size() > MAX_HISTORY_SIZE) {
+    rolloutHistory.remove(0);
   }
 }
 
@@ -508,7 +507,7 @@ export function getFlagHistory(name: string): FlagChangeRecord[] {
  * Clear rollout history.
  */
 export function clearRolloutHistory(): void {
-  rolloutHistory.length = 0;
+  rolloutHistory.clear();
 }
 
 // ============================================================================
@@ -675,7 +674,7 @@ export function onFlagChange(listener: FlagChangeListener): () => void {
   return () => {
     const index = changeListeners.indexOf(listener);
     if (index !== -1) {
-      changeListeners.splice(index, 1);
+      changeListeners.remove(index);
     }
   };
 }

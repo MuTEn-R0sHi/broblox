@@ -35,3 +35,30 @@ if (!String.prototype.size) {
     return this.length;
   };
 }
+
+// Roblox-TS String.byte() polyfill (1-indexed, returns array of char codes)
+// @ts-expect-error - Polyfilling native prototype for tests
+if (!String.prototype.byte) {
+  // @ts-expect-error - Polyfilling native prototype for tests
+  String.prototype.byte = function (i: number) {
+    return [this.charCodeAt(i - 1)];
+  };
+}
+
+// Roblox-TS Array.remove() polyfill (removes element at index)
+// @ts-expect-error - Polyfilling native prototype for tests
+if (!Array.prototype.remove) {
+  // @ts-expect-error - Polyfilling native prototype for tests
+  Array.prototype.remove = function (index: number) {
+    return this.splice(index, 1)[0];
+  };
+}
+
+// Roblox-TS Array.clear() polyfill (empties the array)
+// @ts-expect-error - Polyfilling native prototype for tests
+if (!Array.prototype.clear) {
+  // @ts-expect-error - Polyfilling native prototype for tests
+  Array.prototype.clear = function () {
+    this.length = 0;
+  };
+}
