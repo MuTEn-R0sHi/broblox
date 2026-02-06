@@ -21,7 +21,12 @@ import type {
   WeatherChangedEvent,
   SeasonChangedEvent,
 } from "./types";
-import { DEFAULT_WORLD_SYSTEMS_CONFIG, DEFAULT_LIGHTING_PRESETS } from "./types";
+import {
+  DEFAULT_WORLD_SYSTEMS_CONFIG,
+  DEFAULT_LIGHTING_PRESETS,
+  DEFAULT_WEATHER_DEFINITIONS,
+  DEFAULT_SEASONS,
+} from "./types";
 
 declare const os: { time(): number; clock(): number };
 declare const math: {
@@ -64,7 +69,7 @@ export class WorldManager {
     this.logger = this.config.enableLogging ? createLogger("WorldManager") : undefined;
     this.clockTime = this.config.dayNight.startClockTime;
     this.currentPeriod = this.getTimePeriodForHour(this.clockTime);
-    this.currentSeasonIndex = this.config.season.startingSeason;
+    this.currentSeasonIndex = this.config.season.startingSeason ?? 0;
     this.lastUpdateTime = os.time();
     this.lastWeatherChange = os.time();
     this.weatherDurationLeft = 120;
@@ -179,7 +184,7 @@ export class WorldManager {
 
   /** Force-set the season */
   setSeason(seasonType: string): void {
-    const seasons = this.config.season.seasons;
+    const seasons = this.config.season.seasons ?? DEFAULT_SEASONS;
     for (let i = 0; i < seasons.size(); i++) {
       if (seasons[i].type === seasonType) {
         if (i !== this.currentSeasonIndex) {
@@ -227,7 +232,7 @@ export class WorldManager {
   /** Get current season */
   getSeason(): SeasonType | undefined {
     if (!this.config.season.enabled) return undefined;
-    return this.config.season.seasons[this.currentSeasonIndex]?.type;
+    return (this.config.season.seasons ?? DEFAULT_SEASONS)[this.currentSeasonIndex]?.type;
   }
 
   /** Get day count */
@@ -302,7 +307,7 @@ export class WorldManager {
   }
 
   private findWeatherDef(weatherType: WeatherType): WeatherDefinition | undefined {
-    const defs = this.config.weather.definitions;
+    const defs = this.config.weather.definitions ?? DEFAULT_WEATHER_DEFINITIONS;
     for (let i = 0; i < defs.size(); i++) {
       if (defs[i].type === weatherType) return defs[i];
     }
@@ -310,7 +315,7 @@ export class WorldManager {
   }
 
   private pickNextWeather(): void {
-    const defs = this.config.weather.definitions;
+    const defs = this.config.weather.definitions ?? DEFAULT_WEATHER_DEFINITIONS;
     if (defs.size() === 0) return;
 
     // Simple round-robin (game code could use weighted random from season)
@@ -343,7 +348,7 @@ export class WorldManager {
   private advanceDay(): void {
     if (!this.config.season.enabled) return;
     this.dayInSeason++;
-    const seasons = this.config.season.seasons;
+    const seasons = this.config.season.seasons ?? DEFAULT_SEASONS;
     if (seasons.size() === 0) return;
     const current = seasons[this.currentSeasonIndex];
     if (this.dayInSeason >= current.durationDays) {

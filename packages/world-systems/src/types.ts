@@ -167,8 +167,8 @@ export interface WeatherConfig {
   transitionDuration: number;
   /** Minimum time between weather changes (seconds) */
   minChangeCooldown: number;
-  /** Registered weather definitions */
-  definitions: WeatherDefinition[];
+  /** Registered weather definitions (defaults to DEFAULT_WEATHER_DEFINITIONS if omitted) */
+  definitions?: WeatherDefinition[];
 }
 
 export const DEFAULT_WEATHER_DEFINITIONS: WeatherDefinition[] = [
@@ -271,10 +271,10 @@ export interface SeasonDefinition {
 
 export interface SeasonConfig {
   enabled: boolean;
-  /** Ordered seasons in the year */
-  seasons: SeasonDefinition[];
-  /** Starting season index */
-  startingSeason: number;
+  /** Ordered seasons in the year (defaults to DEFAULT_SEASONS if omitted) */
+  seasons?: SeasonDefinition[];
+  /** Starting season index (default: 0) */
+  startingSeason?: number;
 }
 
 export const DEFAULT_SEASONS: SeasonDefinition[] = [
