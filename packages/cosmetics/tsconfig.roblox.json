@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "jsxFragmentFactory": "React.Fragment",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "moduleDetection": "force",
+    "noLib": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "target": "ESNext",
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "rootDir": "src",
+    "outDir": "out",
+    "baseUrl": "src",
+    "declaration": true,
+    "paths": {
+      "@rbx/*": ["../../packages/*/src"]
+    }
+  },
+  "rbxts": {
+    "type": "package"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts"]
+}

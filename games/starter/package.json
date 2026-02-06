@@ -27,6 +27,10 @@
     "@rbx/progression": "workspace:*",
     "@rbx/quests": "workspace:*",
     "@rbx/rewards": "workspace:*",
+    "@rbx/pets": "workspace:*",
+    "@rbx/gacha": "workspace:*",
+    "@rbx/cosmetics": "workspace:*",
+    "@rbx/battle-pass": "workspace:*",
     "@rbx/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"
   },

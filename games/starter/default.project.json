@@ -112,6 +112,30 @@
               "out": {
                 "$path": "node_modules/@rbx/rewards/out"
               }
+            },
+            "pets": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/pets/out"
+              }
+            },
+            "gacha": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/gacha/out"
+              }
+            },
+            "cosmetics": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/cosmetics/out"
+              }
+            },
+            "battle-pass": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/battle-pass/out"
+              }
             }
           }
         }

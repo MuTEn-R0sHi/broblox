@@ -20,6 +20,10 @@ import { InventoryService } from "./services/InventoryService";
 import { ProgressionService } from "./services/ProgressionService";
 import { QuestService } from "./services/QuestService";
 import { RewardsService } from "./services/RewardsService";
+import { PetService } from "./services/PetService";
+import { GachaService } from "./services/GachaService";
+import { CosmeticsService } from "./services/CosmeticsService";
+import { BattlePassService } from "./services/BattlePassService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -44,7 +48,11 @@ app
   .register(InventoryService)
   .register(ProgressionService)
   .register(QuestService)
-  .register(RewardsService);
+  .register(RewardsService)
+  .register(PetService)
+  .register(GachaService)
+  .register(CosmeticsService)
+  .register(BattlePassService);
 
 app.boot();
 logger.info("Server booted.");

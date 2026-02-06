@@ -1,0 +1,28 @@
+{
+  "name": "@rbx/battle-pass",
+  "version": "0.1.0",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": "./out/index.d.ts"
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc --project tsconfig.roblox.json",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rbx/core": "workspace:*",
+    "@rbx/observability": "workspace:*",
+    "@rbx/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.850",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.18"
+  }
+}

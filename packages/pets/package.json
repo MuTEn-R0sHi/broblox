@@ -1,0 +1,33 @@
+{
+  "name": "@rbx/pets",
+  "version": "0.1.0",
+  "description": "Pet system with hatching, equipping, leveling, abilities, and evolution for Roblox games",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
+    "test": "vitest run --passWithNoTests"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.841",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@rbx/core": "workspace:*",
+    "@rbx/observability": "workspace:*",
+    "@rbx/shared-types": "workspace:*"
+  }
+}
