@@ -84,24 +84,36 @@ packages/
 
 ### Phase 5b — Collection & Monetization
 
+### Phase 5b — Collection & Monetization
+
 Revenue-driving mechanics. Depend on inventory.
 
-| Feature          | Priority    | Effort | Notes                             |
-| ---------------- | ----------- | ------ | --------------------------------- |
-| Pet system       | 🔴 Critical | High   | Proven monetization               |
-| Egg/Gacha system | 🔴 Critical | High   | Drives retention loops            |
-| Bro Companion    | 🔴 Critical | High   | Cross-game mascot, brand identity |
-| Battle pass      | 🟡 High     | Medium | See `docs/modules/battle-pass.md` |
-| Cosmetics system | 🟡 High     | Medium | See `docs/modules/cosmetics.md`   |
-| Crafting system  | 🟢 Medium   | Medium | Item depth                        |
-| Skill trees      | 🟢 Medium   | High   | Class customization               |
+**Status:** ✅ Complete
+
+### Shipped
+
+- `packages/pets` v1: pet registry, store, leveling, evolution, equip (34 tests) ✅
+- `packages/gacha` v1: egg registry, weighted loot tables, pity system (20 tests) ✅
+- `packages/cosmetics` v1: ownership, equip slots, slot validation (26 tests) ✅
+- `packages/battle-pass` v1: seasons, XP/tier progression, free/premium claims (29 tests) ✅
+- Game integrations: PetService, GachaService, CosmeticsService, BattlePassService for both starter and obby ✅
+- 1089 tests across 36 test suites ✅
+
+### Remaining
+
+| Feature         | Priority    | Effort | Notes                             |
+| --------------- | ----------- | ------ | --------------------------------- |
+| Bro Companion   | 🔴 Critical | High   | Cross-game mascot, brand identity |
+| Crafting system | 🟢 Medium   | Medium | Item depth                        |
+| Skill trees     | 🟢 Medium   | High   | Class customization               |
 
 ```
 packages/
   bro-companion/   # Cross-game mascot system (The Bro)
-  pets/            # Pet system, evolution, equipment
-  gacha/           # Eggs, hatching, pity system
-  cosmetics/       # Skins, outfits, accessories
+  pets/            # Pet system, evolution, equipment       ✅
+  gacha/           # Eggs, hatching, pity system            ✅
+  cosmetics/       # Skins, outfits, accessories            ✅
+  battle-pass/     # Seasonal progression, free/premium     ✅
 ```
 
 ### Phase 5c — Support Systems
