@@ -8,9 +8,9 @@
     ".": "./out/index.d.ts"
   },
   "scripts": {
-    "build:roblox": "rbxtsc --project tsconfig.roblox.json",
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
     "lint": "eslint src/",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
     "test": "vitest run"
   },
   "dependencies": {

@@ -213,18 +213,18 @@ export class GachaStore {
   // Weighted random selection
   // -------------------------------------------------------------------------
 
-  private rollWeighted(table: ReadonlyArray<GachaWeight>): GachaWeight {
+  private rollWeighted(lootEntries: ReadonlyArray<GachaWeight>): GachaWeight {
     let totalWeight = 0;
-    for (let i = 0; i < table.size(); i++) {
-      totalWeight += table[i].weight;
+    for (let i = 0; i < lootEntries.size(); i++) {
+      totalWeight += lootEntries[i].weight;
     }
 
     let roll = math.random() * totalWeight;
-    for (let i = 0; i < table.size(); i++) {
-      roll -= table[i].weight;
-      if (roll <= 0) return table[i];
+    for (let i = 0; i < lootEntries.size(); i++) {
+      roll -= lootEntries[i].weight;
+      if (roll <= 0) return lootEntries[i];
     }
-    return table[table.size() - 1];
+    return lootEntries[lootEntries.size() - 1];
   }
 
   /** Pity roll: filter loot table to items at or above pity rarity, then roll weighted. */
