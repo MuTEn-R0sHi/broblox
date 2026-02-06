@@ -358,11 +358,11 @@ export class AudioManager {
     });
   }
 
-  private fireVolumeChanged(channel: AudioChannel | "master", prev: number, next: number): void {
+  private fireVolumeChanged(channel: AudioChannel | "master", prev: number, newVol: number): void {
     const evt: VolumeChangedEvent = {
       channel,
       previousVolume: prev,
-      newVolume: next,
+      newVolume: newVol,
     };
     for (let i = 0; i < this.volumeChangedCallbacks.size(); i++) {
       this.volumeChangedCallbacks[i](evt);
