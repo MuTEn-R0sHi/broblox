@@ -22,11 +22,28 @@ import type {
 import { DEFAULT_PET_CONFIG, PET_DATA_VERSION } from "./types";
 import { PetRegistry } from "./pet-registry";
 
+// Roblox globals
+declare const game: { GetService(name: string): unknown };
+declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
+declare function typeIs(value: unknown, typeName: string): boolean;
+declare const os: { time(): number };
+
+interface DataStore {
+  GetAsync(key: string): unknown;
+  SetAsync(key: string, value: unknown): void;
+}
+interface DataStoreService {
+  GetDataStore(name: string): DataStore;
+}
+interface HttpService {
+  GenerateGUID(wrapInCurlyBraces: boolean): string;
+}
+
 // Observability counters
-const petsAdded = createCounter("pets_added", "Pets added to collection");
-const petsRemoved = createCounter("pets_removed", "Pets removed from collection");
-const petsLevelUp = createCounter("pets_level_up", "Pet level ups");
-const petsEvolved = createCounter("pets_evolved", "Pet evolutions");
+const petsAdded = createCounter("pets_added");
+const petsRemoved = createCounter("pets_removed");
+const petsLevelUp = createCounter("pets_level_up");
+const petsEvolved = createCounter("pets_evolved");
 
 export class PetStore {
   private playerId: number;
@@ -35,6 +52,7 @@ export class PetStore {
   private data: PetPlayerData;
   private dirty = false;
   private logger;
+  private store: DataStore | undefined;
 
   // Callbacks
   private levelUpCallbacks: PetLevelUpCallback[] = [];
@@ -61,6 +79,8 @@ export class PetStore {
 
   /** Initialize store (call before load). */
   init(): void {
+    const dss = game.GetService("DataStoreService") as DataStoreService;
+    this.store = dss.GetDataStore(this.config.datastoreName);
     this.logger?.info(`PetStore initialized for player ${this.playerId}`);
   }
 
@@ -69,21 +89,32 @@ export class PetStore {
   // --------------------------------------------------------------------------
 
   /** Load pet data from DataStore. */
-  load(): void {
-    const ds = game.GetService("DataStoreService").GetDataStore(this.config.datastoreName);
-    const raw = ds.GetAsync(`pets_${this.playerId}`) as PetPlayerData | undefined;
-    if (raw) {
-      this.data = raw;
+  load(): boolean {
+    if (!this.store) return false;
+    const [ok, raw] = pcall(() => this.store!.GetAsync(`pets_${this.playerId}`));
+    if (!ok) return false;
+    if (raw !== undefined && typeIs(raw, "table")) {
+      const saved = raw as unknown as PetPlayerData;
+      this.data = {
+        playerId: this.playerId,
+        pets: saved.pets ?? [],
+        maxSlots: saved.maxSlots ?? this.config.defaultMaxSlots,
+        version: saved.version ?? PET_DATA_VERSION,
+      };
     }
+    this.dirty = false;
     this.logger?.info(`Loaded ${this.petCount()} pets for player ${this.playerId}`);
+    return true;
   }
 
   /** Save pet data to DataStore. */
-  save(): void {
-    const ds = game.GetService("DataStoreService").GetDataStore(this.config.datastoreName);
-    ds.SetAsync(`pets_${this.playerId}`, this.data as unknown as undefined);
+  save(): boolean {
+    if (!this.store) return false;
+    const [ok] = pcall(() => this.store!.SetAsync(`pets_${this.playerId}`, this.data));
+    if (!ok) return false;
     this.dirty = false;
     this.logger?.info(`Saved pets for player ${this.playerId}`);
+    return true;
   }
 
   // --------------------------------------------------------------------------
@@ -102,7 +133,7 @@ export class PetStore {
     }
 
     const pet: PetInstance = {
-      instanceId: game.GetService("HttpService").GenerateGUID(false),
+      instanceId: (game.GetService("HttpService") as HttpService).GenerateGUID(false),
       speciesId,
       nickname,
       level: 1,

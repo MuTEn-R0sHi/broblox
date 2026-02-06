@@ -17,6 +17,8 @@ import { CosmeticRegistry } from "./cosmetic-registry";
 declare const game: {
   GetService(name: string): Record<string, unknown>;
 };
+declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
+declare function typeIs(value: unknown, typeName: string): boolean;
 declare const os: { time(): number };
 declare const print: (...args: unknown[]) => void;
 
@@ -59,17 +61,22 @@ export class CosmeticStore {
 
   load(): void {
     if (!this.dataStore) return;
-    const raw = this.dataStore.GetAsync(`cosmetics_${this.playerId}`) as
-      | { ownedCosmetics?: string[]; equippedCosmetics?: Array<[string, string]> }
-      | undefined;
-    if (raw !== undefined) {
-      this.data.ownedCosmetics = raw.ownedCosmetics ?? [];
-      this.data.equippedCosmetics = new Map<string, string>();
-      if (raw.equippedCosmetics) {
-        for (let i = 0; i < raw.equippedCosmetics.size(); i++) {
-          const pair = raw.equippedCosmetics[i];
-          this.data.equippedCosmetics.set(pair[0], pair[1]);
-        }
+    const [ok, raw] = pcall(
+      () =>
+        this.dataStore!.GetAsync(`cosmetics_${this.playerId}`) as
+          | { ownedCosmetics?: string[]; equippedCosmetics?: Array<[string, string]> }
+          | undefined
+    );
+    if (!ok || raw === undefined) {
+      this.dirty = false;
+      return;
+    }
+    this.data.ownedCosmetics = raw.ownedCosmetics ?? [];
+    this.data.equippedCosmetics = new Map<string, string>();
+    if (raw.equippedCosmetics) {
+      for (let i = 0; i < raw.equippedCosmetics.size(); i++) {
+        const pair = raw.equippedCosmetics[i];
+        this.data.equippedCosmetics.set(pair[0], pair[1]);
       }
     }
     this.dirty = false;
@@ -79,10 +86,12 @@ export class CosmeticStore {
     if (!this.dataStore) return;
     const equippedArr: Array<[string, string]> = [];
     this.data.equippedCosmetics.forEach((v, k) => equippedArr.push([k, v]));
-    this.dataStore.SetAsync(`cosmetics_${this.playerId}`, {
-      ownedCosmetics: this.data.ownedCosmetics,
-      equippedCosmetics: equippedArr,
-    });
+    pcall(() =>
+      this.dataStore!.SetAsync(`cosmetics_${this.playerId}`, {
+        ownedCosmetics: this.data.ownedCosmetics,
+        equippedCosmetics: equippedArr,
+      })
+    );
     this.dirty = false;
   }
 

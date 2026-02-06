@@ -19,6 +19,8 @@ import { EggRegistry } from "./egg-registry";
 declare const game: {
   GetService(name: string): Record<string, unknown>;
 };
+declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
+declare function typeIs(value: unknown, typeName: string): boolean;
 declare const os: { time(): number };
 declare const math: {
   floor(n: number): number;
@@ -83,23 +85,28 @@ export class GachaStore {
 
   load(): void {
     if (!this.dataStore) return;
-    const raw = this.dataStore.GetAsync(`gacha_${this.playerId}`) as
-      | { hatchCounts?: Array<[string, number]>; pityCounters?: Array<[string, number]> }
-      | undefined;
-    if (raw !== undefined) {
-      this.data.hatchCounts = new Map<string, number>();
-      if (raw.hatchCounts) {
-        for (let i = 0; i < raw.hatchCounts.size(); i++) {
-          const pair = raw.hatchCounts[i];
-          this.data.hatchCounts.set(pair[0], pair[1]);
-        }
+    const [ok, raw] = pcall(
+      () =>
+        this.dataStore!.GetAsync(`gacha_${this.playerId}`) as
+          | { hatchCounts?: Array<[string, number]>; pityCounters?: Array<[string, number]> }
+          | undefined
+    );
+    if (!ok || raw === undefined) {
+      this.dirty = false;
+      return;
+    }
+    this.data.hatchCounts = new Map<string, number>();
+    if (raw.hatchCounts) {
+      for (let i = 0; i < raw.hatchCounts.size(); i++) {
+        const pair = raw.hatchCounts[i];
+        this.data.hatchCounts.set(pair[0], pair[1]);
       }
-      this.data.pityCounters = new Map<string, number>();
-      if (raw.pityCounters) {
-        for (let i = 0; i < raw.pityCounters.size(); i++) {
-          const pair = raw.pityCounters[i];
-          this.data.pityCounters.set(pair[0], pair[1]);
-        }
+    }
+    this.data.pityCounters = new Map<string, number>();
+    if (raw.pityCounters) {
+      for (let i = 0; i < raw.pityCounters.size(); i++) {
+        const pair = raw.pityCounters[i];
+        this.data.pityCounters.set(pair[0], pair[1]);
       }
     }
     this.dirty = false;
@@ -112,10 +119,12 @@ export class GachaStore {
     this.data.hatchCounts.forEach((v, k) => hatchArr.push([k, v]));
     const pityArr: Array<[string, number]> = [];
     this.data.pityCounters.forEach((v, k) => pityArr.push([k, v]));
-    this.dataStore.SetAsync(`gacha_${this.playerId}`, {
-      hatchCounts: hatchArr,
-      pityCounters: pityArr,
-    });
+    pcall(() =>
+      this.dataStore!.SetAsync(`gacha_${this.playerId}`, {
+        hatchCounts: hatchArr,
+        pityCounters: pityArr,
+      })
+    );
     this.dirty = false;
   }
 

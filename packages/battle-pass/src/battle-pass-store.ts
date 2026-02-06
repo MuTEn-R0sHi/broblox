@@ -21,6 +21,8 @@ import { SeasonRegistry } from "./season-registry";
 declare const game: {
   GetService(name: string): Record<string, unknown>;
 };
+declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
+declare function typeIs(value: unknown, typeName: string): boolean;
 declare const os: { time(): number };
 declare const print: (...args: unknown[]) => void;
 
@@ -67,20 +69,24 @@ export class BattlePassStore {
 
   load(): void {
     if (!this.dataStore) return;
-    const raw = this.dataStore.GetAsync(`bp_${this.playerId}`) as BattlePassPlayerData | undefined;
-    if (raw !== undefined) {
-      this.data.seasonId = raw.seasonId ?? "";
-      this.data.xp = raw.xp ?? 0;
-      this.data.tier = raw.tier ?? 1;
-      this.data.premiumUnlocked = raw.premiumUnlocked ?? false;
-      this.data.claimedRewards = raw.claimedRewards ?? [];
+    const [ok, raw] = pcall(
+      () => this.dataStore!.GetAsync(`bp_${this.playerId}`) as BattlePassPlayerData | undefined
+    );
+    if (!ok || raw === undefined) {
+      this.dirty = false;
+      return;
     }
+    this.data.seasonId = raw.seasonId ?? "";
+    this.data.xp = raw.xp ?? 0;
+    this.data.tier = raw.tier ?? 1;
+    this.data.premiumUnlocked = raw.premiumUnlocked ?? false;
+    this.data.claimedRewards = raw.claimedRewards ?? [];
     this.dirty = false;
   }
 
   save(): void {
     if (!this.dataStore) return;
-    this.dataStore.SetAsync(`bp_${this.playerId}`, this.data);
+    pcall(() => this.dataStore!.SetAsync(`bp_${this.playerId}`, this.data));
     this.dirty = false;
   }
 

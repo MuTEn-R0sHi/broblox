@@ -40,6 +40,18 @@ function setupGlobals() {
     pow: Math.pow,
     huge: Infinity,
   };
+  g.typeIs = (value: unknown, typeName: string) => {
+    if (typeName === "table") return typeof value === "object" && value !== null;
+    return typeof value === typeName;
+  };
+  g.pcall = (fn: (...a: unknown[]) => unknown) => {
+    try {
+      const result = fn();
+      return [true, result];
+    } catch (e) {
+      return [false, e];
+    }
+  };
   g.game = {
     GetService: vi.fn((svc: string) => {
       if (svc === "DataStoreService") {
