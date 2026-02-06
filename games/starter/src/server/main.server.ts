@@ -16,6 +16,10 @@ import { CodeRedemptionService } from "./services/CodeRedemptionService";
 import { LeaderboardService } from "./services/LeaderboardService";
 import { AnalyticsService } from "./services/AnalyticsService";
 import { NotificationService } from "./services/NotificationService";
+import { InventoryService } from "./services/InventoryService";
+import { ProgressionService } from "./services/ProgressionService";
+import { QuestService } from "./services/QuestService";
+import { RewardsService } from "./services/RewardsService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -36,7 +40,11 @@ app
   .register(CodeRedemptionService)
   .register(LeaderboardService)
   .register(AnalyticsService)
-  .register(NotificationService);
+  .register(NotificationService)
+  .register(InventoryService)
+  .register(ProgressionService)
+  .register(QuestService)
+  .register(RewardsService);
 
 app.boot();
 logger.info("Server booted.");

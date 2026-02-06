@@ -15,6 +15,10 @@ import { ChatModerationService } from "./services/ChatModerationService";
 import { MovementValidationService } from "./services/MovementValidationService";
 import { FeatureFlagSyncService } from "./services/FeatureFlagSyncService";
 import { CodeRedemptionService } from "./services/CodeRedemptionService";
+import { InventoryService } from "./services/InventoryService";
+import { ProgressionService } from "./services/ProgressionService";
+import { QuestService } from "./services/QuestService";
+import { RewardsService } from "./services/RewardsService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -37,7 +41,11 @@ app
   .register(ChatModerationService)
   .register(MovementValidationService)
   .register(FeatureFlagSyncService)
-  .register(CodeRedemptionService);
+  .register(CodeRedemptionService)
+  .register(InventoryService)
+  .register(ProgressionService)
+  .register(QuestService)
+  .register(RewardsService);
 
 app.boot();
 logger.info("Obby server booted.");

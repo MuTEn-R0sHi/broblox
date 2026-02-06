@@ -22,7 +22,11 @@
     "@rbx/moderation": "workspace:*",
     "@rbx/net": "workspace:*",
     "@rbx/notifications": "workspace:*",
+    "@rbx/inventory": "workspace:*",
     "@rbx/observability": "workspace:*",
+    "@rbx/progression": "workspace:*",
+    "@rbx/quests": "workspace:*",
+    "@rbx/rewards": "workspace:*",
     "@rbx/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"
   },

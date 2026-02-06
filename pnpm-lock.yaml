@@ -156,6 +156,9 @@ importers:
       "@rbx/input":
         specifier: workspace:*
         version: link:../../packages/input
+      "@rbx/inventory":
+        specifier: workspace:*
+        version: link:../../packages/inventory
       "@rbx/leaderboards":
         specifier: workspace:*
         version: link:../../packages/leaderboards
@@ -174,6 +177,15 @@ importers:
       "@rbx/observability":
         specifier: workspace:*
         version: link:../../packages/observability
+      "@rbx/progression":
+        specifier: workspace:*
+        version: link:../../packages/progression
+      "@rbx/quests":
+        specifier: workspace:*
+        version: link:../../packages/quests
+      "@rbx/rewards":
+        specifier: workspace:*
+        version: link:../../packages/rewards
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -214,6 +226,9 @@ importers:
       "@rbx/core":
         specifier: workspace:*
         version: link:../../packages/core
+      "@rbx/inventory":
+        specifier: workspace:*
+        version: link:../../packages/inventory
       "@rbx/leaderboards":
         specifier: workspace:*
         version: link:../../packages/leaderboards
@@ -232,6 +247,15 @@ importers:
       "@rbx/observability":
         specifier: workspace:*
         version: link:../../packages/observability
+      "@rbx/progression":
+        specifier: workspace:*
+        version: link:../../packages/progression
+      "@rbx/quests":
+        specifier: workspace:*
+        version: link:../../packages/quests
+      "@rbx/rewards":
+        specifier: workspace:*
+        version: link:../../packages/rewards
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../../packages/shared-types
