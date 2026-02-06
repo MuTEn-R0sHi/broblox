@@ -1,40 +1,25 @@
-# Future Phases (3–7)
+# Future Phases (4–7)
 
-This document outlines planned phases beyond the current roadmap, with feature candidates drawn from platform research and industry trends.
+This document outlines planned phases beyond the completed roadmap, with feature candidates drawn from platform research and industry trends.
 
 > **Source:** Feature research in [Ideas (brainstorm reference)](ideas.md)
 
 ---
 
-## Phase 3 — Beta / Multi-game
+## Phase 3 — Beta / Multi-game ✅
 
 > **Goal:** Second game adopts platform; moderation + ops tooling.
 
-**Status:** 🔜 Next
+**Status:** ✅ Complete
 
-### Deliverables (from overview.md)
+### Shipped
 
-- Second game template created from the platform
-- `packages/moderation` v1: bans/mutes + evidence model
-- `packages/movement` v1: server-authoritative movement + lag compensation
-- Dashboard v2 (control plane): RBAC + audit logs + ban workflow
-- Feature flags: staged rollouts + kill-switch enforcement
-
-### Feature Candidates
-
-| Feature                 | Priority    | Effort | Notes                                 |
-| ----------------------- | ----------- | ------ | ------------------------------------- |
-| Moderation system       | 🔴 Critical | Medium | Bans, mutes, evidence model           |
-| Movement package        | 🔴 Critical | High   | Server-auth movement, anti-speed-hack |
-| RBAC + Audit logs       | 🔴 Critical | Medium | Dashboard v2 requirement              |
-| Second game template    | 🔴 Critical | High   | Proves multi-game reuse               |
-| Feature flag rollouts   | 🟡 High     | Low    | Kill-switch enforcement               |
-| Rebirth/Prestige system | 🟡 High     | Medium | Core retention mechanic               |
-
-### Reliability Requirements
-
-- Rollback procedure tested
-- Incident runbooks exist for matchmaking and exploit waves
+- Second game template (obby) ✅
+- `packages/moderation` v1: bans/mutes + evidence model + dashboard bridge ✅
+- `packages/movement` v1: server-authoritative movement + observability + kill-switch ✅
+- Dashboard v2: RBAC + audit logs + ban workflow + Open Cloud propagation ✅
+- Feature flags v2: segments, scheduling, rollout history, kill-switch ✅
+- 620 tests across 24 test suites ✅
 
 ---
 
@@ -42,27 +27,28 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 > **Goal:** Safe continuous delivery and sustainable operations.
 
-**Status:** 📅 Planned
+**Status:** � Next
 
-### Deliverables (from overview.md)
+### Deliverables
 
-- Open Cloud publish/promote pipeline for Roblox environments (baseline implemented; Phase 4 focuses on hardening + operational excellence)
-- Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - `packages/analytics` v1: player behavior events, funnels, retention
 - `packages/notifications` v1: in-game toasts, announcements, news
+- Open Cloud publish/promote pipeline hardening + operational excellence
+- Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible
+- Rollback procedure tested + incident runbooks
 - Regular ADR + security review cadence
 
 ### Feature Candidates
 
 | Feature                 | Priority    | Effort | Notes                                   |
 | ----------------------- | ----------- | ------ | --------------------------------------- |
-| Open Cloud publish      | 🔴 Critical | High   | Baseline implemented; hardening remains |
 | Analytics package       | 🔴 Critical | Medium | Player behavior, funnels, events        |
-| Notifications package   | 🟡 High     | Medium | Toasts, announcements, news             |
+| Notifications package   | 🔴 Critical | Medium | Toasts, announcements, news             |
+| Open Cloud hardening    | 🔴 Critical | High   | Baseline implemented; hardening remains |
+| Rollback + runbooks     | 🔴 Critical | Medium | Moved from Phase 3 reliability reqs     |
 | Scheduled events system | 🟡 High     | Medium | Events section implementation           |
 | Performance monitoring  | 🟡 High     | Medium | Budgets + alerts                        |
-| Daily login rewards     | 🟢 Medium   | Low    | Retention hook                          |
 | Quest/mission system    | 🟢 Medium   | Medium | Engagement driver                       |
 
 ---
@@ -73,44 +59,57 @@ This document outlines planned phases beyond the current roadmap, with feature c
 
 **Status:** 💡 Planned
 
-### Scope
+### Phase 5a — Foundation
 
-Build platform-level packages that any BroBlox game can consume:
-
-- Base inventory system (prerequisite for all collection features)
-- Progression systems (levels, XP, prestige)
-- Collection systems (pets, items, cosmetics)
-- Reward systems (battle pass, daily rewards)
-- Support systems (localization, audio, tutorial)
-- **The Bro** — Cross-game mascot companion system
-
-### Feature Candidates
+Prerequisites for all collection/reward features. Build these first.
 
 | Feature             | Priority    | Effort | Notes                               |
 | ------------------- | ----------- | ------ | ----------------------------------- |
 | Inventory package   | 🔴 Critical | High   | Base for pets, cosmetics, equipment |
-| Bro Companion       | 🔴 Critical | High   | Cross-game mascot, brand identity   |
-| Pet system          | 🔴 Critical | High   | Proven monetization                 |
-| Egg/Gacha system    | 🔴 Critical | High   | Drives retention loops              |
-| Localization (i18n) | 🟡 High     | Medium | Multi-language support              |
-| Battle pass         | 🟡 High     | Medium | See `docs/modules/battle-pass.md`   |
-| Cosmetics system    | 🟡 High     | Medium | See `docs/modules/cosmetics.md`     |
-| Audio package       | 🟡 High     | Medium | SFX, music, spatial audio           |
-| Tutorial/FTUE       | 🟡 High     | Medium | Guided onboarding framework         |
-| Daily rewards       | 🟢 Medium   | Low    | See `docs/modules/daily-rewards.md` |
-| Crafting system     | 🟢 Medium   | Medium | Item depth                          |
-| Skill trees         | 🟢 Medium   | High   | Class customization                 |
-
-### Package Structure (proposed)
+| Progression package | 🔴 Critical | Medium | XP, levels, prestige/rebirth        |
+| Daily rewards       | 🟡 High     | Low    | See `docs/modules/daily-rewards.md` |
 
 ```
 packages/
   inventory/       # Base item/slot system (prerequisite)
-  bro-companion/   # Cross-game mascot system (The Bro)
   progression/     # XP, levels, prestige/rebirth
+  rewards/         # Daily login, achievements
+```
+
+### Phase 5b — Collection & Monetization
+
+Revenue-driving mechanics. Depend on inventory.
+
+| Feature          | Priority    | Effort | Notes                             |
+| ---------------- | ----------- | ------ | --------------------------------- |
+| Pet system       | 🔴 Critical | High   | Proven monetization               |
+| Egg/Gacha system | 🔴 Critical | High   | Drives retention loops            |
+| Bro Companion    | 🔴 Critical | High   | Cross-game mascot, brand identity |
+| Battle pass      | 🟡 High     | Medium | See `docs/modules/battle-pass.md` |
+| Cosmetics system | 🟡 High     | Medium | See `docs/modules/cosmetics.md`   |
+| Crafting system  | 🟢 Medium   | Medium | Item depth                        |
+| Skill trees      | 🟢 Medium   | High   | Class customization               |
+
+```
+packages/
+  bro-companion/   # Cross-game mascot system (The Bro)
   pets/            # Pet system, evolution, equipment
   gacha/           # Eggs, hatching, pity system
-  rewards/         # Daily login, battle pass, achievements
+  cosmetics/       # Skins, outfits, accessories
+```
+
+### Phase 5c — Support Systems
+
+Independent packages that can be built in parallel.
+
+| Feature             | Priority | Effort | Notes                       |
+| ------------------- | -------- | ------ | --------------------------- |
+| Localization (i18n) | 🟡 High  | Medium | Multi-language support      |
+| Audio package       | 🟡 High  | Medium | SFX, music, spatial audio   |
+| Tutorial/FTUE       | 🟡 High  | Medium | Guided onboarding framework |
+
+```
+packages/
   localization/    # i18n, string tables, language switching
   audio/           # SFX manager, music system, spatial audio
   tutorial/        # FTUE framework, step-by-step guides
@@ -197,33 +196,39 @@ games/
 
 ## Quick Reference: Feature → Phase Mapping
 
-| Feature                           | Phase | Status       |
-| --------------------------------- | ----- | ------------ |
-| Core packages (net, config, etc.) | 1     | ✅ Done      |
-| Combat + hit validation           | 2     | ✅ Done      |
-| Matchmaking + match lifecycle     | 2     | ✅ Done      |
-| Dashboard match history           | 2     | ✅ Done      |
-| Moderation system                 | 3     | 🔜 Next      |
-| Movement package                  | 3     | 🔜 Next      |
-| RBAC + audit logs                 | 3     | 🔜 Next      |
-| Rebirth/prestige                  | 3     | 🔜 Next      |
-| Open Cloud publish/promote        | 4     | 🟡 Hardening |
-| Analytics package                 | 4     | 📅 Planned   |
-| Notifications package             | 4     | 📅 Planned   |
-| Scheduled events                  | 4     | 📅 Planned   |
-| Inventory package                 | 5     | 💡 Planned   |
-| Bro Companion (The Bro)           | 5     | 💡 Planned   |
-| Pet system                        | 5     | 💡 Planned   |
-| Egg/gacha system                  | 5     | 💡 Planned   |
-| Battle pass                       | 5     | 💡 Planned   |
-| Localization (i18n)               | 5     | 💡 Planned   |
-| Audio package                     | 5     | 💡 Planned   |
-| Tutorial/FTUE                     | 5     | 💡 Planned   |
-| Trading                           | 6     | 💡 Planned   |
-| Guilds                            | 6     | 💡 Planned   |
-| Global BroCoins                   | 6     | 💡 Planned   |
-| Genre templates                   | 7     | 💡 Planned   |
-| BroStars game                     | 7     | 💡 Planned   |
+| Feature                           | Phase | Status     |
+| --------------------------------- | ----- | ---------- |
+| Core packages (net, config, etc.) | 1     | ✅ Done    |
+| Combat + hit validation           | 2     | ✅ Done    |
+| Matchmaking + match lifecycle     | 2     | ✅ Done    |
+| Dashboard match history           | 2     | ✅ Done    |
+| Moderation system                 | 3     | ✅ Done    |
+| Movement package                  | 3     | ✅ Done    |
+| RBAC + audit logs                 | 3     | ✅ Done    |
+| Feature flag v2 (segments, etc.)  | 3     | ✅ Done    |
+| Second game template (obby)       | 3     | ✅ Done    |
+| Dashboard moderation bridge       | 3     | ✅ Done    |
+| Analytics package                 | 4     | 🔜 Next    |
+| Notifications package             | 4     | 🔜 Next    |
+| Open Cloud hardening              | 4     | 🔜 Next    |
+| Rollback + runbooks               | 4     | 🔜 Next    |
+| Scheduled events                  | 4     | 🔜 Next    |
+| Inventory package                 | 5a    | 💡 Planned |
+| Progression (XP, prestige)        | 5a    | 💡 Planned |
+| Daily rewards                     | 5a    | 💡 Planned |
+| Pet system                        | 5b    | 💡 Planned |
+| Egg/gacha system                  | 5b    | 💡 Planned |
+| Bro Companion (The Bro)           | 5b    | 💡 Planned |
+| Battle pass                       | 5b    | 💡 Planned |
+| Cosmetics system                  | 5b    | 💡 Planned |
+| Localization (i18n)               | 5c    | 💡 Planned |
+| Audio package                     | 5c    | 💡 Planned |
+| Tutorial/FTUE                     | 5c    | 💡 Planned |
+| Trading                           | 6     | 💡 Planned |
+| Guilds                            | 6     | 💡 Planned |
+| Global BroCoins                   | 6     | 💡 Planned |
+| Genre templates                   | 7     | 💡 Planned |
+| BroStars game                     | 7     | 💡 Planned |
 
 ---
 
@@ -231,10 +236,11 @@ games/
 
 | Phase | Estimated Duration | Dependencies          |
 | ----- | ------------------ | --------------------- |
-| 3     | 4–6 weeks          | Phase 2 ✅            |
-| 4     | 3–4 weeks          | Phase 3               |
-| 5     | 6–8 weeks          | Phase 4               |
-| 6     | 6–8 weeks          | Phase 5 (partial)     |
+| 4     | 3–4 weeks          | Phase 3 ✅            |
+| 5a    | 3–4 weeks          | Phase 4               |
+| 5b    | 4–6 weeks          | Phase 5a              |
+| 5c    | 3–4 weeks          | Phase 4 (parallel)    |
+| 6     | 6–8 weeks          | Phase 5a (partial)    |
 | 7     | Ongoing            | Phases 5–6 (parallel) |
 
 ---

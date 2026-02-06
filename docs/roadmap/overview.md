@@ -76,7 +76,7 @@ Security baseline:
 - All inbound remotes are rate limited ✅
 - Server decides outcomes for any state mutation ✅
 
-Test coverage: 578 tests across all packages, games, and dashboard.
+Test coverage: 620+ tests across all packages, games, and dashboard.
 
 ### Phase 2 — PvP Alpha (competitive loop + ops visibility) ✅
 
@@ -99,57 +99,71 @@ PvP requirements:
 - Deterministic cooldown/ammo logic server-side ✅
 - Match state transitions server-controlled ✅
 
-### Phase 3 — Beta (multi-game reuse + moderation) — In Progress
+### Phase 3 — Beta (multi-game reuse + moderation) ✅
+
+**Status: COMPLETE**
 
 **Goal:** second game adopts platform with minimal extra glue.
 
 Deliverables:
 
 - Second game template created from the platform ✅ (obby game)
-- `packages/moderation` v1: bans/mutes + evidence model ✅
-- `packages/movement` v1: server-authoritative movement validation ✅
+- `packages/moderation` v1: bans/mutes + evidence model + dashboard bridge ✅
+- `packages/movement` v1: server-authoritative movement + observability + feature flag kill-switch ✅
 - Dashboard v2 (control plane): RBAC + audit logs + ban workflow ✅
-- Feature flags: staged rollouts + kill-switch enforcement ✅
+- Feature flags v2: segments, scheduling, rollout history, kill-switch ✅
+- Both games (starter + obby) integrated with moderation + movement ✅
 
-Remaining:
-
-- Rollback procedure tested
-- Incident runbooks for matchmaking and exploit waves
+Test coverage: 620 tests across 24 test suites.
 
 ### Phase 4 — Production (operational excellence)
+
+**Status:** 🔜 Next
 
 **Goal:** safe continuous delivery and sustainable operations.
 
 Deliverables:
 
-- Open Cloud publish/promote pipeline for Roblox environments (baseline implemented; hardening + ops maturity in Phase 4)
+- `packages/analytics` v1: player behavior events, funnels, retention
+- `packages/notifications` v1: in-game toasts, announcements, news
+- Open Cloud publish/promote pipeline hardening + ops maturity
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible (lint/test + scripted checks)
+- Rollback procedure tested + incident runbooks (matchmaking, exploit waves)
 - Regular ADR + security review cadence
 
 ## Milestone mapping (packages)
 
-### Phase 1–2 (Complete ✅)
+### Phase 1–3 (Complete ✅)
 
 - `core`, `shared-types`, `net`, `security`, `config-featureflags`
 - `input`, `ui`, `data`, `observability`
 - `combat`, `matchmaking`
-
-### Phase 3 (In Progress)
-
-- `moderation`: bans/mutes, enforcement hooks ✅
-- `movement`: server-authoritative movement, lag compensation ✅
+- `moderation`, `movement`
+- Games: `starter`, `obby`
+- Dashboard: RBAC, audit, ban workflow, flag propagation
 
 ### Phase 4 (Next)
 
 - `analytics`: player behavior events, funnels
 - `notifications`: in-game toasts, announcements
 
-### Phase 5+ (Future)
+### Phase 5a — Foundation
 
 - `inventory`: base item/slot system (prerequisite for collections)
-- `progression`, `pets`, `gacha`, `rewards`
+- `progression`: XP, levels, prestige/rebirth
+- `rewards`: daily login, achievements
+
+### Phase 5b — Collection
+
+- `pets`, `gacha`, `cosmetics`, battle pass
+
+### Phase 5c — Support
+
 - `localization`, `audio`, `tutorial`
+
+### Phase 6+
+
 - `trading`, `guilds`, `economy`, `social`
 
 > **Full roadmap:** See [Future Phases (3–7)](future-phases.md) for detailed planning.
