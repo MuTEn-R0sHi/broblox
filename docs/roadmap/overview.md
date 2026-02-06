@@ -116,9 +116,9 @@ Deliverables:
 
 Test coverage: 620 tests across 24 test suites.
 
-### Phase 4 — Production (operational excellence)
+### Phase 4 — Production (operational excellence) ✅
 
-**Status:** 🔄 In Progress (packages complete)
+**Status: COMPLETE**
 
 **Goal:** safe continuous delivery and sustainable operations.
 
@@ -128,6 +128,7 @@ Deliverables:
 - `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time) ✅
 - `packages/analytics` v1: player behavior events, funnels, retention ✅
 - `packages/notifications` v1: in-game toasts, announcements, news ✅
+- Game integrations (both starter + obby) ✅
 - Open Cloud publish/promote pipeline hardening + ops maturity
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible (lint/test + scripted checks)
@@ -136,6 +137,22 @@ Deliverables:
 - Regular ADR + security review cadence
 
 Test coverage: 764 tests across 32 test suites.
+
+### Phase 5a — Foundation ✅
+
+**Status: COMPLETE**
+
+**Goal:** core progression & engagement systems that underpin collections, economy, and retention.
+
+Deliverables:
+
+- `packages/inventory` v1: item registry, per-player inventory, stacking, transfers, slot management, metadata, sorting, DataStore persistence ✅
+- `packages/progression` v1: XP curves (linear/quadratic/exponential/custom), auto level-up, prestige/rebirth, XP bonus multipliers, DataStore persistence ✅
+- `packages/quests` v1: quest registry with schedule/tier/tag/level filtering, objective tracking, auto-completion, prerequisites, DataStore persistence ✅
+- `packages/rewards` v1: daily login rewards with streaks/grace periods/cycles, achievement store with progress tracking, DataStore persistence ✅
+- Game integrations: both starter and obby games with themed items, quests, achievements ✅
+
+Test coverage: 976 tests across 22 test suites.
 
 ## Milestone mapping (packages)
 
@@ -148,19 +165,20 @@ Test coverage: 764 tests across 32 test suites.
 - Games: `starter`, `obby`
 - Dashboard: RBAC, audit, ban workflow, flag propagation
 
-### Phase 4 (In Progress)
+### Phase 4 (Complete ✅)
 
 - `codes`: redeemable promo codes ✅
 - `leaderboards`: cross-game leaderboard infrastructure ✅
 - `analytics`: player behavior events, funnels ✅
 - `notifications`: in-game toasts, announcements ✅
 
-### Phase 5a — Foundation
+### Phase 5a — Foundation (Complete ✅)
 
-- `inventory`: base item/slot system (prerequisite for collections)
-- `progression`: XP, levels, prestige/rebirth
-- `quests`: daily/weekly/seasonal quest framework
-- `rewards`: daily login, achievements
+- `inventory`: item registry + per-player inventory with stacking, transfers, slots ✅
+- `progression`: XP curves, auto level-up, prestige/rebirth ✅
+- `quests`: quest registry, objective tracking, daily/weekly schedules ✅
+- `rewards`: daily login rewards, achievements with progress tracking ✅
+- Game integrations: starter (combat-themed) + obby (stage-themed) ✅
 
 ### Phase 5b — Collection
 
