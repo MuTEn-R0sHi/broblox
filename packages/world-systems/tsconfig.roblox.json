@@ -1,25 +1,22 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "strict": true,
+    "noLib": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "types": ["types", "compiler-types"],
     "rootDir": "src",
     "outDir": "out",
-    "baseUrl": "src",
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "strict": true,
-    "moduleResolution": "Node",
-    "module": "commonjs",
-    "target": "ESNext",
-    "lib": [],
-    "noLib": true,
-    "moduleDetection": "force",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-    "jsx": "react"
+    "declarationDir": "out"
   },
-  "include": ["src"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  "rbxts": {
+    "type": "package"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
 }
