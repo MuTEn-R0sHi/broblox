@@ -8,6 +8,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { BanRecord, CreateBanInput } from "./types";
 
+// LuaTuple is a roblox-ts compiler global not available under vitest's tsconfig
+declare type LuaTuple<T extends unknown[]> = T & { readonly LUA_TUPLE: never };
+
 // ---------------------------------------------------------------------------
 // Roblox globals stub
 // ---------------------------------------------------------------------------
