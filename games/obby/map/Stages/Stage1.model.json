@@ -12,6 +12,7 @@
       },
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [20, 2, 20],
         "Position": [0, 0, 0],
         "Material": "SmoothPlastic"
@@ -22,6 +23,7 @@
       "className": "Part",
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [8, 2, 8],
         "Position": [0, 1, 18],
         "Material": "SmoothPlastic"
@@ -32,6 +34,7 @@
       "className": "Part",
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [7, 2, 7],
         "Position": [8, 3, 30],
         "Material": "SmoothPlastic"
@@ -42,6 +45,7 @@
       "className": "Part",
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [7, 2, 7],
         "Position": [0, 5, 42],
         "Material": "SmoothPlastic"
@@ -52,6 +56,7 @@
       "className": "Part",
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [6, 2, 6],
         "Position": [-8, 7, 54],
         "Material": "SmoothPlastic"
@@ -62,6 +67,7 @@
       "className": "Part",
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [6, 2, 6],
         "Position": [0, 9, 66],
         "Material": "SmoothPlastic"
@@ -72,6 +78,7 @@
       "className": "Part",
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [6, 2, 6],
         "Position": [8, 11, 78],
         "Material": "SmoothPlastic"
@@ -85,6 +92,7 @@
       },
       "properties": {
         "Anchored": true,
+        "CanCollide": true,
         "Size": [20, 2, 20],
         "Position": [0, 13, 95],
         "Material": "SmoothPlastic"

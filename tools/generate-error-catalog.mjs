@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Read the shared-types source file
-const sharedTypesPath = join(__dirname, "../packages/shared-types/src/index.ts");
+const sharedTypesPath = join(__dirname, "../packages/shared-types/src/error-codes.ts");
 const content = readFileSync(sharedTypesPath, "utf-8");
 
 // Extract ErrorCode enum

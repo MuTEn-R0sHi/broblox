@@ -10,8 +10,19 @@ export default defineConfig({
     alias: {
       // Workspace packages compile to .luau in `out/`, which Node/Vitest can't import.
       // For tests, resolve to TS sources instead.
+      "@rbx/shared-types": resolve(__dirname, "packages/shared-types/src/index.ts"),
+      "@rbx/constants": resolve(__dirname, "packages/constants/src/index.ts"),
       "@rbx/core": resolve(__dirname, "packages/core/src/index.ts"),
+      "@rbx/config-featureflags": resolve(__dirname, "packages/config-featureflags/src/index.ts"),
+      "@rbx/net": resolve(__dirname, "packages/net/src/index.ts"),
+      "@rbx/data": resolve(__dirname, "packages/data/src/index.ts"),
+      "@rbx/security": resolve(__dirname, "packages/security/src/index.ts"),
       "@rbx/observability": resolve(__dirname, "packages/observability/src/index.ts"),
+      "@rbx/combat": resolve(__dirname, "packages/combat/src/index.ts"),
+      "@rbx/matchmaking": resolve(__dirname, "packages/matchmaking/src/index.ts"),
+      "@rbx/moderation": resolve(__dirname, "packages/moderation/src/index.ts"),
+      "@rbx/movement": resolve(__dirname, "packages/movement/src/index.ts"),
+      "@rbx/testing": resolve(__dirname, "packages/testing/src/index.ts"),
     },
   },
   test: {

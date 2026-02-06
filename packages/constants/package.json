@@ -1,14 +1,12 @@
 {
   "name": "@rbx/constants",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts",
-      "require": "./src/index.ts",
+      "types": "./out/index.d.ts",
       "default": "./out"
     }
   },

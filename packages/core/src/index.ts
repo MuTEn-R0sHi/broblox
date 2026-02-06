@@ -4,8 +4,11 @@
  * Compatible with roblox-ts.
  */
 
-// Logger
+// Application lifecycle
 export * from "./application";
+
+// Roblox-TS compatible collection helpers
+export { arraySize, arrayRemoveAt, arrayTake, setSize } from "./collections";
 
 export enum LogLevel {
   Debug = 0,

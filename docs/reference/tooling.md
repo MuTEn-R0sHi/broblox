@@ -39,19 +39,34 @@ Watch compile:
 
 - `pnpm game:starter:dev`
 
-## Rojo + Studio sync (starter)
+## Obby game (Roblox-TS)
+
+Build once:
+
+- `pnpm game:obby:build`
+
+Watch compile:
+
+- `pnpm game:obby:dev`
+
+## Rojo + Studio sync
 
 Toolchain (recommended):
 
 - `aftman install`
 
-Start Rojo server:
+Start Rojo server (starter):
 
 - `pnpm game:starter:rojo`
 
-Rojo project file:
+Start Rojo server (obby):
+
+- `pnpm game:obby:rojo`
+
+Rojo project files:
 
 - `games/starter/default.project.json`
+- `games/obby/default.project.json`
 
 ## Dashboard
 

@@ -14,6 +14,7 @@
  */
 
 import { Result, ok, PlayerId } from "@rbx/shared-types";
+import { arraySize, arrayRemoveAt } from "@rbx/core";
 import type {
   HitIntent,
   HitValidationResult,
@@ -62,33 +63,6 @@ const validHitListeners: EventListener<HitValidationResult>[] = [];
 // ============================================================================
 // Helper Functions (roblox-ts compatible)
 // ============================================================================
-
-/**
- * Cross-environment sqrt function.
- * Uses math.sqrt in Roblox, Math.sqrt elsewhere.
- */
-/**
- * Get array length in a roblox-ts compatible way.
- */
-function arraySize<T extends defined>(arr: T[]): number {
-  let count = 0;
-  for (const _ of arr) {
-    count++;
-  }
-  return count;
-}
-
-/**
- * Remove element at index from array (mutates array).
- */
-function arrayRemoveAt<T extends defined>(arr: T[], index: number): void {
-  const len = arraySize(arr);
-  if (index < 0 || index >= len) return;
-  if (index < len - 1) {
-    arr[index] = arr[len - 1];
-  }
-  arr.pop();
-}
 
 /**
  * Calculate distance between two Vector3-like objects.

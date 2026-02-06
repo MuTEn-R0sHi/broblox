@@ -76,7 +76,7 @@ Security baseline:
 - All inbound remotes are rate limited ✅
 - Server decides outcomes for any state mutation ✅
 
-Test coverage: 305 tests across all packages.
+Test coverage: 578 tests across all packages, games, and dashboard.
 
 ### Phase 2 — PvP Alpha (competitive loop + ops visibility) ✅
 
@@ -99,21 +99,22 @@ PvP requirements:
 - Deterministic cooldown/ammo logic server-side ✅
 - Match state transitions server-controlled ✅
 
-### Phase 3 — Beta (multi-game reuse + moderation)
+### Phase 3 — Beta (multi-game reuse + moderation) — In Progress
 
 **Goal:** second game adopts platform with minimal extra glue.
 
 Deliverables:
 
-- Second game template created from the platform
-- `packages/moderation` v1: bans/mutes + evidence model
-- Dashboard v2 (control plane): RBAC + audit logs + ban workflow
-- Feature flags: staged rollouts + kill-switch enforcement
+- Second game template created from the platform ✅ (obby game)
+- `packages/moderation` v1: bans/mutes + evidence model ✅
+- `packages/movement` v1: server-authoritative movement validation ✅
+- Dashboard v2 (control plane): RBAC + audit logs + ban workflow ✅
+- Feature flags: staged rollouts + kill-switch enforcement ✅
 
-Reliability requirements:
+Remaining:
 
 - Rollback procedure tested
-- Incident runbooks exist for matchmaking and exploit waves
+- Incident runbooks for matchmaking and exploit waves
 
 ### Phase 4 — Production (operational excellence)
 
@@ -134,10 +135,13 @@ Deliverables:
 - `input`, `ui`, `data`, `observability`
 - `combat`, `matchmaking`
 
-### Phase 3–4 (Next)
+### Phase 3 (In Progress)
 
-- `moderation`: bans/mutes, enforcement hooks
-- `movement`: server-authoritative movement, lag compensation
+- `moderation`: bans/mutes, enforcement hooks ✅
+- `movement`: server-authoritative movement, lag compensation ✅
+
+### Phase 4 (Next)
+
 - `analytics`: player behavior events, funnels
 - `notifications`: in-game toasts, announcements
 

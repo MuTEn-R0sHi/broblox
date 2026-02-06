@@ -14,28 +14,29 @@ This repo releases by tagging SemVer versions. Releases are automatically publis
 
 1. Ensure green CI on `main`
 2. Verify dev deployment succeeded (auto-deployed on merge)
-3. Update `CHANGELOG.md`:
+3. Bump package versions in `package.json` files (use consistent version across all packages in the same phase)
+4. Update `CHANGELOG.md`:
    - Move entries from **Unreleased** to a new version heading `## X.Y.Z`
    - Add release date
-4. Create and push a version tag:
+5. Create and push a version tag:
 
 ```bash
 git pull
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
-5. Promote to staging (optional testing phase):
+6. Promote to staging (optional testing phase):
    - Go to Actions → Promote workflow
    - Select `staging` environment
    - Enter the commit SHA or tag
    - Provide a reason for promotion
    - Wait for approval
 
-6. Promote to production:
+7. Promote to production:
    - Go to Actions → Promote workflow
    - Select `production` environment
-   - Enter the version tag (e.g., `v0.1.0`)
+   - Enter the version tag (e.g., `v0.2.0`)
    - Provide a reason for promotion
    - Wait for approval (requires 2+ reviewers)
 

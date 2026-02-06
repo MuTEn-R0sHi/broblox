@@ -35,6 +35,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Pure numeric constants (no dependencies).
   - Timeouts: remote invoke, handshake retry, session expiry.
   - Limits: payload sizes, timestamp tolerance, vector magnitudes.
+  - Validation helpers for Roblox-specific type checks.
   - Build info: version, commit hash, environment.
   - Safe for both Roblox runtime and Node.js testing.
 
@@ -42,6 +43,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Application lifecycle: `start()`/`stop()`/`dispose()`.
   - Logger with child loggers and structured context.
   - Cleanup primitives (resource lifetimes).
+  - Roblox-TS compatible collection helpers (`arraySize`, `arrayRemoveAt`, `arrayTake`, `setSize`) — **all packages should import from `@rbx/core` instead of inlining these helpers**.
 
 - `shared-types`
   - Branded ids: `PlayerId`, `MatchId`, `ConfigVersion`, etc.
@@ -102,6 +104,32 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Type-safe flag definitions.
   - Validation with error details.
 
+## Phase 2–3 packages
+
+- `combat`
+  - Weapon definitions, cooldowns, ammunition.
+  - Server-authoritative hit validation (raycast verification).
+  - Damage calculation and ability system.
+  - Depends on `@rbx/core` for collection helpers and `@rbx/shared-types` for Result types.
+
+- `matchmaking`
+  - Queue management with skill-based matching.
+  - Match lifecycle (waiting → starting → in-progress → ended).
+  - Server allocation with reserved server provisioning.
+  - Health monitoring and graceful shutdown.
+  - Depends on `@rbx/core` for collection helpers and `@rbx/shared-types` for Result types.
+
+- `moderation`
+  - Ban/mute system with evidence model.
+  - Enforcement hooks for server-side action.
+  - Dashboard integration for moderator workflows.
+
+- `movement`
+  - Server-authoritative movement validation.
+  - Speed hack, teleport, fly hack, and noclip detection.
+  - Configurable walk/run speeds with ability modifiers.
+  - Player movement state tracking with violation history.
+
 ## Game folder expectations
 
 A game should only provide:
@@ -111,6 +139,11 @@ A game should only provide:
 - minimal glue to boot platform services
 
 If game-specific logic starts duplicating across games, it belongs in `packages/`.
+
+Current games:
+
+- `games/starter/` — Starter game template (Phase 1). Demonstrates core platform integration with handshake, actions, remotes, moderation, and feature flags.
+- `games/obby/` — Obby game (Phase 3). Stages, checkpoints, coins, leaderboards, and remote payload validation.
 
 ## Roblox-TS monorepo setup
 

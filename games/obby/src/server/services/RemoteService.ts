@@ -13,6 +13,7 @@ let remoteFolder: Folder | undefined;
 let checkpointReachedRemote: RemoteEvent | undefined;
 let requestRespawnRemote: RemoteEvent | undefined;
 let requestLeaderboardRemote: RemoteEvent | undefined;
+let leaderboardRefreshStatusRemote: RemoteEvent | undefined;
 let stageCompletedRemote: RemoteEvent | undefined;
 let playerDataSyncRemote: RemoteEvent | undefined;
 let leaderboardUpdateRemote: RemoteEvent | undefined;
@@ -28,6 +29,7 @@ export const RemoteService: Service & {
   checkpointReached(): RemoteEvent;
   requestRespawn(): RemoteEvent;
   requestLeaderboard(): RemoteEvent;
+  leaderboardRefreshStatus(): RemoteEvent;
   stageCompleted(): RemoteEvent;
   playerDataSync(): RemoteEvent;
   leaderboardUpdate(): RemoteEvent;
@@ -43,6 +45,10 @@ export const RemoteService: Service & {
 
   requestLeaderboard() {
     return requestLeaderboardRemote!;
+  },
+
+  leaderboardRefreshStatus() {
+    return leaderboardRefreshStatusRemote!;
   },
 
   stageCompleted() {
@@ -89,6 +95,7 @@ export const RemoteService: Service & {
     checkpointReachedRemote = createRemoteEvent("CheckpointReached", remoteFolder);
     requestRespawnRemote = createRemoteEvent("RequestRespawn", remoteFolder);
     requestLeaderboardRemote = createRemoteEvent("RequestLeaderboard", remoteFolder);
+    leaderboardRefreshStatusRemote = createRemoteEvent("LeaderboardRefreshStatus", remoteFolder);
     stageCompletedRemote = createRemoteEvent("StageCompleted", remoteFolder);
     playerDataSyncRemote = createRemoteEvent("PlayerDataSync", remoteFolder);
     leaderboardUpdateRemote = createRemoteEvent("LeaderboardUpdate", remoteFolder);

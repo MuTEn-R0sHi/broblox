@@ -1,6 +1,6 @@
 {
   "name": "@rbx/matchmaking",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",
@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@rbx/constants": "workspace:*",
+    "@rbx/core": "workspace:*",
     "@rbx/shared-types": "workspace:*",
     "@rbx/observability": "workspace:*"
   },

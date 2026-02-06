@@ -6,8 +6,8 @@ These instructions are **binding** for any Copilot-assisted code changes in this
 
 - The docs site under `docs/` is the source of truth for architecture and invariants.
 - If a change affects **networking, security, data/persistence, CI/CD, dashboard privileges, or release flow**, you must:
-  1) update the relevant doc page(s)
-  2) add/update an ADR in `docs/architecture/decisions/` when the change is hard-to-reverse or breaks compatibility
+  1. update the relevant doc page(s)
+  2. add/update an ADR in `docs/architecture/decisions/` when the change is hard-to-reverse or breaks compatibility
 
 Key docs to follow:
 
@@ -66,7 +66,14 @@ Key docs to follow:
   - invalid payload rejection
   - bounds validation
   - rate-limit behavior
+- Use `@rbx/testing` mocks (`mockRobloxGlobals()`) for tests that need Roblox globals (os.clock, math, Vector3, etc.).
 - Do not merge changes that reduce security posture or remove validation.
+
+## Shared code patterns
+
+- **Collection helpers**: Use `arraySize`, `arrayRemoveAt`, `arrayTake`, `setSize` from `@rbx/core/collections`. Do NOT inline array/set size calculations — roblox-ts arrays don’t have `.length` in Luau.
+- **Validation helpers**: Use `@rbx/constants/validation` for Roblox-specific type checks.
+- **New packages**: Follow the canonical `package.json` pattern with `"exports": { ".": { "types": "./out/index.d.ts", "default": "./out" } }` and include `lint`, `typecheck`, `test` scripts. Add path mappings to `tsconfig.roblox.json` and `vitest.config.ts`.
 
 ## CI/CD and environments
 

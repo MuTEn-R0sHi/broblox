@@ -11,12 +11,10 @@
     }
   },
   "scripts": {
-    "build": "rbxtsc",
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
-    "watch": "rbxtsc -w",
-    "test": "vitest run",
-    "lint": "eslint src/"
+    "test": "vitest run --passWithNoTests"
   },
   "keywords": [
     "roblox",
@@ -39,9 +37,5 @@
     "@rbx/net": "workspace:*",
     "@rbx/observability": "workspace:*",
     "@rbx/shared-types": "workspace:*"
-  },
-  "peerDependencies": {
-    "@rbxts/compiler-types": "3.x",
-    "@rbxts/types": "^1.0.0"
   }
 }

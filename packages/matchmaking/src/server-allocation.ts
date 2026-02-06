@@ -12,6 +12,7 @@
  */
 
 import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@rbx/shared-types";
+import { arraySize, arrayRemoveAt } from "@rbx/core";
 
 // ============================================================================
 // Types
@@ -173,27 +174,6 @@ type EventListener<T> = (event: T) => void;
 const serverAllocatedListeners: EventListener<ServerAllocatedEvent>[] = [];
 const teleportInitiatedListeners: EventListener<TeleportInitiatedEvent>[] = [];
 const teleportFailureListeners: EventListener<TeleportFailureEvent>[] = [];
-
-// ============================================================================
-// Helper Functions (roblox-ts compatible)
-// ============================================================================
-
-function arraySize<T extends defined>(arr: T[]): number {
-  let count = 0;
-  for (const _ of arr) {
-    count++;
-  }
-  return count;
-}
-
-function arrayRemoveAt<T extends defined>(arr: T[], index: number): void {
-  const len = arraySize(arr);
-  if (index < 0 || index >= len) return;
-  if (index < len - 1) {
-    arr[index] = arr[len - 1];
-  }
-  arr.pop();
-}
 
 function generateRequestId(): string {
   requestCounter++;

@@ -13,6 +13,7 @@
  */
 
 import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@rbx/shared-types";
+import { arraySize, arrayRemoveAt, setSize } from "@rbx/core";
 import type { Match, MatchStatus, GameMode, Team } from "./types";
 
 // ============================================================================
@@ -86,44 +87,6 @@ const playerReadyListeners: EventListener<PlayerReadyEvent>[] = [];
 const allReadyListeners: EventListener<AllPlayersReadyEvent>[] = [];
 const matchStartedListeners: EventListener<MatchStartedEvent>[] = [];
 const matchEndedListeners: EventListener<MatchEndedEvent>[] = [];
-
-// ============================================================================
-// Helper Functions (roblox-ts compatible)
-// ============================================================================
-
-/**
- * Get array length in a roblox-ts compatible way.
- */
-function arraySize<T extends defined>(arr: T[]): number {
-  let count = 0;
-  for (const _ of arr) {
-    count++;
-  }
-  return count;
-}
-
-/**
- * Remove element at index from array (mutates array).
- */
-function arrayRemoveAt<T extends defined>(arr: T[], index: number): void {
-  const len = arraySize(arr);
-  if (index < 0 || index >= len) return;
-  if (index < len - 1) {
-    arr[index] = arr[len - 1];
-  }
-  arr.pop();
-}
-
-/**
- * Get Set size (roblox-ts compatible).
- */
-function setSize(s: Set<number>): number {
-  let count = 0;
-  for (const _ of s) {
-    count++;
-  }
-  return count;
-}
 
 // ============================================================================
 // Match Registration

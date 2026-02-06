@@ -90,6 +90,13 @@ export const math = {
 export function mockRobloxGlobals(): void {
   const g = globalThis as any;
 
+  // Polyfill roblox-ts array .size() → .length
+  if (!Array.prototype.size) {
+    (Array.prototype as any).size = function (this: unknown[]) {
+      return this.length;
+    };
+  }
+
   g.os = {
     clock: osClock,
     time: osTime,

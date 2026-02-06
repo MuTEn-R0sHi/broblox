@@ -9,6 +9,7 @@ import { RemoteController } from "./RemoteController";
 import {
   StageCompletedEvent,
   CheckpointReachedEvent,
+  LeaderboardRefreshStatusPayload,
   LeaderboardUpdatePayload,
 } from "shared/types";
 
@@ -34,6 +35,27 @@ export class UIController {
   private currentStage = 1;
   private coins = 0;
   private stageStartTime = os.clock();
+
+  private leaderboardRefreshCoolingDown = false;
+  private leaderboardRefreshPending = false;
+  private leaderboardRefreshNonce = 0;
+
+  private updateLeaderboardRefreshButton(): void {
+    const btn = this.leaderboardRefreshButton;
+    if (!btn) return;
+
+    const canClick = !this.leaderboardRefreshCoolingDown;
+    btn.Active = canClick;
+    btn.AutoButtonColor = canClick;
+    btn.TextTransparency = canClick ? 0.15 : 0.35;
+    btn.BackgroundTransparency = canClick ? 0.2 : 0.5;
+
+    if (this.leaderboardRefreshPending && !canClick) {
+      btn.Text = "Refreshing...";
+    } else {
+      btn.Text = "Refresh";
+    }
+  }
 
   private formatLeaderboardPlayerName(userId: number, playerName: string): string {
     const MAX_LEN = 16;
@@ -67,6 +89,7 @@ export class UIController {
     this.remote.onStage((event) => this.onStageCompleted(event));
     this.remote.onDataSync((data) => this.onDataSync(data));
     this.remote.onLeaderboard((data) => this.onLeaderboardUpdate(data));
+    this.remote.onLeaderboardRefreshStatus((data) => this.onLeaderboardRefreshStatus(data));
 
     // Start timer update loop
     task.spawn(() => this.timerLoop());
@@ -188,10 +211,36 @@ export class UIController {
     refreshCorner.Parent = this.leaderboardRefreshButton;
 
     this.leaderboardRefreshButton.MouseButton1Click.Connect(() => {
+      if (this.leaderboardRefreshCoolingDown) return;
+
+      this.leaderboardRefreshPending = true;
+      this.leaderboardRefreshCoolingDown = true;
+      const nonce = (this.leaderboardRefreshNonce += 1);
+
       if (this.leaderboardUpdatedLabel) {
         this.leaderboardUpdatedLabel.Text = "Refreshing...";
       }
+      this.updateLeaderboardRefreshButton();
       this.remote.requestLeaderboardRefresh();
+
+      // Cooldown aligns with server-side per-player rate limiting.
+      task.delay(1.1, () => {
+        if (nonce !== this.leaderboardRefreshNonce) return;
+        this.leaderboardRefreshCoolingDown = false;
+        this.updateLeaderboardRefreshButton();
+      });
+
+      // Safety: if no update arrives, clear the pending UI.
+      task.delay(3, () => {
+        if (nonce !== this.leaderboardRefreshNonce) return;
+        if (!this.leaderboardRefreshPending) return;
+
+        this.leaderboardRefreshPending = false;
+        this.updateLeaderboardRefreshButton();
+        if (this.leaderboardUpdatedLabel && this.leaderboardUpdatedLabel.Text === "Refreshing...") {
+          this.leaderboardUpdatedLabel.Text = "Update timed out";
+        }
+      });
     });
 
     this.leaderboardUpdatedLabel = new Instance("TextLabel");
@@ -330,6 +379,9 @@ export class UIController {
   private onLeaderboardUpdate(payload: LeaderboardUpdatePayload): void {
     if (!this.leaderboardList) return;
 
+    this.leaderboardRefreshPending = false;
+    this.updateLeaderboardRefreshButton();
+
     if (this.leaderboardUpdatedLabel) {
       // payload.updatedAt is seconds since epoch (os.time()).
       const timeText = os.date("%H:%M:%S", payload.updatedAt);
@@ -381,6 +433,34 @@ export class UIController {
       row.Text = `#${e.rank} ${nameText} • ${e.completions} win${e.completions === 1 ? "" : "s"}${timeText}`;
       row.Parent = this.leaderboardList;
     }
+  }
+
+  private onLeaderboardRefreshStatus(status: LeaderboardRefreshStatusPayload): void {
+    if (status.ok) return;
+
+    const retryAfter = status.retryAfter ?? 1;
+    const secondsText = string.format("%.1f", retryAfter);
+    this.showNotification(
+      `Refresh rate-limited. Try again in ${secondsText}s`,
+      new Color3(1, 0.8, 0.2),
+      1.5
+    );
+
+    // Clear pending UI since we won't receive an update payload.
+    this.leaderboardRefreshPending = false;
+    if (this.leaderboardUpdatedLabel && this.leaderboardUpdatedLabel.Text === "Refreshing...") {
+      this.leaderboardUpdatedLabel.Text = `Rate limited (${secondsText}s)`;
+    }
+
+    // Extend/align client cooldown with server-provided retryAfter.
+    this.leaderboardRefreshCoolingDown = true;
+    this.updateLeaderboardRefreshButton();
+    const nonce = this.leaderboardRefreshNonce;
+    task.delay(retryAfter + 0.05, () => {
+      if (nonce !== this.leaderboardRefreshNonce) return;
+      this.leaderboardRefreshCoolingDown = false;
+      this.updateLeaderboardRefreshButton();
+    });
   }
 
   private updateCoinsDisplay(): void {

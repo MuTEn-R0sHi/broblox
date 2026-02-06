@@ -7,89 +7,34 @@ import { ReplicatedStorage } from "@rbxts/services";
 import { createLogger } from "@rbx/core";
 import {
   CheckpointReachedEvent,
-  LeaderboardEntryDto,
+  LeaderboardRefreshStatusPayload,
   LeaderboardUpdatePayload,
   StageCompletedEvent,
 } from "shared/types";
+import {
+  parseLeaderboardRefreshStatusPayload,
+  parseLeaderboardUpdatePayload,
+  parsePlayerDataSyncPayload,
+} from "shared/remote-parsers";
 
 const logger = createLogger("RemoteController");
 
 type CheckpointCallback = (event: CheckpointReachedEvent) => void;
 type StageCallback = (event: StageCompletedEvent) => void;
 type LeaderboardCallback = (data: LeaderboardUpdatePayload) => void;
+type LeaderboardRefreshStatusCallback = (data: LeaderboardRefreshStatusPayload) => void;
 type DataSyncCallback = (data: {
   coins: number;
   currentStage: number;
   currentCheckpoint: number;
 }) => void;
 
-function parsePlayerDataSyncPayload(
-  data: unknown
-): { coins: number; currentStage: number; currentCheckpoint: number } | undefined {
-  if (!typeIs(data, "table")) return undefined;
-  const raw = data as { coins?: unknown; currentStage?: unknown; currentCheckpoint?: unknown };
-  if (!typeIs(raw.coins, "number")) return undefined;
-  if (!typeIs(raw.currentStage, "number")) return undefined;
-  if (!typeIs(raw.currentCheckpoint, "number")) return undefined;
-  return {
-    coins: raw.coins,
-    currentStage: raw.currentStage,
-    currentCheckpoint: raw.currentCheckpoint,
-  };
-}
-
-function parseLeaderboardUpdatePayload(data: unknown): LeaderboardUpdatePayload | undefined {
-  if (!typeIs(data, "table")) return undefined;
-  const raw = data as { updatedAt?: unknown; entries?: unknown };
-  if (!typeIs(raw.updatedAt, "number")) return undefined;
-  if (!typeIs(raw.entries, "table")) return undefined;
-
-  const entriesOut: LeaderboardEntryDto[] = [];
-  for (const entry of raw.entries as unknown[]) {
-    const parsedEntry = parseLeaderboardEntryDto(entry);
-    if (!parsedEntry) {
-      logger.warn("Invalid leaderboard entry in payload");
-      continue;
-    }
-    entriesOut.push(parsedEntry);
-  }
-
-  return {
-    updatedAt: raw.updatedAt,
-    entries: entriesOut,
-  };
-}
-
-function parseLeaderboardEntryDto(data: unknown): LeaderboardEntryDto | undefined {
-  if (!typeIs(data, "table")) return undefined;
-  const raw = data as {
-    userId?: unknown;
-    playerName?: unknown;
-    completions?: unknown;
-    bestTime?: unknown;
-    rank?: unknown;
-  };
-
-  if (!typeIs(raw.userId, "number")) return undefined;
-  if (!typeIs(raw.playerName, "string")) return undefined;
-  if (!typeIs(raw.completions, "number")) return undefined;
-  if (!typeIs(raw.rank, "number")) return undefined;
-  if (raw.bestTime !== undefined && !typeIs(raw.bestTime, "number")) return undefined;
-
-  return {
-    userId: raw.userId,
-    playerName: raw.playerName,
-    completions: raw.completions,
-    bestTime: raw.bestTime as number | undefined,
-    rank: raw.rank,
-  };
-}
-
 export class RemoteController {
   private remoteFolder?: Folder;
   private checkpointReached?: RemoteEvent;
   private requestRespawn?: RemoteEvent;
   private requestLeaderboard?: RemoteEvent;
+  private leaderboardRefreshStatus?: RemoteEvent;
   private stageCompleted?: RemoteEvent;
   private leaderboardUpdate?: RemoteEvent;
   private playerDataSync?: RemoteEvent;
@@ -97,6 +42,7 @@ export class RemoteController {
   private checkpointCallbacks: CheckpointCallback[] = [];
   private stageCallbacks: StageCallback[] = [];
   private leaderboardCallbacks: LeaderboardCallback[] = [];
+  private leaderboardRefreshStatusCallbacks: LeaderboardRefreshStatusCallback[] = [];
   private dataSyncCallbacks: DataSyncCallback[] = [];
 
   boot(): void {
@@ -109,6 +55,9 @@ export class RemoteController {
     this.checkpointReached = this.remoteFolder.WaitForChild("CheckpointReached") as RemoteEvent;
     this.requestRespawn = this.remoteFolder.WaitForChild("RequestRespawn") as RemoteEvent;
     this.requestLeaderboard = this.remoteFolder.WaitForChild("RequestLeaderboard") as RemoteEvent;
+    this.leaderboardRefreshStatus = this.remoteFolder.WaitForChild(
+      "LeaderboardRefreshStatus"
+    ) as RemoteEvent;
     this.stageCompleted = this.remoteFolder.WaitForChild("StageCompleted") as RemoteEvent;
     this.leaderboardUpdate = this.remoteFolder.WaitForChild("LeaderboardUpdate") as RemoteEvent;
     this.playerDataSync = this.remoteFolder.WaitForChild("PlayerDataSync") as RemoteEvent;
@@ -124,6 +73,17 @@ export class RemoteController {
 
     this.leaderboardUpdate.OnClientEvent.Connect((data: unknown) => {
       this.onLeaderboardUpdate(data);
+    });
+
+    this.leaderboardRefreshStatus.OnClientEvent.Connect((data: unknown) => {
+      const parsed = parseLeaderboardRefreshStatusPayload(data);
+      if (!parsed) {
+        logger.warn("Invalid leaderboard refresh status payload");
+        return;
+      }
+      for (const cb of this.leaderboardRefreshStatusCallbacks) {
+        cb(parsed);
+      }
     });
 
     this.playerDataSync.OnClientEvent.Connect((data: unknown) => {
@@ -171,6 +131,13 @@ export class RemoteController {
    */
   onLeaderboard(callback: LeaderboardCallback): void {
     this.leaderboardCallbacks.push(callback);
+  }
+
+  /**
+   * Register callback for leaderboard refresh status events.
+   */
+  onLeaderboardRefreshStatus(callback: LeaderboardRefreshStatusCallback): void {
+    this.leaderboardRefreshStatusCallbacks.push(callback);
   }
 
   /**

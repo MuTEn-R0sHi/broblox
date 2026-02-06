@@ -2,8 +2,6 @@
 
 This document is **auto-generated** from the `ErrorCode` enum in `@rbx/shared-types`.
 
-Error codes are used with the [Result type](./result-types.md) for explicit error handling across the platform.
-
 ## Error Code Ranges
 
 - **0xxx**: General errors (unknown, unspecified)
@@ -64,6 +62,7 @@ Error codes are used with the [Result type](./result-types.md) for explicit erro
 | 5001 | `InternalError`      | _No description_ |
 | 5002 | `ServiceUnavailable` | _No description_ |
 | 5003 | `Timeout`            | _No description_ |
+| 5004 | `DataStoreFailed`    | _No description_ |
 
 ## Adding New Error Codes
 
@@ -78,4 +77,4 @@ node tools/generate-error-catalog.mjs > docs/reference/error-codes.md
 
 ---
 
-_Last updated: 2026-01-23_
+_Last updated: 2026-02-06_

@@ -19,7 +19,6 @@ Notes:
 - **Server allocation** - Reserved server provisioning with health monitoring and graceful shutdown.
 - **Match history dashboard** - List and detail views with filtering by status and game mode.
 - **Match/MatchPlayer database tables** - Prisma schema for match persistence.
-- **Phase 1 test coverage complete** - 305 total tests across all packages.
 - **@rbx/data tests** - 24 unit tests for data persistence layer (versioning, sessions, migrations, retry, cache).
 - **@rbx/security tests** - 41 unit tests for security package (trust scoring, violation detection, enforcement).
 - **@rbx/observability tests** - 44 unit tests for observability package (telemetry, metrics, spans, context).
@@ -30,6 +29,11 @@ Notes:
 - **Flags REST API** - `GET /api/flags/:environment` endpoint for game servers.
 - **GitHub OAuth** - Authentication via GitHub OAuth with NextAuth.js v5.
 - **MySQL/MariaDB support** - Prisma 7 with MariaDB adapter for lima-city hosting.
+- **@rbx/core/collections** - Shared roblox-ts compatible collection helpers (`arraySize`, `arrayRemoveAt`, `arrayTake`, `setSize`), replacing duplicated inline helpers across packages.
+- **@rbx/movement tests** - 50 comprehensive unit tests for MovementValidator (speed hacks, teleport, fly, jump, sequence validation, state management).
+- **Array.prototype.size polyfill** - Added to `@rbx/testing` roblox-mocks for roblox-ts array compatibility in Node.js tests.
+- **Obby game** - Second game template (`games/obby/`) with stages, checkpoints, coins, leaderboards, and remote payload parsers.
+- **Test coverage: 578 tests** across all packages, games, and dashboard.
 
 ### Changed
 
@@ -37,6 +41,18 @@ Notes:
 - **Documentation** - Comprehensive updates to dashboard docs (tech-stack, rbac-and-audit).
 - **Getting started guide** - Added dashboard setup instructions.
 - **README** - Added dashboard section and live link badge.
+- **Package versions** - Bumped 13 Phase 1–2 packages from `0.0.0` to `0.2.0` (moderation/movement at `0.1.0`).
+- **package.json exports** - Standardized `exports` and `types` fields across all 15 packages to canonical pattern.
+- **tsconfig.roblox.json** - Expanded path mappings from 4 to 14 packages (all packages now mapped).
+- **vitest.config.ts** - Expanded aliases to cover all 13 packages; fixed combat/net/matchmaking package-level vitest configs with missing cross-package aliases.
+- **@rbx/constants** - Now exports `validation.ts` module (previously dead code).
+- **@rbx/combat + @rbx/matchmaking** - Now depend on `@rbx/core` for shared collection helpers (removed ~130 lines of duplicated code).
+- **input + ui packages** - Added missing `lint`, `typecheck`, and `test` scripts.
+- **Roadmap** - Phase 3 updated from "not started" to "In Progress" reflecting completed moderation, movement, obby, and dashboard RBAC.
+
+### Removed
+
+- **Unused pnpm overrides** - Removed `hono` and `lodash` entries from `pnpm.overrides` (neither package exists in the dependency tree).
 
 ## 0.1.0 - 2026-01-24
 

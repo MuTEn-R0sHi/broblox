@@ -8,6 +8,7 @@
  */
 
 import { Result, ok, err, ErrorCode, PlayerId, createMatchId } from "@rbx/shared-types";
+import { arraySize, arrayRemoveAt, arrayTake, setSize } from "@rbx/core";
 import type {
   QueueEntry,
   QueueStatus,
@@ -39,62 +40,6 @@ type QueueEventListener<T> = (event: T) => void;
 const joinListeners: QueueEventListener<QueueJoinEvent>[] = [];
 const leaveListeners: QueueEventListener<QueueLeaveEvent>[] = [];
 const matchListeners: QueueEventListener<MatchFormedEvent>[] = [];
-
-// ============================================================================
-// Helper Functions (roblox-ts compatible)
-// ============================================================================
-
-/**
- * Get array length in a roblox-ts compatible way.
- */
-function arraySize<T extends defined>(arr: T[]): number {
-  // In roblox-ts, use table.getn or #operator via the size method
-  let count = 0;
-  for (const _ of arr) {
-    count++;
-  }
-  return count;
-}
-
-/**
- * Remove element at index from array (mutates array).
- * Uses unordered remove for O(1) performance.
- */
-function arrayRemoveAt<T extends defined>(arr: T[], index: number): void {
-  const len = arraySize(arr);
-  if (index < 0 || index >= len) return;
-
-  // Swap with last element and pop
-  if (index < len - 1) {
-    arr[index] = arr[len - 1];
-  }
-  arr.pop();
-}
-
-/**
- * Take first n elements from array.
- */
-function arrayTake<T extends defined>(arr: T[], n: number): T[] {
-  const result: T[] = [];
-  let count = 0;
-  for (const item of arr) {
-    if (count >= n) break;
-    result.push(item);
-    count++;
-  }
-  return result;
-}
-
-/**
- * Get Set size (roblox-ts compatible).
- */
-function setSize(s: Set<number>): number {
-  let count = 0;
-  for (const _ of s) {
-    count++;
-  }
-  return count;
-}
 
 // ============================================================================
 // Configuration

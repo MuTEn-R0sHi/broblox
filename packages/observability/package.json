@@ -1,6 +1,6 @@
 {
   "name": "@rbx/observability",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "description": "Observability utilities for Roblox games - telemetry, metrics, and tracing",
   "private": true,
   "main": "out",
@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
     "test": "vitest run --passWithNoTests"
   },

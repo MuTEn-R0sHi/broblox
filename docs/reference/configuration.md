@@ -83,3 +83,36 @@ Rules:
 - Secrets do not live in the repo.
 - The game client never receives secrets.
 - Server-only secrets are stored via secure mechanisms (Open Cloud secrets store / backend).
+
+## Build configuration
+
+### TypeScript path mappings (`tsconfig.roblox.json`)
+
+All `@rbx/*` packages are mapped in `tsconfig.roblox.json` so the roblox-ts compiler can resolve cross-package imports:
+
+```json
+"paths": {
+  "@rbx/shared-types": ["./packages/shared-types/src/index.ts"],
+  "@rbx/constants": ["./packages/constants/src/index.ts"],
+  "@rbx/core": ["./packages/core/src/index.ts"],
+  ...
+}
+```
+
+**When adding a new package**, add its path mapping here.
+
+### Vitest aliases (`vitest.config.ts`)
+
+Packages compile to `.luau` in `out/`, which Node.js/Vitest can’t import. The root `vitest.config.ts` maps all `@rbx/*` packages to their TypeScript source:
+
+```typescript
+alias: {
+  "@rbx/shared-types": resolve(__dirname, "packages/shared-types/src/index.ts"),
+  "@rbx/core": resolve(__dirname, "packages/core/src/index.ts"),
+  ...
+}
+```
+
+Some packages also have their own `vitest.config.ts` (combat, net, matchmaking) which override the root config. **When adding cross-package dependencies**, ensure the consuming package’s local vitest config includes aliases for all imported packages.
+
+**When adding a new package**, add its alias to both the root config and any package-level configs that import it.

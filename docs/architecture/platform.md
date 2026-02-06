@@ -6,8 +6,9 @@ A reusable set of packages and conventions that every game uses.
 
 ### Core Packages (Implemented ✅)
 
-- `core`: lifecycle, DI/container, logging, utilities
+- `core`: lifecycle, DI/container, logging, utilities, collection helpers
 - `shared-types`: ids, enums, DTOs, error codes
+- `constants`: numeric constants, validation helpers
 - `net`: remote registry, validation, rate limiting, versioning
 - `security`: authority rules + anti-abuse instrumentation
 - `config-featureflags`: configs, rollouts, kill-switches
@@ -16,13 +17,13 @@ A reusable set of packages and conventions that every game uses.
 - `data`: persistence layer, session locking, DataStore patterns
 - `observability`: telemetry, metrics, spans, correlation context
 - `combat`: weapon system, hit validation, damage calculation (Phase 2)
-- `matchmaking`: queue management, match lifecycle (Phase 2)
+- `matchmaking`: queue management, match lifecycle, server allocation (Phase 2)
+- `moderation`: bans/mutes, evidence model, enforcement hooks (Phase 3)
+- `movement`: server-authoritative movement validation + anti-cheat (Phase 3)
 
 ### Planned Packages (Roadmap)
 
-- `movement`: motor-agnostic movement abstraction (Phase 3) — Humanoid + competitive motor
 - `analytics`: player behavior events, funnels, retention tracking (Phase 4)
-- `moderation`: reports, bans/mutes, enforcement hooks (Phase 3)
 - `notifications`: in-game toasts, announcements, news panel (Phase 4)
 - `inventory`: base item/slot system for pets, cosmetics, equipment (Phase 5)
 - `bro-companion`: cross-game mascot system — The Bro follows players everywhere (Phase 5)

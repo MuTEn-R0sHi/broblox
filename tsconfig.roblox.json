@@ -6,22 +6,31 @@
     "moduleResolution": "Node",
     "moduleDetection": "force",
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./node_modules/@rbxts", "./games/starter/node_modules/@rbxts", "./games/starter/node_modules/@rbx"],
+    "typeRoots": [
+      "./node_modules/@rbxts",
+      "./games/starter/node_modules/@rbxts",
+      "./games/starter/node_modules/@rbx"
+    ],
     "types": ["types", "compiler-types"],
     "rootDir": ".",
     "outDir": "games/starter/out",
     "paths": {
       "@rbx/shared-types": ["./packages/shared-types/src/index.ts"],
+      "@rbx/constants": ["./packages/constants/src/index.ts"],
       "@rbx/core": ["./packages/core/src/index.ts"],
       "@rbx/config-featureflags": ["./packages/config-featureflags/src/index.ts"],
-      "@rbx/net": ["./packages/net/src/index.ts"]
+      "@rbx/net": ["./packages/net/src/index.ts"],
+      "@rbx/data": ["./packages/data/src/index.ts"],
+      "@rbx/security": ["./packages/security/src/index.ts"],
+      "@rbx/observability": ["./packages/observability/src/index.ts"],
+      "@rbx/combat": ["./packages/combat/src/index.ts"],
+      "@rbx/matchmaking": ["./packages/matchmaking/src/index.ts"],
+      "@rbx/moderation": ["./packages/moderation/src/index.ts"],
+      "@rbx/movement": ["./packages/movement/src/index.ts"],
+      "@rbx/input": ["./packages/input/src/index.ts"],
+      "@rbx/ui": ["./packages/ui/src/index.ts"]
     }
   },
-  "include": [
-    "games/starter/src/**/*.ts",
-    "packages/*/src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.test.ts"
-  ]
+  "include": ["games/starter/src/**/*.ts", "packages/*/src/**/*.ts"],
+  "exclude": ["**/*.test.ts"]
 }

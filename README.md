@@ -17,18 +17,23 @@ Docs-first Roblox-TS multi-game platform + control-plane dashboard.
 rbx-game-platform/
 ├── packages/              # Shared platform packages (TypeScript → Luau)
 │   ├── shared-types/      # Core type definitions, Result<T>, ErrorCode
-│   ├── constants/         # Numeric constants (timeouts, limits, build info)
-│   ├── core/              # Application lifecycle, Logger, Cleanup utilities
+│   ├── constants/         # Numeric constants, timeouts, limits, validation helpers
+│   ├── core/              # Application lifecycle, Logger, Cleanup, collection helpers
 │   ├── net/               # Remote registry, validation, rate limiting
 │   ├── data/              # PlayerDataStore, SessionManager, persistence
 │   ├── security/          # Violation detectors, trust scoring, enforcement
 │   ├── observability/     # Telemetry, metrics, spans, correlation context
+│   ├── combat/            # Weapon system, hit validation, cooldowns (Phase 2)
+│   ├── matchmaking/       # Queue management, match lifecycle, server alloc (Phase 2)
+│   ├── moderation/        # Bans/mutes, evidence model, enforcement hooks (Phase 3)
+│   ├── movement/          # Server-authoritative movement validation (Phase 3)
 │   ├── input/             # Unified input (keyboard, gamepad, touch)
 │   ├── ui/                # UI components, theming, layout utilities
 │   ├── config-featureflags/  # Feature flags and kill-switches
-│   └── testing/           # Test utilities and mocks for vitest
+│   └── testing/           # Test utilities and Roblox API mocks for vitest
 ├── games/                 # Roblox-TS game projects
-│   └── starter/           # Starter game template
+│   ├── starter/           # Starter game template (Phase 1)
+│   └── obby/              # Obby game with stages, coins, leaderboards (Phase 3)
 ├── apps/                  # Web applications
 │   └── dashboard/         # Next.js admin dashboard (deployed on Vercel)
 ├── docs/                  # MkDocs documentation site
@@ -118,20 +123,21 @@ constants (0 deps)          testing (vitest only)
      ↓
 shared-types
      ↓
-   core
-     ↓
-┌────┴────┬─────────┬──────────┬──────────┐
-│         │         │          │          │
-net   data    security   observability   config-featureflags
-│         │         │          │
-│    ┌────┴─────────┴──────────┘
-│    │
-input   ui
-│    │
-└────┴──→ games/starter
+   core  ─────────────────────────────────────────┐
+     ↓                                              │
+┌────┴────┬─────────┬──────────┬──────────┐   │
+net   data    security   observability   config   │
+│                                                 │
+├─────────┬─────────┬─────────┬─────────┤
+combat  matchmaking  moderation  movement   │
+                                            │
+┌────────┬────────────────────────────────┘
+input    ui
+│        │
+└────────┴──→ games/starter, games/obby
 ```
 
-Packages follow strict dependency direction rules. Games compose from packages; packages never depend on games.
+Packages follow strict dependency direction rules enforced by ESLint. Games compose from packages; packages never depend on games.
 
 ## License
 

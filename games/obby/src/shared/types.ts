@@ -139,6 +139,12 @@ export interface LeaderboardUpdatePayload {
   entries: LeaderboardEntryDto[];
 }
 
+export interface LeaderboardRefreshStatusPayload {
+  ok: boolean;
+  /** If ok=false due to rate limiting, how long to wait before retrying (seconds). */
+  retryAfter?: number;
+}
+
 // ============================================================================
 // Constants
 // ============================================================================

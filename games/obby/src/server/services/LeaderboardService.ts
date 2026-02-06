@@ -7,7 +7,7 @@ import { Service, createLogger } from "@rbx/core";
 import { DataService } from "./DataService";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
-import { events, LeaderboardUpdatePayload } from "shared/types";
+import { LeaderboardRefreshStatusPayload, LeaderboardUpdatePayload } from "shared/types";
 
 const logger = createLogger("LeaderboardService");
 
@@ -183,13 +183,25 @@ function broadcastLeaderboard(force = false): void {
   RemoteService.leaderboardUpdate().FireAllClients(payload);
 }
 
-function sendLeaderboardToPlayer(player: Player, force = false): void {
+function sendLeaderboardToPlayer(player: Player, force = false, reason = "unknown"): boolean {
   const now = os.clock();
   const last = lastRefreshRequestAt.get(player.UserId) ?? -math.huge;
-  if (!force && now - last < REFRESH_REQUEST_MIN_INTERVAL) return;
+  const elapsed = now - last;
+  if (!force && elapsed < REFRESH_REQUEST_MIN_INTERVAL) {
+    const retryAfter = REFRESH_REQUEST_MIN_INTERVAL - elapsed;
+    logger.debug(
+      `Rate-limited leaderboard snapshot for ${player.Name} (${reason}), wait ${string.format(
+        "%.2f",
+        retryAfter
+      )}s`
+    );
+    return false;
+  }
   lastRefreshRequestAt.set(player.UserId, now);
 
   RemoteService.leaderboardUpdate().FireClient(player, buildLeaderboardPayload());
+  logger.debug(`Sent leaderboard snapshot to ${player.Name} (${reason})`);
+  return true;
 }
 
 export const LeaderboardService: Service & {
@@ -304,9 +316,19 @@ export const LeaderboardService: Service & {
 
     // Allow clients to request an immediate snapshot (useful for a manual refresh button).
     RemoteService.requestLeaderboard().OnServerEvent.Connect((player: Player) => {
+      logger.debug(`Client requested leaderboard snapshot: ${player.Name}`);
       // Best-effort refresh: this will schedule a DataStore reload if applicable.
       this.refreshLeaderboard();
-      sendLeaderboardToPlayer(player);
+
+      const now = os.clock();
+      const last = lastRefreshRequestAt.get(player.UserId) ?? -math.huge;
+      const elapsed = now - last;
+      const retryAfter = math.max(0, REFRESH_REQUEST_MIN_INTERVAL - elapsed);
+
+      const ok = sendLeaderboardToPlayer(player, false, "manual");
+
+      const status: LeaderboardRefreshStatusPayload = ok ? { ok: true } : { ok: false, retryAfter };
+      RemoteService.leaderboardRefreshStatus().FireClient(player, status);
     });
 
     // Update leaderboard when players leave

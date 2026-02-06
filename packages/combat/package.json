@@ -1,6 +1,6 @@
 {
   "name": "@rbx/combat",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Server-authoritative combat systems for PvP",
   "main": "out",
@@ -18,11 +18,14 @@
     "test": "vitest run --passWithNoTests"
   },
   "devDependencies": {
-    "@rbx/shared-types": "workspace:*",
     "@rbx/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.905",
     "roblox-ts": "^3.0.0",
     "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@rbx/core": "workspace:*",
+    "@rbx/shared-types": "workspace:*"
   }
 }

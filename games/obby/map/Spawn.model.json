@@ -2,6 +2,7 @@
   "className": "SpawnLocation",
   "properties": {
     "Anchored": true,
+    "CanCollide": true,
     "Size": [6, 1, 6],
     "Position": [0, 2, 5],
     "Neutral": true,
