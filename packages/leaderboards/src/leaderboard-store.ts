@@ -394,11 +394,11 @@ export class LeaderboardStore {
       cached.entries.push(entry);
     }
 
-    // Re-sort using numeric comparator (works in both Lua and JS)
+    // Re-sort using boolean comparator (Lua table.sort requires boolean)
     const asc = def.sortDirection === "asc";
     cached.entries.sort((a, b) => {
-      if (asc) return a.score - b.score;
-      return b.score - a.score;
+      if (asc) return a.score < b.score;
+      return a.score > b.score;
     });
 
     // Re-rank

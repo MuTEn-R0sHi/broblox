@@ -62,3 +62,25 @@ if (!Array.prototype.clear) {
     this.length = 0;
   };
 }
+
+// Roblox-TS Array.sort() polyfill — Lua table.sort comparators return boolean
+// (true = a before b), but JS Array.sort expects a numeric comparator.  Wrap
+// the native sort so that boolean-returning comparators work correctly in tests.
+{
+  const nativeSort = Array.prototype.sort;
+  // @ts-expect-error - Overriding native sort for roblox-ts compat
+  Array.prototype.sort = function (compareFn?: (...args: unknown[]) => unknown) {
+    if (!compareFn) return nativeSort.call(this);
+    return nativeSort.call(this, (a: unknown, b: unknown) => {
+      const r = compareFn(a, b);
+      if (typeof r === "boolean") {
+        // Lua semantics: true => a before b, false => check reverse
+        if (r) return -1;
+        const rev = compareFn(b, a);
+        if (rev) return 1;
+        return 0;
+      }
+      return r as number;
+    });
+  };
+}

@@ -114,9 +114,9 @@ export class AnnouncementManager {
    * Get all news items, newest first.
    */
   getNews(limit?: number): NewsItem[] {
-    // Sort by publishedAt descending
+    // Sort by publishedAt descending (boolean for Lua table.sort)
     const sorted = [...this.newsItems];
-    sorted.sort((a, b) => b.publishedAt - a.publishedAt);
+    sorted.sort((a, b) => a.publishedAt > b.publishedAt);
     if (limit !== undefined && limit > 0) {
       return sorted.slice(0, limit);
     }
@@ -133,7 +133,7 @@ export class AnnouncementManager {
         filtered.push(item);
       }
     }
-    filtered.sort((a, b) => b.publishedAt - a.publishedAt);
+    filtered.sort((a, b) => a.publishedAt > b.publishedAt);
     if (limit !== undefined && limit > 0) {
       return filtered.slice(0, limit);
     }
