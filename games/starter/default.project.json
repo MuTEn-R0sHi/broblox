@@ -82,6 +82,12 @@
               "out": {
                 "$path": "node_modules/@rbx/analytics/out"
               }
+            },
+            "notifications": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/notifications/out"
+              }
             }
           }
         }

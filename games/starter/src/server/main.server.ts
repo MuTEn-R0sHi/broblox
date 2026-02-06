@@ -15,6 +15,7 @@ import { ActionService } from "./services/ActionService";
 import { CodeRedemptionService } from "./services/CodeRedemptionService";
 import { LeaderboardService } from "./services/LeaderboardService";
 import { AnalyticsService } from "./services/AnalyticsService";
+import { NotificationService } from "./services/NotificationService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -34,7 +35,8 @@ app
   .register(ActionService)
   .register(CodeRedemptionService)
   .register(LeaderboardService)
-  .register(AnalyticsService);
+  .register(AnalyticsService)
+  .register(NotificationService);
 
 app.boot();
 logger.info("Server booted.");

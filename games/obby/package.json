@@ -24,6 +24,7 @@
     "@rbx/moderation": "workspace:*",
     "@rbx/movement": "workspace:*",
     "@rbx/net": "workspace:*",
+    "@rbx/notifications": "workspace:*",
     "@rbx/observability": "workspace:*",
     "@rbx/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"
