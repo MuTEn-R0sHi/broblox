@@ -565,7 +565,13 @@ describe("InventoryStore", () => {
       const instanceId = addResult.item!.instanceId;
 
       store.setInstanceMetadata(instanceId, { enchant: "fire", level: 1 });
-      store.updateInstanceMetadata(instanceId, { level: 2, durability: 100 });
+      store.updateInstanceMetadata(
+        instanceId,
+        new Map<string, unknown>([
+          ["level", 2],
+          ["durability", 100],
+        ])
+      );
 
       const instance = store.getInstance(instanceId);
       expect(instance?.metadata).toEqual({ enchant: "fire", level: 2, durability: 100 });

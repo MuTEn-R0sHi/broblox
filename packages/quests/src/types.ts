@@ -30,7 +30,7 @@ export interface QuestObjective {
   /** Target value to reach (e.g., kill 10 enemies → target = 10) */
   target: number;
   /** Optional metadata (e.g., specific enemy type, area name) */
-  metadata?: Record<string, string>;
+  metadata?: Map<string, string>;
 }
 
 // ============================================================================

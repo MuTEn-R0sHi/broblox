@@ -196,7 +196,7 @@ export class QuestStore {
   incrementObjective(
     objectiveType: string,
     amount: number,
-    metadata?: Record<string, string>
+    metadata?: Map<string, string>
   ): number {
     let updated = 0;
 
@@ -217,12 +217,11 @@ export class QuestStore {
         // Check metadata match if specified
         if (metadata && objDef.metadata) {
           let match = true;
-          for (const key in objDef.metadata) {
-            if (metadata[key] !== objDef.metadata[key]) {
+          objDef.metadata.forEach((val, key) => {
+            if (metadata.get(key) !== val) {
               match = false;
-              break;
             }
-          }
+          });
           if (!match) continue;
         }
 

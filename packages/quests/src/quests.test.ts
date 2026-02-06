@@ -376,7 +376,7 @@ describe("QuestStore", () => {
             description: "Kill zombies",
             type: "kill",
             target: 5,
-            metadata: { enemy: "zombie" },
+            metadata: new Map([["enemy", "zombie"]]),
           },
         ],
       });
@@ -384,11 +384,11 @@ describe("QuestStore", () => {
       store.acceptQuest("q_meta");
 
       // Wrong metadata — should not match
-      store.incrementObjective("kill", 3, { enemy: "skeleton" });
+      store.incrementObjective("kill", 3, new Map([["enemy", "skeleton"]]));
       expect(store.getActiveQuest("q_meta")!.objectives[0].current).toBe(0);
 
       // Correct metadata
-      store.incrementObjective("kill", 3, { enemy: "zombie" });
+      store.incrementObjective("kill", 3, new Map([["enemy", "zombie"]]));
       expect(store.getActiveQuest("q_meta")!.objectives[0].current).toBe(3);
     });
   });

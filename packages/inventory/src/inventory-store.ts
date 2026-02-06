@@ -480,15 +480,15 @@ export class InventoryStore {
   /**
    * Merge additional metadata fields into an item instance.
    */
-  updateInstanceMetadata(instanceId: string, updates: Record<string, unknown>): InventoryResult {
+  updateInstanceMetadata(instanceId: string, updates: Map<string, unknown>): InventoryResult {
     const instance = this.getInstance(instanceId);
     if (!instance) {
       return { ok: false, status: "item_not_found", message: `instance ${instanceId} not found` };
     }
     const existing = instance.metadata ?? {};
-    for (const key in updates) {
-      (existing as Record<string, unknown>)[key] = (updates as Record<string, unknown>)[key];
-    }
+    updates.forEach((value, key) => {
+      (existing as Record<string, unknown>)[key] = value;
+    });
     instance.metadata = existing;
     this.dirty = true;
     return { ok: true, status: "success", item: instance };
