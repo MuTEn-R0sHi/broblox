@@ -75,9 +75,10 @@ export class AudioManager {
     }
 
     // Check max instances
-    if (def.maxInstances > 0) {
+    const maxInst = def.maxInstances ?? 0;
+    if (maxInst > 0) {
       const current = this.instanceCounts.get(soundId) ?? 0;
-      if (current >= def.maxInstances) {
+      if (current >= maxInst) {
         return { ok: false, status: "max_instances" };
       }
     }
