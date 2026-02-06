@@ -1,6 +1,7 @@
 {
   "name": "@rbx/config-featureflags",
   "version": "0.2.0",
+  "description": "Runtime feature flags and configuration management",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

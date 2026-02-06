@@ -1,6 +1,7 @@
 {
   "name": "@rbx/battle-pass",
   "version": "0.1.0",
+  "description": "Seasonal battle pass with tiers, XP, and reward tracks",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

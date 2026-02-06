@@ -1,6 +1,7 @@
 {
   "name": "@rbx/net",
   "version": "0.2.0",
+  "description": "Networking layer — remote events, rate limiting, and serialization",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

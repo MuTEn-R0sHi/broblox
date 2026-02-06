@@ -33,7 +33,23 @@ Notes:
 - **@rbx/movement tests** - 50 comprehensive unit tests for MovementValidator (speed hacks, teleport, fly, jump, sequence validation, state management).
 - **Array.prototype.size polyfill** - Added to `@rbx/testing` roblox-mocks for roblox-ts array compatibility in Node.js tests.
 - **Obby game** - Second game template (`games/obby/`) with stages, checkpoints, coins, leaderboards, and remote payload parsers.
-- **Test coverage: 578 tests** across all packages, games, and dashboard.
+- **@rbx/codes** - Redeemable promo code system with single/multi-use, expiry, and limits.
+- **@rbx/leaderboards** - Cross-game leaderboard system with period support and sorted entries.
+- **@rbx/analytics** - Player behavior analytics — events, funnels, sessions, and retention tracking.
+- **@rbx/notifications** - In-game notification system — toasts, announcements, and news feed.
+- **@rbx/inventory** - Base item and slot inventory system with stacking and weight limits.
+- **@rbx/progression** - XP, levels, and prestige/rebirth system with configurable curves.
+- **@rbx/quests** - Quest and objective tracking system with multi-step progress.
+- **@rbx/rewards** - Daily login rewards, streaks, and achievement tracking.
+- **@rbx/pets** - Pet system with hatching, equipping, leveling, abilities, and evolution.
+- **@rbx/gacha** - Gacha / loot box system with pity timers and banner management.
+- **@rbx/cosmetics** - Cosmetic items, skins, and appearance customization.
+- **@rbx/battle-pass** - Seasonal battle pass with tiers, XP, and reward tracks.
+- **@rbx/localization** - Internationalization — multi-locale string registry with interpolation and pluralization.
+- **@rbx/audio** - SFX, music, spatial audio, playlists, and per-channel volume management.
+- **@rbx/tutorial** - FTUE and guided tutorial framework with step sequencing and persistence.
+- **@rbx/world-systems** - Day/night cycle, weather transitions, and season progression.
+- **Test coverage: 1,100+ tests** across all packages, games, and dashboard.
 
 ### Changed
 
@@ -42,17 +58,30 @@ Notes:
 - **Getting started guide** - Added dashboard setup instructions.
 - **README** - Added dashboard section and live link badge.
 - **Package versions** - Bumped 13 Phase 1–2 packages from `0.0.0` to `0.2.0` (moderation/movement at `0.1.0`).
-- **package.json exports** - Standardized `exports` and `types` fields across all 15 packages to canonical pattern.
-- **tsconfig.roblox.json** - Expanded path mappings from 4 to 14 packages (all packages now mapped).
-- **vitest.config.ts** - Expanded aliases to cover all 13 packages; fixed combat/net/matchmaking package-level vitest configs with missing cross-package aliases.
+- **package.json exports** - Standardized `exports` and `types` fields across all 31 packages to canonical pattern.
+- **package.json descriptions** - Added missing description fields to 10 packages.
+- **tsconfig.roblox.json** - Expanded root path mappings from 4 to 30 packages (all packages now mapped).
+- **tsconfig.roblox.json normalization** - All 22 package tsconfigs standardized to identical template with consistent `typeRoots`, `types`, `downlevelIteration`, `exclude`, and `declarationDir`. Removed non-standard JSX, decorator, and path overrides from battle-pass/cosmetics/gacha.
+- **vitest.config.ts** - Expanded aliases to cover all packages; fixed cross-package aliases.
 - **@rbx/constants** - Now exports `validation.ts` module (previously dead code).
 - **@rbx/combat + @rbx/matchmaking** - Now depend on `@rbx/core` for shared collection helpers (removed ~130 lines of duplicated code).
+- **@rbx/audio SoundDefinition** - `playbackSpeed` and `maxInstances` now optional with defaults.
+- **@rbx/world-systems configs** - `DayNightConfig.presets`, `WeatherConfig.definitions`, `SeasonConfig.seasons/startingSeason` now optional with sane defaults.
 - **input + ui packages** - Added missing `lint`, `typecheck`, and `test` scripts.
-- **Roadmap** - Phase 3 updated from "not started" to "In Progress" reflecting completed moderation, movement, obby, and dashboard RBAC.
+- **Roadmap** - Updated through Phase 5c reflecting all completed work.
+- **Starter/Obby games** - Fixed `registerStrings` arg order, `registerPlaylist` signatures, and all roblox-ts reserved identifier usage.
+
+### Fixed
+
+- **roblox-ts reserved identifiers** - Renamed `next` → `newVol`/`nextDef` and `table` → `nsMap` in audio/localization/world-systems packages (Lua reserved words cannot be used as identifiers in roblox-ts).
+- **`Object.keys()` unavailable in roblox-ts** - Replaced with `pairs()` iteration in localization-service `objectKeys` helper.
+- **`downlevelIteration` missing** - Added to all per-package `tsconfig.roblox.json` files for `pairs()` / `for...of` compatibility.
+- **world-systems tsconfig** - Rebuilt from scratch (was missing `allowSyntheticDefaultImports`, `typeRoots`, `types`, `rbxts` section).
 
 ### Removed
 
 - **Unused pnpm overrides** - Removed `hono` and `lodash` entries from `pnpm.overrides` (neither package exists in the dependency tree).
+- **Orphaned `roblox-globals.d.ts`** - Root-level ambient type file that was never referenced by any tsconfig.
 
 ## 0.1.0 - 2026-01-24
 

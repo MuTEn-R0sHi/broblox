@@ -1,6 +1,7 @@
 {
   "name": "@rbx/constants",
   "version": "0.2.0",
+  "description": "Shared build-time constants — timeouts, limits, and defaults",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

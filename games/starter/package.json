@@ -1,6 +1,7 @@
 {
   "name": "@rbx/game-starter",
   "version": "0.1.0",
+  "description": "Starter game template using rbx-game-platform",
   "private": true,
   "scripts": {
     "lint": "eslint .",

@@ -1,6 +1,7 @@
 {
   "name": "@rbx/matchmaking",
   "version": "0.2.0",
+  "description": "Queue-based matchmaking with Elo rating and server allocation",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

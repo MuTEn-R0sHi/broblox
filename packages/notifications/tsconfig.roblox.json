@@ -3,6 +3,7 @@
     "ignoreDeprecations": "5.0",
     "strict": true,
     "noLib": true,
+    "downlevelIteration": true,
     "module": "commonjs",
     "moduleResolution": "Node",
     "moduleDetection": "force",

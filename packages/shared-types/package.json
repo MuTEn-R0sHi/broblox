@@ -1,6 +1,7 @@
 {
   "name": "@rbx/shared-types",
   "version": "0.2.0",
+  "description": "Shared TypeScript types and interfaces across all packages",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

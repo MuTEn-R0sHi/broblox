@@ -1,6 +1,7 @@
 {
   "name": "@rbx/core",
   "version": "0.2.0",
+  "description": "Core framework — service lifecycle, logging, and error handling",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

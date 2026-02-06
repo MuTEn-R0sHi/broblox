@@ -130,6 +130,82 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Configurable walk/run speeds with ability modifiers.
   - Player movement state tracking with violation history.
 
+## Phase 4 packages
+
+- `codes`
+  - Redeemable promo codes with usage-count limits, start/end dates, per-player tracking.
+  - Dashboard management for creating and disabling codes.
+
+- `leaderboards`
+  - Cross-game leaderboards with period support (daily, weekly, seasonal, all-time).
+  - Score submission, ranking, and top-N retrieval.
+
+- `analytics`
+  - Player behavior events: funnels, retention, session tracking.
+  - Structured event emitter with category/action/label/value fields.
+
+- `notifications`
+  - In-game toasts, announcements, and news feed.
+  - Priority queue with dismiss/expire logic.
+
+## Phase 5a packages
+
+- `inventory`
+  - Base item/slot system with stacking, weight limits, transfers.
+  - Per-player inventories backed by DataStore persistence.
+  - Metadata, sorting, and slot validation.
+
+- `progression`
+  - XP calculation with configurable curves (linear, quadratic, exponential, custom).
+  - Auto level-up, prestige/rebirth support, XP bonus multipliers.
+
+- `quests`
+  - Quest registry with schedule/tier/tag/level filtering.
+  - Multi-objective tracking, auto-completion, prerequisite chains.
+
+- `rewards`
+  - Daily login rewards with streaks, grace periods, cycles.
+  - Achievement store with incremental progress tracking.
+
+## Phase 5b packages
+
+- `pets`
+  - Pet hatching, equipping, leveling, evolution.
+  - Rarity tiers and stat scaling.
+
+- `gacha`
+  - Weighted loot tables with pity timers and banner rotation.
+  - Rate-up mechanics and guaranteed-at-N pulls.
+
+- `cosmetics`
+  - Cosmetic item registry with per-player ownership and equipping.
+  - Skin/variant support and rarity classification.
+
+- `battle-pass`
+  - Seasonal battle passes with free/premium tracks.
+  - Tier progression via XP, milestone rewards, auto-claim.
+
+## Phase 5c packages
+
+- `localization`
+  - Multi-locale string tables organized by namespace.
+  - Interpolation (`{key}` replacement) and pluralization rules.
+  - Fallback chain: requested locale → default locale → key echo.
+
+- `audio`
+  - Sound registry, channel-based volume control.
+  - Playlist management: sequential and shuffle modes.
+  - Spatial audio support and concurrent-instance limits.
+
+- `tutorial`
+  - FTUE framework with step sequences and prerequisite chains.
+  - Per-player completion persistence with started/completed/skipped states.
+
+- `world-systems`
+  - Day/night cycle with configurable period and lighting presets.
+  - Weather transitions with visual and gameplay effects.
+  - Seasonal system driving weather probability tables.
+
 ## Game folder expectations
 
 A game should only provide:

@@ -1,6 +1,7 @@
 {
   "name": "@rbx/cosmetics",
   "version": "0.1.0",
+  "description": "Cosmetic items, skins, and appearance customization",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

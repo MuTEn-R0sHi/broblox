@@ -1,6 +1,7 @@
 {
   "name": "@rbx/gacha",
   "version": "0.1.0",
+  "description": "Gacha / loot box system with pity timers and banner management",
   "private": true,
   "main": "out",
   "types": "out/index.d.ts",

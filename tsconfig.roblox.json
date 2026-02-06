@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "strict": true,
     "noLib": true,
     "downlevelIteration": true,
@@ -7,14 +8,10 @@
     "moduleResolution": "Node",
     "moduleDetection": "force",
     "allowSyntheticDefaultImports": true,
-    "typeRoots": [
-      "./node_modules/@rbxts",
-      "./games/starter/node_modules/@rbxts",
-      "./games/starter/node_modules/@rbx"
-    ],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
     "types": ["types", "compiler-types"],
     "rootDir": ".",
-    "outDir": "games/starter/out",
+    "outDir": "out",
     "paths": {
       "@rbx/shared-types": ["./packages/shared-types/src/index.ts"],
       "@rbx/constants": ["./packages/constants/src/index.ts"],
@@ -29,9 +26,25 @@
       "@rbx/moderation": ["./packages/moderation/src/index.ts"],
       "@rbx/movement": ["./packages/movement/src/index.ts"],
       "@rbx/input": ["./packages/input/src/index.ts"],
-      "@rbx/ui": ["./packages/ui/src/index.ts"]
+      "@rbx/ui": ["./packages/ui/src/index.ts"],
+      "@rbx/codes": ["./packages/codes/src/index.ts"],
+      "@rbx/leaderboards": ["./packages/leaderboards/src/index.ts"],
+      "@rbx/analytics": ["./packages/analytics/src/index.ts"],
+      "@rbx/notifications": ["./packages/notifications/src/index.ts"],
+      "@rbx/inventory": ["./packages/inventory/src/index.ts"],
+      "@rbx/progression": ["./packages/progression/src/index.ts"],
+      "@rbx/quests": ["./packages/quests/src/index.ts"],
+      "@rbx/rewards": ["./packages/rewards/src/index.ts"],
+      "@rbx/pets": ["./packages/pets/src/index.ts"],
+      "@rbx/gacha": ["./packages/gacha/src/index.ts"],
+      "@rbx/cosmetics": ["./packages/cosmetics/src/index.ts"],
+      "@rbx/battle-pass": ["./packages/battle-pass/src/index.ts"],
+      "@rbx/localization": ["./packages/localization/src/index.ts"],
+      "@rbx/audio": ["./packages/audio/src/index.ts"],
+      "@rbx/tutorial": ["./packages/tutorial/src/index.ts"],
+      "@rbx/world-systems": ["./packages/world-systems/src/index.ts"]
     }
   },
-  "include": ["games/starter/src/**/*.ts", "packages/*/src/**/*.ts"],
+  "include": ["packages/*/src/**/*.ts"],
   "exclude": ["**/*.test.ts"]
 }

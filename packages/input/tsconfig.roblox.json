@@ -3,20 +3,21 @@
     "ignoreDeprecations": "5.0",
     "strict": true,
     "noLib": true,
+    "downlevelIteration": true,
     "module": "commonjs",
     "moduleResolution": "Node",
     "moduleDetection": "force",
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./node_modules/@rbxts"],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
     "types": ["types", "compiler-types"],
     "rootDir": "src",
     "outDir": "out",
     "declaration": true,
-    "declarationDir": "out",
-    "downlevelIteration": true
+    "declarationDir": "out"
   },
   "rbxts": {
     "type": "package"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
 }
