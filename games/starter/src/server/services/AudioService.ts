@@ -48,14 +48,18 @@ export const AudioService: Service = {
     ]);
 
     // Register playlists
-    audioManager.registerPlaylist("lobby_music", {
-      tracks: [{ soundId: "music_lobby", label: "Lobby Theme" }],
+    audioManager.registerPlaylist({
+      id: "lobby_music",
+      name: "Lobby Music",
+      tracks: [{ id: "lobby_1", soundId: "music_lobby", crossfadeDuration: 2 }],
       loop: true,
       shuffle: false,
     });
 
-    audioManager.registerPlaylist("battle_music", {
-      tracks: [{ soundId: "music_battle", label: "Battle Theme" }],
+    audioManager.registerPlaylist({
+      id: "battle_music",
+      name: "Battle Music",
+      tracks: [{ id: "battle_1", soundId: "music_battle", crossfadeDuration: 2 }],
       loop: true,
       shuffle: false,
     });

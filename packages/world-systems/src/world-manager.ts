@@ -21,7 +21,7 @@ import type {
   WeatherChangedEvent,
   SeasonChangedEvent,
 } from "./types";
-import { DEFAULT_WORLD_SYSTEMS_CONFIG } from "./types";
+import { DEFAULT_WORLD_SYSTEMS_CONFIG, DEFAULT_LIGHTING_PRESETS } from "./types";
 
 declare const os: { time(): number; clock(): number };
 declare const math: {
@@ -250,7 +250,7 @@ export class WorldManager {
 
   /** Get the lighting preset for the current time period */
   getCurrentPreset(): LightingPreset | undefined {
-    const presets = this.config.dayNight.presets;
+    const presets = this.config.dayNight.presets ?? DEFAULT_LIGHTING_PRESETS;
     for (let i = 0; i < presets.size(); i++) {
       if (presets[i].period === this.currentPeriod) return presets[i];
     }
@@ -278,7 +278,7 @@ export class WorldManager {
   // =========================================================================
 
   private getTimePeriodForHour(hour: number): TimePeriod {
-    const presets = this.config.dayNight.presets;
+    const presets = this.config.dayNight.presets ?? DEFAULT_LIGHTING_PRESETS;
     let best: TimePeriod = "midnight";
     let bestHour = -1;
     for (let i = 0; i < presets.size(); i++) {

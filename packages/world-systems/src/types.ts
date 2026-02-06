@@ -43,8 +43,8 @@ export interface DayNightConfig {
   cycleDurationSeconds: number;
   /** Starting ClockTime when cycle begins */
   startClockTime: number;
-  /** Lighting presets */
-  presets: LightingPreset[];
+  /** Lighting presets (defaults to DEFAULT_LIGHTING_PRESETS if omitted) */
+  presets?: LightingPreset[];
 }
 
 export const DEFAULT_LIGHTING_PRESETS: LightingPreset[] = [
