@@ -61,8 +61,8 @@ export function arrayTake<T extends defined>(arr: T[], n: number): T[] {
  */
 export function setSize<T>(s: Set<T>): number {
   let count = 0;
-  for (const _ of s) {
+  s.forEach(() => {
     count++;
-  }
+  });
   return count;
 }

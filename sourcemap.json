@@ -42,6 +42,11 @@
                       "name": "application",
                       "className": "ModuleScript",
                       "filePaths": ["packages/core/out/application.luau"]
+                    },
+                    {
+                      "name": "collections",
+                      "className": "ModuleScript",
+                      "filePaths": ["packages/core/out/collections.luau"]
                     }
                   ]
                 }
@@ -268,9 +273,31 @@
                   "filePaths": ["games/starter/out/server/services/ActionService.luau"]
                 },
                 {
+                  "name": "ChatModerationService",
+                  "className": "ModuleScript",
+                  "filePaths": ["games/starter/out/server/services/ChatModerationService.luau"]
+                },
+                {
+                  "name": "FeatureFlagSyncService",
+                  "className": "ModuleScript",
+                  "filePaths": ["games/starter/out/server/services/FeatureFlagSyncService.luau"]
+                },
+                {
                   "name": "HandshakeService",
                   "className": "ModuleScript",
                   "filePaths": ["games/starter/out/server/services/HandshakeService.luau"]
+                },
+                {
+                  "name": "ModerationEnforcementService",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "games/starter/out/server/services/ModerationEnforcementService.luau"
+                  ]
+                },
+                {
+                  "name": "MovementValidationService",
+                  "className": "ModuleScript",
+                  "filePaths": ["games/starter/out/server/services/MovementValidationService.luau"]
                 },
                 {
                   "name": "PlayerLifecycleService",
@@ -281,23 +308,6 @@
                   "name": "RemoteService",
                   "className": "ModuleScript",
                   "filePaths": ["games/starter/out/server/services/RemoteService.luau"]
-                },
-                {
-                  "name": "ModerationEnforcementService",
-                  "className": "ModuleScript",
-                  "filePaths": [
-                    "games/starter/out/server/services/ModerationEnforcementService.luau"
-                  ]
-                },
-                {
-                  "name": "ChatModerationService",
-                  "className": "ModuleScript",
-                  "filePaths": ["games/starter/out/server/services/ChatModerationService.luau"]
-                },
-                {
-                  "name": "FeatureFlagSyncService",
-                  "className": "ModuleScript",
-                  "filePaths": ["games/starter/out/server/services/FeatureFlagSyncService.luau"]
                 }
               ]
             }
