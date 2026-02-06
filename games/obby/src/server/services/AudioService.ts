@@ -44,8 +44,10 @@ export const AudioService: Service = {
       },
     ]);
 
-    audioManager.registerPlaylist("obby_music", {
-      tracks: [{ soundId: "music_obby", label: "Obby Theme" }],
+    audioManager.registerPlaylist({
+      id: "obby_music",
+      name: "Obby Music",
+      tracks: [{ id: "obby_1", soundId: "music_obby", crossfadeDuration: 2 }],
       loop: true,
       shuffle: false,
     });
