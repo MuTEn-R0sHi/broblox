@@ -13,6 +13,7 @@ import { RemoteService } from "./services/RemoteService";
 import { HandshakeService } from "./services/HandshakeService";
 import { ActionService } from "./services/ActionService";
 import { CodeRedemptionService } from "./services/CodeRedemptionService";
+import { LeaderboardService } from "./services/LeaderboardService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -30,7 +31,8 @@ app
   .register(RemoteService)
   .register(HandshakeService)
   .register(ActionService)
-  .register(CodeRedemptionService);
+  .register(CodeRedemptionService)
+  .register(LeaderboardService);
 
 app.boot();
 logger.info("Server booted.");

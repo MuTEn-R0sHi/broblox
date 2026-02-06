@@ -16,6 +16,7 @@
     "@rbx/config-featureflags": "workspace:*",
     "@rbx/codes": "workspace:*",
     "@rbx/constants": "workspace:*",
+    "@rbx/leaderboards": "workspace:*",
     "@rbx/core": "workspace:*",
     "@rbx/data": "workspace:*",
     "@rbx/input": "workspace:*",

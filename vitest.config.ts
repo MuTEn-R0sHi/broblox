@@ -23,6 +23,7 @@ export default defineConfig({
       "@rbx/moderation": resolve(__dirname, "packages/moderation/src/index.ts"),
       "@rbx/movement": resolve(__dirname, "packages/movement/src/index.ts"),
       "@rbx/codes": resolve(__dirname, "packages/codes/src/index.ts"),
+      "@rbx/leaderboards": resolve(__dirname, "packages/leaderboards/src/index.ts"),
       "@rbx/testing": resolve(__dirname, "packages/testing/src/index.ts"),
     },
   },
