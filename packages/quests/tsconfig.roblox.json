@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "jsxFragmentFactory": "React.Fragment",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "noLib": true,
+    "strict": true,
+    "target": "ESNext",
+    "typeRoots": ["node_modules/@rbxts"],
+    "types": ["compiler-types", "types"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "out",
+    "rootDir": "src",
+    "incremental": true,
+    "tsBuildInfoFile": "./out/.tsbuildinfo"
+  },
+  "rbxts": {
+    "type": "model"
+  },
+  "include": ["src/**/*"]
+}

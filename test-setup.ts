@@ -63,6 +63,9 @@ if (!Array.prototype.clear) {
   };
 }
 
+// Note: Map.size is a property in JS but a method in roblox-ts.
+// Source code should avoid Map.size() — count Map entries manually instead.
+
 // Roblox-TS Array.sort() polyfill — Lua table.sort comparators return boolean
 // (true = a before b), but JS Array.sort expects a numeric comparator.  Wrap
 // the native sort so that boolean-returning comparators work correctly in tests.

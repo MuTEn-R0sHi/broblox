@@ -1,0 +1,20 @@
+{
+  "name": "@rbx/quests",
+  "version": "0.1.0",
+  "description": "Quest and objective tracking system for Roblox games",
+  "main": "out",
+  "scripts": {
+    "build": "rbxtsc",
+    "build:watch": "rbxtsc -w"
+  },
+  "dependencies": {
+    "@rbx/core": "workspace:*",
+    "@rbx/observability": "workspace:*"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.850",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.8.3"
+  }
+}
