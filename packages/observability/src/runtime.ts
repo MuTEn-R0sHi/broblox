@@ -10,19 +10,16 @@
 export function rbxSize(value: unknown): number {
   if (value === undefined) return 0;
 
-  const v = value as unknown as {
-    size?: () => number;
-    length?: number;
-  };
+  const v = value as unknown as Record<string, unknown>;
 
-  const maybeSize = (v as unknown as Record<string, unknown>)["size"];
-  if (typeOf(maybeSize) === "function") {
-    return (maybeSize as (this: unknown) => number).call(v);
+  // Call .size() as a method so `this` stays bound in both Luau and Node.
+  // roblox-ts does not support Function.call().
+  if (typeOf(v["size"]) === "function") {
+    return (value as unknown as { size(): number }).size();
   }
 
-  const maybeLength = (v as unknown as Record<string, unknown>)["length"];
-  if (typeOf(maybeLength) === "number") {
-    return maybeLength as number;
+  if (typeOf(v["length"]) === "number") {
+    return v["length"] as number;
   }
 
   return 0;
