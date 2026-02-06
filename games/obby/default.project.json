@@ -100,6 +100,30 @@
               "out": {
                 "$path": "node_modules/@rbx/notifications/out"
               }
+            },
+            "inventory": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/inventory/out"
+              }
+            },
+            "progression": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/progression/out"
+              }
+            },
+            "quests": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/quests/out"
+              }
+            },
+            "rewards": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/rewards/out"
+              }
             }
           }
         }
