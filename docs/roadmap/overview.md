@@ -126,10 +126,13 @@ Deliverables:
 
 - `packages/analytics` v1: player behavior events, funnels, retention
 - `packages/notifications` v1: in-game toasts, announcements, news
+- `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time)
+- `packages/codes` v1: redeemable promo codes + dashboard management
 - Open Cloud publish/promote pipeline hardening + ops maturity
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible (lint/test + scripted checks)
 - Rollback procedure tested + incident runbooks (matchmaking, exploit waves)
+- Roblox Moments integration (auto-detect highlights, viral sharing)
 - Regular ADR + security review cadence
 
 ## Milestone mapping (packages)
@@ -147,23 +150,33 @@ Deliverables:
 
 - `analytics`: player behavior events, funnels
 - `notifications`: in-game toasts, announcements
+- `leaderboards`: cross-game leaderboard infrastructure
+- `codes`: redeemable promo codes
 
 ### Phase 5a — Foundation
 
 - `inventory`: base item/slot system (prerequisite for collections)
 - `progression`: XP, levels, prestige/rebirth
+- `quests`: daily/weekly/seasonal quest framework
 - `rewards`: daily login, achievements
 
 ### Phase 5b — Collection
 
 - `pets`, `gacha`, `cosmetics`, battle pass
+- `bro-companion`: LittleBro cross-game mascot
 
 ### Phase 5c — Support
 
 - `localization`, `audio`, `tutorial`
+- `world-systems`: day/night, weather, seasons, biomes
 
-### Phase 6+
+### Phase 6 — Economy & Social
 
 - `trading`, `guilds`, `economy`, `social`
 
-> **Full roadmap:** See [Future Phases (3–7)](future-phases.md) for detailed planning.
+### Phase 7+ — Games & Hub
+
+- Genre templates: PvP Arena, BroStars, BroBall, BroCade, Race Mania, ...
+- BroBlox Hub: central hub game with gravity worlds, game portals, LittleBro home
+
+> **Full roadmap:** See [Future Phases (4–7)](future-phases.md) for detailed planning.
