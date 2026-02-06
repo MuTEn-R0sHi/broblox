@@ -76,6 +76,12 @@
               "out": {
                 "$path": "node_modules/@rbx/leaderboards/out"
               }
+            },
+            "analytics": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/analytics/out"
+              }
             }
           }
         }

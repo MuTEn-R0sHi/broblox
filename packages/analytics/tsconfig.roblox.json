@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "out",
+    "baseUrl": "src",
+    "declaration": true,
+    "paths": {
+      "@rbx/*": ["../../packages/*/src"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["**/*.test.ts"]
+}

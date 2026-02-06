@@ -14,6 +14,7 @@ import { HandshakeService } from "./services/HandshakeService";
 import { ActionService } from "./services/ActionService";
 import { CodeRedemptionService } from "./services/CodeRedemptionService";
 import { LeaderboardService } from "./services/LeaderboardService";
+import { AnalyticsService } from "./services/AnalyticsService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -32,7 +33,8 @@ app
   .register(HandshakeService)
   .register(ActionService)
   .register(CodeRedemptionService)
-  .register(LeaderboardService);
+  .register(LeaderboardService)
+  .register(AnalyticsService);
 
 app.boot();
 logger.info("Server booted.");

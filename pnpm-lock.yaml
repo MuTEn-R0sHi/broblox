@@ -135,6 +135,9 @@ importers:
 
   games/obby:
     dependencies:
+      "@rbx/analytics":
+        specifier: workspace:*
+        version: link:../../packages/analytics
       "@rbx/codes":
         specifier: workspace:*
         version: link:../../packages/codes
@@ -193,6 +196,9 @@ importers:
 
   games/starter:
     dependencies:
+      "@rbx/analytics":
+        specifier: workspace:*
+        version: link:../../packages/analytics
       "@rbx/codes":
         specifier: workspace:*
         version: link:../../packages/codes
@@ -242,6 +248,34 @@ importers:
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
+
+  packages/analytics:
+    dependencies:
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+      "@rbx/observability":
+        specifier: workspace:*
+        version: link:../observability
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.841
+        version: 1.0.906
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@types/node@25.2.0)(jiti@2.6.1)(jsdom@28.0.0)(lightningcss@1.30.2)(yaml@2.8.2)
 
   packages/codes:
     dependencies:
