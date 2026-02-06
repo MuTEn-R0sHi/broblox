@@ -180,15 +180,22 @@ Test coverage: 976 tests across 22 test suites.
 - `rewards`: daily login rewards, achievements with progress tracking ✅
 - Game integrations: starter (combat-themed) + obby (stage-themed) ✅
 
-### Phase 5b — Collection
+### Phase 5b — Collection (Complete ✅)
 
-- `pets`, `gacha`, `cosmetics`, battle pass
-- `bro-companion`: LittleBro cross-game mascot
+- `pets`: pet registry, hatching, equipping, leveling (34 tests) ✅
+- `gacha`: loot tables, weighted rolls, pity system (20 tests) ✅
+- `cosmetics`: cosmetic registry, per-player ownership & equipping (26 tests) ✅
+- `battle-pass`: seasonal tiers, free/premium tracks, XP progression (29 tests) ✅
+- Game integrations: starter + obby service files ✅
+- `bro-companion`: LittleBro cross-game mascot (future)
 
-### Phase 5c — Support
+### Phase 5c — Support (Complete ✅)
 
-- `localization`, `audio`, `tutorial`
-- `world-systems`: day/night, weather, seasons, biomes
+- `localization`: multi-locale string tables, namespaces, interpolation, pluralization (27 tests) ✅
+- `audio`: sound registry, channel volumes, playback, playlists (31 tests) ✅
+- `tutorial`: sequence registry, per-player FTUE manager, prerequisites (32 tests) ✅
+- `world-systems`: day/night cycle, weather transitions, seasons (20 tests) ✅
+- Game integrations: starter + obby service files ✅
 
 ### Phase 6 — Economy & Social
 

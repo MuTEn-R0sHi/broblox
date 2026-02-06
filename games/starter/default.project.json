@@ -136,6 +136,30 @@
               "out": {
                 "$path": "node_modules/@rbx/battle-pass/out"
               }
+            },
+            "localization": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/localization/out"
+              }
+            },
+            "audio": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/audio/out"
+              }
+            },
+            "tutorial": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/tutorial/out"
+              }
+            },
+            "world-systems": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/world-systems/out"
+              }
             }
           }
         }

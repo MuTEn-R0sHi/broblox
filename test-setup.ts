@@ -45,6 +45,29 @@ if (!String.prototype.byte) {
   };
 }
 
+// Roblox-TS String.find() polyfill (1-indexed, returns [start] or [undefined])
+// @ts-expect-error - Polyfilling native prototype for tests
+if (!String.prototype.find) {
+  // @ts-expect-error - Polyfilling native prototype for tests
+  String.prototype.find = function (pattern: string) {
+    const idx = this.indexOf(pattern);
+    if (idx === -1) return [undefined];
+    return [idx + 1]; // 1-indexed
+  };
+}
+
+// Roblox-TS String.sub() polyfill (1-indexed, inclusive end)
+// NOTE: Must override because JS has a deprecated String.prototype.sub() that
+// wraps text in <sub> tags, which is NOT what roblox-ts expects.
+{
+  // @ts-expect-error - Overriding native sub for roblox-ts compat
+  String.prototype.sub = function (i: number, j?: number) {
+    const start = i - 1;
+    if (j === undefined) return this.slice(start);
+    return this.slice(start, j);
+  };
+}
+
 // Roblox-TS Array.remove() polyfill (removes element at index)
 // @ts-expect-error - Polyfilling native prototype for tests
 if (!Array.prototype.remove) {

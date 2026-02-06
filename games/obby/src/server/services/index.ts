@@ -13,3 +13,7 @@ export { ModerationEnforcementService } from "./ModerationEnforcementService";
 export { ChatModerationService } from "./ChatModerationService";
 export { MovementValidationService } from "./MovementValidationService";
 export { FeatureFlagSyncService } from "./FeatureFlagSyncService";
+export { LocalizationService } from "./LocalizationService";
+export { AudioService } from "./AudioService";
+export { TutorialService } from "./TutorialService";
+export { WorldService } from "./WorldService";

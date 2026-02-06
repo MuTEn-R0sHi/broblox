@@ -24,6 +24,10 @@ import { PetService } from "./services/PetService";
 import { GachaService } from "./services/GachaService";
 import { CosmeticsService } from "./services/CosmeticsService";
 import { BattlePassService } from "./services/BattlePassService";
+import { LocalizationService } from "./services/LocalizationService";
+import { AudioService } from "./services/AudioService";
+import { TutorialService } from "./services/TutorialService";
+import { WorldService } from "./services/WorldService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -52,7 +56,11 @@ app
   .register(PetService)
   .register(GachaService)
   .register(CosmeticsService)
-  .register(BattlePassService);
+  .register(BattlePassService)
+  .register(LocalizationService)
+  .register(AudioService)
+  .register(TutorialService)
+  .register(WorldService);
 
 app.boot();
 logger.info("Server booted.");

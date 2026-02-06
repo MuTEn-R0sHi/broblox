@@ -34,6 +34,10 @@
     "@rbx/gacha": "workspace:*",
     "@rbx/cosmetics": "workspace:*",
     "@rbx/battle-pass": "workspace:*",
+    "@rbx/localization": "workspace:*",
+    "@rbx/audio": "workspace:*",
+    "@rbx/tutorial": "workspace:*",
+    "@rbx/world-systems": "workspace:*",
     "@rbx/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"
   },
