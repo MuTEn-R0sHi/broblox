@@ -8,6 +8,9 @@
  * - Percentage-based rollouts
  * - Override system for testing/debugging
  * - Flag change listeners
+ * - User/group segments for targeted rollouts
+ * - Schedule-based activation windows
+ * - In-memory rollout history / audit log
  */
 
 // ============================================================================
@@ -15,6 +18,31 @@
 // ============================================================================
 
 export type FlagValue = boolean | number | string;
+
+/**
+ * A segment targets a subset of users by user-ID list and/or an attribute
+ * predicate. When segments are attached to a flag override, the override
+ * only applies to users who match at least one segment.
+ */
+export interface FlagSegment {
+  /** Human-readable segment name */
+  name: string;
+  /** Explicitly included user IDs */
+  userIds?: number[];
+  /** An attribute key/value pair the user must match (e.g. { key: "locale", value: "en" }) */
+  attribute?: { key: string; value: string };
+}
+
+/**
+ * A time window during which a flag override is active.
+ * Both fields are Unix timestamps (seconds).
+ */
+export interface FlagSchedule {
+  /** Override becomes active at this time (inclusive) */
+  startTime?: number;
+  /** Override expires at this time (exclusive) */
+  endTime?: number;
+}
 
 export interface FlagDefinition<T extends FlagValue = FlagValue> {
   /** Unique flag identifier */
@@ -29,6 +57,10 @@ export interface FlagDefinition<T extends FlagValue = FlagValue> {
   rolloutPercentage?: number;
   /** Whether this flag is a kill-switch (can disable features in emergencies) */
   isKillSwitch?: boolean;
+  /** Optional segments for targeted rollout */
+  segments?: FlagSegment[];
+  /** Optional schedule for time-based activation */
+  schedule?: FlagSchedule;
 }
 
 export type FlagCategory =
@@ -45,6 +77,22 @@ export type FlagChangeListener = (
   newValue: FlagValue,
   oldValue: FlagValue | undefined
 ) => void;
+
+/**
+ * A single entry in the rollout history audit log.
+ */
+export interface FlagChangeRecord {
+  /** Flag that changed */
+  flagName: string;
+  /** Value after the change */
+  newValue: FlagValue;
+  /** Value before the change (undefined if first set) */
+  oldValue: FlagValue | undefined;
+  /** Source of the change */
+  source: "local" | "remote" | "kill-switch" | "schedule";
+  /** Unix timestamp (seconds) of the change */
+  timestamp: number;
+}
 
 // ============================================================================
 // Flag Registry
@@ -67,6 +115,19 @@ const killedFlags = new Set<string>();
 
 /** Flag change listeners */
 const changeListeners: FlagChangeListener[] = [];
+
+/** Segment overrides per flag */
+const flagSegmentOverrides = new Map<string, FlagSegment[]>();
+
+/** Schedule overrides per flag */
+const flagScheduleOverrides = new Map<string, FlagSchedule>();
+
+/** User attribute store for segment evaluation */
+const userAttributes = new Map<number, Map<string, string>>();
+
+/** In-memory rollout history (capped) */
+const rolloutHistory: FlagChangeRecord[] = [];
+const MAX_HISTORY_SIZE = 500;
 
 // ============================================================================
 // Flag Definitions
@@ -164,6 +225,7 @@ export function getFlagValueOr<T extends FlagValue>(name: string, fallback: T): 
 export function setFlagValue(name: string, value: FlagValue): void {
   const oldValue = getFlagValue(name);
   flagOverrides.set(name, value);
+  recordHistory(name, value, oldValue, "local");
   notifyListeners(name, value, oldValue);
 }
 
@@ -175,6 +237,7 @@ export function clearFlagOverride(name: string): void {
   flagOverrides.delete(name);
   const newValue = getFlagValue(name);
   if (oldValue !== newValue) {
+    recordHistory(name, newValue!, oldValue, "local");
     notifyListeners(name, newValue!, oldValue);
   }
 }
@@ -187,6 +250,8 @@ export function clearAllOverrides(): void {
   flagEnabledOverrides.clear();
   flagRolloutOverrides.clear();
   killedFlags.clear();
+  flagSegmentOverrides.clear();
+  flagScheduleOverrides.clear();
 }
 
 // ============================================================================
@@ -195,15 +260,29 @@ export function clearAllOverrides(): void {
 
 /**
  * Check if a boolean flag is enabled.
+ * Respects schedule windows — outside the window the flag returns its default.
  */
 export function isFlagEnabled(name: string): boolean {
+  // Schedule check: if a schedule is active and we're outside the window, skip overrides
+  if (!isWithinSchedule(name)) {
+    const def = flagDefinitions.get(name);
+    return def ? def.defaultValue === true : false;
+  }
   const value = getFlagValue<boolean>(name);
   return value === true;
 }
 
 /**
- * Check if a flag is enabled for a specific user based on rollout percentage.
- * Uses deterministic hashing for consistent results per user.
+ * Check if a flag is enabled for a specific user based on rollout percentage
+ * and segments. Uses deterministic hashing for consistent results per user.
+ *
+ * Evaluation order:
+ * 1. Schedule window check
+ * 2. Value override (setFlagValue)
+ * 3. Kill-switch
+ * 4. Segment check (if segments exist, user must match one)
+ * 5. Enabled override / base enabled
+ * 6. Rollout percentage bucket
  *
  * @param name - Flag name
  * @param userId - User ID for deterministic bucketing
@@ -214,7 +293,12 @@ export function isFlagEnabledForUser(name: string, userId: number): boolean {
     return false;
   }
 
-  // Check override first
+  // Schedule check
+  if (!isWithinSchedule(name)) {
+    return definition.defaultValue === true;
+  }
+
+  // Check value override first
   if (flagOverrides.has(name)) {
     return flagOverrides.get(name) === true;
   }
@@ -225,6 +309,14 @@ export function isFlagEnabledForUser(name: string, userId: number): boolean {
 
   if (killedFlags.has(name)) {
     return false;
+  }
+
+  // Segment check: if segments are defined, user must match at least one
+  const segments = flagSegmentOverrides.get(name) ?? definition.segments;
+  if (segments !== undefined && segments.length > 0) {
+    if (!matchesAnySegment(userId, segments)) {
+      return definition.defaultValue === true;
+    }
   }
 
   const baseEnabled = flagEnabledOverrides.has(name)
@@ -254,11 +346,169 @@ export function isFlagEnabledForUser(name: string, userId: number): boolean {
  */
 function hashUserFlag(userId: number, flagName: string): number {
   let hash = userId;
-  for (let i = 0; i < flagName.size(); i++) {
-    const char = flagName.byte(i + 1)[0];
+  for (let i = 0; i < flagName.length; i++) {
+    // charCodeAt works in both Node and roblox-ts
+    const char = flagName.charCodeAt(i);
     hash = (hash * 31 + char) % 10000000;
   }
   return math.abs(hash);
+}
+
+// ============================================================================
+// Segments
+// ============================================================================
+
+/**
+ * Check whether a user matches at least one segment.
+ */
+function matchesAnySegment(userId: number, segments: FlagSegment[]): boolean {
+  for (const segment of segments) {
+    if (matchesSegment(userId, segment)) return true;
+  }
+  return false;
+}
+
+function matchesSegment(userId: number, segment: FlagSegment): boolean {
+  // Check explicit user-ID list
+  if (segment.userIds !== undefined && segment.userIds.length > 0) {
+    for (const id of segment.userIds) {
+      if (id === userId) return true;
+    }
+  }
+
+  // Check attribute predicate
+  if (segment.attribute !== undefined) {
+    const attrs = userAttributes.get(userId);
+    if (attrs) {
+      const val = attrs.get(segment.attribute.key);
+      if (val === segment.attribute.value) return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Set a user attribute used for segment evaluation.
+ */
+export function setUserAttribute(userId: number, key: string, value: string): void {
+  let attrs = userAttributes.get(userId);
+  if (!attrs) {
+    attrs = new Map<string, string>();
+    userAttributes.set(userId, attrs);
+  }
+  attrs.set(key, value);
+}
+
+/**
+ * Get a user attribute.
+ */
+export function getUserAttribute(userId: number, key: string): string | undefined {
+  return userAttributes.get(userId)?.get(key);
+}
+
+/**
+ * Clear all attributes for a user (e.g. on disconnect).
+ */
+export function clearUserAttributes(userId: number): void {
+  userAttributes.delete(userId);
+}
+
+/**
+ * Set segment overrides for a flag.
+ */
+export function setFlagSegments(name: string, segments: FlagSegment[]): void {
+  flagSegmentOverrides.set(name, segments);
+}
+
+/**
+ * Clear segment overrides for a flag.
+ */
+export function clearFlagSegments(name: string): void {
+  flagSegmentOverrides.delete(name);
+}
+
+// ============================================================================
+// Scheduling
+// ============================================================================
+
+/**
+ * Check whether we are within the schedule window for a flag.
+ * If no schedule is defined this returns true (always active).
+ */
+function isWithinSchedule(name: string): boolean {
+  const schedule = flagScheduleOverrides.get(name) ?? flagDefinitions.get(name)?.schedule;
+  if (!schedule) return true;
+
+  const now = os.clock !== undefined ? os.clock() : os.time();
+  if (schedule.startTime !== undefined && now < schedule.startTime) return false;
+  if (schedule.endTime !== undefined && now >= schedule.endTime) return false;
+  return true;
+}
+
+/**
+ * Set a schedule override for a flag.
+ */
+export function setFlagSchedule(name: string, schedule: FlagSchedule): void {
+  flagScheduleOverrides.set(name, schedule);
+}
+
+/**
+ * Clear a schedule override.
+ */
+export function clearFlagSchedule(name: string): void {
+  flagScheduleOverrides.delete(name);
+}
+
+// ============================================================================
+// Rollout History
+// ============================================================================
+
+function recordHistory(
+  flagName: string,
+  newValue: FlagValue,
+  oldValue: FlagValue | undefined,
+  source: FlagChangeRecord["source"]
+): void {
+  const record: FlagChangeRecord = {
+    flagName,
+    newValue,
+    oldValue,
+    source,
+    timestamp: os.clock !== undefined ? os.clock() : os.time(),
+  };
+  rolloutHistory.push(record);
+  // Cap history length
+  while (rolloutHistory.length > MAX_HISTORY_SIZE) {
+    rolloutHistory.shift();
+  }
+}
+
+/**
+ * Get the full rollout history (oldest-first).
+ */
+export function getRolloutHistory(): FlagChangeRecord[] {
+  return [...rolloutHistory];
+}
+
+/**
+ * Get history for a specific flag.
+ */
+export function getFlagHistory(name: string): FlagChangeRecord[] {
+  const result: FlagChangeRecord[] = [];
+  for (const record of rolloutHistory) {
+    if (record.flagName === name) {
+      result.push(record);
+    }
+  }
+  return result;
+}
+
+/**
+ * Clear rollout history.
+ */
+export function clearRolloutHistory(): void {
+  rolloutHistory.length = 0;
 }
 
 // ============================================================================
@@ -300,6 +550,10 @@ export type RemoteBooleanFlagOverride = {
   rolloutPercentage?: number;
   isKilled?: boolean;
   value?: FlagValue;
+  /** Segments to apply for this flag */
+  segments?: FlagSegment[];
+  /** Schedule window for this flag */
+  schedule?: FlagSchedule;
 };
 
 export type RemoteFeatureFlagSnapshot = {
@@ -322,6 +576,7 @@ export function setFlagEnabledOverride(name: string, enabled: boolean): void {
   flagEnabledOverrides.set(name, enabled);
   const newValue = getFlagValue(name);
   if (oldValue !== newValue) {
+    recordHistory(name, newValue as FlagValue, oldValue as FlagValue | undefined, "local");
     notifyListeners(name, newValue as FlagValue, oldValue as FlagValue | undefined);
   }
 }
@@ -331,6 +586,7 @@ export function clearFlagEnabledOverride(name: string): void {
   flagEnabledOverrides.delete(name);
   const newValue = getFlagValue(name);
   if (oldValue !== newValue) {
+    recordHistory(name, newValue as FlagValue, oldValue as FlagValue | undefined, "local");
     notifyListeners(name, newValue as FlagValue, oldValue as FlagValue | undefined);
   }
 }
@@ -360,19 +616,22 @@ export function setFlagKilled(name: string, killed: boolean): void {
   }
   const newValue = getFlagValue(name);
   if (oldValue !== newValue) {
+    recordHistory(name, newValue as FlagValue, oldValue as FlagValue | undefined, "kill-switch");
     notifyListeners(name, newValue as FlagValue, oldValue as FlagValue | undefined);
   }
 }
 
 /**
  * Apply a remote snapshot (e.g. from the dashboard). This will replace the
- * current enabled/rollout/kill overrides for the provided keys.
+ * current enabled/rollout/kill/segment/schedule overrides for the provided keys.
  */
 export function applyRemoteFeatureFlagSnapshot(snapshot: RemoteFeatureFlagSnapshot): void {
   // Replace all remote-managed overrides.
   flagEnabledOverrides.clear();
   flagRolloutOverrides.clear();
   killedFlags.clear();
+  flagSegmentOverrides.clear();
+  flagScheduleOverrides.clear();
 
   for (const [key, override] of pairs(snapshot.flags)) {
     if (override.isKilled !== undefined) {
@@ -387,8 +646,19 @@ export function applyRemoteFeatureFlagSnapshot(snapshot: RemoteFeatureFlagSnapsh
       setFlagRolloutPercentageOverride(key, override.rolloutPercentage);
     }
 
+    if (override.segments !== undefined) {
+      setFlagSegments(key, override.segments);
+    }
+
+    if (override.schedule !== undefined) {
+      setFlagSchedule(key, override.schedule);
+    }
+
     if (override.value !== undefined) {
-      setFlagValue(key, override.value);
+      const oldValue = getFlagValue(key);
+      flagOverrides.set(key, override.value);
+      recordHistory(key, override.value, oldValue, "remote");
+      notifyListeners(key, override.value, oldValue);
     }
   }
 }
@@ -405,7 +675,7 @@ export function onFlagChange(listener: FlagChangeListener): () => void {
   return () => {
     const index = changeListeners.indexOf(listener);
     if (index !== -1) {
-      changeListeners.remove(index);
+      changeListeners.splice(index, 1);
     }
   };
 }

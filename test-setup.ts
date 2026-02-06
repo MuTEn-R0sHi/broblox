@@ -10,6 +10,16 @@ import { mockRobloxGlobals } from "@rbx/testing";
 
 mockRobloxGlobals();
 
+// Roblox `pairs()` — iterates key/value pairs of a table (object)
+const g = globalThis as Record<string, unknown>;
+if (!g.pairs) {
+  g.pairs = function* (obj: Record<string, unknown>) {
+    for (const [k, v] of Object.entries(obj)) {
+      yield [k, v];
+    }
+  };
+}
+
 // Roblox-TS .size() polyfills (Array/String)
 // @ts-expect-error - Polyfilling native prototype for tests
 if (!Array.prototype.size) {
