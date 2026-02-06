@@ -309,8 +309,8 @@ export class LocalizationService {
   /** roblox-ts compatible Object.keys alternative */
   private objectKeys<T extends Record<string, unknown>>(obj: T): string[] {
     const keys: string[] = [];
-    for (const k of Object.keys(obj)) {
-      keys.push(k);
+    for (const [k] of pairs(obj as unknown as Record<string, unknown>)) {
+      keys.push(k as string);
     }
     return keys;
   }
