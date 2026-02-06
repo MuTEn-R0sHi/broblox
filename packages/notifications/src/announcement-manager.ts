@@ -117,8 +117,12 @@ export class AnnouncementManager {
     // Sort by publishedAt descending (boolean for Lua table.sort)
     const sorted = [...this.newsItems];
     sorted.sort((a, b) => a.publishedAt > b.publishedAt);
-    if (limit !== undefined && limit > 0) {
-      return sorted.slice(0, limit);
+    if (limit !== undefined && limit > 0 && sorted.size() > limit) {
+      const result: NewsItem[] = [];
+      for (let i = 0; i < limit; i++) {
+        result.push(sorted[i]);
+      }
+      return result;
     }
     return sorted;
   }
@@ -134,8 +138,12 @@ export class AnnouncementManager {
       }
     }
     filtered.sort((a, b) => a.publishedAt > b.publishedAt);
-    if (limit !== undefined && limit > 0) {
-      return filtered.slice(0, limit);
+    if (limit !== undefined && limit > 0 && filtered.size() > limit) {
+      const result: NewsItem[] = [];
+      for (let i = 0; i < limit; i++) {
+        result.push(filtered[i]);
+      }
+      return result;
     }
     return filtered;
   }
