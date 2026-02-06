@@ -21,7 +21,7 @@
     "tsBuildInfoFile": "./out/.tsbuildinfo"
   },
   "rbxts": {
-    "type": "model"
+    "type": "package"
   },
   "include": ["src/**/*"]
 }

@@ -2,10 +2,19 @@
   "name": "@rbx/rewards",
   "version": "0.1.0",
   "description": "Daily login rewards, streaks, and achievement rewards for Roblox games",
+  "private": true,
   "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
   "scripts": {
-    "build": "rbxtsc",
-    "build:watch": "rbxtsc -w",
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
@@ -16,6 +25,7 @@
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.850",
     "roblox-ts": "^3.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.18"
   }
 }

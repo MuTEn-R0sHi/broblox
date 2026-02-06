@@ -57,7 +57,7 @@ export const InventoryService: Service = {
     registry.register({
       id: "speed_boost",
       name: "Speed Boost",
-      category: "boost",
+      category: "consumable",
       rarity: "rare",
       maxStack: 10,
       tradeable: false,
