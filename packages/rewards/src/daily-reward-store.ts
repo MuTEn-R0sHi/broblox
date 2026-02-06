@@ -157,7 +157,7 @@ export class DailyRewardStore {
     this.data.lastClaimTime = now;
 
     // Get today's reward from the cycle
-    const cycleIndex = (this.data.cycleDay - 1) % this.rewardCycle.length;
+    const cycleIndex = (this.data.cycleDay - 1) % this.rewardCycle.size();
     const rewardDay = this.rewardCycle[cycleIndex];
 
     // Advance cycle day

@@ -142,7 +142,7 @@ export class QuestStore {
     if (def.schedule === "once" && this.isCompleted(questId)) return false;
 
     // Check active quest limit
-    if (this.data.activeQuests.length >= this.config.maxActiveQuests) {
+    if (this.data.activeQuests.size() >= this.config.maxActiveQuests) {
       this.logger?.warn("Max active quests reached");
       return false;
     }
@@ -206,7 +206,7 @@ export class QuestStore {
       const def = this.registry.get(quest.questId);
       if (!def) continue;
 
-      for (let i = 0; i < quest.objectives.length; i++) {
+      for (let i = 0; i < quest.objectives.size(); i++) {
         const objProgress = quest.objectives[i];
         if (objProgress.completed) continue;
 
@@ -352,7 +352,7 @@ export class QuestStore {
 
     // Remove by shifting elements (no Array.splice in roblox-ts)
     const newActive: QuestProgress[] = [];
-    for (let i = 0; i < this.data.activeQuests.length; i++) {
+    for (let i = 0; i < this.data.activeQuests.size(); i++) {
       if (i !== idx) {
         newActive.push(this.data.activeQuests[i]);
       }
@@ -416,13 +416,13 @@ export class QuestStore {
   getQuestProgress(questId: string): number {
     const quest = this.getActiveQuest(questId);
     if (!quest) return 0;
-    if (quest.objectives.length === 0) return 1;
+    if (quest.objectives.size() === 0) return 1;
 
     let completedCount = 0;
     for (const obj of quest.objectives) {
       if (obj.completed) completedCount++;
     }
-    return completedCount / quest.objectives.length;
+    return completedCount / quest.objectives.size();
   }
 
   /** Whether there are unsaved changes. */
@@ -480,7 +480,7 @@ export class QuestStore {
   }
 
   private findActiveQuestIndex(questId: string): number {
-    for (let i = 0; i < this.data.activeQuests.length; i++) {
+    for (let i = 0; i < this.data.activeQuests.size(); i++) {
       if (this.data.activeQuests[i].questId === questId) return i;
     }
     return -1;
