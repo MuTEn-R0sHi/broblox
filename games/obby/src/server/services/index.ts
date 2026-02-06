@@ -11,3 +11,5 @@ export { CheckpointService } from "./CheckpointService";
 export { LeaderboardService } from "./LeaderboardService";
 export { ModerationEnforcementService } from "./ModerationEnforcementService";
 export { ChatModerationService } from "./ChatModerationService";
+export { MovementValidationService } from "./MovementValidationService";
+export { FeatureFlagSyncService } from "./FeatureFlagSyncService";

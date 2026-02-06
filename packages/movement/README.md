@@ -1,14 +1,17 @@
 # @rbx/movement
 
-Server-authoritative movement system for competitive Roblox games.
+Server-authoritative movement validation for competitive Roblox games.
+Detects speed hacks, teleporting, flying, and jump exploits, then optionally
+soft-corrects the player's position/velocity.
 
 ## Features
 
-- **Server Authority** - Server validates all movement for anti-cheat
-- **Client Prediction** - Smooth client-side movement with server reconciliation
-- **Lag Compensation** - Handles network latency gracefully
-- **Anomaly Detection** - Detects speed hacks, teleporting, flying
-- **Motor Abstraction** - Works with Humanoid or custom physics
+- **Server Authority** — validates every movement tick on the server
+- **Anomaly Detection** — speed, teleport, fly, and jump-sequence checks
+- **Soft Correction** — snaps exploiting players back to a legal position
+- **Observability** — counters and histograms via `@rbx/observability`
+- **Feature-Flag Kill-Switch** — disable validation at runtime via
+  `movement.validation.enabled`
 
 ## Installation
 
@@ -16,22 +19,21 @@ Server-authoritative movement system for competitive Roblox games.
 pnpm add @rbx/movement
 ```
 
-## Usage
+## Quick Start
 
-### Server Setup
+### 1. Server validation loop
 
 ```typescript
 import { getMovementValidator, MovementStateManager } from "@rbx/movement";
+import { isFlagEnabled } from "@rbx/config-featureflags";
 
 const stateManager = new MovementStateManager();
-const validator = getMovementValidator({
-  walkSpeed: 16,
-  runSpeed: 24,
-  jumpPower: 50,
-});
+const validator = getMovementValidator();
 
-// Example validation loop (server-sampled):
 RunService.Heartbeat.Connect((dt) => {
+  // Kill-switch: skip when flag is off
+  if (!isFlagEnabled("movement.validation.enabled")) return;
+
   for (const player of Players.GetPlayers()) {
     const character = player.Character;
     const hrp = character?.FindFirstChild("HumanoidRootPart");
@@ -39,6 +41,7 @@ RunService.Heartbeat.Connect((dt) => {
     if (!hrp?.IsA("BasePart") || !humanoid) continue;
 
     const state = stateManager.getState(player.UserId, hrp.Position);
+
     const input = {
       position: hrp.Position,
       velocity: hrp.AssemblyLinearVelocity,
@@ -50,8 +53,19 @@ RunService.Heartbeat.Connect((dt) => {
     };
 
     const result = validator.validate(input, state, dt);
+
     if (!result.isValid) {
-      // react to violations, optionally correct
+      for (const v of result.violations) {
+        state.recordViolation(v.type);
+      }
+    }
+
+    // Apply soft correction when the validator provides one
+    if (result.correctedPosition) {
+      hrp.CFrame = new CFrame(result.correctedPosition);
+    }
+    if (result.correctedVelocity) {
+      hrp.AssemblyLinearVelocity = result.correctedVelocity;
     }
 
     state.updateState({
@@ -66,55 +80,64 @@ RunService.Heartbeat.Connect((dt) => {
 });
 ```
 
-### Client Setup
+### 2. Reading player state
 
 ```typescript
-// Client prediction/reconciliation is not shipped as a stable API yet.
-// Current package exports focus on server-side validation primitives.
-```
-
-### Movement Validation
-
-The server validates all movement inputs:
-
-```typescript
-// You can query the server-side state you're tracking:
 const state = stateManager.getState(player.UserId).getState();
-
-print(state.position);
-print(state.velocity);
-print(state.isGrounded);
+print(state.position, state.velocity, state.isGrounded);
 ```
 
-### Custom Movement Abilities
+### 3. Cleaning up on disconnect
 
 ```typescript
-// Ability tracking hooks exist in types, but a public ability runtime is not shipped yet.
-// If you need this, build on top of `MovementConfig.abilities` and `PlayerMovementState`.
+Players.PlayerRemoving.Connect((player) => {
+  stateManager.removeState(player.UserId);
+});
 ```
 
 ## Architecture
 
 ```
 @rbx/movement
-├── types.ts       - Type definitions
-├── constants.ts   - Movement constants + thresholds
-├── validator.ts   - Movement validation logic
-└── state.ts       - Player state management
+├── types.ts       - MovementConfig, MovementInput, ValidationResult, etc.
+├── constants.ts   - Default config, physics params, validation thresholds
+├── validator.ts   - MovementValidator (singleton via getMovementValidator)
+├── state.ts       - PlayerMovementState & MovementStateManager
+└── index.test.ts  - 50 unit tests
 ```
 
-## Anti-Cheat Integration
+## Anti-Cheat Checks
 
-Movement integrates with `@rbx/security` for automatic violation reporting:
+| Check     | What it detects              | Severity |
+| --------- | ---------------------------- | -------- |
+| Speed     | Velocity exceeds max allowed | medium   |
+| Teleport  | Distance jump > threshold    | high     |
+| Fly       | Extended air time + movement | high     |
+| Jump seq. | Impossible jump patterns     | medium   |
 
-| Violation  | Detection                    | Severity    |
-| ---------- | ---------------------------- | ----------- |
-| Speed hack | Velocity exceeds max         | Medium-High |
-| Teleport   | Distance jump > threshold    | High        |
-| Fly hack   | Extended air time + movement | High        |
-| Noclip     | Position inside geometry     | Critical    |
+## Observability
+
+The validator emits the following metrics automatically (requires
+`@rbx/observability` as a dependency):
+
+| Metric                            | Type      | Labels |
+| --------------------------------- | --------- | ------ |
+| `movement.validations.total`      | Counter   | —      |
+| `movement.violations.total`       | Counter   | `type` |
+| `movement.corrections.total`      | Counter   | —      |
+| `movement.validation.duration_ms` | Histogram | —      |
+
+## Feature Flag
+
+The `movement.validation.enabled` flag (defined in
+`@rbx/config-featureflags`) acts as a kill-switch. When set to `false`,
+the per-heartbeat validation loop exits early so no checks or corrections
+run. The flag defaults to `true`.
 
 ## Configuration
+
+Default values live in `constants.ts` and can be overridden via the
+`MovementConfig` type:
 
 | Option               | Type   | Default | Description                         |
 | -------------------- | ------ | ------- | ----------------------------------- |

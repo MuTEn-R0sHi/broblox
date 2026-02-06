@@ -8,6 +8,48 @@
 import { MovementConfig, MovementInput, MovementViolation, ValidationResult } from "./types";
 import { DEFAULT_MOVEMENT_CONFIG, VALIDATION_THRESHOLDS, NETWORK_CONSTANTS } from "./constants";
 import { PlayerMovementState } from "./state";
+import { createCounter, createHistogram } from "@rbx/observability";
+
+// ============================================================================
+// Metrics (lazily initialised to avoid calling Roblox globals at import time)
+// ============================================================================
+
+let _metrics:
+  | {
+      validationsTotal: ReturnType<typeof createCounter>;
+      violationsTotal: ReturnType<typeof createCounter>;
+      correctionsTotal: ReturnType<typeof createCounter>;
+      validationDurationMs: ReturnType<typeof createHistogram>;
+    }
+  | undefined;
+
+function metrics() {
+  if (!_metrics) {
+    _metrics = {
+      validationsTotal: createCounter("movement_validations_total"),
+      violationsTotal: createCounter("movement_violations_total"),
+      correctionsTotal: createCounter("movement_corrections_total"),
+      validationDurationMs: createHistogram(
+        "movement_validation_duration_ms",
+        {},
+        { boundaries: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5] }
+      ),
+    };
+  }
+  return _metrics;
+}
+
+// Per-type violation counters (created lazily to avoid allocating unused labels)
+const violationCountersByType = new Map<string, ReturnType<typeof createCounter>>();
+
+function getViolationCounter(violationType: string): ReturnType<typeof createCounter> {
+  let counter = violationCountersByType.get(violationType);
+  if (!counter) {
+    counter = createCounter("movement_violations_total", { type: violationType });
+    violationCountersByType.set(violationType, counter);
+  }
+  return counter;
+}
 
 // ============================================================================
 // Movement Validator
@@ -46,6 +88,9 @@ export class MovementValidator {
    * Returns validation result with any violations detected.
    */
   validate(input: MovementInput, state: PlayerMovementState, deltaTime: number): ValidationResult {
+    const t0 = os.clock();
+    metrics().validationsTotal.inc();
+
     const violations: MovementViolation[] = [];
     const currentState = state.getState();
 
@@ -73,6 +118,15 @@ export class MovementValidator {
     const isValid = violations.size() === 0;
     const maxSeverity = this.getMaxSeverity(violations);
     const shouldCorrect = maxSeverity === "high" || violations.size() >= 2;
+
+    // Record metrics
+    for (const v of violations) {
+      getViolationCounter(v.type).inc();
+    }
+    if (shouldCorrect) {
+      metrics().correctionsTotal.inc();
+    }
+    metrics().validationDurationMs.observe((os.clock() - t0) * 1000);
 
     return {
       isValid,

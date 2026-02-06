@@ -421,11 +421,20 @@ function notifyListeners(name: string, newValue: FlagValue, oldValue: FlagValue 
 // ============================================================================
 
 // Gameplay flags
+// Gameplay flags
 defineFlag({
   name: "doAction.enabled",
   defaultValue: true,
   description: "Enable the DoAction remote endpoint",
   category: "gameplay",
+  isKillSwitch: true,
+});
+
+defineFlag({
+  name: "movement.validation.enabled",
+  defaultValue: true,
+  description: "Enable server-side movement validation (anti-cheat)",
+  category: "security",
   isKillSwitch: true,
 });
 

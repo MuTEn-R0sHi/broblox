@@ -1,3 +1,13 @@
+/**
+ * Movement Validation Service (Obby)
+ *
+ * Server-authoritative movement validation loop. Runs every Heartbeat,
+ * reads each player's HumanoidRootPart state, validates via
+ * `@rbx/movement`, and applies soft corrections for violations.
+ *
+ * Gated by the `movement.validation.enabled` feature flag (kill-switch).
+ */
+
 import { Service, createLogger } from "@rbx/core";
 import { Players, RunService } from "@rbxts/services";
 import { getMovementValidator, MovementStateManager, type MovementInput } from "@rbx/movement";
@@ -7,9 +17,7 @@ import { PlayerLifecycleService } from "./PlayerLifecycleService";
 const logger = createLogger("MovementValidationService");
 
 const stateManager = new MovementStateManager();
-
 const validator = getMovementValidator();
-
 const connections: RBXScriptConnection[] = [];
 
 function getHumanoidRootPart(character: Model): BasePart | undefined {
@@ -19,8 +27,7 @@ function getHumanoidRootPart(character: Model): BasePart | undefined {
 }
 
 function getHumanoid(character: Model): Humanoid | undefined {
-  const humanoid = character.FindFirstChildOfClass("Humanoid");
-  return humanoid;
+  return character.FindFirstChildOfClass("Humanoid");
 }
 
 export const MovementValidationService: Service = {
@@ -33,7 +40,6 @@ export const MovementValidationService: Service = {
       // Kill-switch: skip validation entirely when flag is off
       if (!isFlagEnabled("movement.validation.enabled")) return;
 
-      // Large dt spikes can cause false-positives; clamp validation timestep.
       const deltaTime = math.min(dt, 0.25);
 
       for (const player of Players.GetPlayers()) {
@@ -68,7 +74,8 @@ export const MovementValidationService: Service = {
           for (const v of result.violations) {
             state.recordViolation(v.type);
             logger.warn(
-              `Movement violation by ${player.Name} (${player.UserId}): ${v.type} (${v.severity}) ${v.details}`
+              `Movement violation by ${player.Name} (${player.UserId}): ` +
+                `${v.type} (${v.severity}) ${v.details}`
             );
           }
         }
@@ -77,10 +84,8 @@ export const MovementValidationService: Service = {
         const nextVelocity = result.correctedVelocity ?? input.velocity;
 
         if (result.correctedPosition) {
-          // Soft correction: snap back to last validated position.
           hrp.CFrame = new CFrame(result.correctedPosition);
         }
-
         if (result.correctedVelocity) {
           hrp.AssemblyLinearVelocity = result.correctedVelocity;
         }

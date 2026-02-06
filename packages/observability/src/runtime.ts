@@ -17,7 +17,7 @@ export function rbxSize(value: unknown): number {
 
   const maybeSize = (v as unknown as Record<string, unknown>)["size"];
   if (typeOf(maybeSize) === "function") {
-    return (maybeSize as () => number)();
+    return (maybeSize as (this: unknown) => number).call(v);
   }
 
   const maybeLength = (v as unknown as Record<string, unknown>)["length"];

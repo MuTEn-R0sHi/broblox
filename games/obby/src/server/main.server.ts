@@ -12,6 +12,8 @@ import { LeaderboardService } from "./services/LeaderboardService";
 import { DataService } from "./services/DataService";
 import { ModerationEnforcementService } from "./services/ModerationEnforcementService";
 import { ChatModerationService } from "./services/ChatModerationService";
+import { MovementValidationService } from "./services/MovementValidationService";
+import { FeatureFlagSyncService } from "./services/FeatureFlagSyncService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -31,7 +33,9 @@ app
   .register(CheckpointService)
   .register(LeaderboardService)
   .register(ModerationEnforcementService)
-  .register(ChatModerationService);
+  .register(ChatModerationService)
+  .register(MovementValidationService)
+  .register(FeatureFlagSyncService);
 
 app.boot();
 logger.info("Obby server booted.");
