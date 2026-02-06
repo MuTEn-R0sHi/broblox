@@ -486,7 +486,7 @@ export class InventoryStore {
       return { ok: false, status: "item_not_found", message: `instance ${instanceId} not found` };
     }
     const existing = instance.metadata ?? {};
-    for (const key of Object.keys(updates)) {
+    for (const key in updates) {
       (existing as Record<string, unknown>)[key] = (updates as Record<string, unknown>)[key];
     }
     instance.metadata = existing;

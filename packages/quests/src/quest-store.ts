@@ -217,8 +217,7 @@ export class QuestStore {
         // Check metadata match if specified
         if (metadata && objDef.metadata) {
           let match = true;
-          const keys = Object.keys(objDef.metadata);
-          for (const key of keys) {
+          for (const key in objDef.metadata) {
             if (metadata[key] !== objDef.metadata[key]) {
               match = false;
               break;
