@@ -81,7 +81,7 @@ export class RetentionTracker {
 
     const [ok] = pcall(() => {
       this.store!.UpdateAsync(key, (old: unknown) => {
-        if (old !== undefined && old !== null && typeIs(old, "table")) {
+        if (old !== undefined && typeIs(old, "table")) {
           // Existing record
           const existing = old as unknown as RetentionRecord;
           const daysSinceFirst = math.floor((now - existing.firstSeen) / SECONDS_PER_DAY);
@@ -166,7 +166,7 @@ export class RetentionTracker {
 
     const [ok] = pcall(() => {
       const raw = this.store!.GetAsync(key);
-      if (raw !== undefined && raw !== null) {
+      if (raw !== undefined) {
         record = raw as unknown as RetentionRecord;
       }
     });
