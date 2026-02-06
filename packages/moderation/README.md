@@ -4,143 +4,186 @@ Server-side moderation system for Roblox games.
 
 ## Features
 
-- **Ban System** - Temporary and permanent bans with expiry tracking
-- **Mute System** - Chat and voice mutes with duration
-- **Cross-Server Sync** - Ban/mute updates propagate via MessagingService
-- **Trust Integration** - Hooks into `@rbx/security` trust scores
-- **Dashboard Sync** - Integrates with dashboard for moderator actions
-
-## Installation
-
-```bash
-pnpm add @rbx/moderation
-```
+- **Ban System** – Temporary and permanent bans with expiry tracking
+- **Mute System** – Chat, voice, and combined mutes with duration
+- **Cross-Server Sync** – Ban/mute updates propagate via MessagingService
+- **Observability** – Counters and histograms for sync message metrics
+- **Dashboard Sync** – Integrates with the dashboard for moderator actions
 
 ## Usage
 
-### Initialize Moderation
+### Get the Moderation Service
+
+`ModerationService` is a singleton. Pass a DataStore prefix to isolate
+data per game:
 
 ```typescript
-import { ModerationService } from "@rbx/moderation";
+import { getModeration } from "@rbx/moderation";
 
-// Server-side initialization
-ModerationService.init({
-  datastoreName: "PlayerModeration",
-  syncInterval: 30, // seconds between dashboard sync
-  onBanCheck: (player, ban) => {
-    // Optional: Custom ban handling
-    if (ban.type === "PERMANENT") {
-      player.Kick(`Permanently banned: ${ban.reason}`);
-    } else {
-      player.Kick(`Banned until ${ban.expiresAt}: ${ban.reason}`);
-    }
-  },
-});
+const moderation = getModeration("StarterModeration");
 ```
 
-### Check Bans on Join
+### Check Bans on Player Join
 
 ```typescript
-import { ModerationService } from "@rbx/moderation";
+import { getModeration } from "@rbx/moderation";
+
+const moderation = getModeration("StarterModeration");
 
 Players.PlayerAdded.Connect((player) => {
-  const banStatus = ModerationService.checkBan(player.UserId);
-
-  if (banStatus.isBanned) {
-    player.Kick(banStatus.message);
+  const result = moderation.checkBan(player.UserId);
+  if (result.isBanned) {
+    player.Kick(result.message);
     return;
   }
-
-  // Continue with normal join flow
 });
 ```
 
 ### Check Mutes
 
 ```typescript
-import { ModerationService } from "@rbx/moderation";
-
-// Before sending chat message
-const muteStatus = ModerationService.checkMute(player.UserId, "chat");
-if (muteStatus.isMuted) {
-  // Silently block message or show mute notification
-  return;
+const result = moderation.checkMute(player.UserId);
+if (result.isMuted) {
+  // result.mute contains the MuteRecord
+  // result.expiresIn is seconds until expiry
 }
 ```
 
-### Issue Moderation Actions (Server Only)
+### Issue a Ban
 
 ```typescript
-import { ModerationService } from "@rbx/moderation";
-
-// Issue a ban
-await ModerationService.ban({
+moderation.ban({
   playerId: targetUserId,
-  type: "TEMPORARY",
-  durationHours: 24,
-  reason: "Exploiting - speed hack detected",
-  moderatorId: "system", // or moderator's userId
+  type: "TEMPORARY", // or "PERMANENT"
+  durationHours: 24, // omit for permanent
+  reason: "Exploiting — speed hack detected",
+  moderatorId: "system",
 });
+```
 
-// Issue a mute
-await ModerationService.mute({
+### Revoke a Ban
+
+```typescript
+moderation.revokeBan(playerId, banId, revokedById, "Appeal approved");
+```
+
+### Issue a Mute
+
+```typescript
+moderation.mute({
   playerId: targetUserId,
-  type: "chat",
+  type: "chat", // "chat" | "voice" | "all"
   durationMinutes: 30,
   reason: "Spam",
+  moderatorId: "system",
+});
+```
+
+### Remove a Mute
+
+```typescript
+moderation.unmute(playerId, muteId, removedByUserId);
+```
+
+### React to Cross-Server Events
+
+```typescript
+moderation.onBan((record) => {
+  const player = Players.GetPlayerByUserId(record.playerId);
+  if (player) player.Kick("You have been banned.");
 });
 
-// Revoke a ban
-await ModerationService.revokeBan(banId, "Appeal approved");
+moderation.onMute((record) => {
+  const player = Players.GetPlayerByUserId(record.playerId);
+  if (player) {
+    player.SetAttribute("rbx.moderation.muted", true);
+  }
+});
 ```
 
 ## Architecture
 
 ```
 @rbx/moderation
-├── ban-store.ts      - DataStore wrapper for ban records
-├── mute-store.ts     - DataStore wrapper for mute records
-├── sync.ts           - Cross-server sync via MessagingService
-├── service.ts        - Main ModerationService API
-└── types.ts          - Type definitions
+├── types.ts          – Type definitions + default config
+├── ban-store.ts      – DataStore CRUD + caching for ban records
+├── mute-store.ts     – DataStore CRUD + caching for mute records
+├── service.ts        – ModerationService singleton (stores + MessagingService sync + observability)
+└── index.ts          – Re-exports
 ```
 
-## Integration with @rbx/security
+## Game Integration
 
-The moderation system integrates with trust scores:
+Both the **Starter** and **Obby** game templates integrate moderation via two
+services:
 
-```typescript
-import { Enforcer } from "@rbx/security";
-import { ModerationService } from "@rbx/moderation";
+| Service                        | Role                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| `ModerationEnforcementService` | Checks bans on join (kicks), applies mute player attributes, reacts to cross-server events |
+| `ChatModerationService`        | Blanks chat messages from muted players using `TextChatService.OnIncomingMessage`          |
 
-// Configure enforcer to use moderation for bans
-Enforcer.configure({
-  onBan: async (player, reason) => {
-    await ModerationService.ban({
-      playerId: player.UserId,
-      type: "TEMPORARY",
-      durationHours: 24,
-      reason,
-      moderatorId: "system",
-    });
-  },
-});
+## Data Model
+
+### BanRecord
+
+| Field           | Type                                               | Description                |
+| --------------- | -------------------------------------------------- | -------------------------- |
+| `id`            | `string`                                           | Unique ban ID (GUID)       |
+| `playerId`      | `number`                                           | Roblox UserId              |
+| `playerName`    | `string?`                                          | Cached display name        |
+| `type`          | `"TEMPORARY" \| "PERMANENT"`                       | Ban type                   |
+| `status`        | `"ACTIVE" \| "EXPIRED" \| "REVOKED" \| "APPEALED"` | Current status             |
+| `reason`        | `string`                                           | Shown to the player        |
+| `internalNote`  | `string?`                                          | Moderator-only note        |
+| `durationHours` | `number?`                                          | Duration (nil = permanent) |
+| `expiresAt`     | `number?`                                          | Unix timestamp             |
+| `moderatorId`   | `string`                                           | Who issued the ban         |
+| `createdAt`     | `number`                                           | Unix timestamp             |
+| `revokedAt`     | `number?`                                          | When revoked               |
+| `revokedById`   | `string?`                                          | Who revoked                |
+| `revokeReason`  | `string?`                                          | Reason for revocation      |
+
+### MuteRecord
+
+| Field             | Type                         | Description              |
+| ----------------- | ---------------------------- | ------------------------ |
+| `id`              | `string`                     | Unique mute ID (GUID)    |
+| `playerId`        | `number`                     | Roblox UserId            |
+| `type`            | `"chat" \| "voice" \| "all"` | Mute scope               |
+| `isActive`        | `boolean`                    | Whether currently active |
+| `reason`          | `string`                     | Reason                   |
+| `durationMinutes` | `number`                     | Duration                 |
+| `expiresAt`       | `number`                     | Unix timestamp           |
+| `moderatorId`     | `string`                     | Who issued               |
+| `createdAt`       | `number`                     | Unix timestamp           |
+
+## Cross-Server Sync
+
+When a ban or mute is created, the service publishes the record to
+`ModBanSync` / `ModMuteSync` MessagingService topics. Subscribing servers
+invalidate their local cache and fire registered callbacks so enforcement
+services can react immediately.
+
+## Metrics
+
+| Metric                                      | Type      | Labels  |
+| ------------------------------------------- | --------- | ------- |
+| `moderation_sync_received_total`            | Counter   | `topic` |
+| `moderation_sync_published_total`           | Counter   | `topic` |
+| `moderation_sync_cache_invalidations_total` | Counter   | `topic` |
+| `moderation_sync_decode_errors_total`       | Counter   | `topic` |
+| `moderation_sync_message_age_ms`            | Histogram | `topic` |
+
+## Testing
+
+```bash
+pnpm --filter @rbx/moderation test
 ```
 
-## Dashboard Sync
+Tests cover:
 
-Bans and mutes sync with the dashboard database:
-
-- Dashboard moderators can issue/revoke bans via web UI
-- Changes propagate to all servers within sync interval
-- Audit logs are created for all moderation actions
-
-## Configuration
-
-| Option           | Type     | Default              | Description                    |
-| ---------------- | -------- | -------------------- | ------------------------------ |
-| `datastoreName`  | string   | `"PlayerModeration"` | DataStore name for records     |
-| `syncInterval`   | number   | `60`                 | Seconds between dashboard sync |
-| `messagingTopic` | string   | `"moderation"`       | MessagingService topic         |
-| `onBanCheck`     | function | default kick         | Custom ban handling            |
-| `onMuteCheck`    | function | undefined            | Custom mute notification       |
+- **BanStore** – creation (permanent/temporary), expiry semantics, revocation,
+  sync from external source, cache TTL + invalidation
+- **MuteStore** – creation (chat/voice/all), expiry, removal, cache behaviour
+- **ModerationService** – cross-server sync payload handling (string vs table),
+  JSON decode errors, callback dispatch

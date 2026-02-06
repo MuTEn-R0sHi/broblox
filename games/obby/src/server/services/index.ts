@@ -9,3 +9,5 @@ export { DataService } from "./DataService";
 export { StageService } from "./StageService";
 export { CheckpointService } from "./CheckpointService";
 export { LeaderboardService } from "./LeaderboardService";
+export { ModerationEnforcementService } from "./ModerationEnforcementService";
+export { ChatModerationService } from "./ChatModerationService";

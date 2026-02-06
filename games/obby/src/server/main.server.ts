@@ -10,6 +10,8 @@ import { CheckpointService } from "./services/CheckpointService";
 import { StageService } from "./services/StageService";
 import { LeaderboardService } from "./services/LeaderboardService";
 import { DataService } from "./services/DataService";
+import { ModerationEnforcementService } from "./services/ModerationEnforcementService";
+import { ChatModerationService } from "./services/ChatModerationService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -27,7 +29,9 @@ app
   .register(DataService)
   .register(StageService)
   .register(CheckpointService)
-  .register(LeaderboardService);
+  .register(LeaderboardService)
+  .register(ModerationEnforcementService)
+  .register(ChatModerationService);
 
 app.boot();
 logger.info("Obby server booted.");
