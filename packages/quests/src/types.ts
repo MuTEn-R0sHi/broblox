@@ -17,6 +17,8 @@ export type ObjectiveType =
   | "craft"
   | "score"
   | "survive"
+  | "stage_complete"
+  | "deathless_stages"
   | "custom";
 
 /** A single objective within a quest */
