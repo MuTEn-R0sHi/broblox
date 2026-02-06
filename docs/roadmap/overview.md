@@ -118,22 +118,24 @@ Test coverage: 620 tests across 24 test suites.
 
 ### Phase 4 — Production (operational excellence)
 
-**Status:** 🔜 Next
+**Status:** 🔄 In Progress (packages complete)
 
 **Goal:** safe continuous delivery and sustainable operations.
 
 Deliverables:
 
-- `packages/analytics` v1: player behavior events, funnels, retention
-- `packages/notifications` v1: in-game toasts, announcements, news
-- `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time)
-- `packages/codes` v1: redeemable promo codes + dashboard management
+- `packages/codes` v1: redeemable promo codes + dashboard management ✅
+- `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time) ✅
+- `packages/analytics` v1: player behavior events, funnels, retention ✅
+- `packages/notifications` v1: in-game toasts, announcements, news ✅
 - Open Cloud publish/promote pipeline hardening + ops maturity
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible (lint/test + scripted checks)
 - Rollback procedure tested + incident runbooks (matchmaking, exploit waves)
 - Roblox Moments integration (auto-detect highlights, viral sharing)
 - Regular ADR + security review cadence
+
+Test coverage: 764 tests across 32 test suites.
 
 ## Milestone mapping (packages)
 
@@ -146,12 +148,12 @@ Deliverables:
 - Games: `starter`, `obby`
 - Dashboard: RBAC, audit, ban workflow, flag propagation
 
-### Phase 4 (Next)
+### Phase 4 (In Progress)
 
-- `analytics`: player behavior events, funnels
-- `notifications`: in-game toasts, announcements
-- `leaderboards`: cross-game leaderboard infrastructure
-- `codes`: redeemable promo codes
+- `codes`: redeemable promo codes ✅
+- `leaderboards`: cross-game leaderboard infrastructure ✅
+- `analytics`: player behavior events, funnels ✅
+- `notifications`: in-game toasts, announcements ✅
 
 ### Phase 5a — Foundation
 
