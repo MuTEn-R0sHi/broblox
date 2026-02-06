@@ -76,6 +76,12 @@
               "out": {
                 "$path": "node_modules/@rbx/movement/out"
               }
+            },
+            "codes": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/codes/out"
+              }
             }
           }
         }
