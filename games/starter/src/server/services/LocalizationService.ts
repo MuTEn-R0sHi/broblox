@@ -20,48 +20,48 @@ export const LocalizationService: Service = {
     // Register default English strings
     i18n.registerStrings(
       "en",
-      "ui",
-      new Map<string, string>([
-        ["welcome_title", "Welcome!"],
-        ["welcome_message", "Welcome to Starter Game, {{name}}!"],
-        ["coins_display", "Coins: {{amount}}"],
-        ["level_display", "Level {{level}}"],
-        ["items_count", "{{count}} item|{{count}} items"],
-        ["settings_title", "Settings"],
-        ["play_button", "Play"],
-        ["shop_button", "Shop"],
-        ["inventory_button", "Inventory"],
-      ])
+      {
+        welcome_title: "Welcome!",
+        welcome_message: "Welcome to Starter Game, {{name}}!",
+        coins_display: "Coins: {{amount}}",
+        level_display: "Level {{level}}",
+        items_count: "{{count}} item|{{count}} items",
+        settings_title: "Settings",
+        play_button: "Play",
+        shop_button: "Shop",
+        inventory_button: "Inventory",
+      },
+      "ui"
     );
 
     i18n.registerStrings(
       "en",
-      "gameplay",
-      new Map<string, string>([
-        ["kill_message", "{{killer}} eliminated {{victim}}"],
-        ["round_start", "Round {{round}} begins!"],
-        ["round_end", "Round Over!"],
-        ["victory", "Victory!"],
-        ["defeat", "Defeat"],
-        ["respawn_timer", "Respawning in {{seconds}}s"],
-      ])
+      {
+        kill_message: "{{killer}} eliminated {{victim}}",
+        round_start: "Round {{round}} begins!",
+        round_end: "Round Over!",
+        victory: "Victory!",
+        defeat: "Defeat",
+        respawn_timer: "Respawning in {{seconds}}s",
+      },
+      "gameplay"
     );
 
     // Register Spanish strings
     i18n.registerStrings(
       "es",
-      "ui",
-      new Map<string, string>([
-        ["welcome_title", "¡Bienvenido!"],
-        ["welcome_message", "¡Bienvenido a Starter Game, {{name}}!"],
-        ["coins_display", "Monedas: {{amount}}"],
-        ["level_display", "Nivel {{level}}"],
-        ["items_count", "{{count}} objeto|{{count}} objetos"],
-        ["settings_title", "Configuración"],
-        ["play_button", "Jugar"],
-        ["shop_button", "Tienda"],
-        ["inventory_button", "Inventario"],
-      ])
+      {
+        welcome_title: "¡Bienvenido!",
+        welcome_message: "¡Bienvenido a Starter Game, {{name}}!",
+        coins_display: "Monedas: {{amount}}",
+        level_display: "Nivel {{level}}",
+        items_count: "{{count}} objeto|{{count}} objetos",
+        settings_title: "Configuración",
+        play_button: "Jugar",
+        shop_button: "Tienda",
+        inventory_button: "Inventario",
+      },
+      "ui"
     );
 
     logger.info("Localization initialized with en, es");

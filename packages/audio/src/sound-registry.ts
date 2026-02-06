@@ -21,7 +21,13 @@ export class SoundRegistry {
       this.logger?.warn(`Duplicate sound ID: ${sound.id}`);
       return false;
     }
-    this.sounds.set(sound.id, sound);
+    // Apply defaults for optional fields
+    const resolved: SoundDefinition = {
+      ...sound,
+      playbackSpeed: sound.playbackSpeed ?? 1,
+      maxInstances: sound.maxInstances ?? 0,
+    };
+    this.sounds.set(sound.id, resolved);
     return true;
   }
 

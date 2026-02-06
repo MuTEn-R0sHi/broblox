@@ -21,12 +21,12 @@ export interface SoundDefinition {
   channel: AudioChannel;
   /** Default volume (0–1) */
   volume: number;
-  /** Default playback speed */
-  playbackSpeed: number;
+  /** Default playback speed (default: 1) */
+  playbackSpeed?: number;
   /** Whether this sound loops */
   looped: boolean;
-  /** Max simultaneous instances (0 = unlimited) */
-  maxInstances: number;
+  /** Max simultaneous instances (0 = unlimited, default: 0) */
+  maxInstances?: number;
   /** Optional group tag for batch operations */
   group?: string;
 }
