@@ -1,8 +1,10 @@
 {
-  "extends": "./tsconfig.roblox.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@rbxts"]
+    "baseUrl": ".",
+    "paths": {
+      "@rbx/*": ["../*/src"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts"]
+  "include": ["src/**/*.ts", "../../types/**/*.d.ts"]
 }

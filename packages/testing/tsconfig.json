@@ -1,8 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "out"
+    "baseUrl": ".",
+    "paths": {
+      "@rbx/*": ["../*/src"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "../../types/**/*.d.ts"]
 }

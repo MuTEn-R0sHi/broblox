@@ -1,6 +1,10 @@
 {
-  "extends": "./tsconfig.roblox.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "ignoreDeprecations": "5.0"
-  }
+    "baseUrl": ".",
+    "paths": {
+      "@rbx/*": ["../*/src"]
+    }
+  },
+  "include": ["src/**/*.ts", "../../types/**/*.d.ts"]
 }

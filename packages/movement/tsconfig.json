@@ -1,12 +1,10 @@
 {
-  "extends": "../../tsconfig.roblox.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "out",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@rbx/*": ["../../packages/*/src"]
+      "@rbx/*": ["../*/src"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*.ts", "../../types/**/*.d.ts"]
 }
