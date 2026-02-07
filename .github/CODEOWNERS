@@ -20,7 +20,6 @@
 # CI/CD and infrastructure
 /.github/ @roshi
 /aftman.toml @roshi
-/default.project.json @roshi
 
 # Security-sensitive files
 /SECURITY.md @roshi

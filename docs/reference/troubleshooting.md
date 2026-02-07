@@ -81,7 +81,7 @@ See [Roblox-TS Conventions](../roblox-ts/conventions.md#package-configuration-cr
 
 - Changes not syncing:
   - rebuild packages first: `pnpm run build:packages`
-  - regenerate sourcemap: `rojo sourcemap default.project.json -o sourcemap.json`
+  - regenerate sourcemap: `cd games/starter && rojo sourcemap default.project.json -o sourcemap.json`
 
 ## "Works locally, fails in production"
 

@@ -129,7 +129,7 @@ print(playerCtx.playerId);
 Telemetry events and spans automatically include correlation context:
 
 ```typescript
-setCorrelationContext({ playerId: "123", sessionId: "abc" });
+setContext({ playerId: "123", sessionId: "abc" });
 
 emit({
   name: "action_completed",
@@ -205,17 +205,11 @@ if (math.random() < 0.01) {
 ## Integration Example
 
 ```typescript
-import {
-  emit,
-  incrementCounter,
-  recordTiming,
-  withSpan,
-  setCorrelationContext,
-} from "@rbx/observability";
+import { emit, incrementCounter, recordTiming, withSpan, setContext } from "@rbx/observability";
 
 function handlePlayerAction(player: Player, action: ActionRequest) {
   // Set context for this request
-  setCorrelationContext({
+  setContext({
     playerId: tostring(player.UserId),
     actionId: action.actionId,
   });

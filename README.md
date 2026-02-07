@@ -109,12 +109,12 @@ pnpm run game:starter:rojo
 
 This repository contains two Rojo project files:
 
-| File                                 | Purpose               | When to use                                                           |
-| ------------------------------------ | --------------------- | --------------------------------------------------------------------- |
-| `games/starter/default.project.json` | Game-specific project | **Development (recommended)** - Use this for syncing to Roblox Studio |
-| `/default.project.json`              | Monorepo root project | **CI/tooling only** - Used for sourcemap generation and validation    |
+| File                                 | Purpose              | When to use                                             |
+| ------------------------------------ | -------------------- | ------------------------------------------------------- |
+| `games/starter/default.project.json` | Starter game project | **Development** - Use this for syncing to Roblox Studio |
+| `games/obby/default.project.json`    | Obby game project    | **Development** - Use this for syncing to Roblox Studio |
 
-> **Note**: Always use `games/starter/default.project.json` for active game development. The root project file exists primarily for monorepo-level tooling and CI checks.
+> **Note**: Each game has its own `default.project.json` for Rojo syncing and builds.
 
 ## Package dependency graph
 
