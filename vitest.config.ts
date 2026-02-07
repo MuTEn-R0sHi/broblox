@@ -39,11 +39,13 @@ export default defineConfig({
       "@rbx/tutorial": resolve(__dirname, "packages/tutorial/src/index.ts"),
       "@rbx/world-systems": resolve(__dirname, "packages/world-systems/src/index.ts"),
       "@rbx/testing": resolve(__dirname, "packages/testing/src/index.ts"),
+      "@rbxts/t": resolve(__dirname, "packages/net/src/__mocks__/t-mock.ts"),
     },
   },
   test: {
     globals: true,
     setupFiles: [resolve(__dirname, "test-setup.ts")],
+    exclude: ["apps/**", "node_modules/**", "**/node_modules/**", "**/out/**", "**/dist/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],
