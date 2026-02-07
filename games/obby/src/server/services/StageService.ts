@@ -6,6 +6,7 @@
 import { Service, createLogger } from "@rbx/core";
 import { CollectionService, Workspace } from "@rbxts/services";
 import { StageConfig, StageCompletedEvent, OBBY_CONSTANTS } from "shared/types";
+import { mapLen } from "shared/util";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { CheckpointService } from "./CheckpointService";
@@ -45,7 +46,7 @@ export const StageService: Service & {
   },
 
   getStageCount(): number {
-    return stages.size();
+    return mapLen(stages);
   },
 
   completeStage(player: Player, stageNumber: number): void {
@@ -234,7 +235,7 @@ export const StageService: Service & {
       }
     }
 
-    logger.info(`Loaded ${stages.size()} stages`);
+    logger.info(`Loaded ${mapLen(stages)} stages`);
 
     // Helper to setup end zone touch detection
     const setupEndZone = (zone: BasePart, stageNum: number) => {

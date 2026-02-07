@@ -6,6 +6,7 @@
 import { Service, createLogger } from "@rbx/core";
 import { CollectionService, Players, Workspace } from "@rbxts/services";
 import { CheckpointData, CheckpointReachedEvent, OBBY_CONSTANTS } from "shared/types";
+import { mapLen, arrLen } from "shared/util";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 
@@ -303,7 +304,7 @@ export const CheckpointService: Service & {
       }
     }
 
-    logger.info(`Loaded ${checkpoints.size()} checkpoints`);
+    logger.info(`Loaded ${mapLen(checkpoints)} checkpoints`);
 
     // Handle player respawns - teleport to checkpoint after Roblox spawns them
     const handleCharacterAdded = (player: Player, character: Model) => {
@@ -401,7 +402,7 @@ export const CheckpointService: Service & {
     }
 
     logger.info(
-      `Set up ${CollectionService.GetTagged(OBBY_CONSTANTS.KILL_ZONE_TAG).size()} kill zones`
+      `Set up ${arrLen(CollectionService.GetTagged(OBBY_CONSTANTS.KILL_ZONE_TAG))} kill zones`
     );
 
     // Setup coin collection
@@ -505,7 +506,7 @@ export const CheckpointService: Service & {
     }
 
     logger.info(
-      `Set up ${CollectionService.GetTagged(OBBY_CONSTANTS.COIN_TAG).size()} coins total`
+      `Set up ${arrLen(CollectionService.GetTagged(OBBY_CONSTANTS.COIN_TAG))} coins total`
     );
   },
 

@@ -42,6 +42,14 @@ export default defineConfig({
       "@rbx/ui": resolve(__dirname, "packages/ui/src/index.ts"),
       "@rbx/testing": resolve(__dirname, "packages/testing/src/index.ts"),
       "@rbxts/t": resolve(__dirname, "packages/testing/src/t-mock.ts"),
+
+      // Obby game shared path alias (mirrors tsconfig "shared/*" → "src/shared/*")
+      "shared/types": resolve(__dirname, "games/obby/src/shared/types.ts"),
+      "shared/remotes": resolve(__dirname, "games/obby/src/shared/remotes.ts"),
+      "shared/util": resolve(__dirname, "games/obby/src/shared/util.ts"),
+
+      // @rbxts/services is a Lua file — stub it so vitest can parse it
+      "@rbxts/services": resolve(__dirname, "packages/testing/src/services-mock.ts"),
     },
   },
   test: {

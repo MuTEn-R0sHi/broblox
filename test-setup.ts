@@ -68,6 +68,22 @@ if (!String.prototype.find) {
   };
 }
 
+// Roblox-TS String.lower() / String.upper() polyfill
+// @ts-expect-error - Polyfilling native prototype for tests
+if (!String.prototype.lower) {
+  // @ts-expect-error - Polyfilling native prototype for tests
+  String.prototype.lower = function () {
+    return this.toLowerCase();
+  };
+}
+// @ts-expect-error - Polyfilling native prototype for tests
+if (!String.prototype.upper) {
+  // @ts-expect-error - Polyfilling native prototype for tests
+  String.prototype.upper = function () {
+    return this.toUpperCase();
+  };
+}
+
 // Roblox-TS Array.remove() polyfill (removes element at index)
 // @ts-expect-error - Polyfilling native prototype for tests
 if (!Array.prototype.remove) {
@@ -86,8 +102,9 @@ if (!Array.prototype.clear) {
   };
 }
 
-// Note: Map.size is a property in JS but a method in roblox-ts.
-// Source code should avoid Map.size() — count Map entries manually instead.
+// Note: Map.size and Set.size are getters in JS but called as methods in
+// roblox-ts (`.size()`).  Game code uses `mapLen()` / `setLen()` helpers
+// (from shared/util) that work in both environments — no polyfill needed.
 
 // Roblox-TS Array.sort() polyfill — Lua table.sort comparators return boolean
 // (true = a before b), but JS Array.sort expects a numeric comparator.  Wrap
