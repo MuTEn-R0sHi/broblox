@@ -72,7 +72,8 @@ jobs:
 
       - name: Install rbxcloud CLI
         run: |
-          curl -L https://github.com/Sleitnick/rbxcloud/releases/latest/download/rbxcloud-linux.zip -o rbxcloud.zip
+          RBXCLOUD_URL=$(curl -s https://api.github.com/repos/Sleitnick/rbxcloud/releases/latest | grep -o 'https://[^"]*linux\.zip')
+          curl -L "$RBXCLOUD_URL" -o rbxcloud.zip
           unzip rbxcloud.zip
           chmod +x rbxcloud
           sudo mv rbxcloud /usr/local/bin/
