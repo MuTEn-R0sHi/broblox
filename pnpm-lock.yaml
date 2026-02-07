@@ -241,6 +241,9 @@ importers:
       "@rbx/gacha":
         specifier: workspace:*
         version: link:../../packages/gacha
+      "@rbx/inventory":
+        specifier: workspace:*
+        version: link:../../packages/inventory
       "@rbx/leaderboards":
         specifier: workspace:*
         version: link:../../packages/leaderboards
@@ -256,6 +259,9 @@ importers:
       "@rbx/net":
         specifier: workspace:*
         version: link:../../packages/net
+      "@rbx/notifications":
+        specifier: workspace:*
+        version: link:../../packages/notifications
       "@rbx/pets":
         specifier: workspace:*
         version: link:../../packages/pets
