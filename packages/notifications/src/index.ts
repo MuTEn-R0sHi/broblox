@@ -10,3 +10,8 @@
 export * from "./types";
 export { NotificationStore } from "./notification-store";
 export { AnnouncementManager } from "./announcement-manager";
+export { createNotificationService } from "./create-notification-service";
+export type {
+  NotificationServiceConfig,
+  NotificationServiceHandle,
+} from "./create-notification-service";

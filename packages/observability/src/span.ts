@@ -220,12 +220,6 @@ export function childSpan(name: string): Span {
 // Trace Context Helpers
 // ============================================================================
 
-// Declare Roblox globals
-declare const game: {
-  JobId: string;
-  PlaceId: number;
-};
-
 /**
  * Create a new trace context and run a function within it.
  */

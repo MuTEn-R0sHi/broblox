@@ -4,25 +4,11 @@
  * Seasonal progression with obby-themed rewards.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { SeasonRegistry, BattlePassStore } from "@rbx/battle-pass";
+import { createBattlePassService } from "@rbx/battle-pass";
 
-const logger = createLogger("BattlePassService");
-
-const seasonRegistry = new SeasonRegistry();
-const playerBattlePass = new Map<number, BattlePassStore>();
-
-export function getSeasonRegistry(): SeasonRegistry {
-  return seasonRegistry;
-}
-
-export function getBattlePassStore(playerId: number): BattlePassStore | undefined {
-  return playerBattlePass.get(playerId);
-}
-
-export const BattlePassService: Service = {
-  onInit() {
-    seasonRegistry.register({
+const handle = createBattlePassService({
+  seasons: [
+    {
       id: "obby_s1",
       name: "Obby Season 1: Sky High",
       description: "Reach new heights",
@@ -84,46 +70,13 @@ export const BattlePassService: Service = {
           ],
         },
       ],
-    });
+    },
+  ],
+  datastoreName: "ObbyBattlePass",
+});
 
-    logger.info(`Season registry initialized — ${seasonRegistry.count()} seasons.`);
-  },
-
-  onStart() {
-    logger.info("BattlePassService started.");
-  },
-
-  onDestroy() {
-    playerBattlePass.forEach((store, playerId) => {
-      if (store.isDirty()) {
-        store.save();
-        logger.info(`Saved battle pass for player ${playerId}`);
-      }
-    });
-    logger.info("BattlePassService stopped.");
-  },
-};
-
-export function initPlayerBattlePass(playerId: number): BattlePassStore {
-  const store = new BattlePassStore(playerId, seasonRegistry, {
-    datastoreName: "ObbyBattlePass",
-    enableLogging: true,
-  });
-  store.init();
-  store.load();
-  const active = seasonRegistry.getActive();
-  if (active !== undefined) {
-    store.setSeason(active.id);
-  }
-  playerBattlePass.set(playerId, store);
-  logger.info(`Battle pass loaded for player ${playerId}`);
-  return store;
-}
-
-export function cleanupPlayerBattlePass(playerId: number): void {
-  const store = playerBattlePass.get(playerId);
-  if (store && store.isDirty()) {
-    store.save();
-  }
-  playerBattlePass.delete(playerId);
-}
+export const BattlePassService = handle.Service;
+export const getSeasonRegistry = () => handle.getSeasonRegistry();
+export const getBattlePassStore = (playerId: number) => handle.getBattlePassStore(playerId);
+export const initPlayerBattlePass = (playerId: number) => handle.initPlayer(playerId);
+export const cleanupPlayerBattlePass = (playerId: number) => handle.cleanupPlayer(playerId);

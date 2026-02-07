@@ -16,18 +16,6 @@ import type {
 import { DEFAULT_GACHA_CONFIG, rarityRank } from "./types";
 import { EggRegistry } from "./egg-registry";
 
-declare const game: {
-  GetService(name: string): Record<string, unknown>;
-};
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare const os: { time(): number };
-declare const math: {
-  floor(n: number): number;
-  random(): number;
-  huge: number;
-};
-declare const print: (...args: unknown[]) => void;
-
 export class GachaStore {
   private playerId: number;
   private registry: EggRegistry;

@@ -5,7 +5,7 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { CollectionService, Players, Workspace } from "@rbxts/services";
-import { CheckpointData, CheckpointReachedEvent, OBBY_CONSTANTS, events } from "shared/types";
+import { CheckpointData, CheckpointReachedEvent, OBBY_CONSTANTS } from "shared/types";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 
@@ -122,7 +122,7 @@ export const CheckpointService: Service & {
       };
 
       // Notify client
-      RemoteService.fireClient(player, events.checkpointReached, checkpointEvent);
+      RemoteService.getRegistry().fireClient("CheckpointReached", player, checkpointEvent);
     }
   },
 
@@ -202,7 +202,7 @@ export const CheckpointService: Service & {
 
     // Handle client-requested respawns (e.g. reset keybind).
     // Note: main.server registers RemoteService before CheckpointService, so the RemoteEvent exists.
-    RemoteService.requestRespawn().OnServerEvent.Connect((player: Player, payload: unknown) => {
+    RemoteService.getRegistry().onEvent("RequestRespawn", (player: Player, payload) => {
       const now = os.clock();
       const last = lastRespawnRequest.get(player.UserId) ?? -math.huge;
       if (now - last < OBBY_CONSTANTS.RESPAWN_DELAY) {
@@ -465,7 +465,7 @@ export const CheckpointService: Service & {
         // Sync updated data to client
         const updatedData = DataService.getData(player);
         if (updatedData) {
-          RemoteService.fireClient(player, "ObbyPlayerDataSync", {
+          RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
             coins: updatedData.coins,
             currentStage: updatedData.currentStage,
             currentCheckpoint: updatedData.currentCheckpoint,

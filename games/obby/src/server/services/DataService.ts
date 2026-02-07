@@ -5,7 +5,7 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { createPlayerDataStore, createSessionManager, PlayerSession } from "@rbx/data";
-import { events, ObbyPlayerData, StageProgress } from "shared/types";
+import { ObbyPlayerData, StageProgress } from "shared/types";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
 
@@ -178,7 +178,7 @@ export const DataService: Service & {
       this.startStageTimer(player);
 
       // Initial client sync for HUD/state.
-      RemoteService.fireClient(player, events.playerDataSync, {
+      RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
         coins: session.data.coins,
         currentStage: session.data.currentStage,
         currentCheckpoint: session.data.currentCheckpoint,

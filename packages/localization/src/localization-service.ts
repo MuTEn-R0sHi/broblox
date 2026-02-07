@@ -18,8 +18,6 @@ import type {
 } from "./types";
 import { DEFAULT_LOCALIZATION_CONFIG } from "./types";
 
-declare const os: { time(): number };
-
 const PLURAL_SEPARATOR = "|";
 
 export class LocalizationService {

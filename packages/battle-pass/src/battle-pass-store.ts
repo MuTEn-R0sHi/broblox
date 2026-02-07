@@ -18,14 +18,6 @@ import type {
 import { DEFAULT_BATTLE_PASS_CONFIG } from "./types";
 import { SeasonRegistry } from "./season-registry";
 
-declare const game: {
-  GetService(name: string): Record<string, unknown>;
-};
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const os: { time(): number };
-declare const print: (...args: unknown[]) => void;
-
 export class BattlePassStore {
   private playerId: number;
   private registry: SeasonRegistry;

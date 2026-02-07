@@ -81,14 +81,16 @@ If a player leaves before flush completes, attempt synchronous save with timeout
 - On load, validate schema; if corrupt, load from backup or quarantine
 - See `docs/runbooks/data-corruption.md` for recovery procedures
 
-## Profile schema (planned)
+## Profile schema
+
+Implemented across `@rbx/data`, `@rbx/progression`, `@rbx/inventory`, `@rbx/rewards`, and `@rbx/moderation`:
 
 - `schemaVersion`
-- `progression` (xp, level, season)
-- `mmr` (per mode)
-- `inventory` (owned items, equipped loadouts)
-- `moderation` (ban state, mutes, trust score)
-- `receipts` / `grants` (idempotency keys)
+- `progression` (xp, level, prestige) — `@rbx/progression`
+- `mmr` (per mode) — `@rbx/matchmaking`
+- `inventory` (owned items, equipped loadouts) — `@rbx/inventory`
+- `moderation` (ban state, mutes, trust score) — `@rbx/moderation`
+- `receipts` / `grants` (idempotency keys) — `@rbx/rewards`
 
 ## Idempotency (non-negotiable)
 

@@ -4,23 +4,14 @@
  * Multi-language string management with interpolation and pluralization.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { LocalizationService as I18nService } from "@rbx/localization";
+import { createLocalizationService } from "@rbx/localization";
 
-const logger = createLogger("LocalizationService");
-
-const i18n = new I18nService();
-
-export function getI18n(): I18nService {
-  return i18n;
-}
-
-export const LocalizationService: Service = {
-  onInit() {
-    // Register default English strings
-    i18n.registerStrings(
-      "en",
-      {
+const handle = createLocalizationService({
+  strings: [
+    {
+      locale: "en",
+      namespace: "ui",
+      entries: {
         welcome_title: "Welcome!",
         welcome_message: "Welcome to Starter Game, {{name}}!",
         coins_display: "Coins: {{amount}}",
@@ -31,12 +22,11 @@ export const LocalizationService: Service = {
         shop_button: "Shop",
         inventory_button: "Inventory",
       },
-      "ui"
-    );
-
-    i18n.registerStrings(
-      "en",
-      {
+    },
+    {
+      locale: "en",
+      namespace: "gameplay",
+      entries: {
         kill_message: "{{killer}} eliminated {{victim}}",
         round_start: "Round {{round}} begins!",
         round_end: "Round Over!",
@@ -44,13 +34,11 @@ export const LocalizationService: Service = {
         defeat: "Defeat",
         respawn_timer: "Respawning in {{seconds}}s",
       },
-      "gameplay"
-    );
-
-    // Register Spanish strings
-    i18n.registerStrings(
-      "es",
-      {
+    },
+    {
+      locale: "es",
+      namespace: "ui",
+      entries: {
         welcome_title: "¡Bienvenido!",
         welcome_message: "¡Bienvenido a Starter Game, {{name}}!",
         coins_display: "Monedas: {{amount}}",
@@ -61,13 +49,10 @@ export const LocalizationService: Service = {
         shop_button: "Tienda",
         inventory_button: "Inventario",
       },
-      "ui"
-    );
+    },
+  ],
+  defaultLocale: "en",
+});
 
-    logger.info("Localization initialized with en, es");
-  },
-
-  onStart() {
-    logger.info("LocalizationService started");
-  },
-};
+export const LocalizationService = handle.Service;
+export const getI18n = () => handle.getI18n();

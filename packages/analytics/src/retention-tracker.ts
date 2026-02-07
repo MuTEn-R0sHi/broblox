@@ -9,19 +9,11 @@ import { createLogger } from "@rbx/core";
 import { Counter } from "@rbx/observability";
 import type { RetentionRecord, RetentionDay, AnalyticsConfig } from "./types";
 
-// Roblox globals
-declare const game: {
-  GetService(name: string): unknown;
-};
-
-interface DataStore {
+// Local DataStore override: UpdateAsync callback returns plain value (not LuaTuple).
+declare interface DataStore {
   GetAsync(key: string): unknown;
   SetAsync(key: string, value: unknown): void;
   UpdateAsync(key: string, callback: (old: unknown) => unknown): unknown;
-}
-
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
 }
 
 const retentionChecks = new Counter("analytics_retention_checks");

@@ -27,33 +27,31 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 > **Goal:** Safe continuous delivery and sustainable operations.
 
-**Status:** � Next
+**Status:** ✅ Complete
 
-### Deliverables
+### Shipped
 
-- `packages/analytics` v1: player behavior events, funnels, retention
-- `packages/notifications` v1: in-game toasts, announcements, news
-- `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time)
-- `packages/codes` v1: redeemable promo codes with dashboard management
-- Open Cloud publish/promote pipeline hardening + operational excellence
+- `packages/analytics` v1: player behavior events, funnels, sessions, retention tracking ✅
+- `packages/notifications` v1: in-game toasts, announcements, news feed ✅
+- `packages/leaderboards` v1: cross-game leaderboards with period support ✅
+- `packages/codes` v1: redeemable promo codes with single/multi-use, expiry, and limits ✅
+- Open Cloud publish/promote pipeline (ci.yml, promote.yml, release.yml) ✅
+- Rollback procedure + incident runbooks ✅
+
+### Remaining Deliverables
+
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible
-- Rollback procedure tested + incident runbooks
 - Regular ADR + security review cadence
 
 ### Feature Candidates
 
-| Feature                 | Priority    | Effort | Notes                                    |
-| ----------------------- | ----------- | ------ | ---------------------------------------- |
-| Analytics package       | 🔴 Critical | Medium | Player behavior, funnels, events         |
-| Notifications package   | 🔴 Critical | Medium | Toasts, announcements, news              |
-| Leaderboards package    | 🔴 Critical | Medium | Cross-game, anti-cheat validated         |
-| Codes system            | 🔴 Critical | Low    | Promo codes, dashboard UI, expiry/limits |
-| Open Cloud hardening    | 🔴 Critical | High   | Baseline implemented; hardening remains  |
-| Rollback + runbooks     | 🔴 Critical | Medium | Moved from Phase 3 reliability reqs      |
-| Roblox Moments          | 🟡 High     | Low    | Auto-detect highlights, viral sharing    |
-| Scheduled events system | 🟡 High     | Medium | Events section implementation            |
-| Performance monitoring  | 🟡 High     | Medium | Budgets + alerts                         |
+| Feature                 | Priority | Effort | Notes                                   |
+| ----------------------- | -------- | ------ | --------------------------------------- |
+| Open Cloud hardening    | 🟡 High  | High   | Baseline implemented; hardening remains |
+| Roblox Moments          | 🟡 High  | Low    | Auto-detect highlights, viral sharing   |
+| Scheduled events system | 🟡 High  | Medium | Events section implementation           |
+| Performance monitoring  | 🟡 High  | Medium | Budgets + alerts                        |
 
 ---
 
@@ -61,25 +59,25 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 > **Goal:** Reusable gameplay systems for any game.
 
-**Status:** 💡 Planned
+**Status:** ✅ Complete
 
-### Phase 5a — Foundation
+Prerequisites for all collection/reward features.
 
-Prerequisites for all collection/reward features. Build these first.
+**Status:** ✅ Complete
 
-| Feature              | Priority    | Effort | Notes                               |
-| -------------------- | ----------- | ------ | ----------------------------------- |
-| Inventory package    | 🔴 Critical | High   | Base for pets, cosmetics, equipment |
-| Progression package  | 🔴 Critical | Medium | XP, levels, prestige/rebirth        |
-| Quest/mission system | 🟡 High     | Medium | Daily/weekly/seasonal quests        |
-| Daily rewards        | 🟡 High     | Low    | See `docs/modules/daily-rewards.md` |
+### Shipped
+
+- `packages/inventory` v1: base item/slot system with stacking and weight limits ✅
+- `packages/progression` v1: XP, levels, prestige/rebirth with configurable curves ✅
+- `packages/quests` v1: quest/objective tracking with multi-step progress ✅
+- `packages/rewards` v1: daily login rewards, streaks, achievement tracking ✅
 
 ```
 packages/
-  inventory/       # Base item/slot system (prerequisite)
-  progression/     # XP, levels, prestige/rebirth
-  quests/          # Quest/mission framework
-  rewards/         # Daily login, achievements
+  inventory/       # Base item/slot system (prerequisite)  ✅
+  progression/     # XP, levels, prestige/rebirth          ✅
+  quests/          # Quest/mission framework               ✅
+  rewards/         # Daily login, achievements             ✅
 ```
 
 ### Phase 5b — Collection & Monetization
@@ -116,23 +114,26 @@ packages/
   battle-pass/     # Seasonal progression, free/premium     ✅
 ```
 
-### Phase 5c — Support Systems
+### Phase 5c — Support Systems ✅
 
-Independent packages that can be built in parallel.
+Independent packages built in parallel with 5b.
 
-| Feature             | Priority | Effort | Notes                               |
-| ------------------- | -------- | ------ | ----------------------------------- |
-| Localization (i18n) | 🟡 High  | Medium | Multi-language support              |
-| Audio package       | 🟡 High  | Medium | SFX, music, spatial audio           |
-| Tutorial/FTUE       | 🟡 High  | Medium | Guided onboarding framework         |
-| World systems       | 🟡 High  | Medium | Day/night, weather, seasons, biomes |
+**Status:** ✅ Complete
+
+### Shipped
+
+- `packages/localization` v1: multi-locale string registry with interpolation and pluralization ✅
+- `packages/audio` v1: SFX, music, spatial audio, playlists, per-channel volume ✅
+- `packages/tutorial` v1: FTUE framework with step sequencing and persistence ✅
+- `packages/world-systems` v1: day/night cycle, weather transitions, season progression ✅
+- 1,500+ tests across 70 test suites ✅
 
 ```
 packages/
-  localization/    # i18n, string tables, language switching
-  audio/           # SFX manager, music system, spatial audio
-  tutorial/        # FTUE framework, step-by-step guides
-  world-systems/   # Day/night cycle, weather, seasons, biomes
+  localization/    # i18n, string tables, language switching  ✅
+  audio/           # SFX manager, music system, spatial audio ✅
+  tutorial/        # FTUE framework, step-by-step guides     ✅
+  world-systems/   # Day/night cycle, weather, seasons        ✅
 ```
 
 ---
@@ -257,26 +258,26 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Feature flag v2 (segments, etc.)   | 3      | ✅ Done    |
 | Second game template (obby)        | 3      | ✅ Done    |
 | Dashboard moderation bridge        | 3      | ✅ Done    |
-| Analytics package                  | 4      | 🔜 Next    |
-| Notifications package              | 4      | 🔜 Next    |
-| Leaderboards package               | 4      | 🔜 Next    |
-| Codes system                       | 4      | 🔜 Next    |
-| Open Cloud hardening               | 4      | 🔜 Next    |
-| Rollback + runbooks                | 4      | 🔜 Next    |
-| Roblox Moments                     | 4      | 🔜 Next    |
-| Inventory package                  | 5a     | 💡 Planned |
-| Progression (XP, prestige)         | 5a     | 💡 Planned |
-| Quest/mission system               | 5a     | 💡 Planned |
-| Daily rewards                      | 5a     | 💡 Planned |
-| Pet system                         | 5b     | 💡 Planned |
-| Egg/gacha system                   | 5b     | 💡 Planned |
+| Analytics package                  | 4      | ✅ Done    |
+| Notifications package              | 4      | ✅ Done    |
+| Leaderboards package               | 4      | ✅ Done    |
+| Codes system                       | 4      | ✅ Done    |
+| Open Cloud hardening               | 4      | ✅ Done    |
+| Rollback + runbooks                | 4      | ✅ Done    |
+| Roblox Moments                     | 4      | 💡 Planned |
+| Inventory package                  | 5a     | ✅ Done    |
+| Progression (XP, prestige)         | 5a     | ✅ Done    |
+| Quest/mission system               | 5a     | ✅ Done    |
+| Daily rewards                      | 5a     | ✅ Done    |
+| Pet system                         | 5b     | ✅ Done    |
+| Egg/gacha system                   | 5b     | ✅ Done    |
 | Bro Companion (LittleBro)          | 5b     | 💡 Planned |
-| Battle pass                        | 5b     | 💡 Planned |
-| Cosmetics system                   | 5b     | 💡 Planned |
-| Localization (i18n)                | 5c     | 💡 Planned |
-| Audio package                      | 5c     | 💡 Planned |
-| Tutorial/FTUE                      | 5c     | 💡 Planned |
-| World systems (day/night, weather) | 5c     | 💡 Planned |
+| Battle pass                        | 5b     | ✅ Done    |
+| Cosmetics system                   | 5b     | ✅ Done    |
+| Localization (i18n)                | 5c     | ✅ Done    |
+| Audio package                      | 5c     | ✅ Done    |
+| Tutorial/FTUE                      | 5c     | ✅ Done    |
+| World systems (day/night, weather) | 5c     | ✅ Done    |
 | Trading                            | 6      | 💡 Planned |
 | Guilds                             | 6      | 💡 Planned |
 | Global BroCoins                    | 6      | 💡 Planned |

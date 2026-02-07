@@ -1,6 +1,6 @@
 # Modules: Daily rewards
 
-A reusable login streak system.
+A reusable login streak system (`@rbx/rewards`). **Status: Implemented** (35 tests).
 
 ## Purpose
 
@@ -13,11 +13,13 @@ A reusable login streak system.
 - Claims are idempotent (`dailyRewardClaimId`).
 - Time logic uses server time only.
 
-## Data model (planned)
+## Data model
 
-- `lastClaimDay` (server day index)
-- `streakCount`
-- `missedDays`
+- `lastClaimDay` — server day index of last claim
+- `streakCount` — consecutive login days
+- `gracePeriod` — configurable missed-day allowance before streak reset
+- `rewards[]` — ordered reward definitions per day
+- Achievement tracking via `AchievementStore` with progress counters
 
 ## Security
 

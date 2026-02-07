@@ -7,6 +7,9 @@
 // Application lifecycle
 export * from "./application";
 
+// Player lifecycle factory
+export * from "./create-player-lifecycle-service";
+
 // Roblox-TS compatible collection helpers
 export { arraySize, arrayRemoveAt, arrayTake, setSize } from "./collections";
 

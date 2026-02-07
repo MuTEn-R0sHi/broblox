@@ -7,12 +7,6 @@
 import { CorrelationContext } from "./types";
 import { rbxSize } from "./runtime";
 
-// Declare Roblox globals
-declare const game: {
-  JobId: string;
-  PlaceId: number;
-};
-
 // ============================================================================
 // Context Storage
 // ============================================================================

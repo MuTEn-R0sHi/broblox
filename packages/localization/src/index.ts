@@ -12,6 +12,12 @@
  */
 
 export { LocalizationService } from "./localization-service";
+export { createLocalizationService } from "./create-localization-service";
+export type {
+  LocalizationServiceConfig,
+  LocalizationServiceHandle,
+  LocaleStrings,
+} from "./create-localization-service";
 
 export type {
   LocaleCode,

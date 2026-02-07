@@ -20,8 +20,6 @@ import type {
 import { DEFAULT_TUTORIAL_CONFIG } from "./types";
 import { SequenceRegistry } from "./sequence-registry";
 
-declare const os: { time(): number };
-
 const PROGRESS_VERSION = 1;
 
 export class TutorialManager {

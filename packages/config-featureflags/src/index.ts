@@ -689,7 +689,9 @@ function notifyListeners(name: string, newValue: FlagValue, oldValue: FlagValue 
 // Default Platform Flags
 // ============================================================================
 
-// Gameplay flags
+// Feature flag sync service factory
+export * from "./create-feature-flag-sync-service";
+
 // Gameplay flags
 defineFlag({
   name: "doAction.enabled",

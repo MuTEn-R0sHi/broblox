@@ -27,3 +27,7 @@ export * from "./client";
 
 // Remote Registry (type-safe remote definitions)
 export * from "./registry";
+
+// Factory
+export { createRemoteService } from "./create-remote-service";
+export type { RemoteServiceConfig, RemoteServiceHandle } from "./create-remote-service";

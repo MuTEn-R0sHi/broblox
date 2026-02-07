@@ -14,3 +14,5 @@
 export * from "./types";
 export { ItemRegistry } from "./item-registry";
 export { InventoryStore } from "./inventory-store";
+export { createInventoryService } from "./create-inventory-service";
+export type { InventoryServiceConfig, InventoryServiceHandle } from "./create-inventory-service";

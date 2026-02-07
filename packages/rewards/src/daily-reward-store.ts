@@ -15,21 +15,6 @@ import type {
   DailyRewardClaimedEvent,
 } from "./types";
 
-// Roblox globals
-declare const game: { GetService(name: string): unknown };
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const os: { time(): number };
-declare const math: { floor(x: number): number; max(a: number, b: number): number };
-
-interface DataStore {
-  GetAsync(key: string): unknown;
-  SetAsync(key: string, value: unknown): void;
-}
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
-}
-
 const dailyClaims = new Counter("rewards_daily_claims");
 const streakResets = new Counter("rewards_streak_resets");
 const saveAttempts = new Counter("rewards_daily_save_attempts");

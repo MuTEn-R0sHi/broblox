@@ -4,26 +4,11 @@
  * First-time user experience (FTUE) and guided onboarding.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { SequenceRegistry, TutorialManager } from "@rbx/tutorial";
+import { createTutorialService } from "@rbx/tutorial";
 
-const logger = createLogger("TutorialService");
-
-const sequenceRegistry = new SequenceRegistry();
-const playerTutorials = new Map<number, TutorialManager>();
-
-export function getSequenceRegistry(): SequenceRegistry {
-  return sequenceRegistry;
-}
-
-export function getTutorialManager(playerId: number): TutorialManager | undefined {
-  return playerTutorials.get(playerId);
-}
-
-export const TutorialService: Service = {
-  onInit() {
-    // Register the basic FTUE sequence
-    sequenceRegistry.register({
+const handle = createTutorialService({
+  sequences: [
+    {
       id: "ftue_basics",
       name: "Getting Started",
       description: "Learn the basic controls and gameplay",
@@ -65,10 +50,8 @@ export const TutorialService: Service = {
       persistent: true,
       prerequisites: [],
       version: 1,
-    });
-
-    // Register a shop tutorial (requires basics)
-    sequenceRegistry.register({
+    },
+    {
       id: "ftue_shop",
       name: "Using the Shop",
       description: "Learn how to buy items in the shop",
@@ -94,12 +77,13 @@ export const TutorialService: Service = {
       persistent: true,
       prerequisites: ["ftue_basics"],
       version: 1,
-    });
+    },
+  ],
+  datastoreName: "StarterTutorial",
+});
 
-    logger.info(`Tutorial sequences registered: ${sequenceRegistry.count()}`);
-  },
-
-  onStart() {
-    logger.info("TutorialService started");
-  },
-};
+export const TutorialService = handle.Service;
+export const getSequenceRegistry = () => handle.getSequenceRegistry();
+export const getTutorialManager = (playerId: number) => handle.getTutorialManager(playerId);
+export const initPlayerTutorial = (playerId: number) => handle.initPlayer(playerId);
+export const cleanupPlayerTutorial = (playerId: number) => handle.cleanupPlayer(playerId);

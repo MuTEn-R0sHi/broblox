@@ -31,136 +31,12 @@ permissions:
   contents: write
 
 jobs:
-  promote-staging:
-    if: inputs.environment == 'staging'
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-      - name: Checkout source ref
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.source_ref }}
-
-      - name: Set game variables
-        id: game
-        run: |
-          GAME="${{ inputs.game }}"
-          echo "name=$GAME" >> $GITHUB_OUTPUT
-
-          if [ "$GAME" = "starter" ]; then
-            echo "universe_id=${{ vars.STARTER_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-            echo "place_id=${{ vars.STARTER_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
-            echo "game_path=games/starter" >> $GITHUB_OUTPUT
-          elif [ "$GAME" = "obby" ]; then
-            echo "universe_id=${{ vars.OBBY_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-            echo "place_id=${{ vars.OBBY_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
-            echo "game_path=games/obby" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Log promotion details
-        run: |
-          echo "📋 Promotion Details"
-          echo "==================="
-          echo "Game: ${{ inputs.game }}"
-          echo "Source: ${{ inputs.source_ref }}"
-          echo "Target: staging"
-          echo "Reason: ${{ inputs.reason }}"
-          echo "Requested by: ${{ github.actor }}"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "22"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build packages
-        run: pnpm run build:packages
-
-      - name: Build game
-        run: ${{ steps.game.outputs.build_cmd }}
-
-      - name: Setup Aftman (Rojo)
-        uses: ok-nick/setup-aftman@v0.4.2
-
-      - name: Build .rbxl with Rojo
-        run: |
-          cd ${{ steps.game.outputs.game_path }}
-          rojo build default.project.json -o build.rbxl
-
-      - name: Install rbxcloud CLI
-        run: |
-          curl -L https://github.com/Sleitnick/rbxcloud/releases/latest/download/rbxcloud-0.17.0-linux.zip -o rbxcloud.zip
-          unzip rbxcloud.zip
-          chmod +x rbxcloud
-          sudo mv rbxcloud /usr/local/bin/
-
-      - name: Publish to Staging
-        env:
-          ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
-          UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
-          PLACE_ID: ${{ steps.game.outputs.place_id }}
-        run: |
-          echo "Publishing ${{ steps.game.outputs.name }} to Staging environment..."
-          echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
-
-          rbxcloud experience publish \
-            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
-            --universe-id "$UNIVERSE_ID" \
-            --place-id "$PLACE_ID" \
-            --version-type published \
-            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
-
-      - name: Create promotion record
-        run: |
-          echo "✅ Promotion Record"
-          echo "==================="
-          echo "Game: ${{ inputs.game }}"
-          echo "Source: ${{ inputs.source_ref }}"
-          echo "Target: staging"
-          echo "Reason: ${{ inputs.reason }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-  promote-production:
+  validate-production:
     if: inputs.environment == 'production'
     runs-on: ubuntu-latest
-    environment: production
     steps:
-      - name: Checkout source ref
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.source_ref }}
-          fetch-tags: true
-
-      - name: Set game variables
-        id: game
-        run: |
-          GAME="${{ inputs.game }}"
-          echo "name=$GAME" >> $GITHUB_OUTPUT
-
-          if [ "$GAME" = "starter" ]; then
-            echo "universe_id=${{ vars.STARTER_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-            echo "place_id=${{ vars.STARTER_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
-            echo "game_path=games/starter" >> $GITHUB_OUTPUT
-          elif [ "$GAME" = "obby" ]; then
-            echo "universe_id=${{ vars.OBBY_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-            echo "place_id=${{ vars.OBBY_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
-            echo "game_path=games/obby" >> $GITHUB_OUTPUT
-          fi
-
       - name: Verify tag exists
         run: |
-          # For production, we require a version tag
           if [[ ! "${{ inputs.source_ref }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "❌ Production requires a version tag (e.g., v1.0.0)"
             echo "Received: ${{ inputs.source_ref }}"
@@ -168,76 +44,24 @@ jobs:
           fi
           echo "✅ Valid version tag: ${{ inputs.source_ref }}"
 
-      - name: Log promotion details
-        run: |
-          echo "📋 Production Promotion Details"
-          echo "==============================="
-          echo "Game: ${{ inputs.game }}"
-          echo "Version: ${{ inputs.source_ref }}"
-          echo "Reason: ${{ inputs.reason }}"
-          echo "Requested by: ${{ github.actor }}"
+  promote:
+    needs: [validate-production]
+    if: always() && (inputs.environment == 'staging' || needs.validate-production.result == 'success')
+    uses: ./.github/workflows/build-and-publish.yml
+    with:
+      game: ${{ inputs.game }}
+      source_ref: ${{ inputs.source_ref }}
+      environment: ${{ inputs.environment }}
+      reason: ${{ inputs.reason }}
+    secrets:
+      ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "22"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build packages
-        run: pnpm run build:packages
-
-      - name: Build game
-        run: ${{ steps.game.outputs.build_cmd }}
-
-      - name: Setup Aftman (Rojo)
-        uses: ok-nick/setup-aftman@v0.4.2
-
-      - name: Build .rbxl with Rojo
-        run: |
-          cd ${{ steps.game.outputs.game_path }}
-          rojo build default.project.json -o build.rbxl
-
-      - name: Install rbxcloud CLI
-        run: |
-          curl -L https://github.com/Sleitnick/rbxcloud/releases/latest/download/rbxcloud-0.17.0-linux.zip -o rbxcloud.zip
-          unzip rbxcloud.zip
-          chmod +x rbxcloud
-          sudo mv rbxcloud /usr/local/bin/
-
-      - name: Publish to Production
-        env:
-          ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
-          UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
-          PLACE_ID: ${{ steps.game.outputs.place_id }}
-        run: |
-          echo "🚀 Publishing ${{ steps.game.outputs.name }} to Production environment..."
-          echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
-
-          rbxcloud experience publish \
-            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
-            --universe-id "$UNIVERSE_ID" \
-            --place-id "$PLACE_ID" \
-            --version-type published \
-            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
-
-      - name: Create promotion record
-        run: |
-          echo "✅ Production Promotion Record"
-          echo "=============================="
-          echo "Game: ${{ inputs.game }}"
-          echo "Version: ${{ inputs.source_ref }}"
-          echo "Reason: ${{ inputs.reason }}"
-          echo "Actor: ${{ github.actor }}"
-          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
+  update-release:
+    needs: [promote]
+    if: inputs.environment == 'production' && success()
+    runs-on: ubuntu-latest
+    steps:
       - name: Update GitHub Release
-        if: success()
         uses: actions/github-script@v8
         with:
           script: |

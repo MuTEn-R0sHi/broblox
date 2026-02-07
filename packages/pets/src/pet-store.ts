@@ -5,7 +5,7 @@
  */
 
 import { createLogger } from "@rbx/core";
-import { createCounter } from "@rbx/observability";
+import { Counter } from "@rbx/observability";
 import type {
   PetInstance,
   PetPlayerData,
@@ -22,28 +22,11 @@ import type {
 import { DEFAULT_PET_CONFIG, PET_DATA_VERSION } from "./types";
 import { PetRegistry } from "./pet-registry";
 
-// Roblox globals
-declare const game: { GetService(name: string): unknown };
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const os: { time(): number };
-
-interface DataStore {
-  GetAsync(key: string): unknown;
-  SetAsync(key: string, value: unknown): void;
-}
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
-}
-interface HttpService {
-  GenerateGUID(wrapInCurlyBraces: boolean): string;
-}
-
 // Observability counters
-const petsAdded = createCounter("pets_added");
-const petsRemoved = createCounter("pets_removed");
-const petsLevelUp = createCounter("pets_level_up");
-const petsEvolved = createCounter("pets_evolved");
+const petsAdded = new Counter("pets_added");
+const petsRemoved = new Counter("pets_removed");
+const petsLevelUp = new Counter("pets_level_up");
+const petsEvolved = new Counter("pets_evolved");
 
 export class PetStore {
   private playerId: number;

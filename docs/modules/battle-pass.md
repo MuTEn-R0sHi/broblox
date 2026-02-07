@@ -1,6 +1,6 @@
 # Modules: Battle pass
 
-A reusable seasonal progression system.
+A reusable seasonal progression system (`@rbx/battle-pass`). **Status: Implemented** (29 tests).
 
 ## Purpose
 
@@ -14,12 +14,13 @@ A reusable seasonal progression system.
 - Claims are idempotent (`battlePassClaimId`).
 - Rewards must be ledgered if economy-impacting.
 
-## Data model (planned)
+## Data model
 
-- `seasonId`
-- `xp`
-- `level`
-- `claimedRewards[]` (bounded set)
+- `seasonId` — active season identifier
+- `xp` — current season XP
+- `tier` — current tier (computed from XP)
+- `claimedFree[]` — claimed free-track rewards (bounded set)
+- `claimedPremium[]` — claimed premium-track rewards
 - `premiumUnlocked: boolean`
 
 ## Security

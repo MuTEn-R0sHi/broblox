@@ -34,3 +34,10 @@ export { PlayerMovementState, MovementStateManager } from "./state";
 
 // Validator
 export { MovementValidator, getMovementValidator } from "./validator";
+
+// Service factory
+export { createMovementValidationService } from "./create-movement-validation-service";
+export type {
+  MovementValidationConfig,
+  MovementValidationHandle,
+} from "./create-movement-validation-service";

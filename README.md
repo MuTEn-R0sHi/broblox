@@ -15,29 +15,45 @@ Docs-first Roblox-TS multi-game platform + control-plane dashboard.
 
 ```
 rbx-game-platform/
-├── packages/              # Shared platform packages (TypeScript → Luau)
-│   ├── shared-types/      # Core type definitions, Result<T>, ErrorCode
-│   ├── constants/         # Numeric constants, timeouts, limits, validation helpers
-│   ├── core/              # Application lifecycle, Logger, Cleanup, collection helpers
-│   ├── net/               # Remote registry, validation, rate limiting
-│   ├── data/              # PlayerDataStore, SessionManager, persistence
-│   ├── security/          # Violation detectors, trust scoring, enforcement
-│   ├── observability/     # Telemetry, metrics, spans, correlation context
-│   ├── combat/            # Weapon system, hit validation, cooldowns (Phase 2)
-│   ├── matchmaking/       # Queue management, match lifecycle, server alloc (Phase 2)
-│   ├── moderation/        # Bans/mutes, evidence model, enforcement hooks (Phase 3)
-│   ├── movement/          # Server-authoritative movement validation (Phase 3)
-│   ├── input/             # Unified input (keyboard, gamepad, touch)
-│   ├── ui/                # UI components, theming, layout utilities
+├── packages/                 # 31 shared platform packages (TypeScript → Luau)
+│   ├── shared-types/         # Core type definitions, Result<T>, ErrorCode
+│   ├── constants/            # Numeric constants, timeouts, limits, validation helpers
+│   ├── core/                 # Application lifecycle, Logger, Cleanup, collection helpers
+│   ├── net/                  # Remote registry, validation, rate limiting
+│   ├── data/                 # PlayerDataStore, SessionManager, persistence
+│   ├── security/             # Violation detectors, trust scoring, enforcement
+│   ├── observability/        # Telemetry, metrics, spans, correlation context
 │   ├── config-featureflags/  # Feature flags and kill-switches
-│   └── testing/           # Test utilities and Roblox API mocks for vitest
-├── games/                 # Roblox-TS game projects
-│   ├── starter/           # Starter game template (Phase 1)
-│   └── obby/              # Obby game with stages, coins, leaderboards (Phase 3)
-├── apps/                  # Web applications
-│   └── dashboard/         # Next.js admin dashboard (deployed on Vercel)
-├── docs/                  # MkDocs documentation site
-└── tools/                 # Build and development tools
+│   ├── combat/               # Weapon system, hit validation, cooldowns
+│   ├── matchmaking/          # Queue management, match lifecycle, server alloc
+│   ├── moderation/           # Bans/mutes, evidence model, enforcement hooks
+│   ├── movement/             # Server-authoritative movement validation
+│   ├── codes/                # Redeemable promo codes with expiry and limits
+│   ├── leaderboards/         # Cross-game leaderboards with period support
+│   ├── analytics/            # Player behavior events, funnels, sessions, retention
+│   ├── notifications/        # In-game toasts, announcements, news feed
+│   ├── inventory/            # Item registry, per-player slots, stacking, transfers
+│   ├── progression/          # XP, levels, prestige/rebirth with curves
+│   ├── quests/               # Quest/objective tracking with multi-step progress
+│   ├── rewards/              # Daily login rewards, streaks, achievements
+│   ├── pets/                 # Pet hatching, equipping, leveling, evolution
+│   ├── gacha/                # Egg/loot box system with pity timers
+│   ├── cosmetics/            # Cosmetic ownership, equip slots, validation
+│   ├── battle-pass/          # Seasonal tiers, free/premium tracks, XP
+│   ├── localization/         # i18n, multi-locale string registry, pluralization
+│   ├── audio/                # SFX, music, spatial audio, playlists
+│   ├── tutorial/             # FTUE framework, step sequencing, persistence
+│   ├── world-systems/        # Day/night cycle, weather, seasons
+│   ├── input/                # Unified input (keyboard, gamepad, touch)
+│   ├── ui/                   # UI components, theming, layout utilities
+│   └── testing/              # Test utilities and Roblox API mocks for vitest
+├── games/                    # Roblox-TS game projects
+│   ├── starter/              # Starter game template
+│   └── obby/                 # Obby game with stages, coins, leaderboards
+├── apps/                     # Web applications
+│   └── dashboard/            # Next.js admin dashboard (deployed on Vercel)
+├── docs/                     # MkDocs documentation site
+└── tools/                    # Build and development tools
 ```
 
 ## Prereqs
@@ -119,22 +135,43 @@ This repository contains two Rojo project files:
 ## Package dependency graph
 
 ```
-constants (0 deps)          testing (vitest only)
-     ↓
-shared-types
-     ↓
-   core  ─────────────────────────────────────────┐
-     ↓                                              │
-┌────┴────┬─────────┬──────────┬──────────┐   │
-net   data    security   observability   config   │
-│                                                 │
-├─────────┬─────────┬─────────┬─────────┤
-combat  matchmaking  moderation  movement   │
-                                            │
-┌────────┬────────────────────────────────┘
-input    ui
-│        │
-└────────┴──→ games/starter, games/obby
+Layer 0 — Leaf packages (zero deps)
+  constants    testing    shared-types
+
+Layer 1 — Core platform
+  core (← shared-types, constants)
+
+Layer 2 — Infrastructure
+  net    data    security    observability    config-featureflags
+  (all ← core)
+
+Layer 3 — Domain systems
+  combat    matchmaking    moderation    movement
+  (← core + infrastructure)
+
+Layer 4 — Ops & engagement
+  codes    leaderboards    analytics    notifications
+  (← core)
+
+Layer 5a — Progression foundation
+  inventory    progression    quests    rewards
+  (← core)
+
+Layer 5b — Collection & monetization
+  pets    gacha    cosmetics    battle-pass
+  (← core)
+
+Layer 5c — Support systems
+  localization    audio    tutorial    world-systems
+  (← core)
+
+Layer 6 — Client
+  input    ui
+  (← core + constants)
+
+Games
+  starter    obby
+  (compose from all layers above)
 ```
 
 Packages follow strict dependency direction rules enforced by ESLint. Games compose from packages; packages never depend on games.

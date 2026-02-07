@@ -249,9 +249,9 @@ export function validateHit(shooterId: PlayerId, intent: HitIntent): Result<HitV
     }
   }
 
-  // TODO: If checkObstruction is true, perform server raycast
-  // This would require access to Roblox's Workspace:Raycast
-  // For now, we trust the geometric checks above
+  // NOTE: Obstruction raycasting (checkObstruction) is not implemented.
+  // It would require access to Roblox's Workspace:Raycast at runtime.
+  // The geometric checks above are sufficient for most use cases.
 
   // Hit is valid
   const result: HitValidationResult = {

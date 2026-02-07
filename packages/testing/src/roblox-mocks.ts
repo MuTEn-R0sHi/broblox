@@ -61,8 +61,13 @@ export function tostring(value: unknown): string {
 
 /**
  * Mock for Roblox's tonumber() function.
+ * Supports optional base parameter (e.g. tonumber("FF", 16)).
  */
-export function tonumber(value: unknown): number | undefined {
+export function tonumber(value: unknown, base?: number): number | undefined {
+  if (base !== undefined) {
+    const n = parseInt(String(value), base);
+    return Number.isNaN(n) ? undefined : n;
+  }
   const n = Number(value);
   return Number.isNaN(n) ? undefined : n;
 }

@@ -17,21 +17,6 @@ import type {
   XpCurveFunction,
 } from "./types";
 
-// Roblox globals
-declare const game: { GetService(name: string): unknown };
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const math: { floor(x: number): number; pow(base: number, exp: number): number };
-declare const os: { time(): number };
-
-interface DataStore {
-  GetAsync(key: string): unknown;
-  SetAsync(key: string, value: unknown): void;
-}
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
-}
-
 const xpGained = new Counter("progression_xp_gained");
 const levelUps = new Counter("progression_level_ups");
 const prestiges = new Counter("progression_prestiges");

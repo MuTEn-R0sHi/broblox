@@ -11,3 +11,8 @@
 
 export * from "./types";
 export { ProgressionStore } from "./progression-store";
+export { createProgressionService } from "./create-progression-service";
+export type {
+  ProgressionServiceConfig,
+  ProgressionServiceHandle,
+} from "./create-progression-service";

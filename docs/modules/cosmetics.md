@@ -1,6 +1,6 @@
 # Modules: Cosmetics
 
-A reusable cosmetics/appearance system.
+A reusable cosmetics/appearance system (`@rbx/cosmetics`). **Status: Implemented** (26 tests).
 
 ## Purpose
 
@@ -13,10 +13,11 @@ A reusable cosmetics/appearance system.
 - Equip is a server-approved request.
 - Cosmetics never grant gameplay advantage in competitive modes unless explicitly designed and audited.
 
-## Data model (planned)
+## Data model
 
-- `ownedCosmetics[]` (ids)
-- `equippedCosmetics` (slots → ids)
+- `ownedCosmetics[]` — cosmetic IDs owned by the player
+- `equippedCosmetics` — map of slots → cosmetic IDs
+- Slot validation enforced server-side via `CosmeticRegistry`
 
 ## Security
 

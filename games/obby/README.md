@@ -141,8 +141,25 @@ Modify `StageService.ts` to add:
 This game uses:
 
 - `@rbx/core` - Application framework and logging
-- `@rbx/data` - Data persistence (TODO: implement)
+- `@rbx/config-featureflags` - Feature flags and kill-switches
+- `@rbx/constants` - Shared constants and limits
+- `@rbx/data` - Data persistence
+- `@rbx/net` - Remote registry and validation
 - `@rbx/input` - Input handling
 - `@rbx/movement` - Movement validation (anti-cheat)
 - `@rbx/moderation` - Ban/mute system
 - `@rbx/observability` - Telemetry and metrics
+- `@rbx/codes` - Promo code system
+- `@rbx/leaderboards` - Cross-game leaderboards
+- `@rbx/inventory` - Item/slot inventory
+- `@rbx/progression` - XP, levels, prestige
+- `@rbx/quests` - Quest/objective tracking
+- `@rbx/rewards` - Daily rewards and achievements
+- `@rbx/pets` - Pet system
+- `@rbx/gacha` - Egg/loot box system
+- `@rbx/cosmetics` - Cosmetic ownership and equipping
+- `@rbx/battle-pass` - Seasonal battle pass
+- `@rbx/localization` - Internationalization
+- `@rbx/audio` - Sound and music management
+- `@rbx/tutorial` - FTUE framework
+- `@rbx/world-systems` - Day/night cycle, weather, seasons

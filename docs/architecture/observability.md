@@ -20,7 +20,9 @@ Every log/event should attach:
 - `playerUserId` (when relevant)
 - `requestId` (for remote calls)
 
-## Event taxonomy (planned)
+## Event taxonomy
+
+Implemented in `@rbx/observability` and `@rbx/analytics`:
 
 - `security.*` (violations, detectors)
 - `match.*` (start/end, team composition)

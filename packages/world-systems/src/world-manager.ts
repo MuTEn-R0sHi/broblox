@@ -28,14 +28,6 @@ import {
   DEFAULT_SEASONS,
 } from "./types";
 
-declare const os: { time(): number; clock(): number };
-declare const math: {
-  floor(n: number): number;
-  min(a: number, b: number): number;
-  max(a: number, b: number): number;
-  huge: number;
-};
-
 export class WorldManager {
   private config: WorldSystemsConfig;
   private logger;

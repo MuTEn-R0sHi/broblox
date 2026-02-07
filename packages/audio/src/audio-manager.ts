@@ -22,8 +22,6 @@ import type {
 import { DEFAULT_AUDIO_CONFIG } from "./types";
 import { SoundRegistry } from "./sound-registry";
 
-declare const os: { time(): number };
-
 let nextInstanceId = 0;
 function generateInstanceId(): string {
   nextInstanceId++;

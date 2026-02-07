@@ -23,7 +23,7 @@ Networking is the primary exploit surface. We treat it like a public API.
 
 ## Remote registry
 
-Single source of truth (planned):
+Single source of truth (implemented in `@rbx/net`):
 
 - A `net` registry defines all remotes in code.
 - Registry generates server/client stubs.

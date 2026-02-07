@@ -5,7 +5,7 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { CollectionService, Workspace } from "@rbxts/services";
-import { StageConfig, StageCompletedEvent, OBBY_CONSTANTS, events } from "shared/types";
+import { StageConfig, StageCompletedEvent, OBBY_CONSTANTS } from "shared/types";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { CheckpointService } from "./CheckpointService";
@@ -124,12 +124,12 @@ export const StageService: Service & {
       DataService.startStageTimer(player);
 
       // Notify client
-      RemoteService.fireClient(player, events.stageCompleted, completedEvent);
+      RemoteService.getRegistry().fireClient("StageCompleted", player, completedEvent);
 
       // Sync current HUD state (coins/stage/checkpoint).
       const updated = DataService.getData(player);
       if (updated) {
-        RemoteService.fireClient(player, events.playerDataSync, {
+        RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
           coins: updated.coins,
           currentStage: updated.currentStage,
           currentCheckpoint: updated.currentCheckpoint,
@@ -158,12 +158,12 @@ export const StageService: Service & {
       DataService.startRunTimer(player);
       DataService.startStageTimer(player);
 
-      RemoteService.fireClient(player, events.stageCompleted, completedEvent);
+      RemoteService.getRegistry().fireClient("StageCompleted", player, completedEvent);
       logger.info(`Player ${player.Name} completed the entire obby!`);
 
       const updated = DataService.getData(player);
       if (updated) {
-        RemoteService.fireClient(player, events.playerDataSync, {
+        RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
           coins: updated.coins,
           currentStage: updated.currentStage,
           currentCheckpoint: updated.currentCheckpoint,

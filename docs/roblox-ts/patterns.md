@@ -72,6 +72,74 @@ export const ActionService: Service = {
 };
 ```
 
+### Service factory pattern
+
+For cross-game reusable logic, we extract services into **factory functions** in
+shared packages. Each game passes its own config (DataStore name, callbacks,
+etc.) and re-exports the resulting `Service`.
+
+This eliminates copy-paste duplication while keeping each game in full control of
+its configuration.
+
+#### Writing a factory (package side)
+
+```typescript
+// packages/moderation/src/create-moderation-enforcement-service.ts
+import { Service, createLogger } from "@rbx/core";
+import { getModeration } from "./service";
+
+export interface ModerationEnforcementConfig {
+  datastoreName: string;
+  onPlayerAdded: (callback: (player: Player) => void) => void;
+}
+
+export interface ModerationEnforcementHandle {
+  Service: Service;
+}
+
+export function createModerationEnforcementService(
+  config: ModerationEnforcementConfig
+): ModerationEnforcementHandle {
+  const logger = createLogger("ModerationEnforcementService");
+
+  const Service: Service = {
+    onInit() {
+      const moderation = getModeration(config.datastoreName);
+      config.onPlayerAdded((player) => {
+        // enforce bans, apply mute attributes …
+      });
+      logger.info("Moderation enforcement enabled");
+    },
+  };
+
+  return { Service };
+}
+```
+
+#### Consuming a factory (game side)
+
+```typescript
+// games/starter/src/server/services/ModerationEnforcementService.ts
+import { createModerationEnforcementService } from "@rbx/moderation";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
+
+const handle = createModerationEnforcementService({
+  datastoreName: "StarterModeration",
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
+});
+
+export const ModerationEnforcementService = handle.Service;
+```
+
+#### Guidelines
+
+| Guideline                               | Rationale                                               |
+| --------------------------------------- | ------------------------------------------------------- |
+| One factory per service concern         | Keeps factories focused and composable                  |
+| Accept callbacks for cross-service deps | Avoids the factory importing game-local code            |
+| Return a `Handle` object                | Allows exposing getters/helpers alongside the `Service` |
+| Export the `Service` by the same name   | Existing `main.server.ts` registrations stay unchanged  |
+
 ## Networking pattern
 
 - All remotes are defined in `packages/net/src/remotes.ts`.

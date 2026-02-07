@@ -23,3 +23,5 @@ export type {
 export { DEFAULT_QUESTS_CONFIG } from "./types";
 export { QuestRegistry } from "./quest-registry";
 export { QuestStore } from "./quest-store";
+export { createQuestService } from "./create-quest-service";
+export type { QuestServiceConfig, QuestServiceHandle } from "./create-quest-service";

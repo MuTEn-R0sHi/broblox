@@ -2,27 +2,14 @@
  * Rewards Service — Starter Game
  *
  * Daily login rewards and achievement tracking.
- * Uses the @rbx/rewards package.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { DailyRewardStore, AchievementStore } from "@rbx/rewards";
+import { createRewardsService } from "@rbx/rewards";
+import { createLogger } from "@rbx/core";
 import type { DailyRewardDay } from "@rbx/rewards";
 
 const logger = createLogger("RewardsService");
 
-const playerDailyRewards = new Map<number, DailyRewardStore>();
-const playerAchievements = new Map<number, AchievementStore>();
-
-export function getDailyRewards(playerId: number): DailyRewardStore | undefined {
-  return playerDailyRewards.get(playerId);
-}
-
-export function getAchievements(playerId: number): AchievementStore | undefined {
-  return playerAchievements.get(playerId);
-}
-
-// 7-day reward cycle
 const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 100, label: "100 Coins" }] },
   { day: 2, rewards: [{ type: "currency", amount: 150, label: "150 Coins" }] },
@@ -43,64 +30,9 @@ const REWARD_CYCLE: DailyRewardDay[] = [
   },
 ];
 
-export const RewardsService: Service = {
-  onInit() {
-    logger.info("RewardsService initialized.");
-  },
-
-  onStart() {
-    logger.info("RewardsService started.");
-  },
-
-  onDestroy() {
-    playerDailyRewards.forEach((store, playerId) => {
-      if (store.isDirty()) {
-        store.save();
-        logger.info(`Saved daily rewards for player ${playerId}`);
-      }
-    });
-    playerAchievements.forEach((store, playerId) => {
-      if (store.isDirty()) {
-        store.save();
-        logger.info(`Saved achievements for player ${playerId}`);
-      }
-    });
-    logger.info("RewardsService stopped.");
-  },
-};
-
-/**
- * Initialize rewards for a player (call from PlayerLifecycleService).
- */
-export function initPlayerRewards(playerId: number): {
-  daily: DailyRewardStore;
-  achievements: AchievementStore;
-} {
-  // Daily rewards
-  const daily = new DailyRewardStore(playerId, REWARD_CYCLE, {
-    dayDuration: 86400,
-    streakGracePeriod: 86400,
-    cycleLength: 7,
-    dailyDatastoreName: "StarterDailyRewards",
-    enableLogging: true,
-  });
-  daily.init();
-  daily.load();
-
-  daily.onClaimed((event) => {
-    logger.info(`Player ${event.playerId} claimed day ${event.day} — streak ${event.streak}`);
-  });
-
-  playerDailyRewards.set(playerId, daily);
-
-  // Achievements
-  const achievements = new AchievementStore(playerId, {
-    achievementDatastoreName: "StarterAchievements",
-    enableLogging: true,
-  });
-  achievements.init();
-
-  achievements.registerAll([
+const handle = createRewardsService({
+  rewardCycle: REWARD_CYCLE,
+  achievements: [
     {
       id: "ach_first_kill",
       name: "First Blood",
@@ -139,32 +71,32 @@ export function initPlayerRewards(playerId: number): {
       target: 7,
       rewards: [{ type: "currency", amount: 2000 }],
     },
-  ]);
+  ],
+  dailyDatastoreName: "StarterDailyRewards",
+  achievementDatastoreName: "StarterAchievements",
+  dailyStoreOptions: {
+    dayDuration: 86400,
+    streakGracePeriod: 86400,
+    cycleLength: 7,
+  },
+});
 
-  achievements.load();
+export const RewardsService = handle.Service;
+export const getDailyRewards = (playerId: number) => handle.getDailyRewardStore(playerId);
+export const getAchievements = (playerId: number) => handle.getAchievementStore(playerId);
+export const cleanupPlayerRewards = (playerId: number) => handle.cleanupPlayer(playerId);
+
+/** Initialize rewards for a player — adds game-specific event callbacks. */
+export function initPlayerRewards(playerId: number) {
+  const { daily, achievements } = handle.initPlayer(playerId);
+
+  daily.onClaimed((event) => {
+    logger.info(`Player ${event.playerId} claimed day ${event.day} — streak ${event.streak}`);
+  });
+
   achievements.onAchievementCompleted((event) => {
     logger.info(`Player ${event.playerId} unlocked achievement: ${event.achievementId}`);
   });
 
-  playerAchievements.set(playerId, achievements);
-
-  logger.info(`Rewards loaded for player ${playerId}`);
   return { daily, achievements };
-}
-
-/**
- * Cleanup rewards for a player (call from PlayerLifecycleService).
- */
-export function cleanupPlayerRewards(playerId: number): void {
-  const daily = playerDailyRewards.get(playerId);
-  if (daily && daily.isDirty()) {
-    daily.save();
-  }
-  playerDailyRewards.delete(playerId);
-
-  const achievements = playerAchievements.get(playerId);
-  if (achievements && achievements.isDirty()) {
-    achievements.save();
-  }
-  playerAchievements.delete(playerId);
 }

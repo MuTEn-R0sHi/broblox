@@ -171,14 +171,3 @@ export const OBBY_CONSTANTS = {
   /** CollectionService tag for coins */
   COIN_TAG: "ObbyCoin",
 } as const;
-
-// ============================================================================
-// Event Names
-// ============================================================================
-
-export const events = {
-  checkpointReached: "ObbyCheckpointReached",
-  stageCompleted: "ObbyStageCompleted",
-  requestRespawn: "ObbyRequestRespawn",
-  playerDataSync: "ObbyPlayerDataSync",
-} as const;

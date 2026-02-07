@@ -38,18 +38,18 @@ interface TelemetryEvent {
 
 ## Metrics
 
-Track numeric measurements over time.
+Track numeric measurements over time using direct class constructors.
 
 ```typescript
-import { createCounter, createGauge, createHistogram, time } from "@rbx/observability";
+import { Counter, Gauge, Histogram, time } from "@rbx/observability";
 
-const requests = createCounter("requests_total", { endpoint: "handshake" });
-const errors = createCounter("errors_total", { type: "validation" });
+const requests = new Counter("requests_total", { endpoint: "handshake" });
+const errors = new Counter("errors_total", { type: "validation" });
 
-const playersOnline = createGauge("players_online");
+const playersOnline = new Gauge("players_online");
 
-const requestSize = createHistogram("request_size_bytes");
-const handlerLatency = createHistogram("request_duration_ms", { endpoint: "action" });
+const requestSize = new Histogram("request_size_bytes");
+const handlerLatency = new Histogram("request_duration_ms", { endpoint: "action" });
 
 requests.inc();
 playersOnline.set(42);
@@ -59,6 +59,11 @@ time(handlerLatency, () => {
   // ... do work ...
 });
 ```
+
+!!! warning "Deprecated factory functions"
+The `createCounter()`, `createGauge()`, and `createHistogram()` factory functions
+still work but are **deprecated**. Use `new Counter()`, `new Gauge()`, `new Histogram()`
+instead.
 
 ### Metric Types
 
@@ -182,7 +187,7 @@ withSpan("handle_remote", { remote: "DoAction" }, () => {
 
 ## Built-in metrics
 
-Some packages emit standardized metrics via `createCounter` / `createHistogram`. For moderation sync propagation, runtime publishes:
+Some packages emit standardized metrics via `Counter` / `Histogram`. For moderation sync propagation, runtime publishes:
 
 - `moderation_sync_received_total` (labels: `topic`)
 - `moderation_sync_decode_errors_total` (labels: `topic`)
@@ -205,7 +210,12 @@ if (math.random() < 0.01) {
 ## Integration Example
 
 ```typescript
-import { emit, incrementCounter, recordTiming, withSpan, setContext } from "@rbx/observability";
+import { emit, withSpan, setContext } from "@rbx/observability";
+import { Counter, Histogram } from "@rbx/observability";
+
+const actionsRejected = new Counter("action_rejected");
+const actionsProcessed = new Counter("action_processed");
+const actionDuration = new Histogram("action_duration_ms");
 
 function handlePlayerAction(player: Player, action: ActionRequest) {
   // Set context for this request
@@ -223,7 +233,7 @@ function handlePlayerAction(player: Player, action: ActionRequest) {
     });
 
     if (!validation.success) {
-      incrementCounter("action_rejected", { reason: "validation" });
+      actionsRejected.inc({ reason: "validation" });
       return { accepted: false };
     }
 
@@ -234,8 +244,8 @@ function handlePlayerAction(player: Player, action: ActionRequest) {
 
     // Record metrics
     const duration = (os.clock() - startTime) * 1000;
-    recordTiming("action_duration_ms", duration, { action: action.actionId });
-    incrementCounter("action_processed", { action: action.actionId });
+    actionDuration.observe(duration, { action: action.actionId });
+    actionsProcessed.inc({ action: action.actionId });
 
     // Emit event
     emit({

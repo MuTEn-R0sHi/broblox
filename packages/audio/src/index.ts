@@ -14,6 +14,8 @@
 
 export { SoundRegistry } from "./sound-registry";
 export { AudioManager } from "./audio-manager";
+export { createAudioService } from "./create-audio-service";
+export type { AudioServiceConfig, AudioServiceHandle } from "./create-audio-service";
 
 export type {
   AudioChannel,

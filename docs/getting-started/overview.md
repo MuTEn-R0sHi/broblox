@@ -7,7 +7,7 @@ This project is a **monorepo platform** with 31 shared packages, 2 game template
 - Roblox game code: **roblox-ts** (TypeScript → Luau)
 - Project sync/build: **Rojo** (filesystem → DataModel)
 - Dependencies: **pnpm** workspaces
-- Formatting/linting/testing: ESLint + Prettier + **vitest** (1,100+ tests)
+- Formatting/linting/testing: ESLint + Prettier + **vitest** (1,500+ tests across 70 suites)
 - CI/CD: GitHub Actions + Roblox **Open Cloud**
 - Docs hosting: static **MkDocs** site
 - Web dashboard: **Next.js** + Prisma (audit logs, config history, moderation workflow)

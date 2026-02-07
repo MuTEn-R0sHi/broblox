@@ -19,3 +19,5 @@ export type {
 export { DEFAULT_REWARDS_CONFIG } from "./types";
 export { DailyRewardStore } from "./daily-reward-store";
 export { AchievementStore } from "./achievement-store";
+export { createRewardsService } from "./create-rewards-service";
+export type { RewardsServiceConfig, RewardsServiceHandle } from "./create-rewards-service";

@@ -22,21 +22,6 @@ import type {
   ObjectiveProgressEvent,
 } from "./types";
 
-// Roblox globals
-declare const game: { GetService(name: string): unknown };
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const os: { time(): number };
-declare const math: { floor(x: number): number };
-
-interface DataStore {
-  GetAsync(key: string): unknown;
-  SetAsync(key: string, value: unknown): void;
-}
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
-}
-
 const questsAccepted = new Counter("quests_accepted");
 const questsCompleted = new Counter("quests_completed");
 const questsFailed = new Counter("quests_failed");

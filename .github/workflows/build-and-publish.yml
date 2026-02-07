@@ -1,0 +1,149 @@
+name: Build and Publish Game
+
+on:
+  workflow_call:
+    inputs:
+      game:
+        description: "Game to build and publish"
+        required: true
+        type: string
+      source_ref:
+        description: "Git ref to build from"
+        required: true
+        type: string
+      environment:
+        description: "Target environment (staging or production)"
+        required: true
+        type: string
+      reason:
+        description: "Reason for promotion"
+        required: true
+        type: string
+    secrets:
+      ROBLOX_OPEN_CLOUD_API_KEY:
+        required: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout source ref
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-tags: true
+
+      - name: Set game variables
+        id: game
+        run: |
+          GAME="${{ inputs.game }}"
+          echo "name=$GAME" >> $GITHUB_OUTPUT
+          ENV="${{ inputs.environment }}"
+
+          if [ "$GAME" = "starter" ]; then
+            if [ "$ENV" = "staging" ]; then
+              echo "universe_id=${{ vars.STARTER_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+              echo "place_id=${{ vars.STARTER_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
+            else
+              echo "universe_id=${{ vars.STARTER_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+              echo "place_id=${{ vars.STARTER_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
+            fi
+            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
+            echo "game_path=games/starter" >> $GITHUB_OUTPUT
+          elif [ "$GAME" = "obby" ]; then
+            if [ "$ENV" = "staging" ]; then
+              echo "universe_id=${{ vars.OBBY_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+              echo "place_id=${{ vars.OBBY_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
+            else
+              echo "universe_id=${{ vars.OBBY_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+              echo "place_id=${{ vars.OBBY_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
+            fi
+            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
+            echo "game_path=games/obby" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Log promotion details
+        run: |
+          echo "📋 Promotion Details"
+          echo "==================="
+          echo "Game: ${{ inputs.game }}"
+          echo "Source: ${{ inputs.source_ref }}"
+          echo "Target: ${{ inputs.environment }}"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Requested by: ${{ github.actor }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build game
+        run: ${{ steps.game.outputs.build_cmd }}
+
+      - name: Setup Aftman (Rojo)
+        uses: ok-nick/setup-aftman@v0.4.2
+
+      - name: Build .rbxl with Rojo
+        run: |
+          cd ${{ steps.game.outputs.game_path }}
+          rojo build default.project.json -o build.rbxl
+
+      - name: Install rbxcloud CLI
+        run: |
+          curl -L https://github.com/Sleitnick/rbxcloud/releases/latest/download/rbxcloud-linux.zip -o rbxcloud.zip
+          unzip rbxcloud.zip
+          chmod +x rbxcloud
+          sudo mv rbxcloud /usr/local/bin/
+
+      - name: Publish to ${{ inputs.environment }}
+        env:
+          ROBLOX_OPEN_CLOUD_API_KEY: ${{ secrets.ROBLOX_OPEN_CLOUD_API_KEY }}
+          UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
+          PLACE_ID: ${{ steps.game.outputs.place_id }}
+        run: |
+          echo "Publishing ${{ steps.game.outputs.name }} to ${{ inputs.environment }}..."
+          echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
+
+          rbxcloud experience publish \
+            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
+            --universe-id "$UNIVERSE_ID" \
+            --place-id "$PLACE_ID" \
+            --version-type published \
+            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
+
+      - name: Create promotion record
+        run: |
+          echo "✅ Promotion Record"
+          echo "==================="
+          echo "Game: ${{ inputs.game }}"
+          echo "Source: ${{ inputs.source_ref }}"
+          echo "Target: ${{ inputs.environment }}"
+          echo "Reason: ${{ inputs.reason }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

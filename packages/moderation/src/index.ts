@@ -13,3 +13,5 @@ export * from "./types";
 export * from "./ban-store";
 export * from "./mute-store";
 export * from "./service";
+export * from "./create-chat-moderation-service";
+export * from "./create-moderation-enforcement-service";

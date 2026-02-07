@@ -13,3 +13,8 @@
 
 export * from "./types";
 export * from "./leaderboard-store";
+export { createLeaderboardService } from "./create-leaderboard-service";
+export type {
+  LeaderboardServiceConfig,
+  LeaderboardServiceHandle,
+} from "./create-leaderboard-service";

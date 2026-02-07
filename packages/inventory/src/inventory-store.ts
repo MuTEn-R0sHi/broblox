@@ -29,34 +29,6 @@ const DEFAULT_CONFIG: Required<InventoryConfig> = {
 };
 const DATA_VERSION = 1;
 
-// Roblox globals
-declare const game: {
-  GetService(name: string): unknown;
-};
-declare function tostring(v: unknown): string;
-
-interface DataStore {
-  GetAsync(key: string): unknown;
-  SetAsync(key: string, value: unknown): void;
-  UpdateAsync(key: string, callback: (old: unknown) => unknown): unknown;
-}
-
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
-}
-
-interface HttpService {
-  GenerateGUID(wrapInCurlyBraces?: boolean): string;
-}
-
-// Roblox pcall
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-
-// Math/os globals
-declare const math: { floor(x: number): number; random(): number };
-declare const os: { time(): number };
-
 const itemsAdded = new Counter("inventory_items_added");
 const itemsRemoved = new Counter("inventory_items_removed");
 const saveAttempts = new Counter("inventory_save_attempts");

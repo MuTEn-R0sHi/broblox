@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@rbx/constants": "workspace:*",
+    "@rbx/core": "workspace:*",
     "@rbx/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"
   },
@@ -26,6 +27,8 @@
     "@rbx/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.906",
-    "roblox-ts": "^3.0.0"
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

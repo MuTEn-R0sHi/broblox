@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { OBBY_CONSTANTS, events } from "./types";
+import { OBBY_CONSTANTS } from "./types";
 
 describe("obby constants", () => {
   it("should have valid stage constants", () => {
@@ -24,14 +24,5 @@ describe("obby constants", () => {
     expect(OBBY_CONSTANTS.END_ZONE_TAG).toBe("ObbyEndZone");
     expect(OBBY_CONSTANTS.KILL_ZONE_TAG).toBe("ObbyKillZone");
     expect(OBBY_CONSTANTS.COIN_TAG).toBe("ObbyCoin");
-  });
-});
-
-describe("obby events", () => {
-  it("should have valid event names", () => {
-    expect(events.checkpointReached).toBe("ObbyCheckpointReached");
-    expect(events.stageCompleted).toBe("ObbyStageCompleted");
-    expect(events.requestRespawn).toBe("ObbyRequestRespawn");
-    expect(events.playerDataSync).toBe("ObbyPlayerDataSync");
   });
 });

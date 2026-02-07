@@ -1,21 +1,18 @@
 /**
  * Remote Controller
- * Handles client-server communication.
+ * Handles client-server communication via Controller lifecycle.
+ * Uses the type-safe @rbx/net registry.
  */
 
-import { ReplicatedStorage } from "@rbxts/services";
-import { createLogger } from "@rbx/core";
-import {
+import { Controller, createLogger } from "@rbx/core";
+import { createClientRegistry, ClientRemoteRegistry } from "@rbx/net";
+import { ObbyRemotes, ObbyRemotesType, PlayerDataSyncPayload } from "shared/remotes";
+import type {
   CheckpointReachedEvent,
   LeaderboardRefreshStatusPayload,
   LeaderboardUpdatePayload,
   StageCompletedEvent,
 } from "shared/types";
-import {
-  parseLeaderboardRefreshStatusPayload,
-  parseLeaderboardUpdatePayload,
-  parsePlayerDataSyncPayload,
-} from "shared/remote-parsers";
 
 const logger = createLogger("RemoteController");
 
@@ -23,164 +20,99 @@ type CheckpointCallback = (event: CheckpointReachedEvent) => void;
 type StageCallback = (event: StageCompletedEvent) => void;
 type LeaderboardCallback = (data: LeaderboardUpdatePayload) => void;
 type LeaderboardRefreshStatusCallback = (data: LeaderboardRefreshStatusPayload) => void;
-type DataSyncCallback = (data: {
-  coins: number;
-  currentStage: number;
-  currentCheckpoint: number;
-}) => void;
+type DataSyncCallback = (data: PlayerDataSyncPayload) => void;
 
-export class RemoteController {
-  private remoteFolder?: Folder;
-  private checkpointReached?: RemoteEvent;
-  private requestRespawn?: RemoteEvent;
-  private requestLeaderboard?: RemoteEvent;
-  private leaderboardRefreshStatus?: RemoteEvent;
-  private stageCompleted?: RemoteEvent;
-  private leaderboardUpdate?: RemoteEvent;
-  private playerDataSync?: RemoteEvent;
+// Module-level state
+let registry: ClientRemoteRegistry<ObbyRemotesType>;
 
-  private checkpointCallbacks: CheckpointCallback[] = [];
-  private stageCallbacks: StageCallback[] = [];
-  private leaderboardCallbacks: LeaderboardCallback[] = [];
-  private leaderboardRefreshStatusCallbacks: LeaderboardRefreshStatusCallback[] = [];
-  private dataSyncCallbacks: DataSyncCallback[] = [];
+const checkpointCallbacks: CheckpointCallback[] = [];
+const stageCallbacks: StageCallback[] = [];
+const leaderboardCallbacks: LeaderboardCallback[] = [];
+const leaderboardRefreshStatusCallbacks: LeaderboardRefreshStatusCallback[] = [];
+const dataSyncCallbacks: DataSyncCallback[] = [];
 
-  boot(): void {
-    logger.info("RemoteController booting...");
+export const RemoteController: Controller & {
+  requestRespawnAtCheckpoint(checkpointId?: number): void;
+  requestLeaderboardRefresh(): void;
+  onCheckpoint(callback: CheckpointCallback): void;
+  onStage(callback: StageCallback): void;
+  onLeaderboard(callback: LeaderboardCallback): void;
+  onLeaderboardRefreshStatus(callback: LeaderboardRefreshStatusCallback): void;
+  onDataSync(callback: DataSyncCallback): void;
+} = {
+  onInit() {
+    logger.info("RemoteController initializing...");
 
-    // Wait for remotes folder
-    this.remoteFolder = ReplicatedStorage.WaitForChild("ObbyRemotes") as Folder;
+    registry = createClientRegistry(ObbyRemotes, "ObbyRemotes");
+    registry.initialize();
 
-    // Get remote events
-    this.checkpointReached = this.remoteFolder.WaitForChild("CheckpointReached") as RemoteEvent;
-    this.requestRespawn = this.remoteFolder.WaitForChild("RequestRespawn") as RemoteEvent;
-    this.requestLeaderboard = this.remoteFolder.WaitForChild("RequestLeaderboard") as RemoteEvent;
-    this.leaderboardRefreshStatus = this.remoteFolder.WaitForChild(
-      "LeaderboardRefreshStatus"
-    ) as RemoteEvent;
-    this.stageCompleted = this.remoteFolder.WaitForChild("StageCompleted") as RemoteEvent;
-    this.leaderboardUpdate = this.remoteFolder.WaitForChild("LeaderboardUpdate") as RemoteEvent;
-    this.playerDataSync = this.remoteFolder.WaitForChild("PlayerDataSync") as RemoteEvent;
-
-    // Set up listeners
-    this.checkpointReached.OnClientEvent.Connect((data: unknown) => {
-      this.onCheckpointReached(data as CheckpointReachedEvent);
-    });
-
-    this.stageCompleted.OnClientEvent.Connect((data: unknown) => {
-      this.onStageCompleted(data as StageCompletedEvent);
-    });
-
-    this.leaderboardUpdate.OnClientEvent.Connect((data: unknown) => {
-      this.onLeaderboardUpdate(data);
-    });
-
-    this.leaderboardRefreshStatus.OnClientEvent.Connect((data: unknown) => {
-      const parsed = parseLeaderboardRefreshStatusPayload(data);
-      if (!parsed) {
-        logger.warn("Invalid leaderboard refresh status payload");
-        return;
-      }
-      for (const cb of this.leaderboardRefreshStatusCallbacks) {
-        cb(parsed);
+    registry.onEvent("CheckpointReached", (event) => {
+      logger.debug(`Checkpoint reached: ${event.checkpointId}`);
+      for (const cb of checkpointCallbacks) {
+        cb(event);
       }
     });
 
-    this.playerDataSync.OnClientEvent.Connect((data: unknown) => {
-      const parsed = parsePlayerDataSyncPayload(data);
-      if (!parsed) {
-        logger.warn("Invalid player data sync payload");
-        return;
+    registry.onEvent("StageCompleted", (event) => {
+      logger.debug(`Stage completed: ${event.stageNumber}`);
+      for (const cb of stageCallbacks) {
+        cb(event);
       }
-      this.onPlayerDataSync(parsed);
     });
 
-    logger.info("RemoteController booted.");
-  }
+    registry.onEvent("LeaderboardUpdate", (data) => {
+      for (const cb of leaderboardCallbacks) {
+        cb(data);
+      }
+    });
 
-  /**
-   * Request respawn at checkpoint.
-   */
+    registry.onEvent("LeaderboardRefreshStatus", (data) => {
+      for (const cb of leaderboardRefreshStatusCallbacks) {
+        cb(data);
+      }
+    });
+
+    registry.onEvent("PlayerDataSync", (data) => {
+      logger.debug(`Data sync: coins=${data.coins}`);
+      for (const cb of dataSyncCallbacks) {
+        cb(data);
+      }
+    });
+
+    logger.info("RemoteController initialized.");
+  },
+
+  onDestroy() {
+    if (registry) {
+      registry.destroy();
+    }
+  },
+
   requestRespawnAtCheckpoint(checkpointId?: number): void {
-    this.requestRespawn?.FireServer({ toCheckpoint: checkpointId });
-  }
+    registry.fire("RequestRespawn", { toCheckpoint: checkpointId });
+  },
 
-  /**
-   * Request an immediate leaderboard snapshot from the server.
-   */
   requestLeaderboardRefresh(): void {
-    this.requestLeaderboard?.FireServer();
-  }
+    registry.fire("RequestLeaderboard", undefined as unknown as void);
+  },
 
-  /**
-   * Register callback for checkpoint reached.
-   */
   onCheckpoint(callback: CheckpointCallback): void {
-    this.checkpointCallbacks.push(callback);
-  }
+    checkpointCallbacks.push(callback);
+  },
 
-  /**
-   * Register callback for stage completed.
-   */
   onStage(callback: StageCallback): void {
-    this.stageCallbacks.push(callback);
-  }
+    stageCallbacks.push(callback);
+  },
 
-  /**
-   * Register callback for leaderboard updates.
-   */
   onLeaderboard(callback: LeaderboardCallback): void {
-    this.leaderboardCallbacks.push(callback);
-  }
+    leaderboardCallbacks.push(callback);
+  },
 
-  /**
-   * Register callback for leaderboard refresh status events.
-   */
   onLeaderboardRefreshStatus(callback: LeaderboardRefreshStatusCallback): void {
-    this.leaderboardRefreshStatusCallbacks.push(callback);
-  }
+    leaderboardRefreshStatusCallbacks.push(callback);
+  },
 
-  /**
-   * Register callback for player data sync.
-   */
   onDataSync(callback: DataSyncCallback): void {
-    this.dataSyncCallbacks.push(callback);
-  }
-
-  private onCheckpointReached(event: CheckpointReachedEvent): void {
-    logger.debug(`Checkpoint reached: ${event.checkpointId}`);
-    for (const cb of this.checkpointCallbacks) {
-      cb(event);
-    }
-  }
-
-  private onStageCompleted(event: StageCompletedEvent): void {
-    logger.debug(`Stage completed: ${event.stageNumber}`);
-    for (const cb of this.stageCallbacks) {
-      cb(event);
-    }
-  }
-
-  private onLeaderboardUpdate(data: unknown): void {
-    const parsed = parseLeaderboardUpdatePayload(data);
-    if (!parsed) {
-      logger.warn("Invalid leaderboard payload");
-      return;
-    }
-
-    for (const cb of this.leaderboardCallbacks) {
-      cb(parsed);
-    }
-  }
-
-  private onPlayerDataSync(data: {
-    coins: number;
-    currentStage: number;
-    currentCheckpoint: number;
-  }): void {
-    logger.debug(`Data sync: coins=${data.coins}`);
-    for (const cb of this.dataSyncCallbacks) {
-      cb(data);
-    }
-  }
-}
+    dataSyncCallbacks.push(callback);
+  },
+};

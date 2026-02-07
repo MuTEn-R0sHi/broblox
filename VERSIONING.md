@@ -29,6 +29,10 @@ Guideline: a breaking protocol bump implies a major release tag.
 Individual packages have their own version in `package.json`. These track implementation maturity:
 
 - `0.2.0` — Phase 1–2 packages with stable APIs (core, shared-types, constants, net, data, security, observability, input, ui, config-featureflags, combat, matchmaking, testing).
-- `0.1.0` — Phase 3 packages, recently implemented (moderation, movement).
+- `0.1.0` — Phase 3 packages (moderation, movement).
+- `0.1.0` — Phase 4 packages (codes, leaderboards, analytics, notifications).
+- `0.1.0` — Phase 5a packages (inventory, progression, quests, rewards).
+- `0.1.0` — Phase 5b packages (pets, gacha, cosmetics, battle-pass).
+- `0.1.0` — Phase 5c packages (localization, audio, tutorial, world-systems).
 
 Package versions are bumped when cutting a repo release tag. All packages in a given phase are bumped together.

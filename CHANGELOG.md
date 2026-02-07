@@ -49,7 +49,11 @@ Notes:
 - **@rbx/audio** - SFX, music, spatial audio, playlists, and per-channel volume management.
 - **@rbx/tutorial** - FTUE and guided tutorial framework with step sequencing and persistence.
 - **@rbx/world-systems** - Day/night cycle, weather transitions, and season progression.
-- **Test coverage: 1,100+ tests** across all packages, games, and dashboard.
+- **Service factory files** for all 25 packages — consistent `create*Service()` pattern with lifecycle hooks (`onInit`, `onStart`, `onDestroy`), player handlers (`initPlayer`, `cleanupPlayer`), and typed config.
+- **Factory test suites** — 25 test files covering every factory with mock isolation and independent-instance assertions.
+- **Test coverage: 1,500+ tests** across 70 test suites (all packages, games, and dashboard).
+- **Shared Roblox runtime types** - `types/roblox-runtime.d.ts` centralizes `game`, `pcall`, `typeIs`, `os`, `math`, `string`, `print`, `select`, and DataStore ambient declarations; 17 per-file declaration blocks removed.
+- **Reusable CI workflow** - `.github/workflows/build-and-publish.yml` — shared build + publish logic extracted from promote.yml.
 
 ### Changed
 
@@ -70,6 +74,13 @@ Notes:
 - **input + ui packages** - Added missing `lint`, `typecheck`, and `test` scripts.
 - **Roadmap** - Updated through Phase 5c reflecting all completed work.
 - **Starter/Obby games** - Fixed `registerStrings` arg order, `registerPlaylist` signatures, and all roblox-ts reserved identifier usage.
+- **CI caching** - Added pnpm store caching to ci.yml for faster builds.
+- **CI obby build** - ci.yml now builds both starter and obby games.
+- **CI DRY refactor** - promote.yml reduced from 260 to ~75 lines; shared logic extracted to reusable `build-and-publish.yml` workflow.
+- **@rbx/observability** - Deprecated `createCounter`/`createGauge`/`createHistogram` factory functions in favour of direct class constructors.
+- **Coverage thresholds** - Raised vitest thresholds from 50% to 80% lines/functions/statements and 65% branches.
+- **devDependencies** - Added missing `typescript` and `vitest` to 8 packages (config-featureflags, constants, core, input, matchmaking, net, shared-types, ui).
+- **CI** - Node 22 alignment, pnpm 9.15.4 pinning, rbxcloud URL fix in publish workflows.
 
 ### Fixed
 
@@ -82,6 +93,7 @@ Notes:
 
 - **Unused pnpm overrides** - Removed `hono` and `lodash` entries from `pnpm.overrides` (neither package exists in the dependency tree).
 - **Orphaned `roblox-globals.d.ts`** - Root-level ambient type file that was never referenced by any tsconfig.
+- **Per-file Roblox declarations** - Removed 17 redundant `declare const game/pcall/os/math` blocks; replaced by shared `types/roblox-runtime.d.ts`.
 
 ## 0.1.0 - 2026-01-24
 
@@ -101,7 +113,7 @@ Notes:
 - **Package README files** with comprehensive API documentation for all packages.
 - **Build verification in CI** - packages and starter game are now built in CI pipeline.
 - **Pre-commit hooks** using simple-git-hooks and lint-staged for automatic linting and formatting.
-- **Test coverage configuration** with vitest, including coverage thresholds (50% minimum).
+- **Test coverage configuration** with vitest, including coverage thresholds (80% lines/functions/statements, 65% branches).
 - **VSCode workspace settings** with recommended extensions, tasks, and editor configuration.
 - **Tools directory** with error catalog generator script.
 - **Error code reference documentation** auto-generated from ErrorCode enum.

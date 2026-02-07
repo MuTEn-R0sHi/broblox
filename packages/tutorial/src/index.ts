@@ -4,6 +4,8 @@
 
 export { SequenceRegistry } from "./sequence-registry";
 export { TutorialManager } from "./tutorial-manager";
+export { createTutorialService } from "./create-tutorial-service";
+export type { TutorialServiceConfig, TutorialServiceHandle } from "./create-tutorial-service";
 export type {
   StepType,
   StepCondition,

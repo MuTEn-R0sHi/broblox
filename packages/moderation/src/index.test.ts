@@ -1,8 +1,8 @@
 /**
  * Moderation Package Tests
  *
- * Placeholder tests for the moderation system.
- * TODO: Add comprehensive tests for ban/mute logic.
+ * Tests for moderation types, config defaults, and cross-server sync handling.
+ * See service.test.ts for ban/mute/revoke/unmute method tests.
  */
 
 import { describe, it, expect, vi, afterEach } from "vitest";

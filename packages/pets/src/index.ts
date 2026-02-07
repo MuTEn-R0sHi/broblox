@@ -14,3 +14,5 @@
 export * from "./types";
 export { PetRegistry } from "./pet-registry";
 export { PetStore } from "./pet-store";
+export { createPetService } from "./create-pet-service";
+export type { PetServiceConfig, PetServiceHandle } from "./create-pet-service";

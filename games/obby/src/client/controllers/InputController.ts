@@ -3,37 +3,26 @@
  * Handles player input for reset/respawn.
  */
 
-import { UserInputService, Players } from "@rbxts/services";
-import { createLogger } from "@rbx/core";
+import { UserInputService } from "@rbxts/services";
+import { Controller, createLogger } from "@rbx/core";
 import { RemoteController } from "./RemoteController";
 
 const logger = createLogger("InputController");
 
-export class InputController {
-  private remote: RemoteController;
-  private player = Players.LocalPlayer;
-
-  constructor(remote: RemoteController) {
-    this.remote = remote;
-  }
-
-  boot(): void {
-    logger.info("InputController booting...");
+export const InputController: Controller = {
+  onStart() {
+    logger.info("InputController starting...");
 
     // Reset keybind (R key)
     UserInputService.InputBegan.Connect((input, gameProcessed) => {
       if (gameProcessed) return;
 
       if (input.KeyCode === Enum.KeyCode.R) {
-        this.requestReset();
+        logger.debug("Reset requested");
+        RemoteController.requestRespawnAtCheckpoint();
       }
     });
 
-    logger.info("InputController booted.");
-  }
-
-  private requestReset(): void {
-    logger.debug("Reset requested");
-    this.remote.requestRespawnAtCheckpoint();
-  }
-}
+    logger.info("InputController started.");
+  },
+};

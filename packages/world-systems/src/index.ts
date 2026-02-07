@@ -3,6 +3,8 @@
  */
 
 export { WorldManager } from "./world-manager";
+export { createWorldService } from "./create-world-service";
+export type { WorldServiceConfig, WorldServiceHandle } from "./create-world-service";
 export type {
   TimePeriod,
   LightingPreset,

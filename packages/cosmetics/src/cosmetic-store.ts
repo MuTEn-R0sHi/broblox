@@ -14,14 +14,6 @@ import type {
 import { CATEGORY_SLOTS, DEFAULT_COSMETICS_CONFIG } from "./types";
 import { CosmeticRegistry } from "./cosmetic-registry";
 
-declare const game: {
-  GetService(name: string): Record<string, unknown>;
-};
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const os: { time(): number };
-declare const print: (...args: unknown[]) => void;
-
 export class CosmeticStore {
   private playerId: number;
   private registry: CosmeticRegistry;

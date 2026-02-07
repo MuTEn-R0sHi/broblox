@@ -11,11 +11,6 @@ import { Counter } from "@rbx/observability";
 import { emit } from "@rbx/observability";
 import type { AnalyticsEvent, EventCategory, EventDefinition, AnalyticsConfig } from "./types";
 
-// Roblox globals
-declare const game: {
-  JobId: string;
-};
-
 const eventsTracked = new Counter("analytics_events_tracked");
 const eventsDropped = new Counter("analytics_events_dropped");
 

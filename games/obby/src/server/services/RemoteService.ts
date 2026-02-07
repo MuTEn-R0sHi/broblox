@@ -1,111 +1,34 @@
 /**
  * Remote Service
- * Sets up RemoteEvents for client-server communication.
+ *
+ * Creates and manages all remotes using the type-safe registry.
+ * Other services access remotes through this service.
  */
 
 import { Service, createLogger } from "@rbx/core";
-import { ReplicatedStorage } from "@rbxts/services";
+import { createServerRegistry, ServerRemoteRegistry } from "@rbx/net";
+import { ObbyRemotes, ObbyRemotesType } from "shared/remotes";
 
 const logger = createLogger("RemoteService");
 
-// Module-level state
-let remoteFolder: Folder | undefined;
-let checkpointReachedRemote: RemoteEvent | undefined;
-let requestRespawnRemote: RemoteEvent | undefined;
-let requestLeaderboardRemote: RemoteEvent | undefined;
-let leaderboardRefreshStatusRemote: RemoteEvent | undefined;
-let stageCompletedRemote: RemoteEvent | undefined;
-let playerDataSyncRemote: RemoteEvent | undefined;
-let leaderboardUpdateRemote: RemoteEvent | undefined;
-
-function createRemoteEvent(name: string, parent: Folder): RemoteEvent {
-  const remote = new Instance("RemoteEvent");
-  remote.Name = name;
-  remote.Parent = parent;
-  return remote;
-}
+// Registry instance — initialized in onInit
+let registry: ServerRemoteRegistry<ObbyRemotesType>;
 
 export const RemoteService: Service & {
-  checkpointReached(): RemoteEvent;
-  requestRespawn(): RemoteEvent;
-  requestLeaderboard(): RemoteEvent;
-  leaderboardRefreshStatus(): RemoteEvent;
-  stageCompleted(): RemoteEvent;
-  playerDataSync(): RemoteEvent;
-  leaderboardUpdate(): RemoteEvent;
-  fireClient(player: Player, eventName: string, ...args: unknown[]): void;
+  /** Access the remote registry for handlers */
+  getRegistry(): ServerRemoteRegistry<ObbyRemotesType>;
 } = {
-  checkpointReached() {
-    return checkpointReachedRemote!;
-  },
-
-  requestRespawn() {
-    return requestRespawnRemote!;
-  },
-
-  requestLeaderboard() {
-    return requestLeaderboardRemote!;
-  },
-
-  leaderboardRefreshStatus() {
-    return leaderboardRefreshStatusRemote!;
-  },
-
-  stageCompleted() {
-    return stageCompletedRemote!;
-  },
-
-  playerDataSync() {
-    return playerDataSyncRemote!;
-  },
-
-  leaderboardUpdate() {
-    return leaderboardUpdateRemote!;
-  },
-
-  fireClient(player: Player, eventName: string, ...args: unknown[]): void {
-    let remote: RemoteEvent | undefined;
-
-    if (eventName === "ObbyCheckpointReached") {
-      remote = checkpointReachedRemote;
-    } else if (eventName === "ObbyStageCompleted") {
-      remote = stageCompletedRemote;
-    } else if (eventName === "ObbyRequestRespawn") {
-      remote = requestRespawnRemote;
-    } else if (eventName === "ObbyPlayerDataSync") {
-      remote = playerDataSyncRemote;
-    } else if (eventName === "ObbyLeaderboardUpdate") {
-      remote = leaderboardUpdateRemote;
+  getRegistry() {
+    if (!registry) {
+      error("RemoteService not initialized");
     }
-
-    if (remote) {
-      remote.FireClient(player, ...args);
-    } else {
-      logger.warn(`Unknown event: ${eventName}`);
-    }
+    return registry;
   },
 
   onInit() {
-    logger.debug("Creating remotes...");
-
-    remoteFolder = new Instance("Folder");
-    remoteFolder.Name = "ObbyRemotes";
-    remoteFolder.Parent = ReplicatedStorage;
-
-    checkpointReachedRemote = createRemoteEvent("CheckpointReached", remoteFolder);
-    requestRespawnRemote = createRemoteEvent("RequestRespawn", remoteFolder);
-    requestLeaderboardRemote = createRemoteEvent("RequestLeaderboard", remoteFolder);
-    leaderboardRefreshStatusRemote = createRemoteEvent("LeaderboardRefreshStatus", remoteFolder);
-    stageCompletedRemote = createRemoteEvent("StageCompleted", remoteFolder);
-    playerDataSyncRemote = createRemoteEvent("PlayerDataSync", remoteFolder);
-    leaderboardUpdateRemote = createRemoteEvent("LeaderboardUpdate", remoteFolder);
-
-    logger.debug("Remotes created");
-  },
-
-  onDestroy() {
-    if (remoteFolder) {
-      remoteFolder.Destroy();
-    }
+    logger.debug("Initializing remotes...");
+    registry = createServerRegistry(ObbyRemotes, "ObbyRemotes");
+    registry.initialize();
+    logger.debug("Remotes initialized");
   },
 };

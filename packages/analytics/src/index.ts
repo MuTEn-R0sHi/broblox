@@ -14,3 +14,5 @@ export { EventTracker } from "./event-tracker";
 export { FunnelTracker } from "./funnel-tracker";
 export { SessionTracker } from "./session-tracker";
 export { RetentionTracker } from "./retention-tracker";
+export { createAnalyticsService } from "./create-analytics-service";
+export type { AnalyticsServiceConfig, AnalyticsServiceHandle } from "./create-analytics-service";

@@ -12,3 +12,8 @@
 
 export * from "./types";
 export * from "./code-store";
+export { createCodeRedemptionService } from "./create-code-redemption-service";
+export type {
+  CodeRedemptionServiceConfig,
+  CodeRedemptionServiceHandle,
+} from "./create-code-redemption-service";

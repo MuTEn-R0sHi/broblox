@@ -1,18 +1,36 @@
 # Reference: CLI
 
-This page will list canonical commands once the code toolchain is added.
+Available commands for development, testing, and documentation.
 
-Planned commands:
+## Development
 
-- `pnpm install` (install dependencies)
-- `pnpm build` (compile Roblox-TS)
-- `pnpm dev` (watch build)
-- `rojo serve` (serve project to Studio)
-- `pnpm test` (unit tests)
-- `pnpm lint` (lint)
-- `pnpm format` (format)
+```bash
+pnpm install              # Install all dependencies
+pnpm run build:packages   # Compile all roblox-ts packages
+pnpm run build:starter    # Build starter game (builds packages first)
+pnpm run game:starter:dev # Watch mode for development
+pnpm run game:starter:rojo # Start Rojo server for Studio sync
+```
 
-Docs commands:
+## Quality
 
-- `mkdocs serve`
-- `mkdocs build`
+```bash
+pnpm lint                 # Run ESLint across all packages
+pnpm typecheck            # Run TypeScript/roblox-ts type checking
+pnpm test                 # Run all tests with vitest
+pnpm test -- --coverage   # Run tests with coverage report
+```
+
+## Documentation
+
+```bash
+mkdocs serve              # Local docs preview (http://127.0.0.1:8000)
+mkdocs build              # Build static docs site
+```
+
+## Per-package commands
+
+```bash
+pnpm --filter @rbx/net test       # Test a single package
+pnpm --filter @rbx/core typecheck # Typecheck a single package
+```

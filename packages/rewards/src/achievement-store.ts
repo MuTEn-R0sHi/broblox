@@ -16,20 +16,6 @@ import type {
   AchievementCompletedEvent,
 } from "./types";
 
-// Roblox globals
-declare const game: { GetService(name: string): unknown };
-declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
-declare const os: { time(): number };
-
-interface DataStore {
-  GetAsync(key: string): unknown;
-  SetAsync(key: string, value: unknown): void;
-}
-interface DataStoreService {
-  GetDataStore(name: string): DataStore;
-}
-
 const achievementsCompleted = new Counter("rewards_achievements_completed");
 const saveAttempts = new Counter("rewards_achievement_save_attempts");
 const saveFailures = new Counter("rewards_achievement_save_failures");

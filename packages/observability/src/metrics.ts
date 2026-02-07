@@ -97,6 +97,7 @@ export class Counter {
 
 /**
  * Create a counter metric.
+ * @deprecated Use `new Counter(name, labels)` directly.
  */
 export function createCounter(name: string, labels?: Record<string, string>): Counter {
   return new Counter(name, labels);
@@ -161,6 +162,7 @@ export class Gauge {
 
 /**
  * Create a gauge metric.
+ * @deprecated Use `new Gauge(name, labels)` directly.
  */
 export function createGauge(name: string, labels?: Record<string, string>): Gauge {
   return new Gauge(name, labels);
@@ -239,6 +241,7 @@ export class Histogram {
 
 /**
  * Create a histogram metric.
+ * @deprecated Use `new Histogram(name, labels, buckets)` directly.
  */
 export function createHistogram(
   name: string,
