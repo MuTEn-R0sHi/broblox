@@ -12,7 +12,7 @@ import {
   createActionResult,
   createErrorResult,
 } from "@rbx/testing";
-import { validateDoActionPayload, validateHandshakePayload } from "../validation";
+import { validateDoActionPayload, validateHandshakePayload } from "./validation";
 
 describe("Protocol Serialization", () => {
   describe("DoAction payload", () => {

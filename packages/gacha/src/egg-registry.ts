@@ -5,22 +5,7 @@
  */
 
 import type { EggDefinition, GachaRarity } from "./types";
-
-const RARITY_ORDER: ReadonlyArray<GachaRarity> = [
-  "common",
-  "uncommon",
-  "rare",
-  "epic",
-  "legendary",
-  "mythic",
-];
-
-function rarityRank(r: GachaRarity): number {
-  for (let i = 0; i < RARITY_ORDER.size(); i++) {
-    if (RARITY_ORDER[i] === r) return i;
-  }
-  return 0;
-}
+import { rarityRank } from "./types";
 
 export class EggRegistry {
   private eggs = new Map<string, EggDefinition>();

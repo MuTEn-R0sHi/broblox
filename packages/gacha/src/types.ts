@@ -105,3 +105,23 @@ export const DEFAULT_GACHA_CONFIG: GachaConfig = {
 };
 
 export const VERSION = "0.1.0";
+
+// ---------------------------------------------------------------------------
+// Rarity utilities (shared across gacha modules)
+// ---------------------------------------------------------------------------
+
+export const RARITY_ORDER: ReadonlyArray<GachaRarity> = [
+  "common",
+  "uncommon",
+  "rare",
+  "epic",
+  "legendary",
+  "mythic",
+];
+
+export function rarityRank(r: GachaRarity): number {
+  for (let i = 0; i < RARITY_ORDER.size(); i++) {
+    if (RARITY_ORDER[i] === r) return i;
+  }
+  return 0;
+}

@@ -1,7 +1,7 @@
 {
   "name": "@rbx/ui",
   "version": "0.2.0",
-  "type": "module",
+  "private": true,
   "description": "UI component library for Roblox games",
   "main": "out",
   "types": "out/index.d.ts",

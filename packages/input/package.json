@@ -1,7 +1,7 @@
 {
   "name": "@rbx/input",
   "version": "0.2.0",
-  "type": "module",
+  "private": true,
   "description": "Input abstraction for Roblox games - unified keyboard, gamepad, and touch controls",
   "main": "out",
   "types": "out/index.d.ts",

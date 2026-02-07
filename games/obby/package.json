@@ -14,19 +14,13 @@
   },
   "dependencies": {
     "@rbx/config-featureflags": "workspace:*",
-    "@rbx/analytics": "workspace:*",
     "@rbx/codes": "workspace:*",
     "@rbx/constants": "workspace:*",
-    "@rbx/leaderboards": "workspace:*",
     "@rbx/core": "workspace:*",
     "@rbx/data": "workspace:*",
-    "@rbx/input": "workspace:*",
     "@rbx/moderation": "workspace:*",
     "@rbx/movement": "workspace:*",
-    "@rbx/net": "workspace:*",
-    "@rbx/notifications": "workspace:*",
     "@rbx/inventory": "workspace:*",
-    "@rbx/observability": "workspace:*",
     "@rbx/progression": "workspace:*",
     "@rbx/quests": "workspace:*",
     "@rbx/rewards": "workspace:*",
@@ -38,7 +32,6 @@
     "@rbx/audio": "workspace:*",
     "@rbx/tutorial": "workspace:*",
     "@rbx/world-systems": "workspace:*",
-    "@rbx/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"
   },
   "devDependencies": {

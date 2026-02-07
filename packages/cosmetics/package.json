@@ -6,13 +6,16 @@
   "main": "out",
   "types": "out/index.d.ts",
   "exports": {
-    ".": "./out/index.d.ts"
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
   },
   "scripts": {
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
-    "lint": "eslint src/",
+    "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "@rbx/core": "workspace:*",
@@ -21,9 +24,9 @@
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
-    "@rbxts/types": "^1.0.850",
+    "@rbxts/types": "^1.0.906",
     "roblox-ts": "^3.0.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }
 }

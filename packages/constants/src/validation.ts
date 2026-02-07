@@ -48,20 +48,3 @@ export function isValidTimestamp(timestamp: number, nowMs: number): boolean {
 export function clamp(value: number, min: number, max: number): number {
   return math.max(min, math.min(max, value));
 }
-
-// ============================================================================
-// Device Classes
-// ============================================================================
-
-/** Valid device class values */
-export const VALID_DEVICE_CLASSES = ["kbm", "gamepad", "touch"] as const;
-export type DeviceClass = (typeof VALID_DEVICE_CLASSES)[number];
-
-/**
- * Check if a value is a valid device class.
- */
-export function isValidDeviceClass(value: unknown): value is DeviceClass {
-  return (
-    typeOf(value) === "string" && (value === "kbm" || value === "gamepad" || value === "touch")
-  );
-}

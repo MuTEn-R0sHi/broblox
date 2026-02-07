@@ -26,6 +26,7 @@ build/
 # Roblox-TS
 games/**/out/
 packages/**/out/
+sourcemap.json
 
 # Testing
 coverage/

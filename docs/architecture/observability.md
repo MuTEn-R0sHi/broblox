@@ -37,14 +37,13 @@ Every log/event should attach:
 
 ### Phase 1: Structured console logs
 
-Events are logged to console as structured JSON:
+Events are logged to console as structured JSON using `@rbx/observability`:
 
 ```typescript
-// packages/core/src/index.ts
-import { logEvent } from "@rbx/core";
+import { emit } from "@rbx/observability";
 
 // Usage
-logEvent("security", "invalid_payload", { remote: "Intent_DoAction", playerId: 123 });
+emit({ category: "security", action: "invalid_payload", remote: "Intent_DoAction", playerId: 123 });
 ```
 
 Review process: Manual review via Studio output or Roblox Developer Console.

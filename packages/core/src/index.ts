@@ -124,45 +124,6 @@ export function logError(
   logger.error(fullMessage);
 }
 
-// Structured event logging (observability)
-let correlationContext: Record<string, unknown> = {};
-
-export function setCorrelationContext(context: Record<string, unknown>): void {
-  correlationContext = context;
-}
-
-export function getCorrelationContext(): Record<string, unknown> {
-  return correlationContext;
-}
-
-export function logEvent(
-  category: string,
-  event: string,
-  data: Record<string, unknown> = {}
-): void {
-  const baseContext = {
-    serverId: correlationContext.serverId ?? game.JobId,
-    jobId: correlationContext.jobId ?? game.JobId,
-    placeId: correlationContext.placeId ?? game.PlaceId,
-  };
-
-  const payload = {
-    timestamp: os.time(),
-    category,
-    event,
-    ...baseContext,
-    ...correlationContext,
-    ...data,
-  };
-
-  const [success, result] = pcall(() => game.GetService("HttpService").JSONEncode(payload));
-  if (success) {
-    print(result as string);
-  } else {
-    print(payload);
-  }
-}
-
 // Janitor (cleanup utility)
 export class Janitor {
   private tasks: Array<() => void> = [];

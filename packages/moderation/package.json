@@ -1,6 +1,7 @@
 {
   "name": "@rbx/moderation",
   "version": "0.1.0",
+  "private": true,
   "description": "Moderation system for Roblox games - bans, mutes, enforcement",
   "main": "out",
   "types": "out/index.d.ts",
@@ -26,15 +27,13 @@
   "license": "MIT",
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
-    "@rbxts/types": "^1.0.841",
+    "@rbxts/types": "^1.0.906",
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "dependencies": {
     "@rbx/core": "workspace:*",
-    "@rbx/data": "workspace:*",
-    "@rbx/net": "workspace:*",
     "@rbx/observability": "workspace:*",
     "@rbx/shared-types": "workspace:*"
   }

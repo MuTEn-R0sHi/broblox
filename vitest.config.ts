@@ -38,8 +38,10 @@ export default defineConfig({
       "@rbx/audio": resolve(__dirname, "packages/audio/src/index.ts"),
       "@rbx/tutorial": resolve(__dirname, "packages/tutorial/src/index.ts"),
       "@rbx/world-systems": resolve(__dirname, "packages/world-systems/src/index.ts"),
+      "@rbx/input": resolve(__dirname, "packages/input/src/index.ts"),
+      "@rbx/ui": resolve(__dirname, "packages/ui/src/index.ts"),
       "@rbx/testing": resolve(__dirname, "packages/testing/src/index.ts"),
-      "@rbxts/t": resolve(__dirname, "packages/net/src/__mocks__/t-mock.ts"),
+      "@rbxts/t": resolve(__dirname, "packages/testing/src/t-mock.ts"),
     },
   },
   test: {

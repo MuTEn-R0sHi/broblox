@@ -13,14 +13,13 @@ import type {
   HatchCallback,
   HatchResult,
 } from "./types";
-import { DEFAULT_GACHA_CONFIG } from "./types";
+import { DEFAULT_GACHA_CONFIG, rarityRank } from "./types";
 import { EggRegistry } from "./egg-registry";
 
 declare const game: {
   GetService(name: string): Record<string, unknown>;
 };
 declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
-declare function typeIs(value: unknown, typeName: string): boolean;
 declare const os: { time(): number };
 declare const math: {
   floor(n: number): number;
@@ -28,23 +27,6 @@ declare const math: {
   huge: number;
 };
 declare const print: (...args: unknown[]) => void;
-
-// Rarity ordering for pity checks
-const RARITY_ORDER: ReadonlyArray<GachaRarity> = [
-  "common",
-  "uncommon",
-  "rare",
-  "epic",
-  "legendary",
-  "mythic",
-];
-
-function rarityRank(r: GachaRarity): number {
-  for (let i = 0; i < RARITY_ORDER.size(); i++) {
-    if (RARITY_ORDER[i] === r) return i;
-  }
-  return 0;
-}
 
 export class GachaStore {
   private playerId: number;
