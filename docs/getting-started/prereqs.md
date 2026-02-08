@@ -3,12 +3,20 @@
 ## Local prerequisites (developer machine)
 
 - Roblox Studio (latest stable)
-- Node.js (LTS)
-- pnpm (recommended) or npm
+- Node.js (>= 20.11.0)
+- pnpm (via Corepack)
 - Git
 - Rojo (recommended, for Roblox Studio sync)
 
 Optional (recommended): Aftman for toolchain pinning (Rojo, etc.)
+
+## Package manager
+
+This repo is a `pnpm` workspace, and `pnpm` is pinned via `package.json#packageManager`.
+
+One-time setup:
+
+- `corepack enable`
 
 ### Installing Aftman
 

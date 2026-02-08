@@ -6,10 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { LeaderboardDefinition, LeaderboardPeriod, LeaderboardsConfig } from "./types";
-
-// LuaTuple is a roblox-ts compiler global not available under vitest's tsconfig
-declare type LuaTuple<T extends unknown[]> = T & { readonly LUA_TUPLE: never };
+import type { LeaderboardDefinition, LeaderboardsConfig } from "./types";
 
 // ---------------------------------------------------------------------------
 // Roblox globals stub

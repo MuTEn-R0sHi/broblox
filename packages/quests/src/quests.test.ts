@@ -258,9 +258,9 @@ describe("QuestStore", () => {
       for (let i = 0; i < 5; i++) {
         quests.push(makeKillQuest({ id: `q_${i}` }));
       }
-      const { store } = makeStore(quests);
+      const { registry } = makeStore(quests);
       // Override maxActiveQuests to 3
-      const s2 = new QuestStore(1, makeStore(quests).registry, { maxActiveQuests: 3 });
+      const s2 = new QuestStore(1, registry, { maxActiveQuests: 3 });
       s2.init();
       s2.acceptQuest("q_0");
       s2.acceptQuest("q_1");

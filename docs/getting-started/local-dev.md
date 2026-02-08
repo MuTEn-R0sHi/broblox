@@ -79,7 +79,7 @@ Create a GitHub OAuth App at https://github.com/settings/developers:
 ### Database setup
 
 ```bash
-npx prisma db push
+pnpm prisma db push
 ```
 
 ### Run development server
@@ -123,10 +123,14 @@ The build compiles shared packages first, then the game:
 
 **Obby Game:**
 
-- Build once: `pnpm --filter @rbx/game-obby build`
-- Watch: `pnpm --filter @rbx/game-obby dev`
+- Build once: `pnpm game:obby:build`
+- Watch: `pnpm game:obby:dev`
 
 > **Note:** `build:starter` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @rbx/game-starter build` directly.
+
+If you prefer using repo-level scripts for consistency, the equivalent is:
+
+- `pnpm game:starter:build`
 
 ### 3) Rojo + Studio sync
 
@@ -143,7 +147,7 @@ pnpm game:starter:rojo
 
 ```bash
 aftman install
-cd games/obby && pnpm rojo:serve
+pnpm game:obby:rojo
 ```
 
 The Rojo project file is `games/starter/default.project.json`.

@@ -54,7 +54,7 @@ Operations control plane for the rbx-game-platform.
    ```bash
    pnpm install
    cd apps/dashboard
-   npx prisma db push
+   pnpm prisma db push
    ```
 
 5. Start development server:
@@ -106,6 +106,8 @@ Fetch feature flags for a specific environment.
 **Parameters:**
 
 - `environment`: `dev`, `stage`, or `prod`
+
+> Note: the dashboard API uses `stage`/`prod` labels; GitHub Environments use `staging`/`production`.
 
 **Headers (optional):**
 

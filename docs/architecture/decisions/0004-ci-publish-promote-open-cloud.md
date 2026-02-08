@@ -2,11 +2,11 @@
 
 ## Status
 
-Accepted
+Accepted (partially implemented)
 
 ## Context
 
-We want automated, repeatable releases for multiple games with clear environment separation (dev/stage/prod), and we need a safe approval gate for production.
+We want automated, repeatable releases for multiple games with clear environment separation (dev/staging/production), and we need a safe approval gate for production.
 
 Manual publishing from Studio does not scale and is error-prone.
 
@@ -18,8 +18,13 @@ Release model:
 
 - Build once, promote the same artifact.
 - `dev` publishes automatically from `main`.
-- `stage` promotion requires manual approval.
-- `prod` promotion requires a version tag and approval.
+- `staging` promotion requires manual approval.
+- `production` promotion requires a version tag and approval.
+
+Implementation note:
+
+- The current GitHub Actions workflows rebuild from a pinned git ref (commit SHA or tag) during promotion.
+  Persisted build artifacts for true "build once, promote" can be added later.
 
 Credentials:
 
@@ -49,5 +54,5 @@ Audit:
 
 1. Implement CI build and artifact generation.
 2. Implement dev publish.
-3. Add stage environment with approval.
-4. Add prod tag-based promotion with rollback procedure.
+3. Add staging environment with approval.
+4. Add production tag-based promotion with rollback procedure.

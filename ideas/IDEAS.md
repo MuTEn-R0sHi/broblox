@@ -3,8 +3,8 @@
 > **Purpose:** Raw brainstorming for feature ideas, monetization patterns, and game mechanics.
 > This is a scratch pad for unvetted ideas — structured planning lives in the roadmap docs.
 >
-> **Official Roadmap:** [docs/roadmap/](docs/roadmap/)
-> **Future Phases:** [docs/roadmap/future-phases.md](docs/roadmap/future-phases.md)
+> **Official Roadmap:** [docs/roadmap/overview.md](../docs/roadmap/overview.md)
+> **Future Phases:** [docs/roadmap/future-phases.md](../docs/roadmap/future-phases.md)
 
 ---
 

@@ -10,13 +10,9 @@ import { Counter } from "@rbx/observability";
 import type {
   Notification,
   NotificationOptions,
-  NotificationType,
   NotificationPriority,
-  NotificationDuration,
   NotificationsConfig,
-  DEFAULT_NOTIFICATIONS_CONFIG,
 } from "./types";
-import { resolveDuration } from "./types";
 
 const notificationsCreated = new Counter("notifications_created");
 const notificationsDismissed = new Counter("notifications_dismissed");

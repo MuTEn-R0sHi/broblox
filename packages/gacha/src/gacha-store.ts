@@ -8,7 +8,6 @@ import type {
   EggDefinition,
   GachaConfig,
   GachaPlayerData,
-  GachaRarity,
   GachaWeight,
   HatchCallback,
   HatchResult,

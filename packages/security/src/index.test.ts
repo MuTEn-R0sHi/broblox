@@ -607,7 +607,6 @@ describe("Violation Types", () => {
 describe("Trust Score Cache", () => {
   it("caches trust scores with TTL", () => {
     const cache = new Map<number, { score: TrustScore; timestamp: number }>();
-    const CACHE_TTL = 60;
     const player = createMockPlayer();
 
     const score: TrustScore = {

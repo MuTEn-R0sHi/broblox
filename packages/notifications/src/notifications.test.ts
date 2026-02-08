@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { NotificationsConfig, Notification, AnnouncementDefinition, NewsItem } from "./types";
+import type { NotificationsConfig } from "./types";
 
 // ---------------------------------------------------------------------------
 // Roblox globals polyfills

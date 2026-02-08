@@ -7,8 +7,6 @@
 import { createLogger } from "@rbx/core";
 import type {
   LocaleCode,
-  StringTable,
-  PluralEntry,
   InterpolationParams,
   LocalizationConfig,
   TranslationResult,

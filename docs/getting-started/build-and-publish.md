@@ -5,20 +5,21 @@ This page defines the release model used by this repo.
 ## Environments
 
 - **dev**: auto-published on merge to `main`
-- **stage**: manual approval gate; used for QA and canary
-- **prod**: tagged releases only; must support rollback
+- **staging**: manual approval gate; used for QA and canary
+- **production**: tagged releases only; must support rollback
 
 ## Artifact philosophy
 
-Build once, promote the same artifact.
+Build from a pinned ref, then publish.
 
 - Roblox-TS compile output + Rojo project files form a reproducible build.
-- Promotion should not rebuild gameplay code; it should publish the exact same artifact.
+- Today, promotions rebuild from a specific git ref (commit SHA or tag) and publish that output.
+  If/when we add persisted build artifacts, the goal is to promote the exact same artifact between environments.
 
 ## Open Cloud usage
 
-- CI uses Open Cloud to publish versions and promote between environments.
-- Credentials are stored in GitHub environments (dev/stage/prod) with required reviewers.
+- CI uses Open Cloud to publish versions to each environment.
+- Credentials are stored in GitHub environments (dev/staging/production) with required reviewers.
 
 ## Rollback expectations
 

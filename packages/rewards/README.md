@@ -79,5 +79,5 @@ store.save();
 ## Tests
 
 ```bash
-pnpm test -- packages/rewards
+pnpm --filter @rbx/rewards test
 ```

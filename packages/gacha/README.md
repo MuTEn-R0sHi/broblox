@@ -72,4 +72,4 @@ const result = store.hatch("basic_egg", 500);
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/gacha.md)

@@ -15,6 +15,7 @@ import {
   ServerEventHandler,
   RateLimitConfig,
 } from "./types";
+import { RateLimiter } from "../ratelimit";
 
 // Declare Roblox services at runtime
 declare const game: {
@@ -22,14 +23,6 @@ declare const game: {
     FindFirstChild(name: string): Instance | undefined;
   };
 };
-
-/**
- * Internal rate limit state per player
- */
-interface RateLimitState {
-  tokens: number;
-  lastRefill: number;
-}
 
 // ============================================================================
 // Server Registry Class
@@ -41,7 +34,7 @@ interface RateLimitState {
 export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
   private folder: Folder;
   private instances = new Map<string, RemoteFunction | RemoteEvent>();
-  private rateLimitStates = new Map<string, Map<number, RateLimitState>>();
+  private rateLimiters = new Map<string, RateLimiter>();
 
   constructor(
     private registry: TRegistry,
@@ -66,6 +59,11 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
     // Use pairs to iterate (compiles to Lua pairs())
     for (const [key, def] of pairs(this.registry as unknown as Map<string, RemoteDefinition>)) {
       this.createRemote(key as string, def);
+
+      // Create per-endpoint rate limiter once (token bucket).
+      if (def.rateLimit) {
+        this.getOrCreateRateLimiter(key as string, def.rateLimit);
+      }
     }
   }
 
@@ -102,12 +100,9 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
     remote.OnServerInvoke = (player: Player, ...args: unknown[]) => {
       // Rate limiting
       if (def.rateLimit) {
-        const result = this.checkPlayerRateLimit(key as string, player, def.rateLimit);
-        if (!result.allowed) {
-          return err(ErrorCode.RateLimited, {
-            retryAfterMs: result.retryAfterMs,
-          });
-        }
+        const limiter = this.getOrCreateRateLimiter(key as string, def.rateLimit);
+        const rl = limiter.check(player.UserId);
+        if (!rl.ok) return err(ErrorCode.RateLimited, { retryAfterMs: rl.retryAfterMs });
       }
 
       // Validation
@@ -147,10 +142,9 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
     remote.OnServerEvent.Connect((player: Player, ...args: unknown[]) => {
       // Rate limiting
       if (def.rateLimit) {
-        const result = this.checkPlayerRateLimit(key as string, player, def.rateLimit);
-        if (!result.allowed) {
-          return; // Silently drop rate-limited events
-        }
+        const limiter = this.getOrCreateRateLimiter(key as string, def.rateLimit);
+        const rl = limiter.check(player.UserId);
+        if (!rl.ok) return; // Silently drop rate-limited events
       }
 
       // Validation
@@ -227,44 +221,13 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
     this.instances.set(key, instance);
   }
 
-  private checkPlayerRateLimit(
-    key: string,
-    player: Player,
-    config: RateLimitConfig
-  ): { allowed: boolean; retryAfterMs?: number } {
-    // Get or create rate limit state map for this remote
-    let stateMap = this.rateLimitStates.get(key);
-    if (!stateMap) {
-      stateMap = new Map();
-      this.rateLimitStates.set(key, stateMap);
-    }
+  private getOrCreateRateLimiter(key: string, config: RateLimitConfig): RateLimiter {
+    const existing = this.rateLimiters.get(key);
+    if (existing) return existing;
 
-    // Get or create state for this player
-    let state = stateMap.get(player.UserId);
-    const now = os.clock();
-    if (!state) {
-      state = { tokens: config.maxRequests, lastRefill: now };
-      stateMap.set(player.UserId, state);
-    }
-
-    // Token bucket refill
-    const windowSec = config.windowMs / 1000;
-    const elapsed = now - state.lastRefill;
-    const refillRate = config.maxRequests / windowSec;
-    const tokensToAdd = elapsed * refillRate;
-    state.tokens = math.min(config.maxRequests, state.tokens + tokensToAdd);
-    state.lastRefill = now;
-
-    // Check if allowed
-    if (state.tokens >= 1) {
-      state.tokens -= 1;
-      return { allowed: true };
-    }
-
-    // Not allowed - calculate retry time
-    const tokensNeeded = 1 - state.tokens;
-    const retryAfterSec = tokensNeeded / refillRate;
-    return { allowed: false, retryAfterMs: retryAfterSec * 1000 };
+    const limiter = new RateLimiter(config);
+    this.rateLimiters.set(key, limiter);
+    return limiter;
   }
 }
 

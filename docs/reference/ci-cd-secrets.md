@@ -110,7 +110,9 @@ The workflows support multiple games (starter, obby, etc.). Each game needs its 
 | `OBBY_PROD_UNIVERSE_ID` | Universe ID for production |
 | `OBBY_PROD_PLACE_ID` | Place ID for production |
 
-> **Note**: Use repository-level variables with game-specific prefixes (STARTER*\*, OBBY*\*) so workflows can reference them based on the selected game.
+> **Important**: These values are read via `vars.*` inside the GitHub Actions **Environment** context.
+> Define them in each GitHub Environment (`dev`, `staging`, `production`) under:
+> Repository Settings → Environments → (select env) → Variables.
 
 ## Step 4: Verify Setup
 
@@ -124,20 +126,22 @@ The workflows support multiple games (starter, obby, etc.). Each game needs its 
 
 1. Go to **Actions** → **Promote** workflow
 2. Click **Run workflow**
-3. Select `staging` environment
-4. Enter the commit SHA from a successful dev build
-5. Provide a reason for promotion
-6. Approve the deployment when prompted
+3. Select the `game` (starter/obby)
+4. Select `staging` environment
+5. Enter the git ref to promote (commit SHA or tag)
+6. Provide a reason for promotion
+7. Approve the deployment when prompted
 
 ### Test Production Promotion
 
 1. Create a version tag: `git tag v1.0.0 && git push origin v1.0.0`
 2. Go to **Actions** → **Promote** workflow
 3. Click **Run workflow**
-4. Select `production` environment
-5. Enter the version tag (e.g., `v1.0.0`)
-6. Provide a reason for promotion
-7. Get approval from required reviewers
+4. Select the `game` (starter/obby)
+5. Select `production` environment
+6. Enter the version tag (e.g., `v1.0.0`)
+7. Provide a reason for promotion
+8. Get approval from required reviewers
 
 ## Troubleshooting
 
@@ -154,9 +158,11 @@ The workflows support multiple games (starter, obby, etc.). Each game needs its 
 
 ### "Artifact Not Found" Error
 
-- Ensure a build artifact exists for the specified ref
-- Check if the artifact has expired (30-day retention)
-- Verify the artifact name matches the expected pattern
+The current publishing workflows rebuild from the provided git ref (commit SHA or tag).
+
+- Verify the `source_ref` exists (commit SHA or tag)
+- For production promotions, ensure the ref is a SemVer tag like `v1.2.3`
+- If you still see an artifact-related error, it likely comes from a custom/older workflow run; re-run the current workflow
 
 ### Rate Limiting
 
@@ -235,13 +241,6 @@ ROBLOX_FEATUREFLAGS_ENTRY_KEY_PREFIX=featureflags_ # optional
 
 Important: `ROBLOX_FEATUREFLAGS_DATASTORE_NAME` must match what the game server uses when initializing feature flag sync.
 
-### Required Variables (Repository Level)
+### Variables summary
 
-```
-DEV_UNIVERSE_ID
-DEV_PLACE_ID
-STAGING_UNIVERSE_ID
-STAGING_PLACE_ID
-PROD_UNIVERSE_ID
-PROD_PLACE_ID
-```
+No additional repository-level variables are required. The workflows read game-specific variables (`STARTER_*`, `OBBY_*`) from the selected GitHub Actions Environment.

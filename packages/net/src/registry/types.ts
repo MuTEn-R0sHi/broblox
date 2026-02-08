@@ -91,7 +91,7 @@ export type InferResponse<T extends RemoteDefinition> =
 export type ServerFunctionHandler<TRequest, TResponse> = (
   player: Player,
   request: TRequest
-) => TResponse | Promise<TResponse>;
+) => TResponse;
 
 /** Server handler for a RemoteEvent (client-to-server) */
 export type ServerEventHandler<TRequest> = (player: Player, request: TRequest) => void;
