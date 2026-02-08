@@ -14,7 +14,6 @@ export {
   PROTOCOL_VERSION,
   MIN_PROTOCOL_VERSION,
 } from "@rbx/shared-types";
-export type { Result, Ok, Err } from "@rbx/shared-types";
 
 // Export Internal Modules
 export * from "./ratelimit";

@@ -21,7 +21,6 @@ export type {
   QuestsConfig,
 } from "./types";
 export { DEFAULT_QUESTS_CONFIG } from "./types";
-export type { RewardEntry, RewardType } from "@rbx/rewards";
 export { QuestRegistry } from "./quest-registry";
 export { QuestStore } from "./quest-store";
 export { createQuestService } from "./create-quest-service";

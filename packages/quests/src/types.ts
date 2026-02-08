@@ -4,7 +4,19 @@
  * Types for quest definitions, objectives, progress tracking, and configuration.
  */
 
-import type { RewardEntry } from "@rbx/rewards";
+/**
+ * Reward type (mirrors @rbx/rewards — inlined to avoid cross-package import
+ * that breaks rbxtsc Rojo resolution with pnpm workspace symlinks).
+ */
+export type RewardType = "currency" | "xp" | "item" | "boost" | "cosmetic" | "custom";
+
+/** A single reward entry (structurally identical to @rbx/rewards RewardEntry). */
+export interface RewardEntry {
+  type: RewardType;
+  amount: number;
+  itemId?: string;
+  label?: string;
+}
 
 // ============================================================================
 // Quest Objective

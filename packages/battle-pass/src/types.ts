@@ -4,7 +4,19 @@
  * Seasonal progression with free and premium tracks.
  */
 
-import type { RewardEntry } from "@rbx/rewards";
+/**
+ * Reward type (mirrors @rbx/rewards — inlined to avoid cross-package import
+ * that breaks rbxtsc Rojo resolution with pnpm workspace symlinks).
+ */
+type RewardType = "currency" | "xp" | "item" | "boost" | "cosmetic" | "custom";
+
+/** A single reward entry (structurally identical to @rbx/rewards RewardEntry). */
+interface RewardEntry {
+  type: RewardType;
+  amount: number;
+  itemId?: string;
+  label?: string;
+}
 
 // ---------------------------------------------------------------------------
 // Track & Tier
