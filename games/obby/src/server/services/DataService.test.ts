@@ -6,21 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
-/** Minimal Player stub – full type lives in @rbxts/types (excluded from tests). */
-interface Player {
-  Name: string;
-  UserId: number;
-  Character?: { FindFirstChild(name: string): unknown };
-}
-
-// Shared test helpers
-function makePlayer(overrides: Partial<{ Name: string; UserId: number }> = {}) {
-  return {
-    Name: overrides.Name ?? "TestPlayer",
-    UserId: overrides.UserId ?? 42,
-  } as unknown as Player;
-}
+import { type Player, makePlayer, makeDefaultData } from "./__test-helpers";
 
 describe("DataService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
@@ -36,22 +22,6 @@ describe("DataService", () => {
   // Capture callbacks registered via onPlayerAdded/onPlayerRemoving
   let playerAddedCallback: ((player: Player) => void) | undefined;
   let playerRemovingCallback: ((player: Player) => void) | undefined;
-
-  function makeDefaultData() {
-    return {
-      __version: 1,
-      currentCheckpoint: 0,
-      currentStage: 1,
-      coins: 0,
-      totalDeaths: 0,
-      totalCompletions: 0,
-      bestFullRunTime: undefined,
-      stageProgress: {},
-      unlockedItems: [],
-      equippedTrail: undefined,
-      lastPlayedAt: 0,
-    };
-  }
 
   beforeEach(() => {
     vi.resetModules();

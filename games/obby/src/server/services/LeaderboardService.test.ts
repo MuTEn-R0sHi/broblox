@@ -7,40 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-/** Minimal Player stub – full type lives in @rbxts/types (excluded from tests). */
-interface Player {
-  Name: string;
-  UserId: number;
-  Character?: { FindFirstChild(name: string): unknown };
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-
-function makePlayer(overrides: Partial<{ Name: string; UserId: number }> = {}) {
-  return {
-    Name: overrides.Name ?? "TestPlayer",
-    UserId: overrides.UserId ?? 42,
-  } as unknown as Player;
-}
-
-function makeDefaultData(overrides: Record<string, unknown> = {}) {
-  return {
-    __version: 1,
-    currentCheckpoint: 0,
-    currentStage: 1,
-    coins: 0,
-    totalDeaths: 0,
-    totalCompletions: 0,
-    bestFullRunTime: undefined,
-    stageProgress: {},
-    unlockedItems: [],
-    equippedTrail: undefined,
-    lastPlayedAt: 0,
-    ...overrides,
-  };
-}
-
-// ── Test suite ─────────────────────────────────────────────────────────────
+import { type Player, makePlayer, makeDefaultData } from "./__test-helpers";
 
 describe("LeaderboardService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;

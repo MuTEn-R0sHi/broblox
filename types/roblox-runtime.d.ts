@@ -36,6 +36,18 @@ declare function typeIs(value: unknown, typeName: string): boolean;
 /** Lua `select` — returns arguments after `index`, or count with "#". */
 declare function select<T>(index: number | "#", ...args: T[]): T;
 
+/** Lua `tostring` — converts a value to its string representation. */
+declare function tostring(value: unknown): string;
+
+/** Lua `tonumber` — converts a value to a number, or undefined if it can't. */
+declare function tonumber(value: unknown, base?: number): number | undefined;
+
+/** Lua `error` — throws an error. */
+declare function error(message: string): never;
+
+/** Lua `warn` — prints a warning to stdout. */
+declare function warn(...args: unknown[]): void;
+
 // ============================================================================
 // Lua Standard Libraries
 // ============================================================================
@@ -61,6 +73,8 @@ declare const math: {
   cos(x: number): number;
   sqrt(x: number): number;
   log(x: number, base?: number): number;
+  exp(x: number): number;
+  clamp(value: number, min: number, max: number): number;
   huge: number;
   pi: number;
 };
@@ -72,10 +86,35 @@ declare const string: {
   format(fmt: string, ...args: unknown[]): string;
   rep(s: string, n: number): string;
   len(s: string): number;
+  sub(s: string, i: number, j?: number): string;
+  byte(s: string, i?: number): number;
+  char(...codes: number[]): string;
+  find(s: string, pattern: string): [number | undefined];
+  match(s: string, pattern: string): string | undefined;
 };
 
 /** Lua `print` global. */
 declare const print: (...args: unknown[]) => void;
+
+// ============================================================================
+// Roblox Task Library
+// ============================================================================
+
+/** Roblox `task` scheduler library. */
+declare const task: {
+  spawn(fn: () => void): void;
+  delay(seconds: number, fn: () => void): void;
+  wait(seconds?: number): number;
+  defer(fn: () => void): void;
+  cancel(thread?: unknown): void;
+};
+
+// ============================================================================
+// Roblox Iteration
+// ============================================================================
+
+/** Lua `pairs()` — iterates key/value pairs of a table. */
+declare function pairs<T extends object>(obj: T): IterableIterator<[keyof T, T[keyof T]]>;
 
 // ============================================================================
 // Roblox DataStore Interfaces

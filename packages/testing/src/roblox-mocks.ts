@@ -151,17 +151,101 @@ export const luaString = {
 /**
  * Install Roblox globals on the global object for tests.
  * Call this in beforeAll() or at the top of test files.
+ *
+ * This is the **single source of truth** for all Roblox/roblox-ts runtime
+ * polyfills.  `test-setup.ts` simply calls `mockRobloxGlobals()` — do NOT
+ * add polyfills there.
  */
 export function mockRobloxGlobals(): void {
   const g = globalThis as any;
 
-  // Polyfill roblox-ts array .size() → .length
-  const proto = Array.prototype as any;
-  if (!proto.size) {
-    proto.size = function (this: unknown[]) {
+  // ── Array polyfills (roblox-ts) ────────────────────────────────────────
+
+  const arrProto = Array.prototype as any;
+
+  // .size() → .length
+  if (!arrProto.size) {
+    arrProto.size = function (this: unknown[]) {
       return this.length;
     };
   }
+
+  // .remove(index) — removes element at index
+  if (!arrProto.remove) {
+    arrProto.remove = function (this: unknown[], index: number) {
+      return this.splice(index, 1)[0];
+    };
+  }
+
+  // .clear() — empties the array
+  if (!arrProto.clear) {
+    arrProto.clear = function (this: unknown[]) {
+      this.length = 0;
+    };
+  }
+
+  // .sort() — Lua table.sort comparators return boolean (true = a before b),
+  // but JS Array.sort expects a numeric comparator.
+  {
+    const nativeSort = Array.prototype.sort;
+    arrProto.sort = function (this: unknown[], compareFn?: (...args: unknown[]) => unknown) {
+      if (!compareFn) return nativeSort.call(this);
+      return nativeSort.call(this, (a: unknown, b: unknown) => {
+        const r = compareFn(a, b);
+        if (typeof r === "boolean") {
+          if (r) return -1;
+          const rev = compareFn(b, a);
+          if (rev) return 1;
+          return 0;
+        }
+        return r as number;
+      });
+    };
+  }
+
+  // ── String polyfills (roblox-ts method-call style: s.lower()) ─────────
+
+  const strProto = String.prototype as any;
+
+  if (!strProto.size) {
+    strProto.size = function (this: string) {
+      return this.length;
+    };
+  }
+
+  if (!strProto.byte) {
+    strProto.byte = function (this: string, i: number) {
+      return [this.charCodeAt(i - 1)];
+    };
+  }
+
+  // Must override — JS String.prototype.find() has different semantics
+  strProto.find = function (this: string, pattern: string) {
+    const idx = this.indexOf(pattern);
+    if (idx === -1) return [undefined];
+    return [idx + 1]; // 1-indexed
+  };
+
+  // Must override — JS has deprecated String.prototype.sub() that wraps in <sub>
+  strProto.sub = function (this: string, i: number, j?: number) {
+    const start = i - 1;
+    if (j === undefined) return this.slice(start);
+    return this.slice(start, j);
+  };
+
+  if (!strProto.lower) {
+    strProto.lower = function (this: string) {
+      return this.toLowerCase();
+    };
+  }
+
+  if (!strProto.upper) {
+    strProto.upper = function (this: string) {
+      return this.toUpperCase();
+    };
+  }
+
+  // ── Lua globals ────────────────────────────────────────────────────────
 
   g.os = {
     clock: osClock,
@@ -180,6 +264,15 @@ export function mockRobloxGlobals(): void {
     if (typeName === "nil") return value === undefined || value === null;
     return typeof value === typeName;
   };
+
+  // pairs() — iterates key/value pairs of a table (object)
+  if (!g.pairs) {
+    g.pairs = function* (obj: Record<string, unknown>) {
+      for (const [k, v] of Object.entries(obj)) {
+        yield [k, v];
+      }
+    };
+  }
 
   // Mock print/warn
   g.print = console.log;
@@ -224,6 +317,8 @@ export function mockRobloxGlobals(): void {
       // Return a stub; tests that need real services should vi.doMock
       return { _service: name };
     },
+    JobId: "test-job-id",
+    PlaceId: 0,
   };
 }
 
@@ -244,6 +339,7 @@ export function unmockRobloxGlobals(): void {
   delete g.warn;
   delete g.pcall;
   delete g.error;
+  delete g.pairs;
   delete g.task;
   delete g.game;
 }

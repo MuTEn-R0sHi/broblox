@@ -7,49 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-/** Minimal Player stub – full type lives in @rbxts/types (excluded from tests). */
-interface Player {
-  Name: string;
-  UserId: number;
-  Character?: { FindFirstChild(name: string): unknown };
-}
-
-// ── Test helpers ───────────────────────────────────────────────────────────
-
-function makePlayer(overrides: Partial<{ Name: string; UserId: number; Character: unknown }> = {}) {
-  const humanoidRootPart = {
-    AssemblyLinearVelocity: { X: 0, Y: 0, Z: 0 },
-    CFrame: {},
-  };
-  const character = {
-    FindFirstChild: vi.fn((name: string) =>
-      name === "HumanoidRootPart" ? humanoidRootPart : undefined
-    ),
-    FindFirstChildOfClass: vi.fn(() => ({ Health: 100, MaxHealth: 100 })),
-  };
-  return {
-    Name: overrides.Name ?? "TestPlayer",
-    UserId: overrides.UserId ?? 42,
-    Character: "Character" in overrides ? overrides.Character : character,
-  } as unknown as Player;
-}
-
-function makeDefaultData(overrides: Record<string, unknown> = {}) {
-  return {
-    __version: 1,
-    currentCheckpoint: 0,
-    currentStage: 1,
-    coins: 0,
-    totalDeaths: 0,
-    totalCompletions: 0,
-    bestFullRunTime: undefined,
-    stageProgress: {},
-    unlockedItems: [],
-    equippedTrail: undefined,
-    lastPlayedAt: 0,
-    ...overrides,
-  };
-}
+import { type Player, makePlayer, makeDefaultData } from "./__test-helpers";
 
 describe("CheckpointService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
