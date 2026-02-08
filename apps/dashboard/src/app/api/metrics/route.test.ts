@@ -20,6 +20,13 @@ vi.mock("@/lib/db", () => ({
 
 vi.mock("@/lib/authorize", () => ({
   checkAuth: (...args: unknown[]) => mockCheckAuth(...args),
+  validateApiKey: (req: NextRequest) => {
+    const apiKey = req.headers.get("x-api-key");
+    const expected = process.env.GAME_SERVER_API_KEY;
+    return !!apiKey && !!expected && apiKey === expected;
+  },
+  checkRateLimit: () => true,
+  getRateLimitKey: () => "test",
 }));
 
 import { POST, GET } from "./route";
