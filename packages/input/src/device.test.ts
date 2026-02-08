@@ -12,13 +12,18 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 // Mock Roblox services before importing the module
 // ---------------------------------------------------------------------------
 
+/** Lightweight stand-in for the Roblox Enum.UserInputType. */
+interface MockInputType {
+  Name: string;
+}
+
 let mockTouchEnabled = false;
 let mockKeyboardEnabled = true;
 let mockGamepadEnabled = false;
 let mockMouseEnabled = true;
 let mockIsTenFoot = false;
-let mockLastInputType = { Name: "Keyboard" } as Enum.UserInputType;
-const mockInputChangedCallbacks: Array<(inputType: Enum.UserInputType) => void> = [];
+let mockLastInputType: MockInputType = { Name: "Keyboard" };
+const mockInputChangedCallbacks: Array<(inputType: MockInputType) => void> = [];
 
 const mockUserInputService = {
   get TouchEnabled() {
@@ -35,7 +40,7 @@ const mockUserInputService = {
   },
   GetLastInputType: () => mockLastInputType,
   LastInputTypeChanged: {
-    Connect: (cb: (inputType: Enum.UserInputType) => void) => {
+    Connect: (cb: (inputType: MockInputType) => void) => {
       mockInputChangedCallbacks.push(cb);
       return { Disconnect: () => {} };
     },
@@ -83,7 +88,7 @@ beforeEach(() => {
   mockGamepadEnabled = false;
   mockMouseEnabled = true;
   mockIsTenFoot = false;
-  mockLastInputType = { Name: "Keyboard" } as Enum.UserInputType;
+  mockLastInputType = { Name: "Keyboard" } as MockInputType;
   mockInputChangedCallbacks.length = 0;
 });
 
@@ -162,7 +167,7 @@ describe("getPlatformInfo", () => {
 
 describe("initDeviceDetection", () => {
   it("sets initial device from last input type", () => {
-    mockLastInputType = { Name: "Gamepad1" } as Enum.UserInputType;
+    mockLastInputType = { Name: "Gamepad1" } as MockInputType;
     initDeviceDetection();
     expect(getCurrentDevice()).toBe("gamepad");
   });
@@ -174,13 +179,13 @@ describe("initDeviceDetection", () => {
   });
 
   it("handles Touch as initial input type", () => {
-    mockLastInputType = { Name: "Touch" } as Enum.UserInputType;
+    mockLastInputType = { Name: "Touch" } as MockInputType;
     initDeviceDetection();
     expect(getCurrentDevice()).toBe("touch");
   });
 
   it("keeps current device for unknown initial input type", () => {
-    mockLastInputType = { Name: "Focus" } as Enum.UserInputType;
+    mockLastInputType = { Name: "Focus" } as MockInputType;
     initDeviceDetection();
     // stays whatever it was
     expect(getCurrentDevice()).toBeDefined();
@@ -190,14 +195,14 @@ describe("initDeviceDetection", () => {
     initDeviceDetection();
     // Simulate switching to gamepad
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad1" } as Enum.UserInputType);
+      cb({ Name: "Gamepad1" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("gamepad");
     expect(isUsingGamepad()).toBe(true);
   });
 
   it("ignores change to same device type", () => {
-    mockLastInputType = { Name: "Keyboard" } as Enum.UserInputType;
+    mockLastInputType = { Name: "Keyboard" } as MockInputType;
     initDeviceDetection();
 
     const spy = vi.fn();
@@ -206,7 +211,7 @@ describe("initDeviceDetection", () => {
 
     // Simulate another keyboard input — same device, should NOT fire
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "MouseButton1" } as Enum.UserInputType);
+      cb({ Name: "MouseButton1" } as MockInputType);
     }
     expect(spy).not.toHaveBeenCalled();
   });
@@ -215,7 +220,7 @@ describe("initDeviceDetection", () => {
     initDeviceDetection();
     // Simulate unknown input
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Focus" } as Enum.UserInputType);
+      cb({ Name: "Focus" } as MockInputType);
     }
     // Device should remain unchanged
     expect(getCurrentDevice()).toBeDefined();
@@ -247,34 +252,34 @@ describe("onDeviceChange", () => {
 
 describe("input type mapping", () => {
   beforeEach(() => {
-    mockLastInputType = { Name: "Keyboard" } as Enum.UserInputType;
+    mockLastInputType = { Name: "Keyboard" } as MockInputType;
     initDeviceDetection();
   });
 
   it("maps MouseButton1 to keyboard", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "MouseButton1" } as Enum.UserInputType);
+      cb({ Name: "MouseButton1" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("keyboard");
   });
 
   it("maps Gamepad2 to gamepad", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad2" } as Enum.UserInputType);
+      cb({ Name: "Gamepad2" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("gamepad");
   });
 
   it("maps Gamepad3 to gamepad", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad3" } as Enum.UserInputType);
+      cb({ Name: "Gamepad3" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("gamepad");
   });
 
   it("maps Gamepad4 to gamepad", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad4" } as Enum.UserInputType);
+      cb({ Name: "Gamepad4" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("gamepad");
   });
@@ -282,49 +287,49 @@ describe("input type mapping", () => {
   it("maps MouseButton2 to keyboard", () => {
     // First switch to something else
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad1" } as Enum.UserInputType);
+      cb({ Name: "Gamepad1" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("gamepad");
     // Now switch to MouseButton2
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "MouseButton2" } as Enum.UserInputType);
+      cb({ Name: "MouseButton2" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("keyboard");
   });
 
   it("maps MouseButton3 to keyboard", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad1" } as Enum.UserInputType);
+      cb({ Name: "Gamepad1" } as MockInputType);
     }
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "MouseButton3" } as Enum.UserInputType);
+      cb({ Name: "MouseButton3" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("keyboard");
   });
 
   it("maps MouseMovement to keyboard", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad1" } as Enum.UserInputType);
+      cb({ Name: "Gamepad1" } as MockInputType);
     }
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "MouseMovement" } as Enum.UserInputType);
+      cb({ Name: "MouseMovement" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("keyboard");
   });
 
   it("maps MouseWheel to keyboard", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Gamepad1" } as Enum.UserInputType);
+      cb({ Name: "Gamepad1" } as MockInputType);
     }
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "MouseWheel" } as Enum.UserInputType);
+      cb({ Name: "MouseWheel" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("keyboard");
   });
 
   it("maps Touch to touch", () => {
     for (const cb of mockInputChangedCallbacks) {
-      cb({ Name: "Touch" } as Enum.UserInputType);
+      cb({ Name: "Touch" } as MockInputType);
     }
     expect(getCurrentDevice()).toBe("touch");
     expect(isUsingTouch()).toBe(true);

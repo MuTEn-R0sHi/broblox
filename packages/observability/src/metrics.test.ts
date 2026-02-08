@@ -5,7 +5,7 @@
  * timing helper, and ConsoleMetricSink.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   Counter,
   Gauge,
@@ -20,7 +20,7 @@ import {
   useConsoleMetricSink,
   CommonMetrics,
 } from "./metrics";
-import type { MetricSink, MetricPoint } from "./types";
+import type { MetricPoint } from "./types";
 
 // ============================================================================
 // Counter
@@ -258,35 +258,47 @@ describe("time()", () => {
 // ============================================================================
 
 describe("ConsoleMetricSink", () => {
+  function withPrintSpy(fn: (spy: ReturnType<typeof vi.fn>) => void): void {
+    const g = globalThis as Record<string, unknown>;
+    const origPrint = g.print;
+    const spy = vi.fn();
+    g.print = spy;
+    try {
+      fn(spy);
+    } finally {
+      g.print = origPrint;
+    }
+  }
+
   it("prints metric points", () => {
-    const printSpy = vi.spyOn(globalThis, "print" as never).mockImplementation(() => {});
-    const sink = new ConsoleMetricSink();
+    withPrintSpy((printSpy) => {
+      const sink = new ConsoleMetricSink();
 
-    sink.record({
-      name: "my_metric",
-      type: "counter",
-      value: 7,
-      timestamp: 1000,
-      labels: { env: "test" },
+      sink.record({
+        name: "my_metric",
+        type: "counter",
+        value: 7,
+        timestamp: 1000,
+        labels: { env: "test" },
+      });
+
+      expect(printSpy).toHaveBeenCalledWith(expect.stringContaining("my_metric"));
     });
-
-    expect(printSpy).toHaveBeenCalledWith(expect.stringContaining("my_metric"));
-    printSpy.mockRestore();
   });
 
   it("handles missing labels", () => {
-    const printSpy = vi.spyOn(globalThis, "print" as never).mockImplementation(() => {});
-    const sink = new ConsoleMetricSink();
+    withPrintSpy((printSpy) => {
+      const sink = new ConsoleMetricSink();
 
-    sink.record({
-      name: "no_labels",
-      type: "gauge",
-      value: 3,
-      timestamp: 1000,
+      sink.record({
+        name: "no_labels",
+        type: "gauge",
+        value: 3,
+        timestamp: 1000,
+      });
+
+      expect(printSpy).toHaveBeenCalledWith(expect.stringContaining("no_labels"));
     });
-
-    expect(printSpy).toHaveBeenCalledWith(expect.stringContaining("no_labels"));
-    printSpy.mockRestore();
   });
 
   it("flush is a no-op", () => {

@@ -137,12 +137,12 @@ describe("logError", () => {
   beforeEach(() => {
     errorSpy = vi.fn();
     logger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: errorSpy,
-      setLevel: vi.fn(),
-      child: vi.fn(),
+      debug: vi.fn() as Logger["debug"],
+      info: vi.fn() as Logger["info"],
+      warn: vi.fn() as Logger["warn"],
+      error: errorSpy as Logger["error"],
+      setLevel: vi.fn() as Logger["setLevel"],
+      child: vi.fn() as Logger["child"],
     };
   });
 
@@ -210,14 +210,16 @@ describe("Janitor", () => {
 
   it("addConnection disconnects on cleanup", () => {
     const disconnect = vi.fn();
-    janitor.addConnection({ Disconnect: disconnect } as unknown as RBXScriptConnection);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    janitor.addConnection({ Disconnect: disconnect } as any);
     janitor.cleanup();
     expect(disconnect).toHaveBeenCalledOnce();
   });
 
   it("addInstance destroys on cleanup", () => {
     const destroy = vi.fn();
-    janitor.addInstance({ Destroy: destroy } as unknown as Instance);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    janitor.addInstance({ Destroy: destroy } as any);
     janitor.cleanup();
     expect(destroy).toHaveBeenCalledOnce();
   });

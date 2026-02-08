@@ -205,20 +205,26 @@ describe("ConsoleSink", () => {
   });
 
   it("skips events below min level", () => {
-    const printSpy = vi.spyOn(globalThis, "print" as never).mockImplementation(() => {});
-    const sink = new ConsoleSink("warn");
-    sink.emit({
-      category: "game",
-      name: "debug_event",
-      level: "debug",
-      timestamp: 1000,
-      clock: 1,
-      context: { traceId: "t", serverId: "s", placeId: 0 },
-      data: {},
-    });
-    // print should NOT have been called because debug < warn
-    expect(printSpy).not.toHaveBeenCalled();
-    printSpy.mockRestore();
+    const g = globalThis as Record<string, unknown>;
+    const origPrint = g.print;
+    const printSpy = vi.fn();
+    g.print = printSpy;
+    try {
+      const sink = new ConsoleSink("warn");
+      sink.emit({
+        category: "game",
+        name: "debug_event",
+        level: "debug",
+        timestamp: 1000,
+        clock: 1,
+        context: { traceId: "t", serverId: "s", placeId: 0 },
+        data: {},
+      });
+      // print should NOT have been called because debug < warn
+      expect(printSpy).not.toHaveBeenCalled();
+    } finally {
+      g.print = origPrint;
+    }
   });
 
   it("flush is a no-op", () => {
