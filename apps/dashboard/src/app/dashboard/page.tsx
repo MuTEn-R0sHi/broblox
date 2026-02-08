@@ -3,6 +3,16 @@ import { requirePermission } from "@/lib/authorize";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flag, Users, Shield, Activity } from "lucide-react";
 
+function isMissingTableError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    // Prisma: P2021 = table does not exist
+    (error as { code?: string }).code === "P2021"
+  );
+}
+
 export default async function DashboardPage() {
   const { user } = await requirePermission("view:dashboard");
 
@@ -10,39 +20,82 @@ export default async function DashboardPage() {
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-  const [flagCount, enabledFlagCount, uniquePlayers, modActions, recentEvents] = await Promise.all([
-    prisma.featureFlag.count(),
-    prisma.featureFlag.count({
-      where: {
-        OR: [{ enabledDev: true }, { enabledStage: true }, { enabledProd: true }],
-      },
-    }),
-    // Count unique player IDs seen in telemetry within the last hour
-    prisma.telemetryEvent.groupBy({
-      by: ["playerId"],
-      where: {
-        playerId: { not: null },
-        ingestedAt: { gte: oneHourAgo },
-      },
-    }),
-    // Count moderation actions in the last 24h
-    prisma.ban.count({ where: { createdAt: { gte: oneDayAgo } } }),
-    // Recent telemetry events for the activity feed
-    prisma.telemetryEvent.findMany({
-      where: { level: { in: ["info", "warn", "error"] } },
-      orderBy: { ingestedAt: "desc" },
-      take: 5,
-    }),
-  ]);
+  let dbNotInitialized = false;
 
-  // Count unique active servers from recent telemetry
-  const activeServers = await prisma.telemetryEvent.groupBy({
-    by: ["serverId"],
-    where: {
-      serverId: { not: null },
-      ingestedAt: { gte: oneHourAgo },
-    },
-  });
+  let flagCount = 0;
+  let enabledFlagCount = 0;
+  try {
+    [flagCount, enabledFlagCount] = await Promise.all([
+      prisma.featureFlag.count(),
+      prisma.featureFlag.count({
+        where: {
+          OR: [{ enabledDev: true }, { enabledStage: true }, { enabledProd: true }],
+        },
+      }),
+    ]);
+  } catch (error) {
+    if (isMissingTableError(error)) {
+      dbNotInitialized = true;
+    } else {
+      throw error;
+    }
+  }
+
+  let modActions = 0;
+  try {
+    modActions = await prisma.ban.count({ where: { createdAt: { gte: oneDayAgo } } });
+  } catch (error) {
+    if (isMissingTableError(error)) {
+      dbNotInitialized = true;
+      modActions = 0;
+    } else {
+      throw error;
+    }
+  }
+
+  let uniquePlayers: Array<{ playerId: bigint | null }> = [];
+  let activeServers: Array<{ serverId: string | null }> = [];
+  let recentEvents: Array<{
+    id: string;
+    category: string;
+    name: string;
+    level: string;
+    ingestedAt: Date;
+    serverId: string | null;
+  }> = [];
+
+  try {
+    [uniquePlayers, recentEvents, activeServers] = await Promise.all([
+      prisma.telemetryEvent.groupBy({
+        by: ["playerId"],
+        where: {
+          playerId: { not: null },
+          ingestedAt: { gte: oneHourAgo },
+        },
+      }),
+      prisma.telemetryEvent.findMany({
+        where: { level: { in: ["info", "warn", "error"] } },
+        orderBy: { ingestedAt: "desc" },
+        take: 5,
+      }),
+      prisma.telemetryEvent.groupBy({
+        by: ["serverId"],
+        where: {
+          serverId: { not: null },
+          ingestedAt: { gte: oneHourAgo },
+        },
+      }),
+    ]);
+  } catch (error) {
+    if (isMissingTableError(error)) {
+      dbNotInitialized = true;
+      uniquePlayers = [];
+      recentEvents = [];
+      activeServers = [];
+    } else {
+      throw error;
+    }
+  }
 
   const stats = [
     {
@@ -76,6 +129,12 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">Welcome back, {user.name ?? "Operator"}</p>
+        {dbNotInitialized ? (
+          <p className="text-sm text-muted-foreground">
+            Database schema is not initialized. Run `pnpm prisma db push` against the connected
+            database.
+          </p>
+        ) : null}
       </div>
 
       {/* Stats Grid */}
