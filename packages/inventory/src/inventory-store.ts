@@ -15,8 +15,6 @@ import type {
   InventoryConfig,
   InventoryResult,
   TransferResult,
-  DEFAULT_INVENTORY_CONFIG,
-  INVENTORY_DATA_VERSION,
 } from "./types";
 
 // Re-import as values (types above are just for type annotations)

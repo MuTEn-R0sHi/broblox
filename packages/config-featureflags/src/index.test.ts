@@ -610,7 +610,7 @@ describe("rollout history cap", () => {
 describe("defineFlag edge cases", () => {
   it("skips duplicate registration", () => {
     // "doAction.enabled" is already defined at module load
-    const result = defineFlag({
+    defineFlag({
       name: "doAction.enabled",
       defaultValue: false,
       description: "Duplicate",

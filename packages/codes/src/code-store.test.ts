@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { RedeemableCode, CodeRedemptionRecord, CodesConfig } from "./types";
+import type { RedeemableCode, CodesConfig } from "./types";
 
 // LuaTuple is a roblox-ts compiler global not available under vitest's tsconfig
 declare type LuaTuple<T extends unknown[]> = T & { readonly LUA_TUPLE: never };
@@ -399,7 +399,7 @@ describe("CodeStore", () => {
 
   describe("config", () => {
     it("uses default config when none provided", async () => {
-      const cs = await getCodeStore();
+      await getCodeStore();
       // Should have created store with default name
       expect(store.GetAsync).toBeDefined();
     });

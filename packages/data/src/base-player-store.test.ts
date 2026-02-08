@@ -39,7 +39,7 @@ const DEFAULT_DATA: TestData = { coins: 0, level: 1, items: [] };
 // Since the global mock's GetService returns a stub `{ _service: name }` which
 // doesn't have GetDataStore, we'll mock the module-level declarations.
 
-import { BasePlayerStore, BaseStoreConfig } from "./base-player-store";
+import { BasePlayerStore } from "./base-player-store";
 
 class TestStore extends BasePlayerStore<TestData> {
   protected keyPrefix(): string {

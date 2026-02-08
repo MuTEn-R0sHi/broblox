@@ -10,7 +10,6 @@ import { Counter } from "@rbx/observability";
 import {
   RedeemableCode,
   CodeRedemptionRecord,
-  CodeReward,
   RedeemResult,
   RedeemResultStatus,
   CodesConfig,

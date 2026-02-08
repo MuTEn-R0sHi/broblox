@@ -10,7 +10,6 @@ import type {
   BattlePassResult,
   ClaimCallback,
   ClaimResult,
-  SeasonDefinition,
   TierReward,
   TierUpCallback,
   XpResult,

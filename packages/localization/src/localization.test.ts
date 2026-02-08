@@ -41,7 +41,6 @@ function setupGlobals() {
 // ---------------------------------------------------------------------------
 
 import { LocalizationService } from "./localization-service";
-import type { LocaleCode } from "./types";
 
 describe("LocalizationService", () => {
   let svc: LocalizationService;

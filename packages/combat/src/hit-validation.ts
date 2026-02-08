@@ -14,7 +14,7 @@
  */
 
 import { Result, ok, PlayerId } from "@rbx/shared-types";
-import { arraySize, arrayRemoveAt } from "@rbx/core";
+import { arrayRemoveAt } from "@rbx/core";
 import type {
   HitIntent,
   HitValidationResult,

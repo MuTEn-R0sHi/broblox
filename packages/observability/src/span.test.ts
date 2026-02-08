@@ -6,7 +6,7 @@
  * trace context helpers.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { resetPlayerIdCounter } from "@rbx/testing";
 import { initContext } from "./context";
 import {
