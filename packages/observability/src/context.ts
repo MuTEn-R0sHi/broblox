@@ -136,6 +136,7 @@ export function addPlayerTag(player: Player, key: string, value: string): void {
 /**
  * Generate a unique trace ID.
  * Format: timestamp_random
+ * @internal
  */
 export function generateTraceId(): string {
   return `${os.time()}_${math.random(100000, 999999)}`;
@@ -144,6 +145,7 @@ export function generateTraceId(): string {
 /**
  * Generate a unique span ID.
  * Format: random 8 characters
+ * @internal
  */
 export function generateSpanId(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";

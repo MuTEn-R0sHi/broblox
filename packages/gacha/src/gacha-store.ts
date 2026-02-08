@@ -118,6 +118,9 @@ export class GachaStore {
     if (!egg.enabled) {
       return { ok: false, status: "egg_disabled" };
     }
+    if (currencyBalance < 0) {
+      return { ok: false, status: "invalid_balance" };
+    }
     if (currencyBalance < egg.cost) {
       return { ok: false, status: "insufficient_funds" };
     }

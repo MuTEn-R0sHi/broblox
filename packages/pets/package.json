@@ -29,5 +29,12 @@
     "@rbx/core": "workspace:*",
     "@rbx/observability": "workspace:*",
     "@rbx/shared-types": "workspace:*"
-  }
+  },
+  "keywords": [
+    "roblox",
+    "roblox-ts",
+    "pets",
+    "hatching",
+    "creature-system"
+  ]
 }

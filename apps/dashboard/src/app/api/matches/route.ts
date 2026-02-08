@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
-import { requireApiPermission } from "@/lib/authorize";
+import {
+  requireApiPermission,
+  validateApiKey,
+  checkRateLimit,
+  getRateLimitKey,
+} from "@/lib/authorize";
 
 // Schema for creating a match
 const createMatchSchema = z.object({
@@ -13,13 +18,6 @@ const createMatchSchema = z.object({
   mapName: z.string().optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
-
-// API key validation (simple header-based auth for game servers)
-function validateApiKey(request: NextRequest): boolean {
-  const apiKey = request.headers.get("x-api-key");
-  // In production, compare against secure stored keys
-  return apiKey === process.env.GAME_SERVER_API_KEY;
-}
 
 /**
  * GET /api/matches
@@ -32,9 +30,15 @@ export async function GET(request: NextRequest) {
     if (authResult instanceof Response) return authResult;
   }
 
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const searchParams = request.nextUrl.searchParams;
-  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") ?? "20", 10)));
+  const parsedPage = parseInt(searchParams.get("page") ?? "1", 10);
+  const page = Math.max(1, Number.isFinite(parsedPage) ? parsedPage : 1);
+  const parsedLimit = parseInt(searchParams.get("limit") ?? "20", 10);
+  const limit = Math.min(100, Math.max(1, Number.isFinite(parsedLimit) ? parsedLimit : 20));
   const status = searchParams.get("status");
   const gameMode = searchParams.get("gameMode");
   const playerId = searchParams.get("playerId");
@@ -50,8 +54,14 @@ export async function GET(request: NextRequest) {
   }
 
   if (playerId) {
+    let playerIdBigInt: bigint;
+    try {
+      playerIdBigInt = BigInt(playerId);
+    } catch {
+      return NextResponse.json({ error: "Invalid playerId" }, { status: 400 });
+    }
     where.players = {
-      some: { playerId: BigInt(playerId) },
+      some: { playerId: playerIdBigInt },
     };
   }
 
@@ -90,6 +100,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   if (!validateApiKey(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   try {

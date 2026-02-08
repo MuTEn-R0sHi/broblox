@@ -8,3 +8,6 @@ const handle = createMovementValidationService({
 });
 
 export const MovementValidationService = handle.Service;
+
+/** Exposed so CombatService can wire the position provider. */
+export const movementStateManager = handle.stateManager;

@@ -1,12 +1,18 @@
 /**
  * @rbx/combat
  * Server-authoritative combat systems for PvP.
+ *
+ * **Integration status:**
+ * - `setPositionProvider`, `resetPositionProvider`, `clearPlayerPosition` —
+ *   integrated (CombatService wires movement positions)
+ * - Cooldown system, hit validation core — @planned (tested internally,
+ *   not yet wired to damage/ability remotes)
  */
 
 // Types
 export * from "./types";
 
-// Cooldown system
+// Cooldown system — @planned: wire to ability remotes
 export {
   // Configuration
   registerAbility,
@@ -31,13 +37,16 @@ export {
   resetCooldowns,
 } from "./cooldown";
 
-// Hit validation
+// Hit validation — partially integrated (position provider wired),
+// @planned: wire validateHit to damage remote handler
 export {
   // Configuration
   configureHitValidation,
   getHitValidationConfig,
   resetHitValidationConfig,
-  // Player management
+  // Position management
+  setPositionProvider,
+  resetPositionProvider,
   updatePlayerPosition,
   getPlayerPosition,
   clearPlayerPosition,

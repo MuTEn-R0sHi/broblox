@@ -4,9 +4,12 @@
  * Server-side utilities for checking permissions in API routes and server actions.
  */
 
+import { timingSafeEqual } from "crypto";
+
 import { auth } from "./auth";
-import { hasPermission, hasAnyPermission, Permission, Role } from "./rbac";
+import { hasPermission, hasAnyPermission, isRoleHigherOrEqual, Permission, Role } from "./rbac";
 import { redirect } from "next/navigation";
+import { NextRequest } from "next/server";
 
 // ============================================================================
 // Types
@@ -84,15 +87,7 @@ export async function requireAnyPermission(permissions: Permission[]): Promise<A
 export async function requireRole(minimumRole: Role): Promise<AuthResult> {
   const result = await requireAuth();
 
-  const roleHierarchy: Record<Role, number> = {
-    VIEWER: 0,
-    SUPPORT: 1,
-    MODERATOR: 2,
-    ENGINEER: 3,
-    ADMIN: 4,
-  };
-
-  if (roleHierarchy[result.user.role] < roleHierarchy[minimumRole]) {
+  if (!isRoleHigherOrEqual(result.user.role, minimumRole)) {
     redirect("/dashboard?error=unauthorized");
   }
 
@@ -180,4 +175,103 @@ export async function requireApiPermission(permission: Permission): Promise<Auth
   }
 
   return result;
+}
+
+// ============================================================================
+// API Key Validation
+// ============================================================================
+
+/**
+ * Validate the `x-api-key` header against an API key from the environment.
+ * Uses constant-time comparison to prevent timing attacks.
+ *
+ * @param request - Incoming request with an `x-api-key` header.
+ * @param envVar - Environment variable that holds the expected key (default `GAME_SERVER_API_KEY`).
+ */
+export function validateApiKey(
+  request: NextRequest,
+  envVar: string = "GAME_SERVER_API_KEY"
+): boolean {
+  const apiKey = request.headers.get("x-api-key");
+  const expected = process.env[envVar];
+  if (!apiKey || !expected) return false;
+  if (apiKey.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(apiKey), Buffer.from(expected));
+}
+
+// ============================================================================
+// Rate Limiting
+// ============================================================================
+
+interface RateLimitEntry {
+  timestamps: number[];
+}
+
+const rateLimitStore = new Map<string, RateLimitEntry>();
+
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 60; // per window
+const RATE_LIMIT_CLEANUP_INTERVAL_MS = 300_000; // 5 minutes
+
+// Periodic cleanup of stale entries
+let cleanupTimer: ReturnType<typeof setInterval> | undefined;
+function ensureCleanupTimer() {
+  if (cleanupTimer) return;
+  cleanupTimer = setInterval(() => {
+    const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+    for (const [key, entry] of rateLimitStore) {
+      entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
+      if (entry.timestamps.length === 0) rateLimitStore.delete(key);
+    }
+  }, RATE_LIMIT_CLEANUP_INTERVAL_MS);
+  // Don't block process exit
+  if (cleanupTimer && typeof cleanupTimer === "object" && "unref" in cleanupTimer) {
+    cleanupTimer.unref();
+  }
+}
+
+/**
+ * Simple in-memory sliding-window rate limiter.
+ * Returns `true` if the request is allowed, `false` if rate-limited.
+ *
+ * @param key - Unique key for the rate limit bucket (e.g. API key or IP).
+ * @param maxRequests - Max requests per window (default 60).
+ * @param windowMs - Window duration in ms (default 60_000).
+ */
+export function checkRateLimit(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): boolean {
+  ensureCleanupTimer();
+
+  const now = Date.now();
+  const cutoff = now - windowMs;
+
+  let entry = rateLimitStore.get(key);
+  if (!entry) {
+    entry = { timestamps: [] };
+    rateLimitStore.set(key, entry);
+  }
+
+  // Remove expired timestamps
+  entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
+
+  if (entry.timestamps.length >= maxRequests) {
+    return false; // rate limited
+  }
+
+  entry.timestamps.push(now);
+  return true; // allowed
+}
+
+/**
+ * Get a rate-limit key from a request (API key or fallback to IP).
+ */
+export function getRateLimitKey(request: NextRequest): string {
+  const apiKey = request.headers.get("x-api-key");
+  if (apiKey) return `apikey:${apiKey}`;
+  const ip =
+    request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? "unknown";
+  return `ip:${ip}`;
 }

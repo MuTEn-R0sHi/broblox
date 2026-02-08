@@ -611,5 +611,44 @@ describe("LeaderboardStore", () => {
       expect(rank.found).toBe(true);
       expect(rank.entry?.rank).toBe(1);
     });
+
+    it("rejects NaN score", async () => {
+      const ls = await getStore();
+      ls.register(makeDef());
+      const result = ls.submitScore("kills", 100, "Player100", NaN);
+      expect(result.success).toBe(false);
+      expect(result.status).toBe("ERROR");
+    });
+
+    it("rejects negative score", async () => {
+      const ls = await getStore();
+      ls.register(makeDef());
+      const result = ls.submitScore("kills", 100, "Player100", -10);
+      expect(result.success).toBe(false);
+      expect(result.status).toBe("ERROR");
+    });
+
+    it("rejects Infinity score", async () => {
+      const ls = await getStore();
+      ls.register(makeDef());
+      const result = ls.submitScore("kills", 100, "Player100", Infinity);
+      expect(result.success).toBe(false);
+      expect(result.status).toBe("ERROR");
+    });
+
+    it("rejects -Infinity score", async () => {
+      const ls = await getStore();
+      ls.register(makeDef());
+      const result = ls.submitScore("kills", 100, "Player100", -Infinity);
+      expect(result.success).toBe(false);
+      expect(result.status).toBe("ERROR");
+    });
+
+    it("accepts zero score", async () => {
+      const ls = await getStore();
+      ls.register(makeDef());
+      const result = ls.submitScore("kills", 100, "Player100", 0);
+      expect(result.success).toBe(true);
+    });
   });
 });

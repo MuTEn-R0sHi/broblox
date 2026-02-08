@@ -7,7 +7,7 @@ import { bridgeRevokeMuteToRoblox } from "@/lib/moderation-bridge";
 
 export async function revokeMute(
   muteId: string,
-  playerId: string,
+  _playerId: string,
   reason: string
 ): Promise<{ success?: boolean; warning?: string; error?: string }> {
   const auth = await checkPermission("moderation:mute");
@@ -18,13 +18,6 @@ export async function revokeMute(
   const revokeReason = reason?.trim();
   if (!revokeReason || revokeReason.length < 3) {
     return { error: "Reason must be at least 3 characters" };
-  }
-
-  let playerIdBigInt: bigint;
-  try {
-    playerIdBigInt = BigInt(playerId);
-  } catch {
-    return { error: "Invalid player ID" };
   }
 
   const mute = await prisma.mute.findUnique({
@@ -46,16 +39,18 @@ export async function revokeMute(
     },
   });
 
-  await auditMuteRevoke(auth.user.id, playerIdBigInt, muteId, revokeReason);
+  // Always use mute.playerId from the database to prevent IDOR
+  // (client-supplied playerId is ignored)
+  await auditMuteRevoke(auth.user.id, mute.playerId, muteId, revokeReason);
 
   const syncResult = await bridgeRevokeMuteToRoblox({
     muteId,
-    playerId: playerIdBigInt,
+    playerId: mute.playerId,
     revokedById: auth.user.id,
     revokedAt: new Date(),
   });
 
-  await auditMuteSync(auth.user.id, playerIdBigInt, muteId, syncResult);
+  await auditMuteSync(auth.user.id, mute.playerId, muteId, syncResult);
 
   if (!syncResult.ok) {
     return {

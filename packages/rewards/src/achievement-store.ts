@@ -137,6 +137,8 @@ export class AchievementStore {
    * Returns true if the achievement was completed by this increment.
    */
   incrementProgress(achievementId: string, amount: number): boolean {
+    if (amount <= 0) return false;
+
     const def = this.definitions.get(achievementId);
     if (!def) return false;
 
@@ -156,33 +158,15 @@ export class AchievementStore {
     prog.current += amount;
     this.dirty = true;
 
-    if (prog.current >= def.target) {
-      prog.current = def.target;
-      prog.completed = true;
-      prog.completedAt = os.time();
-      achievementsCompleted.inc();
-
-      this.logger?.info(`Achievement completed: ${achievementId}`);
-
-      const event: AchievementCompletedEvent = {
-        playerId: this.playerId,
-        achievementId,
-        rewards: def.rewards,
-      };
-      for (const cb of this.completedCallbacks) {
-        cb(event);
-      }
-
-      return true;
-    }
-
-    return false;
+    return this.tryComplete(prog, def);
   }
 
   /**
    * Set progress on an achievement directly.
    */
   setProgress(achievementId: string, value: number): boolean {
+    if (value < 0) return false;
+
     const def = this.definitions.get(achievementId);
     if (!def) return false;
 
@@ -202,15 +186,22 @@ export class AchievementStore {
     prog.current = value;
     this.dirty = true;
 
+    return this.tryComplete(prog, def);
+  }
+
+  /** Check if progress meets target and fire completion if so. */
+  private tryComplete(prog: AchievementProgress, def: AchievementDefinition): boolean {
     if (prog.current >= def.target) {
       prog.current = def.target;
       prog.completed = true;
       prog.completedAt = os.time();
       achievementsCompleted.inc();
 
+      this.logger?.info(`Achievement completed: ${prog.achievementId}`);
+
       const event: AchievementCompletedEvent = {
         playerId: this.playerId,
-        achievementId,
+        achievementId: prog.achievementId,
         rewards: def.rewards,
       };
       for (const cb of this.completedCallbacks) {

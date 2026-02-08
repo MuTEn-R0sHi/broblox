@@ -64,6 +64,12 @@ export class MockRateLimiter {
   private mockNow = 0;
 
   constructor(config: RateLimitConfig) {
+    if (config.windowMs <= 0) {
+      throw new Error("RateLimiter: windowMs must be > 0");
+    }
+    if (config.maxRequests <= 0) {
+      throw new Error("RateLimiter: maxRequests must be > 0");
+    }
     this.config = {
       windowMs: config.windowMs,
       maxRequests: config.maxRequests,

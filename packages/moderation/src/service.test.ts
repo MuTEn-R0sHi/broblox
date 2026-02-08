@@ -87,8 +87,12 @@ describe("ModerationService", () => {
     }));
 
     vi.doMock("@rbx/observability", () => ({
-      createCounter: () => ({ inc: vi.fn() }),
-      createHistogram: () => ({ observe: vi.fn() }),
+      Counter: class {
+        inc = vi.fn();
+      },
+      Histogram: class {
+        observe = vi.fn();
+      },
     }));
 
     vi.doMock("./ban-store", () => ({

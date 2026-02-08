@@ -211,3 +211,39 @@ describe("theme management", () => {
     expect(getTheme().name).toBe("custom");
   });
 });
+
+// ============================================================================
+// Edge cases
+// ============================================================================
+
+describe("hex edge cases", () => {
+  it("handles lowercase hex", () => {
+    const c = hex("ff0000");
+    expect(c.r).toBeCloseTo(1);
+    expect(c.g).toBeCloseTo(0);
+    expect(c.b).toBeCloseTo(0);
+  });
+
+  it("handles mixed case hex", () => {
+    const c = hex("#aaBBcc");
+    expect(c.r).toBeCloseTo(170 / 255);
+    expect(c.g).toBeCloseTo(187 / 255);
+    expect(c.b).toBeCloseTo(204 / 255);
+  });
+});
+
+describe("lighten/darken boundary cases", () => {
+  it("lighten from black by full amount gives that amount", () => {
+    const c = lighten({ r: 0, g: 0, b: 0 }, 0.5);
+    expect(c.r).toBeCloseTo(0.5);
+    expect(c.g).toBeCloseTo(0.5);
+    expect(c.b).toBeCloseTo(0.5);
+  });
+
+  it("darken clamps at 0", () => {
+    const c = darken({ r: 0.05, g: 0.05, b: 0.05 }, 0.2);
+    expect(c.r).toBe(0);
+    expect(c.g).toBe(0);
+    expect(c.b).toBe(0);
+  });
+});

@@ -15,12 +15,12 @@ let notificationStore: NotificationStore | undefined;
 let announcementManager: AnnouncementManager | undefined;
 
 export function getNotificationStore(): NotificationStore {
-  if (!notificationStore) throw "NotificationService has not been initialized yet.";
+  if (!notificationStore) error("NotificationService has not been initialized yet.");
   return notificationStore;
 }
 
 export function getAnnouncementManager(): AnnouncementManager {
-  if (!announcementManager) throw "NotificationService has not been initialized yet.";
+  if (!announcementManager) error("NotificationService has not been initialized yet.");
   return announcementManager;
 }
 

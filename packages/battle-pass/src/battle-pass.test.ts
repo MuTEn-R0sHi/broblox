@@ -82,15 +82,13 @@ const testSeason: SeasonDefinition = {
           id: "r1_free",
           name: "100 Coins",
           track: "free",
-          rewardType: "currency",
-          payload: { coins: 100 },
+          reward: { type: "currency", amount: 100 },
         },
         {
           id: "r1_premium",
           name: "Gold Hat",
           track: "premium",
-          rewardType: "cosmetic",
-          payload: { cosmeticId: "gold_hat" },
+          reward: { type: "cosmetic", amount: 1, itemId: "gold_hat" },
         },
       ],
     },
@@ -102,8 +100,7 @@ const testSeason: SeasonDefinition = {
           id: "r2_free",
           name: "200 Coins",
           track: "free",
-          rewardType: "currency",
-          payload: { coins: 200 },
+          reward: { type: "currency", amount: 200 },
         },
       ],
     },
@@ -115,15 +112,13 @@ const testSeason: SeasonDefinition = {
           id: "r3_free",
           name: "Rare Pet",
           track: "free",
-          rewardType: "pet",
-          payload: { petId: "rare_cat" },
+          reward: { type: "custom", amount: 1, itemId: "rare_cat", label: "pet" },
         },
         {
           id: "r3_premium",
           name: "Exclusive Trail",
           track: "premium",
-          rewardType: "cosmetic",
-          payload: { cosmeticId: "fire_trail" },
+          reward: { type: "cosmetic", amount: 1, itemId: "fire_trail" },
         },
       ],
     },
@@ -135,8 +130,7 @@ const testSeason: SeasonDefinition = {
           id: "r4_free",
           name: "Title",
           track: "free",
-          rewardType: "title",
-          payload: { title: "Veteran" },
+          reward: { type: "custom", amount: 1, itemId: "Veteran", label: "title" },
         },
       ],
     },
@@ -236,6 +230,24 @@ describe("BattlePassStore", () => {
     expect(store.getXp()).toBe(0);
   });
 
+  it("resets premium on season change", () => {
+    store.unlockPremium();
+    expect(store.isPremium()).toBe(true);
+    const s2: SeasonDefinition = { ...testSeason, id: "season_2", name: "Season 2" };
+    registry.register(s2);
+    store.setSeason("season_2");
+    expect(store.isPremium()).toBe(false);
+  });
+
+  it("resets claimed rewards on season change", () => {
+    store.claimReward("r1_free");
+    expect(store.isClaimed("r1_free")).toBe(true);
+    const s2: SeasonDefinition = { ...testSeason, id: "season_2", name: "Season 2" };
+    registry.register(s2);
+    store.setSeason("season_2");
+    expect(store.isClaimed("r1_free")).toBe(false);
+  });
+
   // XP & Tier progression
   it("adds XP and progresses tier", () => {
     const result = store.addXp(100);
@@ -261,6 +273,20 @@ describe("BattlePassStore", () => {
     const result = store.addXp(100);
     expect(result.ok).toBe(false);
     expect(result.status).toBe("max_tier");
+  });
+
+  it("rejects negative XP", () => {
+    const result = store.addXp(-50);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_amount");
+    expect(store.getXp()).toBe(0);
+  });
+
+  it("rejects zero XP", () => {
+    const result = store.addXp(0);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_amount");
+    expect(store.getXp()).toBe(0);
   });
 
   it("fires onTierUp callback", () => {

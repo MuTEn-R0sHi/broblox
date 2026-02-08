@@ -237,10 +237,10 @@ export class TutorialManager {
     this.progress = {
       completedSequences: saved.completedSequences ?? [],
       activeSequenceId: saved.activeSequenceId,
-      activeStepIndex: saved.activeStepIndex ?? 0,
+      activeStepIndex: math.max(0, saved.activeStepIndex ?? 0),
       skippedSequences: saved.skippedSequences ?? [],
-      totalStepsCompleted: saved.totalStepsCompleted ?? 0,
-      lastActivityAt: saved.lastActivityAt ?? 0,
+      totalStepsCompleted: math.max(0, saved.totalStepsCompleted ?? 0),
+      lastActivityAt: math.max(0, saved.lastActivityAt ?? 0),
       version: saved.version ?? PROGRESS_VERSION,
     };
     this.dirty = false;

@@ -6,7 +6,7 @@ import { auditAppealResolve, auditBanRevoke } from "@/lib/audit";
 
 export async function resolveAppeal(
   appealId: string,
-  banId: string,
+  _banId: string,
   status: "APPROVED" | "DENIED",
   resolution: string
 ): Promise<{ success?: boolean; error?: string }> {
@@ -44,11 +44,12 @@ export async function resolveAppeal(
     },
   });
 
-  // If approved, revoke the ban
+  // If approved, revoke the ban — always use appeal.banId from the database
+  // to prevent IDOR (client-supplied banId is ignored)
   if (status === "APPROVED") {
     const revokeReason = `Appeal approved: ${normalizedResolution}`;
     await prisma.ban.update({
-      where: { id: banId },
+      where: { id: appeal.banId },
       data: {
         status: "APPEALED",
         revokedAt: new Date(),
@@ -57,7 +58,7 @@ export async function resolveAppeal(
       },
     });
 
-    await auditBanRevoke(auth.user.id, appeal.ban.playerId, banId, revokeReason);
+    await auditBanRevoke(auth.user.id, appeal.ban.playerId, appeal.banId, revokeReason);
   }
 
   await auditAppealResolve(auth.user.id, appealId, status, normalizedResolution);

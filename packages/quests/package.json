@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@rbx/core": "workspace:*",
-    "@rbx/observability": "workspace:*"
+    "@rbx/observability": "workspace:*",
+    "@rbx/rewards": "workspace:*"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",

@@ -19,7 +19,7 @@ import type {
   PetEvolvedCallback,
   PetEquippedCallback,
 } from "./types";
-import { DEFAULT_PET_CONFIG, PET_DATA_VERSION } from "./types";
+import { DEFAULT_PET_CONFIG, MAX_NICKNAME_LENGTH, PET_DATA_VERSION } from "./types";
 import { PetRegistry } from "./pet-registry";
 
 // Observability counters
@@ -217,6 +217,10 @@ export class PetStore {
 
   /** Add XP to a pet. Auto-levels if threshold reached. */
   addXp(instanceId: string, amount: number): PetResult {
+    if (amount <= 0) {
+      return { ok: false, status: "invalid_amount", message: "Amount must be positive" };
+    }
+
     const pet = this.getPet(instanceId);
     if (!pet) return { ok: false, status: "pet_not_found" };
 
@@ -402,11 +406,7 @@ export class PetStore {
 
   /** Count equipped pets. */
   equippedCount(): number {
-    let n = 0;
-    for (const p of this.data.pets) {
-      if (p.equipped) n++;
-    }
-    return n;
+    return this.getEquippedPets().size();
   }
 
   /** Lock/unlock a pet. */
@@ -420,6 +420,17 @@ export class PetStore {
 
   /** Set a pet's nickname. */
   setNickname(instanceId: string, nickname: string): PetResult {
+    if (nickname.size() === 0) {
+      return { ok: false, status: "invalid_nickname", message: "Nickname must not be empty" };
+    }
+    if (nickname.size() > MAX_NICKNAME_LENGTH) {
+      return {
+        ok: false,
+        status: "invalid_nickname",
+        message: `Nickname must be at most ${MAX_NICKNAME_LENGTH} characters`,
+      };
+    }
+
     const pet = this.getPet(instanceId);
     if (!pet) return { ok: false, status: "pet_not_found" };
     pet.nickname = nickname;

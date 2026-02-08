@@ -132,6 +132,18 @@ export class BanStore {
    * Create a new ban.
    */
   createBan(input: CreateBanInput): BanRecord {
+    // Input validation
+    if (input.playerId <= 0) {
+      error("createBan: playerId must be a positive number");
+    }
+    const trimmedReason = input.reason !== undefined ? tostring(input.reason) : "";
+    if (trimmedReason.size() === 0) {
+      error("createBan: reason must not be empty");
+    }
+    if (input.durationHours !== undefined && input.durationHours <= 0) {
+      error("createBan: durationHours must be positive when provided");
+    }
+
     const now = os.time();
     const ban: BanRecord = {
       id: this.generateId(),

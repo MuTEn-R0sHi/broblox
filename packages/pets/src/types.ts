@@ -105,6 +105,8 @@ export interface PetPlayerData {
 // Operation Results
 // ============================================================================
 
+export const MAX_NICKNAME_LENGTH = 30;
+
 export type PetResultStatus =
   | "success"
   | "pet_not_found"
@@ -117,6 +119,8 @@ export type PetResultStatus =
   | "insufficient_xp"
   | "cannot_evolve"
   | "pet_locked"
+  | "invalid_amount"
+  | "invalid_nickname"
   | "datastore_error"
   | "unknown_error";
 

@@ -3,6 +3,7 @@
  */
 
 import { MovementState, AbilityState } from "./types";
+import { VALIDATION_THRESHOLDS } from "./constants";
 
 // ============================================================================
 // Player Movement State
@@ -84,8 +85,8 @@ export class PlayerMovementState {
       violationType,
     });
 
-    // Clean old violations (older than 10 seconds)
-    const cutoff = os.clock() - 10;
+    // Clean old violations (older than violationWindow seconds)
+    const cutoff = os.clock() - VALIDATION_THRESHOLDS.violationWindow;
     const newHistory: Array<{ timestamp: number; violationType: string }> = [];
     for (const v of this.violationHistory) {
       if (v.timestamp > cutoff) {
@@ -99,7 +100,7 @@ export class PlayerMovementState {
    * Get recent violation count.
    */
   getRecentViolationCount(): number {
-    const cutoff = os.clock() - 10;
+    const cutoff = os.clock() - VALIDATION_THRESHOLDS.violationWindow;
     let count = 0;
     for (const v of this.violationHistory) {
       if (v.timestamp > cutoff) {

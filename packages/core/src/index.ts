@@ -145,7 +145,10 @@ export class Janitor {
 
   cleanup(): void {
     for (const task of this.tasks) {
-      pcall(task);
+      const [ok, err] = pcall(task);
+      if (!ok) {
+        print(`[Janitor] cleanup task failed: ${tostring(err)}`);
+      }
     }
     this.tasks = [];
   }

@@ -8,6 +8,7 @@
 
 import { describe, it, expect, beforeEach } from "vitest";
 import {
+  defineFlag,
   getFlagDefinition,
   getAllFlagDefinitions,
   getFlagsByCategory,
@@ -541,5 +542,143 @@ describe("enabled and rollout overrides", () => {
     clearFlagRolloutPercentageOverride("experiment.newMatchmaking");
     // Reverts to definition's rolloutPercentage (0%) → no users
     expect(isFlagEnabledForUser("experiment.newMatchmaking", 1)).toBe(false);
+  });
+});
+
+// ============================================================================
+// Edge cases — branch coverage
+// ============================================================================
+
+describe("isFlagEnabledForUser edge cases", () => {
+  it("returns false for non-boolean flags", () => {
+    // Define a string flag — isFlagEnabledForUser should return false
+    defineFlag({
+      name: "test.stringFlag",
+      defaultValue: "hello",
+      description: "A string flag",
+      category: "debug",
+    });
+    expect(isFlagEnabledForUser("test.stringFlag", 1)).toBe(false);
+  });
+
+  it("returns false when baseEnabled is false (enabledOverride false)", () => {
+    // doAction.enabled defaults to true, override to false
+    setFlagEnabledOverride("doAction.enabled", false);
+    expect(isFlagEnabledForUser("doAction.enabled", 1)).toBe(false);
+  });
+
+  it("returns true when no rollout percentage is defined", () => {
+    // doAction.enabled has no rolloutPercentage → should return true via baseEnabled
+    expect(isFlagEnabledForUser("doAction.enabled", 1)).toBe(true);
+  });
+
+  it("returns true when value override is true (bypasses rollout)", () => {
+    setFlagValue("experiment.newMatchmaking", true);
+    expect(isFlagEnabledForUser("experiment.newMatchmaking", 99)).toBe(true);
+  });
+
+  it("returns false when value override is false", () => {
+    setFlagValue("doAction.enabled", false);
+    expect(isFlagEnabledForUser("doAction.enabled", 99)).toBe(false);
+  });
+
+  it("user not matching any segment falls back to default", () => {
+    defineFlag({
+      name: "test.segmentedFlag",
+      defaultValue: false,
+      description: "Segmented flag",
+      category: "experiment",
+      segments: [{ name: "beta-testers", userIds: [100, 200] }],
+    });
+    // userId 999 is not in segment → falls back to defaultValue (false)
+    expect(isFlagEnabledForUser("test.segmentedFlag", 999)).toBe(false);
+  });
+});
+
+describe("rollout history cap", () => {
+  it("caps history at MAX_HISTORY_SIZE (500 entries)", () => {
+    // Generate > 500 changes to trigger the history cap
+    for (let i = 0; i < 510; i++) {
+      setFlagValue("doAction.enabled", i % 2 === 0);
+    }
+    const history = getRolloutHistory();
+    expect(history.length).toBeLessThanOrEqual(500);
+    expect(history.length).toBeGreaterThan(0);
+  });
+});
+
+describe("defineFlag edge cases", () => {
+  it("skips duplicate registration", () => {
+    // "doAction.enabled" is already defined at module load
+    const result = defineFlag({
+      name: "doAction.enabled",
+      defaultValue: false,
+      description: "Duplicate",
+      category: "debug",
+    });
+    // Original definition should be unchanged (defaultValue true)
+    expect(getFlagValue("doAction.enabled")).toBe(true);
+  });
+
+  it("defines a numeric flag", () => {
+    defineFlag({
+      name: "test.maxRetries",
+      defaultValue: 3,
+      description: "Max retry count",
+      category: "networking",
+    });
+    expect(getFlagValue("test.maxRetries")).toBe(3);
+  });
+});
+
+describe("setFlagEnabledOverride edge cases", () => {
+  it("ignores non-boolean flags", () => {
+    defineFlag({
+      name: "test.numericFlag",
+      defaultValue: 42,
+      description: "Numeric config",
+      category: "gameplay",
+    });
+    setFlagEnabledOverride("test.numericFlag", true);
+    // Should not have changed the value (it's not boolean)
+    expect(getFlagValue("test.numericFlag")).toBe(42);
+  });
+});
+
+describe("setFlagKilled edge cases", () => {
+  it("ignores non-boolean flags", () => {
+    defineFlag({
+      name: "test.stringConfig",
+      defaultValue: "value",
+      description: "String config",
+      category: "gameplay",
+    });
+    setFlagKilled("test.stringConfig", true);
+    // Should not affect non-boolean flag
+    expect(getFlagValue("test.stringConfig")).toBe("value");
+  });
+});
+
+describe("clearUserAttributes", () => {
+  it("removes user from attribute store", () => {
+    setUserAttribute(42, "locale", "en");
+    expect(getUserAttribute(42, "locale")).toBe("en");
+    clearUserAttributes(42);
+    expect(getUserAttribute(42, "locale")).toBeUndefined();
+  });
+});
+
+describe("applyRemoteFeatureFlagSnapshot edge cases", () => {
+  it("applies value overrides and records history as remote source", () => {
+    clearRolloutHistory();
+    applyRemoteFeatureFlagSnapshot({
+      flags: {
+        "doAction.enabled": { value: false },
+      },
+    });
+    expect(getFlagValue("doAction.enabled")).toBe(false);
+    const history = getRolloutHistory();
+    const remoteEntries = history.filter((h) => h.source === "remote");
+    expect(remoteEntries.length).toBeGreaterThan(0);
   });
 });

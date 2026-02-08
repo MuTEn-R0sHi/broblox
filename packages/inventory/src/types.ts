@@ -18,8 +18,6 @@ export type ItemCategory =
   | "consumable"
   | "material"
   | "currency"
-  | "cosmetic"
-  | "pet"
   | "egg"
   | "tool"
   | "quest"

@@ -674,6 +674,30 @@ describe("MovementValidator", () => {
         expect(result.correctedPosition).toBeDefined();
       }
     });
+
+    it("should skip teleport check when deltaTime is zero", () => {
+      // Move the player far away — normally would trigger teleport
+      const input = createInput({
+        position: vec3(9999, 0, 9999),
+        velocity: vec3(0, 0, 0),
+        sequenceNumber: 1,
+      });
+      const result = validator.validate(input, playerState, 0);
+      // teleport check should be skipped, so only non-teleport violations (if any)
+      const teleportViolations = result.violations.filter((v) => v.type === "teleport");
+      expect(teleportViolations).toHaveLength(0);
+    });
+
+    it("should skip teleport check when deltaTime is negative", () => {
+      const input = createInput({
+        position: vec3(9999, 0, 9999),
+        velocity: vec3(0, 0, 0),
+        sequenceNumber: 1,
+      });
+      const result = validator.validate(input, playerState, -1);
+      const teleportViolations = result.violations.filter((v) => v.type === "teleport");
+      expect(teleportViolations).toHaveLength(0);
+    });
   });
 
   // --------------------------------------------------------------------------

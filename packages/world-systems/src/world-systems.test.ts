@@ -287,4 +287,21 @@ describe("WorldManager", () => {
     wm.update(100);
     expect(wm.getClockTime()).toBe(12); // unchanged
   });
+
+  it("ignores negative delta time", async () => {
+    const wm = await loadManager();
+    wm.start();
+    const before = wm.getClockTime();
+    wm.update(-10);
+    expect(wm.getClockTime()).toBe(before); // unchanged
+  });
+
+  it("does not fire time period callback on negative delta", async () => {
+    const wm = await loadManager({ dayNight: { startClockTime: 12 } });
+    const events: TimePeriodChangedEvent[] = [];
+    wm.onTimePeriodChanged((e) => events.push(e));
+    wm.start();
+    wm.update(-500);
+    expect(events).toHaveLength(0);
+  });
 });

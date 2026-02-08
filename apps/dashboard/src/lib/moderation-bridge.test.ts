@@ -31,12 +31,17 @@ vi.mock("@/lib/roblox-open-cloud", () => {
 
 let bridgeCreateMuteToRoblox: typeof import("@/lib/moderation-bridge").bridgeCreateMuteToRoblox;
 let bridgeRevokeMuteToRoblox: typeof import("@/lib/moderation-bridge").bridgeRevokeMuteToRoblox;
+let bridgeCreateBanToRoblox: typeof import("@/lib/moderation-bridge").bridgeCreateBanToRoblox;
+let bridgeRevokeBanToRoblox: typeof import("@/lib/moderation-bridge").bridgeRevokeBanToRoblox;
 type MuteBridgeResult = import("@/lib/moderation-bridge").MuteBridgeResult;
+type BanBridgeResult = import("@/lib/moderation-bridge").BanBridgeResult;
 
 beforeAll(async () => {
   const mod = await import("@/lib/moderation-bridge");
   bridgeCreateMuteToRoblox = mod.bridgeCreateMuteToRoblox;
   bridgeRevokeMuteToRoblox = mod.bridgeRevokeMuteToRoblox;
+  bridgeCreateBanToRoblox = mod.bridgeCreateBanToRoblox;
+  bridgeRevokeBanToRoblox = mod.bridgeRevokeBanToRoblox;
 });
 
 describe("moderation-bridge (mutes)", () => {
@@ -116,5 +121,128 @@ describe("moderation-bridge (mutes)", () => {
     const payload = JSON.parse(publishCall.message) as { id: string; isActive: boolean };
     expect(payload.id).toBe("mute_1");
     expect(payload.isActive).toBe(false);
+  });
+});
+
+describe("moderation-bridge (bans)", () => {
+  beforeEach(() => {
+    publishMessagingService.mockClear();
+    updateStandardDataStoreEntry.mockClear();
+  });
+
+  it("publishes ban create and writes to the _Bans DataStore", async () => {
+    const result = await bridgeCreateBanToRoblox({
+      banId: "ban_1",
+      playerId: BigInt(456),
+      playerName: "BadPlayer",
+      type: "TEMPORARY",
+      reason: "Exploiting",
+      internalNote: "Caught on camera",
+      durationHours: 24,
+      expiresAt: new Date("2026-02-06T00:00:00Z"),
+      moderatorId: "mod_1",
+      createdAt: new Date("2026-02-05T00:00:00Z"),
+    });
+
+    expect((result as BanBridgeResult).ok).toBe(true);
+
+    expect(updateStandardDataStoreEntry).toHaveBeenCalledTimes(1);
+    const dsCall = updateStandardDataStoreEntry.mock.calls[0]?.[0];
+    expect(dsCall.datastore.datastoreName).toBe("StarterModeration_Bans");
+    expect(dsCall.entryKey).toBe("bans_456");
+
+    expect(publishMessagingService).toHaveBeenCalledTimes(1);
+    const publishCall = publishMessagingService.mock.calls[0]?.[0];
+    expect(publishCall.topic).toBe("ModBanSync");
+    expect(typeof publishCall.message).toBe("string");
+
+    const payload = JSON.parse(publishCall.message) as {
+      id: string;
+      playerId: number;
+      status: string;
+      type: string;
+    };
+    expect(payload.id).toBe("ban_1");
+    expect(payload.playerId).toBe(456);
+    expect(payload.status).toBe("ACTIVE");
+    expect(payload.type).toBe("TEMPORARY");
+  });
+
+  it("revokes a ban and deactivates the record when found", async () => {
+    updateStandardDataStoreEntry.mockImplementationOnce(async (opts) => {
+      const existing = [
+        {
+          id: "ban_1",
+          playerId: 456,
+          type: "TEMPORARY",
+          status: "ACTIVE",
+          reason: "Exploiting",
+          moderatorId: "mod_1",
+          createdAt: 1000,
+        },
+      ];
+
+      const next = opts.update(existing as never);
+      expect(Array.isArray(next)).toBe(true);
+      const [first] = next as Array<{ status: string; revokedById: string; revokeReason: string }>;
+      expect(first.status).toBe("REVOKED");
+      expect(first.revokedById).toBe("mod_2");
+      expect(first.revokeReason).toBe("Appeal approved");
+    });
+
+    const result = await bridgeRevokeBanToRoblox({
+      banId: "ban_1",
+      playerId: BigInt(456),
+      revokedById: "mod_2",
+      revokeReason: "Appeal approved",
+      revokedAt: new Date("2026-02-05T12:00:00Z"),
+    });
+
+    expect((result as BanBridgeResult).ok).toBe(true);
+    expect(publishMessagingService).toHaveBeenCalledTimes(1);
+
+    const publishCall = publishMessagingService.mock.calls[0]?.[0];
+    const payload = JSON.parse(publishCall.message) as { id: string; status: string };
+    expect(payload.id).toBe("ban_1");
+    expect(payload.status).toBe("REVOKED");
+  });
+
+  it("returns error string for unsafe BigInt conversion", async () => {
+    const result = await bridgeCreateBanToRoblox({
+      banId: "ban_big",
+      playerId: BigInt("99007199254740993"),
+      type: "PERMANENT",
+      reason: "Test",
+      moderatorId: "mod_1",
+      createdAt: new Date("2026-02-05T00:00:00Z"),
+    });
+
+    expect((result as BanBridgeResult).ok).toBe(false);
+    expect((result as Extract<BanBridgeResult, { ok: false }>).error).toBeDefined();
+  });
+
+  it("revoke still publishes when ban record not found in DataStore", async () => {
+    updateStandardDataStoreEntry.mockImplementationOnce(async (opts) => {
+      // Return empty array — ban not found in DataStore
+      const next = opts.update([] as never);
+      expect(Array.isArray(next)).toBe(true);
+      expect((next as unknown[]).length).toBe(0);
+    });
+
+    const result = await bridgeRevokeBanToRoblox({
+      banId: "ban_missing",
+      playerId: BigInt(789),
+      revokedById: "mod_1",
+      revokeReason: "Cleanup",
+      revokedAt: new Date("2026-02-05T12:00:00Z"),
+    });
+
+    expect((result as BanBridgeResult).ok).toBe(true);
+    // Should still publish a minimal revoke message for cross-server invalidation
+    expect(publishMessagingService).toHaveBeenCalledTimes(1);
+    const publishCall = publishMessagingService.mock.calls[0]?.[0];
+    const payload = JSON.parse(publishCall.message) as { id: string; status: string };
+    expect(payload.id).toBe("ban_missing");
+    expect(payload.status).toBe("REVOKED");
   });
 });

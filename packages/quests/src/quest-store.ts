@@ -183,6 +183,8 @@ export class QuestStore {
     amount: number,
     metadata?: Map<string, string>
   ): number {
+    if (amount <= 0) return 0;
+
     let updated = 0;
 
     for (const quest of this.data.activeQuests) {
@@ -244,6 +246,8 @@ export class QuestStore {
    * Set progress on a specific objective within a specific quest.
    */
   setObjectiveProgress(questId: string, objectiveId: string, value: number): boolean {
+    if (value < 0) return false;
+
     const quest = this.getActiveQuest(questId);
     if (!quest || quest.status !== "active") return false;
 
@@ -291,14 +295,7 @@ export class QuestStore {
     questsCompleted.inc();
 
     // Add to completed list if not already there
-    let found = false;
-    for (const id of this.data.completedQuestIds) {
-      if (id === quest.questId) {
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
+    if (!this.hasCompletedId(quest.questId)) {
       this.data.completedQuestIds.push(quest.questId);
     }
 
@@ -306,9 +303,7 @@ export class QuestStore {
     const event: QuestCompletedEvent = {
       playerId: this.playerId,
       questId: quest.questId,
-      xpReward: def?.xpReward ?? 0,
-      currencyReward: def?.currencyReward ?? 0,
-      itemRewards: def?.itemRewards ?? [],
+      rewards: def?.rewards ?? [],
     };
 
     this.logger?.info(`Quest completed: ${quest.questId}`);
@@ -382,10 +377,7 @@ export class QuestStore {
 
   /** Check if a quest has been completed. */
   isCompleted(questId: string): boolean {
-    for (const id of this.data.completedQuestIds) {
-      if (id === questId) return true;
-    }
-    return false;
+    return this.hasCompletedId(questId);
   }
 
   /** Count of active quests. */
@@ -469,5 +461,13 @@ export class QuestStore {
       if (this.data.activeQuests[i].questId === questId) return i;
     }
     return -1;
+  }
+
+  /** Check if a questId exists in the completedQuestIds list. */
+  private hasCompletedId(questId: string): boolean {
+    for (const id of this.data.completedQuestIds) {
+      if (id === questId) return true;
+    }
+    return false;
   }
 }

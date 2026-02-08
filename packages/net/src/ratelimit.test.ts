@@ -17,6 +17,24 @@ describe("RateLimiter", () => {
     limiter.setMockTime(0);
   });
 
+  describe("constructor validation", () => {
+    it("throws on zero windowMs", () => {
+      expect(() => new MockRateLimiter({ windowMs: 0, maxRequests: 5 })).toThrow();
+    });
+
+    it("throws on negative windowMs", () => {
+      expect(() => new MockRateLimiter({ windowMs: -100, maxRequests: 5 })).toThrow();
+    });
+
+    it("throws on zero maxRequests", () => {
+      expect(() => new MockRateLimiter({ windowMs: 1000, maxRequests: 0 })).toThrow();
+    });
+
+    it("throws on negative maxRequests", () => {
+      expect(() => new MockRateLimiter({ windowMs: 1000, maxRequests: -1 })).toThrow();
+    });
+  });
+
   describe("basic functionality", () => {
     it("allows requests within limit", () => {
       const result = limiter.check("player1");

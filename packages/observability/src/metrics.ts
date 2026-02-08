@@ -98,6 +98,7 @@ export class Counter {
 /**
  * Create a counter metric.
  * @deprecated Use `new Counter(name, labels)` directly.
+ * @internal
  */
 export function createCounter(name: string, labels?: Record<string, string>): Counter {
   return new Counter(name, labels);
@@ -163,6 +164,7 @@ export class Gauge {
 /**
  * Create a gauge metric.
  * @deprecated Use `new Gauge(name, labels)` directly.
+ * @internal
  */
 export function createGauge(name: string, labels?: Record<string, string>): Gauge {
   return new Gauge(name, labels);
@@ -242,6 +244,7 @@ export class Histogram {
 /**
  * Create a histogram metric.
  * @deprecated Use `new Histogram(name, labels, buckets)` directly.
+ * @internal
  */
 export function createHistogram(
   name: string,
@@ -308,13 +311,13 @@ export function useConsoleMetricSink(): () => void {
 /** Pre-defined common metrics */
 export const CommonMetrics = {
   /** Number of active players */
-  activePlayers: createGauge("game_active_players"),
+  activePlayers: new Gauge("game_active_players"),
   /** Number of active matches */
-  activeMatches: createGauge("game_active_matches"),
+  activeMatches: new Gauge("game_active_matches"),
   /** Remote call duration */
-  remoteLatency: createHistogram("remote_latency_ms"),
+  remoteLatency: new Histogram("remote_latency_ms"),
   /** DataStore operation duration */
-  datastoreLatency: createHistogram("datastore_latency_ms"),
+  datastoreLatency: new Histogram("datastore_latency_ms"),
   /** Errors count */
-  errors: createCounter("game_errors_total"),
+  errors: new Counter("game_errors_total"),
 };

@@ -74,10 +74,23 @@ nav:
       - Tech stack: dashboard/tech-stack.md
   - Modules:
       - Template: modules/module-template.md
+      - Audio: modules/audio.md
       - Battle pass: modules/battle-pass.md
-      - Daily rewards: modules/daily-rewards.md
+      - Core: modules/core.md
       - Cosmetics: modules/cosmetics.md
+      - Daily rewards: modules/daily-rewards.md
+      - Data: modules/data.md
+      - Gacha: modules/gacha.md
+      - Localization: modules/localization.md
+      - Net: modules/net.md
+      - Observability: modules/observability.md
+      - Pets: modules/pets.md
+      - Rewards: modules/rewards.md
+      - Security: modules/security.md
+      - Shared types: modules/shared-types.md
       - Trading: modules/trading.md
+      - Tutorial: modules/tutorial.md
+      - World systems: modules/world-systems.md
   - Runbooks:
       - Incident response: runbooks/incident-response.md
       - Exploit wave: runbooks/exploit-wave.md

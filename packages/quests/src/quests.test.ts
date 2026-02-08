@@ -102,8 +102,10 @@ function makeKillQuest(overrides?: Partial<QuestDefinition>): QuestDefinition {
     schedule: "daily",
     tier: "common",
     objectives: [{ id: "obj_kill", description: "Kill enemies", type: "kill", target: 10 }],
-    xpReward: 500,
-    currencyReward: 100,
+    rewards: [
+      { type: "xp", amount: 500 },
+      { type: "currency", amount: 100 },
+    ],
     ...overrides,
   };
 }
@@ -119,9 +121,11 @@ function makeMultiObjQuest(): QuestDefinition {
       { id: "obj_kill", description: "Kill 5 enemies", type: "kill", target: 5 },
       { id: "obj_collect", description: "Collect 3 gems", type: "collect", target: 3 },
     ],
-    xpReward: 1000,
-    currencyReward: 250,
-    itemRewards: ["sword_01"],
+    rewards: [
+      { type: "xp", amount: 1000 },
+      { type: "currency", amount: 250 },
+      { type: "item", amount: 1, itemId: "sword_01" },
+    ],
   };
 }
 
@@ -357,6 +361,31 @@ describe("QuestStore", () => {
       expect(updated).toBe(0);
     });
 
+    it("rejects negative increment amount", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      store.incrementObjective("kill", 3);
+      const updated = store.incrementObjective("kill", -1);
+      expect(updated).toBe(0);
+      expect(store.getActiveQuest("quest_kill_10")!.objectives[0].current).toBe(3);
+    });
+
+    it("rejects zero increment amount", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      const updated = store.incrementObjective("kill", 0);
+      expect(updated).toBe(0);
+    });
+
+    it("rejects negative setObjectiveProgress value", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      store.setObjectiveProgress("quest_kill_10", "obj_kill", 5);
+      const result = store.setObjectiveProgress("quest_kill_10", "obj_kill", -1);
+      expect(result).toBe(false);
+      expect(store.getActiveQuest("quest_kill_10")!.objectives[0].current).toBe(5);
+    });
+
     it("handles multi-objective quests", () => {
       const { store } = makeStore();
       store.acceptQuest("quest_multi");
@@ -433,9 +462,11 @@ describe("QuestStore", () => {
       store.incrementObjective("kill", 5);
       store.incrementObjective("collect", 3);
 
-      expect(reward.xpReward).toBe(1000);
-      expect(reward.currencyReward).toBe(250);
-      expect(reward.itemRewards).toEqual(["sword_01"]);
+      expect(reward.rewards).toEqual([
+        { type: "xp", amount: 1000 },
+        { type: "currency", amount: 250 },
+        { type: "item", amount: 1, itemId: "sword_01" },
+      ]);
     });
 
     it("prevents re-accepting once-only completed quest", () => {

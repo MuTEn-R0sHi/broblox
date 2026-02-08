@@ -38,5 +38,6 @@
   "dependencies": {
     "@rbx/core": "workspace:*",
     "@rbx/shared-types": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

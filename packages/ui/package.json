@@ -2,6 +2,7 @@
   "name": "@rbx/ui",
   "version": "0.2.0",
   "private": true,
+  "status": "integrated",
   "description": "UI component library for Roblox games",
   "main": "out",
   "types": "out/index.d.ts",

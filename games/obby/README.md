@@ -142,7 +142,7 @@ This game uses:
 
 - `@rbx/core` - Application framework and logging
 - `@rbx/config-featureflags` - Feature flags and kill-switches
-- `@rbx/constants` - Shared constants and limits
+- `@rbx/shared-types` - Shared constants, types, and limits
 - `@rbx/data` - Data persistence
 - `@rbx/net` - Remote registry and validation
 - `@rbx/input` - Input handling

@@ -7,10 +7,40 @@ export default async function DashboardPage() {
   const { user } = await requirePermission("view:dashboard");
 
   // Fetch real stats from database
-  const flagCount = await prisma.featureFlag.count();
-  const enabledFlagCount = await prisma.featureFlag.count({
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const [flagCount, enabledFlagCount, uniquePlayers, modActions, recentEvents] = await Promise.all([
+    prisma.featureFlag.count(),
+    prisma.featureFlag.count({
+      where: {
+        OR: [{ enabledDev: true }, { enabledStage: true }, { enabledProd: true }],
+      },
+    }),
+    // Count unique player IDs seen in telemetry within the last hour
+    prisma.telemetryEvent.groupBy({
+      by: ["playerId"],
+      where: {
+        playerId: { not: null },
+        ingestedAt: { gte: oneHourAgo },
+      },
+    }),
+    // Count moderation actions in the last 24h
+    prisma.ban.count({ where: { createdAt: { gte: oneDayAgo } } }),
+    // Recent telemetry events for the activity feed
+    prisma.telemetryEvent.findMany({
+      where: { level: { in: ["info", "warn", "error"] } },
+      orderBy: { ingestedAt: "desc" },
+      take: 5,
+    }),
+  ]);
+
+  // Count unique active servers from recent telemetry
+  const activeServers = await prisma.telemetryEvent.groupBy({
+    by: ["serverId"],
     where: {
-      OR: [{ enabledDev: true }, { enabledStage: true }, { enabledProd: true }],
+      serverId: { not: null },
+      ingestedAt: { gte: oneHourAgo },
     },
   });
 
@@ -21,9 +51,24 @@ export default async function DashboardPage() {
       description: `${enabledFlagCount} enabled`,
       icon: Flag,
     },
-    { name: "Active Players", value: "—", description: "Coming soon", icon: Users },
-    { name: "Mod Actions", value: "—", description: "Coming soon", icon: Shield },
-    { name: "Server Uptime", value: "—", description: "Coming soon", icon: Activity },
+    {
+      name: "Active Players",
+      value: uniquePlayers.length.toString(),
+      description: "Last hour",
+      icon: Users,
+    },
+    {
+      name: "Mod Actions",
+      value: modActions.toString(),
+      description: "Last 24 hours",
+      icon: Shield,
+    },
+    {
+      name: "Active Servers",
+      value: activeServers.length.toString(),
+      description: "Last hour",
+      icon: Activity,
+    },
   ];
 
   return (
@@ -54,31 +99,38 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest actions in the platform</CardDescription>
+            <CardDescription>Latest telemetry events</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="h-2 w-2 rounded-full bg-green-500" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Dev environment published</p>
-                  <p className="text-xs text-muted-foreground">2 minutes ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-2 w-2 rounded-full bg-blue-500" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Feature flag &quot;new_lobby&quot; enabled</p>
-                  <p className="text-xs text-muted-foreground">1 hour ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Production promoted to v0.1.0</p>
-                  <p className="text-xs text-muted-foreground">3 hours ago</p>
-                </div>
-              </div>
+              {recentEvents.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No events yet. Connect game servers with HttpSink to see activity.
+                </p>
+              ) : (
+                recentEvents.map((event) => (
+                  <div key={event.id} className="flex items-center gap-4">
+                    <div
+                      className={`h-2 w-2 rounded-full ${
+                        event.level === "error"
+                          ? "bg-red-500"
+                          : event.level === "warn"
+                            ? "bg-yellow-500"
+                            : "bg-green-500"
+                      }`}
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        {event.category}:{event.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {event.ingestedAt.toLocaleString()}
+                        {event.serverId ? ` · ${event.serverId.slice(0, 8)}` : ""}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

@@ -2,6 +2,7 @@
   "name": "@rbx/combat",
   "version": "0.2.0",
   "private": true,
+  "status": "integrated",
   "description": "Server-authoritative combat systems for PvP",
   "main": "out",
   "types": "out/index.d.ts",
@@ -22,7 +23,8 @@
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.906",
     "roblox-ts": "^3.0.0",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@rbx/core": "workspace:*",

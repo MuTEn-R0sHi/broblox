@@ -542,6 +542,49 @@ describe("InventoryStore", () => {
       // Source should still have the item (rolled back)
       expect(source.getItemCount("iron_sword")).toBe(2);
     });
+
+    it("rejects transfer of unknown item", () => {
+      const registry = makeRegistry();
+      const source = new InventoryStore(1, registry, { defaultMaxSlots: 10 });
+      const target = new InventoryStore(2, registry, { defaultMaxSlots: 10 });
+      source.init();
+      target.init();
+
+      const result = source.transferTo(target, "nonexistent_item", 1);
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("invalid_item");
+    });
+
+    it("rejects transfer when quantity exceeds owned", () => {
+      const registry = makeRegistry();
+      const source = new InventoryStore(1, registry, { defaultMaxSlots: 10 });
+      const target = new InventoryStore(2, registry, { defaultMaxSlots: 10 });
+      source.init();
+      target.init();
+
+      source.addItem("wood", 5);
+      const result = source.transferTo(target, "wood", 20);
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("insufficient_quantity");
+      // Source unmodified
+      expect(source.getItemCount("wood")).toBe(5);
+      // Target unchanged
+      expect(target.getItemCount("wood")).toBe(0);
+    });
+
+    it("rejects transfer with zero quantity", () => {
+      const registry = makeRegistry();
+      const source = new InventoryStore(1, registry, { defaultMaxSlots: 10 });
+      const target = new InventoryStore(2, registry, { defaultMaxSlots: 10 });
+      source.init();
+      target.init();
+
+      source.addItem("wood", 10);
+      const result = source.transferTo(target, "wood", 0);
+      expect(result.ok).toBe(false);
+      // removeItem rejects quantity < 1
+      expect(source.getItemCount("wood")).toBe(10);
+    });
   });
 
   // --------------------------------------------------------------------------

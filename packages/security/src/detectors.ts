@@ -53,7 +53,10 @@ export function reportViolation(
 
   // Notify all handlers
   for (const handler of handlers) {
-    pcall(() => handler(violation));
+    const [ok, err] = pcall(() => handler(violation));
+    if (!ok) {
+      logger.warn(`Violation handler threw: ${tostring(err)}`);
+    }
   }
 
   return violation;

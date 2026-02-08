@@ -95,6 +95,7 @@ export class WorldManager {
    */
   update(deltaSec: number): void {
     if (!this.running) return;
+    if (deltaSec <= 0) return;
 
     // ---------- Day / Night ----------
     if (this.config.dayNight.enabled) {

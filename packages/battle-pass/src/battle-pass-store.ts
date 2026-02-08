@@ -126,6 +126,10 @@ export class BattlePassStore {
 
   /** Add XP and automatically tier up */
   addXp(amount: number): XpResult {
+    if (amount <= 0) {
+      return { ok: false, status: "invalid_amount" };
+    }
+
     const season = this.registry.get(this.data.seasonId);
     if (season === undefined) {
       return { ok: false, status: "season_not_found" };

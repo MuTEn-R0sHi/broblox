@@ -323,4 +323,50 @@ describe("CosmeticStore", () => {
     store2.load();
     expect(store2.ownedCount()).toBe(2);
   });
+
+  // Equip replaces — fires unequip for displaced cosmetic
+  it("fires unequip callback when replacing equipped cosmetic in same slot", () => {
+    const cb = vi.fn();
+    store.onEquip(cb);
+    store.grant("red_hat");
+    store.grant("gold_skin");
+    // gold_skin is skin category but let's use hat slot for red_hat first
+    store.equip("red_hat", "head");
+    expect(cb).toHaveBeenCalledTimes(1);
+
+    // Register another hat to replace
+    const blueHat: CosmeticDefinition = {
+      id: "blue_hat",
+      name: "Blue Hat",
+      description: "A blue hat",
+      category: "hat",
+      rarity: "common",
+      tradeable: true,
+      limited: false,
+    };
+    registry.register(blueHat);
+    store.grant("blue_hat");
+
+    store.equip("blue_hat", "head");
+    // Should have fired: equip red_hat (1), unequip red_hat (2), equip blue_hat (3)
+    expect(cb).toHaveBeenCalledTimes(3);
+    // Second call should be unequip of the old cosmetic
+    expect(cb).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        cosmeticId: "red_hat",
+        slot: "head",
+        equipped: false,
+      })
+    );
+    // Third call should be equip of the new cosmetic
+    expect(cb).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        cosmeticId: "blue_hat",
+        slot: "head",
+        equipped: true,
+      })
+    );
+  });
 });

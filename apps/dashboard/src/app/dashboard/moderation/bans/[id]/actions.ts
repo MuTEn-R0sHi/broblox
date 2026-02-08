@@ -7,7 +7,7 @@ import { bridgeRevokeBanToRoblox } from "@/lib/moderation-bridge";
 
 export async function revokeBan(
   banId: string,
-  playerId: string,
+  _playerId: string,
   reason: string
 ): Promise<{ success?: boolean; warning?: string; error?: string }> {
   const auth = await checkPermission("moderation:ban");
@@ -18,13 +18,6 @@ export async function revokeBan(
   const revokeReason = reason?.trim();
   if (!revokeReason || revokeReason.length < 3) {
     return { error: "Reason must be at least 3 characters" };
-  }
-
-  let playerIdBigInt: bigint;
-  try {
-    playerIdBigInt = BigInt(playerId);
-  } catch {
-    return { error: "Invalid player ID" };
   }
 
   const ban = await prisma.ban.findUnique({
@@ -49,16 +42,18 @@ export async function revokeBan(
     },
   });
 
-  await auditBanRevoke(auth.user.id, playerIdBigInt, banId, revokeReason);
+  // Always use ban.playerId from the database to prevent IDOR
+  // (client-supplied playerId is ignored)
+  await auditBanRevoke(auth.user.id, ban.playerId, banId, revokeReason);
 
   const syncResult = await bridgeRevokeBanToRoblox({
     banId,
-    playerId: playerIdBigInt,
+    playerId: ban.playerId,
     revokedById: auth.user.id,
     revokeReason,
     revokedAt: updated.revokedAt ?? new Date(),
   });
-  await auditBanSync(auth.user.id, playerIdBigInt, banId, syncResult);
+  await auditBanSync(auth.user.id, ban.playerId, banId, syncResult);
 
   if (!syncResult.ok) {
     return {

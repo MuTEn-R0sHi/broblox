@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Security utilities for Roblox games",
   "private": true,
+  "status": "integrated",
   "main": "out",
   "types": "out/index.d.ts",
   "exports": {
@@ -37,5 +38,6 @@
   "dependencies": {
     "@rbx/core": "workspace:*",
     "@rbx/shared-types": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

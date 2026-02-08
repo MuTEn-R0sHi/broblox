@@ -17,6 +17,12 @@
 /** The global `game` object. Use `as` casts for service-specific APIs. */
 declare const game: {
   GetService(name: string): unknown;
+  /** Gets a custom attribute value. */
+  GetAttribute(name: string): unknown;
+  /** Sets a custom attribute value. */
+  SetAttribute(name: string, value: unknown): void;
+  /** Binds a callback to run before shutdown. */
+  BindToClose(callback: () => void): void;
   /** The unique identifier for this game server instance. */
   JobId: string;
   /** The place ID of the current game. */
@@ -100,13 +106,16 @@ declare const print: (...args: unknown[]) => void;
 // Roblox Task Library
 // ============================================================================
 
+/** Roblox thread handle returned by task.spawn / coroutine.create. */
+type thread = { readonly __nominal_thread: unique symbol };
+
 /** Roblox `task` scheduler library. */
 declare const task: {
-  spawn(fn: () => void): void;
-  delay(seconds: number, fn: () => void): void;
+  spawn(fn: () => void): thread;
+  delay(seconds: number, fn: () => void): thread;
   wait(seconds?: number): number;
-  defer(fn: () => void): void;
-  cancel(thread?: unknown): void;
+  defer(fn: () => void): thread;
+  cancel(thread?: thread): void;
 };
 
 // ============================================================================
@@ -137,6 +146,12 @@ interface HttpService {
   GenerateGUID(wrapInCurlyBraces?: boolean): string;
   JSONEncode(value: unknown): string;
   JSONDecode(input: string): unknown;
+  RequestAsync(options: {
+    Url: string;
+    Method?: string;
+    Headers?: Record<string, string>;
+    Body?: string;
+  }): { Success: boolean; StatusCode: number; Body: string };
 }
 
 /** Roblox MessagingService API. */

@@ -14,7 +14,7 @@ let leaderboardStore: LeaderboardStore | undefined;
 
 export function getLeaderboardStore(): LeaderboardStore {
   if (!leaderboardStore) {
-    throw "LeaderboardService has not been initialized yet.";
+    error("LeaderboardService has not been initialized yet.");
   }
   return leaderboardStore;
 }

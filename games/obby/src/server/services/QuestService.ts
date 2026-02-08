@@ -21,8 +21,10 @@ const handle = createQuestService({
       objectives: [
         { id: "obj_stages", description: "Complete stages", type: "stage_complete", target: 5 },
       ],
-      xpReward: 300,
-      currencyReward: 75,
+      rewards: [
+        { type: "xp", amount: 300 },
+        { type: "currency", amount: 75 },
+      ],
     },
     {
       id: "daily_collect_tokens",
@@ -33,8 +35,10 @@ const handle = createQuestService({
       objectives: [
         { id: "obj_tokens", description: "Collect tokens", type: "collect", target: 10 },
       ],
-      xpReward: 200,
-      currencyReward: 50,
+      rewards: [
+        { type: "xp", amount: 200 },
+        { type: "currency", amount: 50 },
+      ],
     },
     {
       id: "weekly_stages_25",
@@ -45,9 +49,11 @@ const handle = createQuestService({
       objectives: [
         { id: "obj_stages", description: "Complete stages", type: "stage_complete", target: 25 },
       ],
-      xpReward: 2000,
-      currencyReward: 400,
-      itemRewards: ["skip_stage"],
+      rewards: [
+        { type: "xp", amount: 2000 },
+        { type: "currency", amount: 400 },
+        { type: "item", amount: 1, itemId: "skip_stage" },
+      ],
     },
     {
       id: "weekly_no_deaths",
@@ -63,9 +69,11 @@ const handle = createQuestService({
           target: 10,
         },
       ],
-      xpReward: 3000,
-      currencyReward: 750,
-      itemRewards: ["trail_fire"],
+      rewards: [
+        { type: "xp", amount: 3000 },
+        { type: "currency", amount: 750 },
+        { type: "item", amount: 1, itemId: "trail_fire" },
+      ],
     },
   ],
   datastoreName: "ObbyQuests",
@@ -81,9 +89,8 @@ export const cleanupPlayerQuests = (playerId: number) => handle.cleanupPlayer(pl
 export function initPlayerQuests(playerId: number) {
   const store = handle.initPlayer(playerId);
   store.onQuestCompleted((event) => {
-    logger.info(
-      `Player ${event.playerId} completed quest: ${event.questId} (+${event.xpReward} XP)`
-    );
+    const xp = event.rewards.reduce((sum, r) => (r.type === "xp" ? sum + r.amount : sum), 0);
+    logger.info(`Player ${event.playerId} completed quest: ${event.questId} (+${xp} XP)`);
   });
   return store;
 }

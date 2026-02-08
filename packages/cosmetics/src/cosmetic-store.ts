@@ -178,6 +178,19 @@ export class CosmeticStore {
       return { ok: false, status: "already_equipped" };
     }
 
+    // Fire unequip event for the displaced cosmetic before replacing
+    if (current !== undefined) {
+      for (let i = 0; i < this.equipCallbacks.size(); i++) {
+        this.equipCallbacks[i]({
+          playerId: this.playerId,
+          cosmeticId: current,
+          slot,
+          equipped: false,
+          timestamp: os.time(),
+        });
+      }
+    }
+
     this.data.equippedCosmetics.set(slot, cosmeticId);
     this.dirty = true;
 

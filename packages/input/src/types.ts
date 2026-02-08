@@ -11,6 +11,16 @@
 /** Input device categories */
 export type DeviceType = "keyboard" | "gamepad" | "touch";
 
+/**
+ * Device class for wire-protocol handshakes.
+ *
+ * Maps Roblox UserInputService capabilities to a simple classification:
+ * - `"kbm"` — keyboard / mouse (desktop)
+ * - `"gamepad"` — gamepad / controller
+ * - `"touch"` — mobile / tablet touchscreen
+ */
+export type DeviceClass = "kbm" | "gamepad" | "touch";
+
 /** Platform detection result */
 export interface PlatformInfo {
   deviceType: DeviceType;

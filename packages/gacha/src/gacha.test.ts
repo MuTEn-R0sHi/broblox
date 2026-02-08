@@ -199,6 +199,12 @@ describe("GachaStore", () => {
     expect(store.hatch("basic_egg", 50).status).toBe("insufficient_funds");
   });
 
+  it("rejects negative currency balance", () => {
+    const result = store.hatch("basic_egg", -100);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_balance");
+  });
+
   it("enforces max hatches", () => {
     store.hatch("limited_egg", 9999);
     store.hatch("limited_egg", 9999);

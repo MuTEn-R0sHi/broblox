@@ -1,6 +1,12 @@
 /**
  * @rbx/matchmaking
  * Matchmaking system for the platform.
+ *
+ * **Integration status:**
+ * - `registerQueue`, `resetQueues` — integrated (MatchmakingService)
+ * - Queue joining/leaving, match formation, match lifecycle,
+ *   server allocation, teleportation — @planned (tested internally,
+ *   not yet wired to game remotes)
  */
 
 // Types
@@ -8,11 +14,11 @@ export * from "./types";
 
 // Queue operations
 export {
-  // Configuration
+  // Configuration — integrated
   registerQueue,
   getQueueConfig,
   getRegisteredGameModes,
-  // Queue operations
+  // Queue operations — @planned: wire to client remotes
   joinQueue,
   leaveQueue,
   getQueueStatus,
@@ -21,9 +27,9 @@ export {
   // Queue queries
   getQueueSize,
   getQueueEntries,
-  // Timeout processing
+  // Timeout processing — @planned: call on interval in MatchmakingService
   processTimeouts,
-  // Match formation
+  // Match formation — @planned: call on interval in MatchmakingService
   tryFormMatch,
   // Event listeners
   onQueueJoin,
@@ -33,7 +39,7 @@ export {
   resetQueues,
 } from "./queue";
 
-// Match lifecycle
+// Match lifecycle — @planned: wire to game flow after queue formation
 export {
   // Match registration
   registerMatch,
@@ -70,7 +76,7 @@ export type {
   MatchEndedEvent,
 } from "./match";
 
-// Server allocation
+// Server allocation — @planned: wire after match lifecycle integration
 export {
   // Service injection
   setTeleportService,

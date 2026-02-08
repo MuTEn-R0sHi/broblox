@@ -116,10 +116,10 @@ export class ProgressionStore {
       const saved = raw as unknown as ProgressionData;
       this.data = {
         playerId: this.playerId,
-        level: saved.level ?? 1,
-        currentXp: saved.currentXp ?? 0,
-        totalXp: saved.totalXp ?? 0,
-        prestige: saved.prestige ?? 0,
+        level: math.max(1, saved.level ?? 1),
+        currentXp: math.max(0, saved.currentXp ?? 0),
+        totalXp: math.max(0, saved.totalXp ?? 0),
+        prestige: math.max(0, saved.prestige ?? 0),
         prestigeHistory: saved.prestigeHistory ?? [],
         version: saved.version ?? 1,
       };
@@ -155,7 +155,7 @@ export class ProgressionStore {
    * Returns the number of levels gained.
    */
   addXp(amount: number): number {
-    if (amount <= 0) return 0;
+    if (amount <= 0 || amount !== amount || amount === math.huge) return 0;
 
     // Apply prestige bonus
     let effectiveAmount = amount;

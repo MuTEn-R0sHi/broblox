@@ -55,10 +55,10 @@ function setupGlobals() {
   g.os = { time: vi.fn(() => mockTime) };
   g.math = { floor: Math.floor };
   g.string = { upper: (s: string) => s.toUpperCase() };
-  g.pcall = (fn: () => void) => {
+  g.pcall = (fn: (...a: unknown[]) => unknown) => {
     try {
-      fn();
-      return [true];
+      const result = fn();
+      return [true, result];
     } catch {
       return [false];
     }
@@ -492,6 +492,46 @@ describe("CodeStore", () => {
       expect(result.success).toBe(true);
       expect(result.rewards).toHaveLength(3);
       expect(result.rewards![2].assetId).toBe("hat_001");
+    });
+  });
+
+  // ====================================================================
+  // DataStore fault tolerance
+  // ====================================================================
+
+  describe("DataStore error resilience", () => {
+    it("returns failure when DataStore UpdateAsync throws during redemption", async () => {
+      // Make UpdateAsync throw to simulate DataStore throttling
+      store.UpdateAsync.mockImplementationOnce(() => {
+        throw new Error("DataStore throttled");
+      });
+
+      const cs = await getCodeStore();
+      cs.registerCode(makeCode());
+      const result = cs.redeemCode(100, "FREECOINS");
+
+      expect(result.success).toBe(false);
+      // useCount should NOT have been incremented
+      expect(cs.getCode("FREECOINS")?.useCount).toBe(0);
+    });
+
+    it("returns empty records when DataStore GetAsync throws", async () => {
+      store.GetAsync.mockImplementationOnce(() => {
+        throw new Error("DataStore unavailable");
+      });
+
+      const cs = await getCodeStore();
+      const records = cs.getPlayerRecords(100);
+      expect(records).toEqual([]);
+    });
+
+    it("hasPlayerRedeemed returns false when DataStore throws", async () => {
+      store.GetAsync.mockImplementationOnce(() => {
+        throw new Error("DataStore unavailable");
+      });
+
+      const cs = await getCodeStore();
+      expect(cs.hasPlayerRedeemed(100, "FREECOINS")).toBe(false);
     });
   });
 });

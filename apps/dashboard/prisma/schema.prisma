@@ -352,3 +352,61 @@ model MatchPlayer {
   @@unique([matchId, playerId])
   @@index([playerId])
 }
+
+// ============================================================================
+// Telemetry & Metrics (ingested from game servers)
+// ============================================================================
+
+model TelemetryEvent {
+  id          String   @id @default(cuid())
+
+  category    String   // game, player, match, economy, etc.
+  name        String   // e.g., "player_joined", "match_started"
+  level       String   // debug, info, warn, error
+
+  timestamp   Int      // Unix timestamp from game server (os.time())
+  clock       Float    // High-precision clock (os.clock())
+
+  // Correlation
+  traceId     String?
+  spanId      String?
+  serverId    String?
+  placeId     BigInt?
+  playerId    BigInt?
+  sessionId   String?
+
+  // Event-specific data
+  data        Json?
+
+  // Ingestion metadata
+  ingestedAt  DateTime @default(now())
+
+  @@index([category, name])
+  @@index([level])
+  @@index([timestamp])
+  @@index([playerId])
+  @@index([serverId])
+  @@index([ingestedAt])
+}
+
+model MetricPoint {
+  id          String   @id @default(cuid())
+
+  name        String   // Metric name (e.g., "player_count", "frame_time_ms")
+  type        String   // counter, gauge, histogram
+
+  value       Float
+  timestamp   Int      // Unix timestamp from game server
+
+  // Labels for dimensional filtering
+  labels      Json?    // { "server": "abc", "gameMode": "ffa" }
+
+  // Ingestion metadata
+  serverId    String?
+  ingestedAt  DateTime @default(now())
+
+  @@index([name, timestamp])
+  @@index([type])
+  @@index([serverId])
+  @@index([ingestedAt])
+}

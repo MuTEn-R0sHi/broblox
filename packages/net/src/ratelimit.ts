@@ -24,6 +24,12 @@ export class RateLimiter {
   private config: Required<RateLimitConfig>;
 
   constructor(config: RateLimitConfig) {
+    if (config.windowMs <= 0) {
+      error("RateLimiter: windowMs must be > 0");
+    }
+    if (config.maxRequests <= 0) {
+      error("RateLimiter: maxRequests must be > 0");
+    }
     this.config = {
       windowMs: config.windowMs,
       maxRequests: config.maxRequests,

@@ -4,6 +4,8 @@
  * Seasonal progression with free and premium tracks.
  */
 
+import type { RewardEntry } from "@rbx/rewards";
+
 // ---------------------------------------------------------------------------
 // Track & Tier
 // ---------------------------------------------------------------------------
@@ -17,10 +19,8 @@ export interface TierReward {
   readonly name: string;
   /** Which track this reward belongs to */
   readonly track: RewardTrack;
-  /** Type of reward (currency, item, cosmetic, etc.) */
-  readonly rewardType: string;
-  /** Reward payload — game-specific (e.g. { coins: 500 } or { itemId: "sword" }) */
-  readonly payload: Record<string, unknown>;
+  /** The reward granted at this tier */
+  readonly reward: RewardEntry;
 }
 
 export interface BattlePassTier {
@@ -80,7 +80,8 @@ export type BattlePassStatus =
   | "premium_required"
   | "already_premium"
   | "max_tier"
-  | "reward_not_found";
+  | "reward_not_found"
+  | "invalid_amount";
 
 export interface BattlePassResult {
   readonly ok: boolean;

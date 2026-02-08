@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
-import { requireApiPermission } from "@/lib/authorize";
+import {
+  requireApiPermission,
+  validateApiKey,
+  checkRateLimit,
+  getRateLimitKey,
+} from "@/lib/authorize";
 
 // Schema for updating match
 const updateMatchSchema = z.object({
@@ -39,12 +44,6 @@ const updatePlayerSchema = z.object({
   stats: z.record(z.string(), z.unknown()).optional(),
 });
 
-// API key validation
-function validateApiKey(request: NextRequest): boolean {
-  const apiKey = request.headers.get("x-api-key");
-  return apiKey === process.env.GAME_SERVER_API_KEY;
-}
-
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
@@ -57,6 +56,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   if (!validateApiKey(request)) {
     const authResult = await requireApiPermission("view:matches");
     if (authResult instanceof Response) return authResult;
+  }
+
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const { id } = await params;
@@ -93,6 +96,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   if (!validateApiKey(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const { id } = await params;
@@ -135,6 +142,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 export async function POST(request: NextRequest, { params }: RouteParams) {
   if (!validateApiKey(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const { id } = await params;

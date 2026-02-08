@@ -13,7 +13,33 @@ Notes:
 
 ### Added
 
-- **Phase 2 PvP Alpha complete** - Server-authoritative combat and match tracking.
+- **Defensive Guards (Deep Review Rounds 1–15)** — Systematic hardening across all packages:
+  - `@rbx/progression` — NaN/Infinity XP guard, corrupt data clamping in `load()`.
+  - `@rbx/pets` — Negative XP guard, nickname length validation, `equippedCount` cleanup.
+  - `@rbx/gacha` — Negative balance guard in `pull()`.
+  - `@rbx/cosmetics` — Unequip-previous-item event on equip.
+  - `@rbx/leaderboards` — NaN/Infinity/negative score guard in `submitScore()`.
+  - `@rbx/codes` — DataStore fault tolerance via `pcall` wrapping.
+  - `@rbx/movement` — DeltaTime ≤ 0 guard, `stateManager` exposure.
+  - `@rbx/tutorial` — Corrupt progress data clamping in `restoreProgress()`.
+  - `@rbx/world-systems` — DeltaTime ≤ 0 guard in tick loop.
+  - `@rbx/net` — RateLimiter constructor validation (windowMs > 0, maxRequests > 0).
+  - `@rbx/rewards` — Empty cycle guard, corrupt data sanitization in `tryComplete()`.
+  - `@rbx/battle-pass` — Negative XP guard, `RewardEntry` type alignment.
+  - `@rbx/quests` — `hasCompletedId` refactor, `RewardEntry` type alignment.
+  - `@rbx/moderation` — Input validation, `Counter` constructor migration.
+  - `@rbx/combat` — `PositionProvider` pattern, hit validation improvements.
+  - `@rbx/observability` — `@internal` annotations, `CommonMetrics` constructor migration.
+  - `@rbx/config-featureflags` — `@internal` annotations for internal APIs.
+  - `@rbx/security` — `pcall` error logging in detectors.
+- **New test coverage** — 2,103 tests across 90 test suites (up from ~1,500).
+  - Added tests for: collections, base-player-store, detectors, enforcer, trust-score, result, testing utilities, rate-limiter constructor validation.
+- **Dashboard security hardening** — IDOR fixes, rate limiting, timing-safe API key comparison, RBAC enforcement.
+- **Module documentation** — 13 new module docs (audio, core, data, gacha, localization, net, observability, pets, rewards, security, shared-types, tutorial, world-systems).
+- **Package READMEs** — Added for audio, battle-pass, cosmetics, gacha, localization, pets, tutorial, world-systems.
+
+### Changed
+
 - **Combat system** - Weapon definitions, hit validation, damage calculation, cooldown management.
 - **Match system** - Full match lifecycle (waiting → starting → in-progress → ended) with team scores and player stats.
 - **Server allocation** - Reserved server provisioning with health monitoring and graceful shutdown.

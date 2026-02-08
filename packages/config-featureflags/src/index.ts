@@ -544,6 +544,7 @@ export function triggerKillSwitch(name: string): boolean {
 // Remote/Environment Overrides
 // ============================================================================
 
+/** @internal Used by `applyRemoteFeatureFlagSnapshot` — not part of the public API. */
 export type RemoteBooleanFlagOverride = {
   enabled?: boolean;
   rolloutPercentage?: number;
@@ -555,6 +556,7 @@ export type RemoteBooleanFlagOverride = {
   schedule?: FlagSchedule;
 };
 
+/** @internal Used by `applyRemoteFeatureFlagSnapshot` — not part of the public API. */
 export type RemoteFeatureFlagSnapshot = {
   updatedAt?: number;
   flags: Record<string, RemoteBooleanFlagOverride>;
@@ -566,6 +568,7 @@ function clampPercentage(value: number): number {
   return math.floor(value);
 }
 
+/** @internal Called by `applyRemoteFeatureFlagSnapshot` — prefer snapshot API externally. */
 export function setFlagEnabledOverride(name: string, enabled: boolean): void {
   const definition = flagDefinitions.get(name);
   const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
@@ -580,6 +583,7 @@ export function setFlagEnabledOverride(name: string, enabled: boolean): void {
   }
 }
 
+/** @internal */
 export function clearFlagEnabledOverride(name: string): void {
   const oldValue = getFlagValue(name);
   flagEnabledOverrides.delete(name);
@@ -590,6 +594,7 @@ export function clearFlagEnabledOverride(name: string): void {
   }
 }
 
+/** @internal Called by `applyRemoteFeatureFlagSnapshot` — prefer snapshot API externally. */
 export function setFlagRolloutPercentageOverride(name: string, rolloutPercentage: number): void {
   const definition = flagDefinitions.get(name);
   const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
@@ -598,10 +603,12 @@ export function setFlagRolloutPercentageOverride(name: string, rolloutPercentage
   flagRolloutOverrides.set(name, clampPercentage(rolloutPercentage));
 }
 
+/** @internal */
 export function clearFlagRolloutPercentageOverride(name: string): void {
   flagRolloutOverrides.delete(name);
 }
 
+/** @internal Called by `applyRemoteFeatureFlagSnapshot` — prefer snapshot API externally. */
 export function setFlagKilled(name: string, killed: boolean): void {
   const definition = flagDefinitions.get(name);
   const isBoolean = definition ? typeOf(definition.defaultValue as unknown) === "boolean" : false;
@@ -623,6 +630,9 @@ export function setFlagKilled(name: string, killed: boolean): void {
 /**
  * Apply a remote snapshot (e.g. from the dashboard). This will replace the
  * current enabled/rollout/kill/segment/schedule overrides for the provided keys.
+ *
+ * @internal Called by the sync service — external consumers should use
+ * `createFeatureFlagSyncService` rather than calling this directly.
  */
 export function applyRemoteFeatureFlagSnapshot(snapshot: RemoteFeatureFlagSnapshot): void {
   // Replace all remote-managed overrides.

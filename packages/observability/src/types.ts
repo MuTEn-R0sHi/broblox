@@ -17,6 +17,8 @@ export type TelemetryCategory =
   | "error"
   | "performance"
   | "security"
+  | "ui"
+  | "progression"
   | "custom";
 
 /** Telemetry event severity/level */

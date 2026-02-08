@@ -189,11 +189,18 @@ export class CodeStore {
     };
 
     const key = this.getPlayerKey(playerId);
-    this.store.UpdateAsync(key, (old) => {
-      const existing = (old as CodeRedemptionRecord[] | undefined) ?? [];
-      existing.push(record);
-      return existing;
+    const [persistOk] = pcall(() => {
+      this.store.UpdateAsync(key, (old) => {
+        const existing = (old as CodeRedemptionRecord[] | undefined) ?? [];
+        existing.push(record);
+        return existing;
+      });
     });
+
+    if (!persistOk) {
+      redemptionFailures.inc();
+      return this.fail("INVALID_CODE", "Failed to save redemption. Try again.");
+    }
 
     // 7. Bump global counter
     entry.useCount += 1;
@@ -224,8 +231,12 @@ export class CodeStore {
    */
   getPlayerRecords(playerId: number): CodeRedemptionRecord[] {
     const key = this.getPlayerKey(playerId);
-    const [data] = this.store.GetAsync(key);
-    return (data as CodeRedemptionRecord[] | undefined) ?? [];
+    const [ok, rawResult] = pcall(() => {
+      const [data] = this.store.GetAsync(key);
+      return data;
+    });
+    if (!ok) return [];
+    return (rawResult as CodeRedemptionRecord[] | undefined) ?? [];
   }
 
   /**

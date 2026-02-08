@@ -434,4 +434,81 @@ describe("ProgressionStore", () => {
       expect(store.getPlayerId()).toBe(42);
     });
   });
+
+  // --------------------------------------------------------------------------
+  // Load — corrupted data clamping
+  // --------------------------------------------------------------------------
+
+  describe("load clamps corrupted values", () => {
+    it("clamps negative level to 1", () => {
+      const store = makeStore();
+      store.save(); // create store key
+      // Inject corrupted data
+      const dss = (globalThis as Record<string, unknown>).game as {
+        GetService: (n: string) => {
+          GetDataStore: (n: string) => {
+            GetAsync: (k: string) => unknown;
+            SetAsync: (k: string, v: unknown) => void;
+          };
+        };
+      };
+      const ds = dss.GetService("DataStoreService").GetDataStore("PlayerProgression_v1");
+      ds.SetAsync("progression_1", {
+        level: -5,
+        currentXp: 50,
+        totalXp: 100,
+        prestige: 0,
+        prestigeHistory: [],
+        version: 1,
+      });
+      store.load();
+      expect(store.getLevel()).toBe(1);
+    });
+
+    it("clamps negative currentXp to 0", () => {
+      const store = makeStore();
+      const dss = (globalThis as Record<string, unknown>).game as {
+        GetService: (n: string) => {
+          GetDataStore: (n: string) => {
+            GetAsync: (k: string) => unknown;
+            SetAsync: (k: string, v: unknown) => void;
+          };
+        };
+      };
+      const ds = dss.GetService("DataStoreService").GetDataStore("PlayerProgression_v1");
+      ds.SetAsync("progression_1", {
+        level: 5,
+        currentXp: -100,
+        totalXp: -200,
+        prestige: -3,
+        prestigeHistory: [],
+        version: 1,
+      });
+      store.load();
+      expect(store.getCurrentXp()).toBe(0);
+      expect(store.getTotalXp()).toBe(0);
+      expect(store.getPrestige()).toBe(0);
+    });
+  });
+
+  // --------------------------------------------------------------------------
+  // addXp — NaN / Infinity guard
+  // --------------------------------------------------------------------------
+
+  describe("addXp edge cases", () => {
+    it("ignores NaN xp", () => {
+      const store = makeStore();
+      const levelsGained = store.addXp(NaN);
+      expect(levelsGained).toBe(0);
+      expect(store.getCurrentXp()).toBe(0);
+      expect(store.getTotalXp()).toBe(0);
+    });
+
+    it("ignores Infinity xp", () => {
+      const store = makeStore();
+      const levelsGained = store.addXp(Infinity);
+      expect(levelsGained).toBe(0);
+      expect(store.getCurrentXp()).toBe(0);
+    });
+  });
 });

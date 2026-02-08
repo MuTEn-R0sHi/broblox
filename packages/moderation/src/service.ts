@@ -6,7 +6,7 @@
  */
 
 import { createLogger } from "@rbx/core";
-import { createCounter, createHistogram } from "@rbx/observability";
+import { Counter, Histogram } from "@rbx/observability";
 import { BanStore } from "./ban-store";
 import { MuteStore } from "./mute-store";
 import {
@@ -44,45 +44,42 @@ const messageAgeBucketsMs = {
 
 const moderationSyncMetrics = {
   ban: {
-    received: createCounter("moderation_sync_received_total", { topic: "ModBanSync" }),
-    payloadString: createCounter("moderation_sync_payload_string_total", { topic: "ModBanSync" }),
-    payloadTable: createCounter("moderation_sync_payload_table_total", { topic: "ModBanSync" }),
-    payloadOther: createCounter("moderation_sync_payload_other_total", { topic: "ModBanSync" }),
-    decodeError: createCounter("moderation_sync_decode_errors_total", { topic: "ModBanSync" }),
-    cacheInvalidations: createCounter("moderation_sync_cache_invalidations_total", {
+    received: new Counter("moderation_sync_received_total", { topic: "ModBanSync" }),
+    payloadString: new Counter("moderation_sync_payload_string_total", { topic: "ModBanSync" }),
+    payloadTable: new Counter("moderation_sync_payload_table_total", { topic: "ModBanSync" }),
+    payloadOther: new Counter("moderation_sync_payload_other_total", { topic: "ModBanSync" }),
+    decodeError: new Counter("moderation_sync_decode_errors_total", { topic: "ModBanSync" }),
+    cacheInvalidations: new Counter("moderation_sync_cache_invalidations_total", {
       topic: "ModBanSync",
     }),
-    callbacks: createCounter("moderation_sync_callbacks_total", { topic: "ModBanSync" }),
-    messageAgeMs: createHistogram(
+    callbacks: new Counter("moderation_sync_callbacks_total", { topic: "ModBanSync" }),
+    messageAgeMs: new Histogram(
       "moderation_sync_message_age_ms",
       { topic: "ModBanSync" },
       messageAgeBucketsMs
     ),
-    published: createCounter("moderation_sync_published_total", { topic: "ModBanSync" }),
+    published: new Counter("moderation_sync_published_total", { topic: "ModBanSync" }),
   },
   mute: {
-    received: createCounter("moderation_sync_received_total", { topic: "ModMuteSync" }),
-    payloadString: createCounter("moderation_sync_payload_string_total", { topic: "ModMuteSync" }),
-    payloadTable: createCounter("moderation_sync_payload_table_total", { topic: "ModMuteSync" }),
-    payloadOther: createCounter("moderation_sync_payload_other_total", { topic: "ModMuteSync" }),
-    decodeError: createCounter("moderation_sync_decode_errors_total", { topic: "ModMuteSync" }),
-    cacheInvalidations: createCounter("moderation_sync_cache_invalidations_total", {
+    received: new Counter("moderation_sync_received_total", { topic: "ModMuteSync" }),
+    payloadString: new Counter("moderation_sync_payload_string_total", { topic: "ModMuteSync" }),
+    payloadTable: new Counter("moderation_sync_payload_table_total", { topic: "ModMuteSync" }),
+    payloadOther: new Counter("moderation_sync_payload_other_total", { topic: "ModMuteSync" }),
+    decodeError: new Counter("moderation_sync_decode_errors_total", { topic: "ModMuteSync" }),
+    cacheInvalidations: new Counter("moderation_sync_cache_invalidations_total", {
       topic: "ModMuteSync",
     }),
-    callbacks: createCounter("moderation_sync_callbacks_total", { topic: "ModMuteSync" }),
-    messageAgeMs: createHistogram(
+    callbacks: new Counter("moderation_sync_callbacks_total", { topic: "ModMuteSync" }),
+    messageAgeMs: new Histogram(
       "moderation_sync_message_age_ms",
       { topic: "ModMuteSync" },
       messageAgeBucketsMs
     ),
-    published: createCounter("moderation_sync_published_total", { topic: "ModMuteSync" }),
+    published: new Counter("moderation_sync_published_total", { topic: "ModMuteSync" }),
   },
 };
 
-function recordMessageAgeMs(
-  histogram: ReturnType<typeof createHistogram>,
-  sentTimestampSec: number
-): void {
+function recordMessageAgeMs(histogram: Histogram, sentTimestampSec: number): void {
   const ageSec = os.time() - sentTimestampSec;
   if (ageSec < 0) return;
   histogram.observe(ageSec * 1000);

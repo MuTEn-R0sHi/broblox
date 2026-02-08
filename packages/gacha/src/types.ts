@@ -52,6 +52,7 @@ export type GachaStatus =
   | "egg_not_found"
   | "egg_disabled"
   | "insufficient_funds"
+  | "invalid_balance"
   | "max_hatches_reached"
   | "loot_table_empty"
   | "slots_full";

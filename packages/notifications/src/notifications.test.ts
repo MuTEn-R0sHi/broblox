@@ -275,6 +275,35 @@ describe("NotificationStore", () => {
       // Oldest should be removed, newest kept
       expect(notifs[2].title).toBe("4");
     });
+
+    it("drops oldest urgent when all notifications are urgent and queue is full", async () => {
+      const store = await getStore({ maxQueueSize: 2 });
+
+      store.notify({ title: "Urgent1", targetPlayerIds: [1], priority: "urgent" });
+      store.notify({ title: "Urgent2", targetPlayerIds: [1], priority: "urgent" });
+      // Queue is full with 2 urgent items; adding a 3rd should drop the oldest urgent
+      store.notify({ title: "Urgent3", targetPlayerIds: [1], priority: "urgent" });
+
+      const notifs = store.getPlayerNotifications(1);
+      expect(notifs).toHaveLength(2);
+      // Oldest (Urgent1) should have been removed
+      expect(notifs[0].title).toBe("Urgent2");
+      expect(notifs[1].title).toBe("Urgent3");
+    });
+
+    it("prefers dropping non-urgent over urgent when mixed", async () => {
+      const store = await getStore({ maxQueueSize: 2 });
+
+      store.notify({ title: "Normal", targetPlayerIds: [1], priority: "normal" });
+      store.notify({ title: "Urgent1", targetPlayerIds: [1], priority: "urgent" });
+      // Queue full with [Normal, Urgent1]; adding should drop Normal (non-urgent)
+      store.notify({ title: "New", targetPlayerIds: [1], priority: "normal" });
+
+      const notifs = store.getPlayerNotifications(1);
+      expect(notifs).toHaveLength(2);
+      expect(notifs[0].title).toBe("Urgent1");
+      expect(notifs[1].title).toBe("New");
+    });
   });
 
   describe("clear", () => {

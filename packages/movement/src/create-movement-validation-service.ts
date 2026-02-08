@@ -39,6 +39,8 @@ export interface MovementValidationConfig {
 export interface MovementValidationHandle {
   /** The Service to register with Application.register(). */
   Service: Service;
+  /** The underlying state manager — useful for wiring position providers (e.g., combat). */
+  stateManager: MovementStateManager;
 }
 
 function getHumanoidRootPart(character: Model): BasePart | undefined {
@@ -152,5 +154,5 @@ export function createMovementValidationService(
     },
   };
 
-  return { Service: MovementValidationService };
+  return { Service: MovementValidationService, stateManager };
 }

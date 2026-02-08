@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-
-// API Key for game servers to authenticate
-const API_KEY = process.env.FLAGS_API_KEY;
+import { validateApiKey, checkRateLimit, getRateLimitKey } from "@/lib/authorize";
 
 type Environment = "dev" | "stage" | "prod";
 
@@ -23,14 +21,14 @@ export async function GET(
     return NextResponse.json({ error: "Invalid environment" }, { status: 400 });
   }
 
-  // Check API key (required)
-  if (!API_KEY) {
-    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  // Timing-safe API key check
+  if (!validateApiKey(request, "FLAGS_API_KEY")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const apiKey = request.headers.get("x-api-key");
-  if (!apiKey || apiKey !== API_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Rate limiting
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const env = environment as Environment;

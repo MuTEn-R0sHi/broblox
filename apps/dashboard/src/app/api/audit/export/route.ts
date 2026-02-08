@@ -1,5 +1,6 @@
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireApiPermission } from "@/lib/authorize";
+import { requireApiPermission, checkRateLimit, getRateLimitKey } from "@/lib/authorize";
 import type { Prisma } from "@prisma/client";
 
 function csvEscape(value: unknown): string {
@@ -39,9 +40,17 @@ function parseLimit(params: URLSearchParams): number {
   return Math.min(Math.floor(parsed), 50_000);
 }
 
-export async function GET(request: Request): Promise<Response> {
+export async function GET(request: NextRequest): Promise<Response> {
   const auth = await requireApiPermission("view:audit");
   if (auth instanceof Response) return auth;
+
+  // Rate limiting
+  if (!checkRateLimit(getRateLimitKey(request))) {
+    return new Response(JSON.stringify({ error: "Too many requests" }), {
+      status: 429,
+      headers: { "content-type": "application/json" },
+    });
+  }
 
   const url = new URL(request.url);
   const params = url.searchParams;

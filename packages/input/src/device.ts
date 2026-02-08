@@ -149,3 +149,28 @@ export function isUsingGamepad(): boolean {
 export function isUsingTouch(): boolean {
   return currentDevice === "touch";
 }
+
+// ============================================================================
+// Device Class (wire-protocol)
+// ============================================================================
+
+import type { DeviceClass } from "./types";
+
+/**
+ * Detect the device class for use in handshake / protocol messages.
+ *
+ * Returns `"touch"` for mobile/tablet, `"gamepad"` for controllers,
+ * or `"kbm"` (keyboard + mouse) as default.
+ *
+ * This uses `UserInputService` capability flags — call on the client only.
+ */
+export function detectDeviceClass(): DeviceClass {
+  const UserInputService = game.GetService("UserInputService");
+  if (UserInputService.TouchEnabled && !UserInputService.KeyboardEnabled) {
+    return "touch";
+  }
+  if (UserInputService.GamepadEnabled) {
+    return "gamepad";
+  }
+  return "kbm";
+}

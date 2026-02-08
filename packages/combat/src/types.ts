@@ -117,6 +117,27 @@ export interface HitValidationConfig {
   logSuspicious: boolean;
 }
 
+/**
+ * Position provider function type.
+ *
+ * Override the default internal cache by supplying a provider that reads
+ * from another source such as `@rbx/movement`'s `MovementStateManager`.
+ *
+ * @example
+ * ```ts
+ * import { MovementStateManager } from "@rbx/movement";
+ * import { setPositionProvider } from "@rbx/combat";
+ *
+ * const manager = new MovementStateManager();
+ * setPositionProvider((playerId) => {
+ *   if (!manager.hasState(playerId as number)) return undefined;
+ *   const pos = manager.getState(playerId as number).getState().position;
+ *   return { X: pos.X, Y: pos.Y, Z: pos.Z };
+ * });
+ * ```
+ */
+export type PositionProvider = (playerId: PlayerId) => Vector3Like | undefined;
+
 // ============================================================================
 // Events
 // ============================================================================

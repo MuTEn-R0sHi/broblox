@@ -424,4 +424,22 @@ describe("TutorialManager", () => {
     expect(events.size()).toBe(1);
     expect(events[0].skipped).toBe(true);
   });
+
+  // ------ restoreProgress clamps negative values ------
+
+  it("restoreProgress clamps negative activeStepIndex to 0", async () => {
+    const { manager } = await loadManager([makeSequence()]);
+    manager.restoreProgress({
+      completedSequences: [],
+      activeStepIndex: -5,
+      skippedSequences: [],
+      totalStepsCompleted: -3,
+      lastActivityAt: -1,
+      version: 1,
+    });
+    expect(manager.getActiveStepIndex()).toBe(0);
+    expect(manager.totalStepsCompleted()).toBe(0);
+    const progress = manager.getProgress();
+    expect(progress.lastActivityAt).toBe(0);
+  });
 });

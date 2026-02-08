@@ -18,8 +18,10 @@ const handle = createQuestService({
       schedule: "daily",
       tier: "common",
       objectives: [{ id: "obj_kill", description: "Kill enemies", type: "kill", target: 10 }],
-      xpReward: 500,
-      currencyReward: 100,
+      rewards: [
+        { type: "xp", amount: 500 },
+        { type: "currency", amount: 100 },
+      ],
     },
     {
       id: "daily_collect_5",
@@ -28,8 +30,10 @@ const handle = createQuestService({
       schedule: "daily",
       tier: "common",
       objectives: [{ id: "obj_collect", description: "Collect items", type: "collect", target: 5 }],
-      xpReward: 300,
-      currencyReward: 50,
+      rewards: [
+        { type: "xp", amount: 300 },
+        { type: "currency", amount: 50 },
+      ],
     },
     {
       id: "weekly_kills_50",
@@ -38,9 +42,11 @@ const handle = createQuestService({
       schedule: "weekly",
       tier: "rare",
       objectives: [{ id: "obj_kill", description: "Kill enemies", type: "kill", target: 50 }],
-      xpReward: 2500,
-      currencyReward: 500,
-      itemRewards: ["health_potion"],
+      rewards: [
+        { type: "xp", amount: 2500 },
+        { type: "currency", amount: 500 },
+        { type: "item", amount: 1, itemId: "health_potion" },
+      ],
     },
     {
       id: "weekly_explore",
@@ -52,8 +58,10 @@ const handle = createQuestService({
         { id: "obj_visit", description: "Visit areas", type: "visit", target: 3 },
         { id: "obj_collect", description: "Collect items", type: "collect", target: 10 },
       ],
-      xpReward: 1500,
-      currencyReward: 300,
+      rewards: [
+        { type: "xp", amount: 1500 },
+        { type: "currency", amount: 300 },
+      ],
     },
   ],
   datastoreName: "StarterQuests",
@@ -69,9 +77,8 @@ export const cleanupPlayerQuests = (playerId: number) => handle.cleanupPlayer(pl
 export function initPlayerQuests(playerId: number) {
   const store = handle.initPlayer(playerId);
   store.onQuestCompleted((event) => {
-    logger.info(
-      `Player ${event.playerId} completed quest: ${event.questId} (+${event.xpReward} XP)`
-    );
+    const xp = event.rewards.reduce((sum, r) => (r.type === "xp" ? sum + r.amount : sum), 0);
+    logger.info(`Player ${event.playerId} completed quest: ${event.questId} (+${xp} XP)`);
   });
   return store;
 }

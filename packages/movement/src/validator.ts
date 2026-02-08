@@ -8,7 +8,7 @@
 import { MovementConfig, MovementInput, MovementViolation, ValidationResult } from "./types";
 import { DEFAULT_MOVEMENT_CONFIG, VALIDATION_THRESHOLDS, NETWORK_CONSTANTS } from "./constants";
 import { PlayerMovementState } from "./state";
-import { createCounter, createHistogram } from "@rbx/observability";
+import { Counter, Histogram } from "@rbx/observability";
 
 // ============================================================================
 // Metrics (lazily initialised to avoid calling Roblox globals at import time)
@@ -16,20 +16,20 @@ import { createCounter, createHistogram } from "@rbx/observability";
 
 let _metrics:
   | {
-      validationsTotal: ReturnType<typeof createCounter>;
-      violationsTotal: ReturnType<typeof createCounter>;
-      correctionsTotal: ReturnType<typeof createCounter>;
-      validationDurationMs: ReturnType<typeof createHistogram>;
+      validationsTotal: Counter;
+      violationsTotal: Counter;
+      correctionsTotal: Counter;
+      validationDurationMs: Histogram;
     }
   | undefined;
 
 function metrics() {
   if (!_metrics) {
     _metrics = {
-      validationsTotal: createCounter("movement_validations_total"),
-      violationsTotal: createCounter("movement_violations_total"),
-      correctionsTotal: createCounter("movement_corrections_total"),
-      validationDurationMs: createHistogram(
+      validationsTotal: new Counter("movement_validations_total"),
+      violationsTotal: new Counter("movement_violations_total"),
+      correctionsTotal: new Counter("movement_corrections_total"),
+      validationDurationMs: new Histogram(
         "movement_validation_duration_ms",
         {},
         { boundaries: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5] }
@@ -40,12 +40,12 @@ function metrics() {
 }
 
 // Per-type violation counters (created lazily to avoid allocating unused labels)
-const violationCountersByType = new Map<string, ReturnType<typeof createCounter>>();
+const violationCountersByType = new Map<string, Counter>();
 
-function getViolationCounter(violationType: string): ReturnType<typeof createCounter> {
+function getViolationCounter(violationType: string): Counter {
   let counter = violationCountersByType.get(violationType);
   if (!counter) {
-    counter = createCounter("movement_violations_total", { type: violationType });
+    counter = new Counter("movement_violations_total", { type: violationType });
     violationCountersByType.set(violationType, counter);
   }
   return counter;
@@ -91,6 +91,9 @@ export class MovementValidator {
     const t0 = os.clock();
     metrics().validationsTotal.inc();
 
+    // Guard against invalid deltaTime — skip teleport check when time is nonsensical
+    const safeDeltaTime = deltaTime > 0 ? deltaTime : 0;
+
     const violations: MovementViolation[] = [];
     const currentState = state.getState();
 
@@ -98,9 +101,11 @@ export class MovementValidator {
     const speedResult = this.checkSpeed(input, currentState);
     if (speedResult) violations.push(speedResult);
 
-    // Check for teleportation
-    const teleportResult = this.checkTeleport(input, currentState, deltaTime);
-    if (teleportResult) violations.push(teleportResult);
+    // Check for teleportation (skip when deltaTime is invalid)
+    if (safeDeltaTime > 0) {
+      const teleportResult = this.checkTeleport(input, currentState, safeDeltaTime);
+      if (teleportResult) violations.push(teleportResult);
+    }
 
     // Check for fly hacks
     const flyResult = this.checkFly(input, state);

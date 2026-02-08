@@ -22,6 +22,7 @@ import type {
   HitValidationFailure,
   Vector3Like,
   SuspiciousHitEvent,
+  PositionProvider,
 } from "./types";
 
 // ============================================================================
@@ -39,8 +40,11 @@ const defaultConfig: HitValidationConfig = {
 /** Current configuration */
 let currentConfig: HitValidationConfig = { ...defaultConfig };
 
-/** Player positions cache (updated by game) */
-const playerPositions = new Map<number, Vector3Like>();
+/** Internal position cache (used when no external provider is set) */
+const internalPositions = new Map<number, Vector3Like>();
+
+/** Active position provider — defaults to internal cache */
+let positionProvider: PositionProvider = (playerId) => internalPositions.get(playerId as number);
 
 /** Player invulnerability state */
 const invulnerablePlayers = new Set<number>();
@@ -130,29 +134,51 @@ export function resetHitValidationConfig(): void {
 }
 
 // ============================================================================
+// Position Provider
+// ============================================================================
+
+/**
+ * Set a custom position provider for hit validation.
+ *
+ * When using `@rbx/movement`, wire positions through here to avoid
+ * duplicate position tracking. See {@link PositionProvider} for an example.
+ */
+export function setPositionProvider(provider: PositionProvider): void {
+  positionProvider = provider;
+}
+
+/**
+ * Reset the position provider to the internal cache.
+ */
+export function resetPositionProvider(): void {
+  positionProvider = (playerId) => internalPositions.get(playerId as number);
+}
+
+// ============================================================================
 // Player Position Management
 // ============================================================================
 
 /**
- * Update a player's cached position.
+ * Update a player's position in the internal cache.
+ * Has no effect when a custom position provider is set.
  * Call this frequently (e.g., every heartbeat) to maintain accuracy.
  */
 export function updatePlayerPosition(playerId: PlayerId, position: Vector3Like): void {
-  playerPositions.set(playerId as number, position);
+  internalPositions.set(playerId as number, position);
 }
 
 /**
- * Get a player's cached position.
+ * Get a player's position from the active provider.
  */
 export function getPlayerPosition(playerId: PlayerId): Vector3Like | undefined {
-  return playerPositions.get(playerId as number);
+  return positionProvider(playerId);
 }
 
 /**
- * Clear a player's position (e.g., on disconnect).
+ * Clear a player's position from the internal cache (e.g., on disconnect).
  */
 export function clearPlayerPosition(playerId: PlayerId): void {
-  playerPositions.delete(playerId as number);
+  internalPositions.delete(playerId as number);
 }
 
 // ============================================================================
@@ -219,7 +245,7 @@ export function validateHit(shooterId: PlayerId, intent: HitIntent): Result<HitV
   }
 
   // Get target position
-  const targetPosition = playerPositions.get(intent.targetId as number);
+  const targetPosition = positionProvider(intent.targetId);
   if (!targetPosition) {
     return ok(createFailure("target_not_found", serverTimestamp, shooterId, intent));
   }
@@ -372,7 +398,8 @@ export function onValidHit(listener: EventListener<HitValidationResult>): () => 
  * Clear all hit validation state. For testing only.
  */
 export function resetHitValidation(): void {
-  playerPositions.clear();
+  internalPositions.clear();
+  positionProvider = (playerId) => internalPositions.get(playerId as number);
   invulnerablePlayers.clear();
   suspiciousHitCounts.clear();
   lastHitTimes.clear();

@@ -4,6 +4,8 @@
  * Types for quest definitions, objectives, progress tracking, and configuration.
  */
 
+import type { RewardEntry } from "@rbx/rewards";
+
 // ============================================================================
 // Quest Objective
 // ============================================================================
@@ -59,12 +61,8 @@ export interface QuestDefinition {
   tier: QuestTier;
   /** Objectives to complete */
   objectives: QuestObjective[];
-  /** XP reward */
-  xpReward: number;
-  /** Currency reward */
-  currencyReward: number;
-  /** Optional item reward IDs */
-  itemRewards?: string[];
+  /** Rewards granted on completion */
+  rewards: RewardEntry[];
   /** Tags for filtering */
   tags?: string[];
   /** Minimum level to accept */
@@ -125,9 +123,7 @@ export interface QuestAcceptedEvent {
 export interface QuestCompletedEvent {
   playerId: number;
   questId: string;
-  xpReward: number;
-  currencyReward: number;
-  itemRewards: string[];
+  rewards: RewardEntry[];
 }
 
 export interface ObjectiveProgressEvent {

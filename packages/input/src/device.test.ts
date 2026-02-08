@@ -76,6 +76,7 @@ import {
   isUsingKeyboard,
   isUsingGamepad,
   isUsingTouch,
+  detectDeviceClass,
 } from "./device";
 
 // ---------------------------------------------------------------------------
@@ -333,5 +334,47 @@ describe("input type mapping", () => {
     }
     expect(getCurrentDevice()).toBe("touch");
     expect(isUsingTouch()).toBe(true);
+  });
+});
+
+// ============================================================================
+// detectDeviceClass (wire-protocol device classification)
+// ============================================================================
+
+describe("detectDeviceClass", () => {
+  it("returns 'kbm' for keyboard/mouse desktop", () => {
+    mockKeyboardEnabled = true;
+    mockTouchEnabled = false;
+    mockGamepadEnabled = false;
+    expect(detectDeviceClass()).toBe("kbm");
+  });
+
+  it("returns 'touch' for touch-only device", () => {
+    mockTouchEnabled = true;
+    mockKeyboardEnabled = false;
+    mockGamepadEnabled = false;
+    expect(detectDeviceClass()).toBe("touch");
+  });
+
+  it("returns 'kbm' for device with both touch and keyboard", () => {
+    mockTouchEnabled = true;
+    mockKeyboardEnabled = true;
+    mockGamepadEnabled = false;
+    expect(detectDeviceClass()).toBe("kbm");
+  });
+
+  it("returns 'gamepad' for gamepad-enabled device", () => {
+    mockTouchEnabled = false;
+    mockKeyboardEnabled = true;
+    mockGamepadEnabled = true;
+    expect(detectDeviceClass()).toBe("gamepad");
+  });
+
+  it("returns 'gamepad' over touch when both enabled without keyboard", () => {
+    mockTouchEnabled = true;
+    mockKeyboardEnabled = false;
+    mockGamepadEnabled = true;
+    // Touch check comes first, so touch without keyboard → touch
+    expect(detectDeviceClass()).toBe("touch");
   });
 });

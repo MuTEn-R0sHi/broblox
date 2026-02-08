@@ -151,6 +151,10 @@ describe("DailyRewardStore", () => {
       expect(store.canClaim()).toBe(true);
     });
 
+    it("throws when constructed with empty reward cycle", async () => {
+      expect(() => new DailyRewardStore(1, [])).toThrow();
+    });
+
     it("claims day 1 reward", () => {
       const store = makeStore();
       const day = store.claim();
@@ -293,6 +297,63 @@ describe("DailyRewardStore", () => {
       expect(store.getPlayerId()).toBe(1);
     });
   });
+
+  describe("corrupt data sanitisation", () => {
+    it("clamps cycleDay=0 from corrupted save to 1", () => {
+      const cycle = makeRewardCycle();
+      const store = new DailyRewardStore(1, cycle);
+      store.init();
+
+      // Simulate corrupted data with cycleDay=0 being loaded from DataStore
+      const dsStore = (globalThis as unknown as Record<string, unknown>).game as {
+        GetService: (name: string) => {
+          GetDataStore: (name: string) => {
+            GetAsync: (key: string) => unknown;
+            SetAsync: (key: string, value: unknown) => void;
+          };
+        };
+      };
+      const ds = dsStore.GetService("DataStoreService").GetDataStore("DailyRewards_v1");
+      ds.SetAsync("daily_1", {
+        streak: 0,
+        cycleDay: 0, // corrupted — should be >= 1
+        lastClaimTime: 0,
+        totalDaysClaimed: 0,
+        version: 1,
+      });
+
+      store.load();
+      expect(store.getCycleDay()).toBe(1); // sanitised to 1
+    });
+
+    it("clamps negative streak from corrupted save to 0", () => {
+      const cycle = makeRewardCycle();
+      const store = new DailyRewardStore(1, cycle);
+      store.init();
+
+      const dsStore = (globalThis as unknown as Record<string, unknown>).game as {
+        GetService: (name: string) => {
+          GetDataStore: (name: string) => {
+            GetAsync: (key: string) => unknown;
+            SetAsync: (key: string, value: unknown) => void;
+          };
+        };
+      };
+      const ds = dsStore.GetService("DataStoreService").GetDataStore("DailyRewards_v1");
+      ds.SetAsync("daily_1", {
+        streak: -5, // corrupted
+        cycleDay: 3,
+        lastClaimTime: 0,
+        totalDaysClaimed: -2, // corrupted
+        version: 1,
+      });
+
+      store.load();
+      expect(store.getStreak()).toBe(0); // sanitised
+      expect(store.getCycleDay()).toBe(3); // valid — unchanged
+      expect(store.getTotalDaysClaimed()).toBe(0); // sanitised
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -392,6 +453,23 @@ describe("AchievementStore", () => {
       const store = makeStore();
       expect(store.incrementProgress("nonexistent", 10)).toBe(false);
     });
+
+    it("rejects negative amount in incrementProgress", () => {
+      const store = makeStore();
+      expect(store.incrementProgress("ach_kills", -5)).toBe(false);
+      expect(store.getProgress("ach_kills")).toBeUndefined();
+    });
+
+    it("rejects zero amount in incrementProgress", () => {
+      const store = makeStore();
+      expect(store.incrementProgress("ach_kills", 0)).toBe(false);
+    });
+
+    it("rejects negative value in setProgress", () => {
+      const store = makeStore();
+      expect(store.setProgress("ach_kills", -10)).toBe(false);
+      expect(store.getProgress("ach_kills")).toBeUndefined();
+    });
   });
 
   describe("queries", () => {
@@ -414,6 +492,12 @@ describe("AchievementStore", () => {
     it("returns 0 fraction for unknown", () => {
       const store = makeStore();
       expect(store.getCompletionFraction("nonexistent")).toBe(0);
+    });
+
+    it("returns 1 fraction for completed achievement", () => {
+      const store = makeStore();
+      store.incrementProgress("ach_kills", 100);
+      expect(store.getCompletionFraction("ach_kills")).toBe(1);
     });
 
     it("counts completed achievements", () => {

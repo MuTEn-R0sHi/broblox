@@ -186,6 +186,11 @@ export class LeaderboardStore {
       return { success: false, status: "ERROR" };
     }
 
+    // OrderedDataStores require finite non-negative integers
+    if (score !== score || score === math.huge || score === -math.huge || score < 0) {
+      return { success: false, status: "ERROR" };
+    }
+
     const dsService = game.GetService("DataStoreService");
     const key = `${userId}`;
     let updated = false;

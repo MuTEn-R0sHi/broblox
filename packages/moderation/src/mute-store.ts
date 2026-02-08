@@ -105,6 +105,18 @@ export class MuteStore {
    * Create a new mute.
    */
   createMute(input: CreateMuteInput): MuteRecord {
+    // Input validation
+    if (input.playerId <= 0) {
+      error("createMute: playerId must be a positive number");
+    }
+    const trimmedReason = input.reason !== undefined ? tostring(input.reason) : "";
+    if (trimmedReason.size() === 0) {
+      error("createMute: reason must not be empty");
+    }
+    if (input.durationMinutes <= 0) {
+      error("createMute: durationMinutes must be positive");
+    }
+
     const now = os.time();
     const mute: MuteRecord = {
       id: this.generateId(),

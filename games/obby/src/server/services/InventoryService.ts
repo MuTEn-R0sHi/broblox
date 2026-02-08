@@ -48,7 +48,7 @@ const handle = createInventoryService({
     {
       id: "trail_fire",
       name: "Fire Trail",
-      category: "cosmetic",
+      category: "misc",
       rarity: "epic",
       maxStack: 1,
       tradeable: true,

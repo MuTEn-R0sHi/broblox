@@ -40,6 +40,10 @@ export class DailyRewardStore {
   private claimedCallbacks: DailyRewardClaimedCallback[] = [];
 
   constructor(playerId: number, rewardCycle: DailyRewardDay[], config?: Partial<RewardsConfig>) {
+    if (rewardCycle.size() === 0) {
+      error("DailyRewardStore: rewardCycle must not be empty");
+    }
+
     this.playerId = playerId;
     this.config = { ...DEFAULT_CONFIG, ...(config ?? {}) };
     this.rewardCycle = rewardCycle;
@@ -77,10 +81,10 @@ export class DailyRewardStore {
       const saved = raw as unknown as DailyLoginData;
       this.data = {
         playerId: this.playerId,
-        streak: saved.streak ?? 0,
-        cycleDay: saved.cycleDay ?? 1,
-        lastClaimTime: saved.lastClaimTime ?? 0,
-        totalDaysClaimed: saved.totalDaysClaimed ?? 0,
+        streak: math.max(0, saved.streak ?? 0),
+        cycleDay: math.max(1, saved.cycleDay ?? 1),
+        lastClaimTime: math.max(0, saved.lastClaimTime ?? 0),
+        totalDaysClaimed: math.max(0, saved.totalDaysClaimed ?? 0),
         version: saved.version ?? 1,
       };
     }

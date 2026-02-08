@@ -4,6 +4,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { PetSpecies } from "./types";
+import { MAX_NICKNAME_LENGTH } from "./types";
 
 // ---------------------------------------------------------------------------
 // Roblox global mocks
@@ -311,6 +312,20 @@ describe("PetStore", () => {
     expect(result.status).toBe("max_level");
   });
 
+  it("rejects negative XP", () => {
+    const { pet } = store.addPet("fire_slime");
+    const result = store.addXp(pet!.instanceId, -10);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_amount");
+  });
+
+  it("rejects zero XP", () => {
+    const { pet } = store.addPet("fire_slime");
+    const result = store.addXp(pet!.instanceId, 0);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_amount");
+  });
+
   it("fires onLevelUp callback", () => {
     const cb = vi.fn();
     store.onLevelUp(cb);
@@ -391,7 +406,21 @@ describe("PetStore", () => {
     const { pet: p1 } = store.addPet("fire_slime");
     store.addPet("water_sprite");
     store.equipPet(p1!.instanceId);
-    expect(store.getEquippedPets()).toHaveLength(1);
+    const equipped = store.getEquippedPets();
+    expect(equipped).toHaveLength(1);
+    expect(equipped[0].instanceId).toBe(p1!.instanceId);
+  });
+
+  it("equippedCount matches getEquippedPets length", () => {
+    const { pet: p1 } = store.addPet("fire_slime");
+    const { pet: p2 } = store.addPet("water_sprite");
+    expect(store.equippedCount()).toBe(0);
+    store.equipPet(p1!.instanceId);
+    expect(store.equippedCount()).toBe(1);
+    expect(store.equippedCount()).toBe(store.getEquippedPets().size());
+    store.equipPet(p2!.instanceId);
+    expect(store.equippedCount()).toBe(2);
+    expect(store.equippedCount()).toBe(store.getEquippedPets().size());
   });
 
   // Nickname / Lock
@@ -399,6 +428,29 @@ describe("PetStore", () => {
     const { pet } = store.addPet("fire_slime");
     store.setNickname(pet!.instanceId, "Blaze");
     expect(store.getPet(pet!.instanceId)?.nickname).toBe("Blaze");
+  });
+
+  it("rejects empty nickname", () => {
+    const { pet } = store.addPet("fire_slime");
+    const result = store.setNickname(pet!.instanceId, "");
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_nickname");
+  });
+
+  it("rejects nickname exceeding max length", () => {
+    const { pet } = store.addPet("fire_slime");
+    const tooLong = "A".repeat(MAX_NICKNAME_LENGTH + 1);
+    const result = store.setNickname(pet!.instanceId, tooLong);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe("invalid_nickname");
+  });
+
+  it("accepts nickname at max length", () => {
+    const { pet } = store.addPet("fire_slime");
+    const exactMax = "A".repeat(MAX_NICKNAME_LENGTH);
+    const result = store.setNickname(pet!.instanceId, exactMax);
+    expect(result.ok).toBe(true);
+    expect(store.getPet(pet!.instanceId)?.nickname).toBe(exactMax);
   });
 
   it("locks and unlocks a pet", () => {
