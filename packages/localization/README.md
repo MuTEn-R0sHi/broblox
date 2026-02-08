@@ -67,4 +67,4 @@ svc.plural("items.count", 3); // "3 items" (falls back to en)
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/localization.md)

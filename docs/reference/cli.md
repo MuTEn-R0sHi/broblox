@@ -18,7 +18,7 @@ pnpm run game:starter:rojo # Start Rojo server for Studio sync
 pnpm lint                 # Run ESLint across all packages
 pnpm typecheck            # Run TypeScript/roblox-ts type checking
 pnpm test                 # Run all tests with vitest
-pnpm test -- --coverage   # Run tests with coverage report
+pnpm test:coverage        # Run tests with coverage report
 ```
 
 ## Documentation

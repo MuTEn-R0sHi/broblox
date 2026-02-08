@@ -70,5 +70,5 @@ store.save();
 ## Tests
 
 ```bash
-pnpm test -- packages/quests
+pnpm --filter @rbx/quests test
 ```

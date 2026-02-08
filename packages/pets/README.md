@@ -83,4 +83,4 @@ store.addPet("fire_cat", "Whiskers");
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/pets.md)

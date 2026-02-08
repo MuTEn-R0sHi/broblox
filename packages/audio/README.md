@@ -61,4 +61,4 @@ manager.setChannelVolume("music", 0.3);
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/audio.md)

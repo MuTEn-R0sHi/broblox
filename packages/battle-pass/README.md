@@ -63,4 +63,4 @@ store.addXp(150);
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/battle-pass.md)

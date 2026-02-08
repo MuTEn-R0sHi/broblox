@@ -78,4 +78,4 @@ manager.startSequence("intro");
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/tutorial.md)

@@ -58,7 +58,7 @@ rbx-game-platform/
 
 ## Prereqs
 
-- Node.js 20+ (LTS recommended)
+- Node.js >= 20.11.0 (LTS recommended)
 - Corepack (bundled with modern Node) for `pnpm`
 - [Aftman](https://github.com/LPGhatguy/aftman) for Rojo (optional, for Roblox sync)
 
@@ -94,7 +94,7 @@ See [apps/dashboard/README.md](apps/dashboard/README.md) for setup instructions.
 cd apps/dashboard
 cp .env.example .env
 # Edit .env with your database and OAuth credentials
-npx prisma db push
+pnpm prisma db push
 pnpm dev
 ```
 

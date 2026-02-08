@@ -58,4 +58,4 @@ store.equip("golden_crown", "head");
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/cosmetics.md)

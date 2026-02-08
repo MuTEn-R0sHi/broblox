@@ -67,5 +67,5 @@ store.save();
 ## Tests
 
 ```bash
-pnpm test -- packages/progression
+pnpm --filter @rbx/progression test
 ```

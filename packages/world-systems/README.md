@@ -67,4 +67,4 @@ manager.setClockTime(22); // Force night
 
 ## Related Docs
 
-- [Module Overview](../../docs/modules/index.md)
+- [Module docs](../../docs/modules/world-systems.md)

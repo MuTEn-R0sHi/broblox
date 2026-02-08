@@ -70,7 +70,7 @@ Pure TypeScript logic runs in Node.js via vitest:
 ```bash
 pnpm test              # all packages
 pnpm --filter @rbx/net test  # single package
-pnpm test -- --coverage      # with coverage report
+pnpm test:coverage           # with coverage report
 ```
 
 Coverage target: 80%+ for domain logic, 100% for security-critical validators.

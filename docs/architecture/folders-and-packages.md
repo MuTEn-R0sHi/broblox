@@ -256,7 +256,7 @@ pnpm run build:starter
 
 # Or separately:
 pnpm run build:packages    # Compiles packages to out/
-pnpm --filter @rbx/game-starter build
+pnpm game:starter:build
 ```
 
 ### How games consume packages

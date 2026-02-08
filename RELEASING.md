@@ -48,12 +48,11 @@ On every push to `main`:
 
 1. Build packages and game
 2. Generate `.rbxl` file with Rojo
-3. Upload build artifact
-4. Publish to dev experience via Open Cloud API
+3. Publish to dev experience via Open Cloud API
 
 ### Staging/Production (Manual Promotion)
 
-The promote workflow allows you to deploy any previously built artifact:
+The promote workflow rebuilds from a chosen git ref (commit SHA or tag) and publishes it:
 
 ```
 GitHub Actions → Promote → [staging|production]
@@ -61,7 +60,7 @@ GitHub Actions → Promote → [staging|production]
 
 Key features:
 
-- **Build once, promote the same artifact** - Same binary goes to all environments
+- **Pinned ref promotions** - Promote by specifying the exact commit SHA or tag
 - **Approval gates** - Required reviewers must approve before deployment
 - **Audit trail** - All promotions are logged with actor, reason, and timestamp
 - **Production requires tags** - Must use semantic version tag (e.g., `v1.0.0`)
@@ -70,8 +69,7 @@ Key features:
 
 1. GitHub Actions creates a GitHub Release for the tag
 2. Release notes are generated automatically by GitHub
-3. Build artifact is tagged with the version
-4. Ready for promotion to staging/production
+3. Tag is ready to be used as a promotion `source_ref`
 
 ## Rollback Procedure
 
@@ -106,9 +104,11 @@ Check the "Publish Dev" workflow logs for:
 
 ### Promotion workflow can't find artifact
 
-- Artifacts expire after 30 days
-- Verify the source ref (commit SHA or tag) is correct
-- Check that the original build completed successfully
+The current promote workflow rebuilds from a git ref, so there is no separate build artifact to look up.
+
+- Verify the `source_ref` exists (commit SHA or tag)
+- For production, ensure the ref is a SemVer tag like `v1.2.3`
+- If the publish step fails, check Open Cloud credentials and target universe/place IDs
 
 ### Production promotion rejected
 
