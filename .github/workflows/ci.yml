@@ -46,6 +46,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Check testing ↔ shared-types sync
+        run: pnpm run check:sync
+
       - name: Test
         run: pnpm test
 

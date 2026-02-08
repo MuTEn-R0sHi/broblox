@@ -25,5 +25,5 @@
     "rojo": "default.project.json"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules/@rbx/*/src/**", "**/*.test.ts", "**/__tests__/**"]
+  "exclude": ["node_modules/@rbx/*/src/**", "**/*.test.ts", "**/__test-*", "**/__tests__/**"]
 }

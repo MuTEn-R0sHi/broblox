@@ -10,6 +10,7 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
+    "check:sync": "node tools/check-testing-sync.mjs",
     "test:coverage": "vitest run --coverage",
     "build:packages": "pnpm --filter '@rbx/*' --filter '!@rbx/game-*' run build:roblox",
     "build:starter": "pnpm run build:packages && pnpm --filter @rbx/game-starter run build",

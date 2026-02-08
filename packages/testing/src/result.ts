@@ -23,6 +23,8 @@ export interface Err {
   readonly message?: string;
   readonly retryAfterMs?: number;
   readonly field?: string;
+  /** Additional context for debugging (e.g., version info) */
+  readonly context?: Record<string, unknown>;
 }
 
 export type Result<T> = Ok<T> | Err;

@@ -116,7 +116,7 @@ export function getErrorCodeDescription(code: ErrorCode): string {
     case ErrorCode.Timeout:
       return "The operation timed out";
     case ErrorCode.DataStoreFailed:
-      return "A DataStore operation failed";
+      return "Data store operation failed";
     default:
       return "An error occurred";
   }
