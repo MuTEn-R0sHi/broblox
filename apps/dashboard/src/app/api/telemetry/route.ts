@@ -4,6 +4,16 @@ import { checkAuth, validateApiKey, checkRateLimit, getRateLimitKey } from "@/li
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 
+function isMissingTableError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    // Prisma: P2021 = table does not exist
+    (error as { code?: string }).code === "P2021"
+  );
+}
+
 const telemetryEventSchema = z.object({
   category: z.string().min(1),
   name: z.string().min(1),
@@ -70,6 +80,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    if (isMissingTableError(error)) {
+      return NextResponse.json(
+        {
+          error: "Telemetry database is not initialized",
+          hint: "Run `pnpm prisma db push` for the dashboard database.",
+        },
+        { status: 503 }
+      );
+    }
     console.error("Failed to ingest telemetry:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -110,17 +130,31 @@ export async function GET(request: NextRequest) {
     where.ingestedAt = { gte: sinceDate };
   }
 
-  const events = await prisma.telemetryEvent.findMany({
-    where,
-    orderBy: { ingestedAt: "desc" },
-    take: limit,
-  });
+  try {
+    const events = await prisma.telemetryEvent.findMany({
+      where,
+      orderBy: { ingestedAt: "desc" },
+      take: limit,
+    });
 
-  return NextResponse.json({
-    events: events.map((e) => ({
-      ...e,
-      placeId: e.placeId?.toString(),
-      playerId: e.playerId?.toString(),
-    })),
-  });
+    return NextResponse.json({
+      events: events.map((e) => ({
+        ...e,
+        placeId: e.placeId?.toString(),
+        playerId: e.playerId?.toString(),
+      })),
+    });
+  } catch (error) {
+    if (isMissingTableError(error)) {
+      return NextResponse.json(
+        {
+          error: "Telemetry database is not initialized",
+          hint: "Run `pnpm prisma db push` for the dashboard database.",
+        },
+        { status: 503 }
+      );
+    }
+    console.error("Failed to query telemetry:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
