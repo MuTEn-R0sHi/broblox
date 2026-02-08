@@ -85,7 +85,15 @@ export const math = {
   ceil: Math.ceil,
   abs: Math.abs,
   sqrt: Math.sqrt,
-  random: Math.random,
+  random: (a?: number, b?: number): number => {
+    if (a !== undefined && b !== undefined) {
+      return Math.floor(Math.random() * (b - a + 1)) + a;
+    }
+    if (a !== undefined) {
+      return Math.floor(Math.random() * a) + 1;
+    }
+    return Math.random();
+  },
   huge: Infinity,
   pi: Math.PI,
   log: Math.log,
@@ -278,10 +286,10 @@ export function mockRobloxGlobals(): void {
   g.print = console.log;
   g.warn = console.warn;
 
-  // Mock pcall
-  g.pcall = <T>(fn: () => T): [true, T] | [false, string] => {
+  // Mock pcall — supports passing extra arguments like Lua's pcall(fn, arg1, ...)
+  g.pcall = <T>(fn: (...args: unknown[]) => T, ...args: unknown[]): [true, T] | [false, string] => {
     try {
-      return [true, fn()];
+      return [true, fn(...args)];
     } catch (e) {
       return [false, String(e)];
     }
