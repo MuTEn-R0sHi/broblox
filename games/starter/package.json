@@ -42,7 +42,7 @@
     "@rbx/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/services": "^1.6.0",
-    "@rbxts/types": "^1.0.906",
+    "@rbxts/types": "^1.0.907",
     "roblox-ts": "^3.0.0"
   }
 }
