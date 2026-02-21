@@ -306,7 +306,7 @@ model Game {
 // Feature flags configuration
 model FeatureFlag {
   id          String   @id @default(cuid())
-  key         String   @default(dbgenerated("(uuid())")) // fallback for pre-existing rows on migration
+  key         String   @default(cuid()) // client-side default; avoids unsafe DB function on migration
   name        String
   description String?  @db.Text
 
