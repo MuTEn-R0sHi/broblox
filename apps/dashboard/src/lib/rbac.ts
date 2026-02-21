@@ -45,7 +45,7 @@ export type Permission =
 
 /** Permission matrix - maps roles to their permissions */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags", "games:view"],
+  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags"],
 
   SUPPORT: [
     "view:dashboard",
@@ -53,7 +53,6 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:players",
     "view:flags",
     "view:audit",
-    "games:view",
     "moderation:view",
   ],
 
@@ -63,7 +62,6 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:players",
     "view:flags",
     "view:audit",
-    "games:view",
     "moderation:view",
     "moderation:mute",
     "moderation:ban",
@@ -78,6 +76,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:flags",
     "view:audit",
     "games:view",
+    "games:create",
     "games:manage",
     "moderation:view",
     "flags:toggle:dev",
@@ -169,8 +168,8 @@ export function getRoleDescription(role: Role): string {
     VIEWER: "Can view dashboards and basic information",
     SUPPORT: "Can view audit logs and moderation history",
     MODERATOR: "Can issue bans, mutes, and handle appeals",
-    ENGINEER: "Can manage game registry and toggle feature flags in dev/stage",
-    ADMIN: "Full access to all features including game creation and prod toggles",
+    ENGINEER: "Can manage and create games, toggle feature flags in dev/stage",
+    ADMIN: "Full access to all features including game deletion and prod toggles",
   };
   return descriptions[role] ?? "";
 }

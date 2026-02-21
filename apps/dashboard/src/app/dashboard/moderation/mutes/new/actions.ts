@@ -41,7 +41,7 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
     where: {
       playerId: playerIdBigInt,
       isActive: true,
-      expiresAt: { gt: new Date() },
+      OR: [{ isPermanent: true }, { expiresAt: { gt: new Date() } }],
     },
   });
 
