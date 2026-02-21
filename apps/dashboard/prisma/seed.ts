@@ -16,9 +16,22 @@
  *   b) pass inline:
  *        STARTER_DEV_UNIVERSE_ID=123 ... pnpm db:seed
  */
+import "dotenv/config";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) throw new Error("DATABASE_URL is not set");
+const url = new URL(databaseUrl);
+const adapter = new PrismaMariaDb({
+  host: url.hostname,
+  port: parseInt(url.port) || 3306,
+  user: url.username,
+  password: url.password,
+  database: url.pathname.slice(1),
+  connectionLimit: 2,
+});
+const prisma = new PrismaClient({ adapter });
 
 function bigint(val: string | undefined): bigint | null {
   if (!val || val.trim() === "" || val.trim() === "0") return null;
