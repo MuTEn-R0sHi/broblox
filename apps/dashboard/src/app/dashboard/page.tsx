@@ -135,6 +135,12 @@ export default async function DashboardPage() {
       icon: Flag,
     },
     {
+      name: "Mod Actions",
+      value: modActions.toString(),
+      description: "Bans issued (24h)",
+      icon: Shield,
+    },
+    {
       name: "Active Players",
       value: uniquePlayers.length.toString(),
       description: "Last hour (all games)",

@@ -3,7 +3,7 @@ import { requirePermission } from "@/lib/authorize";
 import { hasPermission } from "@/lib/rbac";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Gamepad2, Flag, Shield, Trophy, ChevronRight } from "lucide-react";
+import { Gamepad2, Flag, Shield, Trophy } from "lucide-react";
 import { getGames } from "./actions";
 import { CreateGameButton } from "./create-game";
 
