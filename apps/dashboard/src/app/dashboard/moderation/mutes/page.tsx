@@ -21,9 +21,9 @@ interface SearchParams {
 
 type MuteStatus = "ACTIVE" | "EXPIRED" | "INACTIVE";
 
-function getMuteStatus(mute: { isActive: boolean; expiresAt: Date }): MuteStatus {
+function getMuteStatus(mute: { isActive: boolean; expiresAt: Date | null }): MuteStatus {
   if (!mute.isActive) return "INACTIVE";
-  if (mute.expiresAt <= new Date()) return "EXPIRED";
+  if (mute.expiresAt !== null && mute.expiresAt <= new Date()) return "EXPIRED";
   return "ACTIVE";
 }
 
@@ -204,7 +204,11 @@ export default async function MutesPage({ searchParams }: { searchParams: Promis
                         <Badge variant={getMuteStatusColor(status)}>{status}</Badge>
                       </td>
                       <td className="p-4 text-sm text-muted-foreground">
-                        {formatDistanceToNow(mute.expiresAt, { addSuffix: true })}
+                        {mute.expiresAt ? (
+                          formatDistanceToNow(mute.expiresAt, { addSuffix: true })
+                        ) : (
+                          <span className="text-yellow-400">Permanent</span>
+                        )}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">

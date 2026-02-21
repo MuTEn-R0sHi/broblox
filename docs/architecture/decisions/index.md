@@ -36,3 +36,4 @@ Each ADR should include:
 - ADR-0004: CI publish/promote via Open Cloud
 - ADR-0005: Schema validation library choice
 - ADR-0006: Framework choice — custom vs Flamework
+- ADR-0007: Multi-game dashboard design

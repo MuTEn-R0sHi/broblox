@@ -19,6 +19,8 @@ export interface AuditContext {
   before?: unknown;
   after?: unknown;
   reason?: string;
+  /** Optional game scope. null/undefined = platform-level action. */
+  gameId?: string | null;
 }
 
 function truncateAuditValue(value: string, maxLen = 500): string {
@@ -50,6 +52,7 @@ export async function audit(ctx: AuditContext): Promise<void> {
       before: ctx.before as object | undefined,
       after: ctx.after as object | undefined,
       reason: ctx.reason,
+      gameId: ctx.gameId ?? null,
       ipHash,
       userAgent,
     },

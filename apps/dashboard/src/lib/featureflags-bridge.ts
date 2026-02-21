@@ -58,6 +58,12 @@ function clampPercentage(value: number): number {
 export async function bridgeSyncFeatureFlagsToRoblox(opts: {
   environments: Array<"dev" | "stage" | "prod">;
   flags: DashboardFeatureFlagRecord[];
+  /**
+   * Per-environment Roblox Universe IDs.
+   * When provided, syncs to the specific game's DataStore instead of the
+   * global ROBLOX_UNIVERSE_ID fallback.
+   */
+  universeIds?: Partial<Record<"dev" | "stage" | "prod", number>>;
 }): Promise<FeatureFlagsBridgeResult> {
   const cfg = getOpenCloudFeatureFlagsBridgeConfig();
   if (!cfg.enabled) return { ok: true, skipped: true };
@@ -68,6 +74,7 @@ export async function bridgeSyncFeatureFlagsToRoblox(opts: {
     for (const env of opts.environments) {
       const runtimeEnv = mapEnv(env);
       const entryKey = `${cfg.entryKeyPrefix}${runtimeEnv}`;
+      const universeIdOverride = opts.universeIds?.[env];
 
       const payload: DataStorePayload = {
         updatedAt,
@@ -98,12 +105,14 @@ export async function bridgeSyncFeatureFlagsToRoblox(opts: {
       };
 
       await updateStandardDataStoreEntry<DataStorePayload, DataStorePayload>({
+        universeIdOverride,
         datastore: { datastoreName: cfg.datastoreName, scope: cfg.scope },
         entryKey,
         update: () => payload,
       });
 
       await publishMessagingService({
+        universeIdOverride,
         topic: cfg.topic,
         message: JSON.stringify({ environment: runtimeEnv, updatedAt }),
       });

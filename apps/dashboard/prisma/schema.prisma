@@ -88,6 +88,10 @@ model AuditLog {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
 
+  // Game scope: null = platform-level action
+  gameId    String?
+  game      Game?    @relation(fields: [gameId], references: [id])
+
   action    String   // e.g., "config.update", "ban.create"
   target    String?  // e.g., player ID, config key
   before    Json?    // State before change
@@ -98,6 +102,7 @@ model AuditLog {
   userAgent String?  @db.Text
 
   @@index([userId])
+  @@index([gameId])
   @@index([timestamp])
   @@index([action])
 }
@@ -130,6 +135,10 @@ model Ban {
   playerId    BigInt    // Roblox UserId
   playerName  String?   // Cached display name
 
+  // Game scope: null = global ban (all games in studio), non-null = game-specific ban
+  gameId      String?
+  game        Game?     @relation(fields: [gameId], references: [id])
+
   type        BanType   @default(TEMPORARY)
   status      BanStatus @default(ACTIVE)
 
@@ -160,6 +169,7 @@ model Ban {
   updatedAt   DateTime  @updatedAt
 
   @@index([playerId])
+  @@index([gameId])
   @@index([status])
   @@index([expiresAt])
   @@index([issuedById])
@@ -171,14 +181,19 @@ model Mute {
   playerId    BigInt    // Roblox UserId
   playerName  String?   // Cached display name
 
+  // Game scope: null = global mute (all games), non-null = game-specific mute
+  gameId      String?
+  game        Game?     @relation(fields: [gameId], references: [id])
+
   type        MuteType  @default(CHAT)
   isActive    Boolean   @default(true)
 
   reason      String    @db.Text
 
-  // Duration
-  durationMinutes Int
-  expiresAt   DateTime
+  // Duration: set isPermanent = true for indefinite mutes (durationMinutes ignored)
+  isPermanent     Boolean  @default(false)
+  durationMinutes Int      @default(0)
+  expiresAt       DateTime?
 
   // Moderator who issued the mute
   issuedById  String
@@ -187,6 +202,7 @@ model Mute {
   createdAt   DateTime  @default(now())
 
   @@index([playerId])
+  @@index([gameId])
   @@index([isActive])
   @@index([expiresAt])
 }
@@ -241,12 +257,62 @@ model Appeal {
   @@index([playerId])
 }
 
+// ============================================================================
+// Game Registry
+// ============================================================================
+
+/**
+ * A Game represents one Roblox experience managed by this platform.
+ * Per-environment Roblox identifiers (universeId, placeId) are stored here
+ * so bridges (flags, moderation) can route to the correct universe.
+ *
+ * gameId is an optional FK on flags, bans, mutes, audit logs, and metrics:
+ *   - NULL  => platform-wide / applies to all games (e.g. global bans)
+ *   - non-null => scoped to that specific game
+ */
+model Game {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique  // URL-safe identifier, e.g. "obby", "starter"
+  description String? @db.Text
+  iconUrl     String? // URL for the game thumbnail / icon
+
+  // Roblox identifiers per environment (null = not linked yet)
+  universeIdDev   BigInt?
+  universeIdStage BigInt?
+  universeIdProd  BigInt?
+  placeIdDev      BigInt?
+  placeIdStage    BigInt?
+  placeIdProd     BigInt?
+
+  isActive Boolean @default(true)
+
+  // Relations
+  flags     FeatureFlag[]
+  matches   Match[]
+  bans      Ban[]
+  mutes     Mute[]
+  auditLogs AuditLog[]
+  metrics   MetricPoint[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String?
+
+  @@index([slug])
+  @@index([isActive])
+}
+
 // Feature flags configuration
 model FeatureFlag {
   id          String   @id @default(cuid())
-  key         String   @unique
+  key         String
   name        String
   description String?  @db.Text
+
+  // Game scope: null = global (applies to all games)
+  gameId      String?
+  game        Game?    @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   // Per-environment toggles
   enabledDev   Boolean @default(false)
@@ -270,6 +336,10 @@ model FeatureFlag {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // key must be unique within a game scope (null gameId = global)
+  @@unique([key, gameId])
+  @@index([gameId])
 }
 
 // Match history
@@ -295,6 +365,10 @@ model Match {
   serverId     String?     // Roblox server JobId
   placeId      BigInt?     // Roblox place ID
 
+  // Game scope (preferred over raw placeId for dashboard queries)
+  gameId       String?
+  game         Game?       @relation(fields: [gameId], references: [id])
+
   gameMode     String      // e.g., "deathmatch", "ctf", "ranked"
   mapName      String?
 
@@ -319,6 +393,7 @@ model Match {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
+  @@index([gameId])
   @@index([status])
   @@index([gameMode])
   @@index([startedAt])
@@ -403,10 +478,17 @@ model MetricPoint {
 
   // Ingestion metadata
   serverId    String?
+  placeId     BigInt?  // Roblox place ID (for game-level metric aggregation)
+
+  // Game scope
+  gameId      String?
+  game        Game?    @relation(fields: [gameId], references: [id])
+
   ingestedAt  DateTime @default(now())
 
   @@index([name, timestamp])
   @@index([type])
+  @@index([gameId])
   @@index([serverId])
   @@index([ingestedAt])
 }

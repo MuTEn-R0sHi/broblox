@@ -17,6 +17,11 @@ export type Permission =
   | "view:players"
   | "view:flags"
   | "view:audit"
+  // Game registry permissions
+  | "games:view"
+  | "games:create"
+  | "games:manage"
+  | "games:delete"
   // Moderation permissions
   | "moderation:view"
   | "moderation:mute"
@@ -40,7 +45,7 @@ export type Permission =
 
 /** Permission matrix - maps roles to their permissions */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags"],
+  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags", "games:view"],
 
   SUPPORT: [
     "view:dashboard",
@@ -48,6 +53,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:players",
     "view:flags",
     "view:audit",
+    "games:view",
     "moderation:view",
   ],
 
@@ -57,6 +63,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:players",
     "view:flags",
     "view:audit",
+    "games:view",
     "moderation:view",
     "moderation:mute",
     "moderation:ban",
@@ -70,6 +77,8 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:players",
     "view:flags",
     "view:audit",
+    "games:view",
+    "games:manage",
     "moderation:view",
     "flags:toggle:dev",
     "flags:toggle:stage",
@@ -83,6 +92,10 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:players",
     "view:flags",
     "view:audit",
+    "games:view",
+    "games:create",
+    "games:manage",
+    "games:delete",
     "moderation:view",
     "moderation:mute",
     "moderation:ban",
@@ -156,8 +169,8 @@ export function getRoleDescription(role: Role): string {
     VIEWER: "Can view dashboards and basic information",
     SUPPORT: "Can view audit logs and moderation history",
     MODERATOR: "Can issue bans, mutes, and handle appeals",
-    ENGINEER: "Can toggle feature flags in dev/stage",
-    ADMIN: "Full access to all features",
+    ENGINEER: "Can manage game registry and toggle feature flags in dev/stage",
+    ADMIN: "Full access to all features including game creation and prod toggles",
   };
   return descriptions[role] ?? "";
 }
