@@ -49,6 +49,7 @@ All MODERATOR permissions, plus:
 - Toggle feature flags in dev/stage
 - Create feature flags
 - View settings (read-only)
+- View, create, and manage games (register/edit Roblox experiences)
 
 ### Role: ADMIN
 
@@ -58,6 +59,7 @@ All ENGINEER permissions, plus:
 - Delete/kill feature flags
 - Manage user roles
 - Edit settings
+- Delete registered games
 
 ## Bootstrapping an admin (local/dev)
 
@@ -106,6 +108,10 @@ For safety, role changes require:
 | Toggle PROD flags  | ❌     | ❌      | ❌        | ❌       | ✅    |
 | Create flags       | ❌     | ❌      | ❌        | ✅       | ✅    |
 | Delete/kill flags  | ❌     | ❌      | ❌        | ❌       | ✅    |
+| View games         | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Create games       | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Manage games       | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Delete games       | ❌     | ❌      | ❌        | ❌       | ✅    |
 | Manage roles       | ❌     | ❌      | ❌        | ❌       | ✅    |
 
 ## Implementation
@@ -138,8 +144,9 @@ Every privileged action is recorded with:
 | ----------- | ------------------------------------------------------------------- |
 | `id`        | Unique audit log ID                                                 |
 | `userId`    | User who performed the action                                       |
-| `action`    | Action type (e.g., `flag.toggle.prod`)                              |
-| `target`    | Target resource (e.g., flag name)                                   |
+| `gameId`    | Game the action was scoped to (null for platform-level actions)     |
+| `action`    | Action type (e.g., `flag.toggle.prod`, `game.create`)               |
+| `target`    | Target resource (e.g., flag key, game slug)                         |
 | `reason`    | Human-readable reason/context (required for some high-risk actions) |
 | `before`    | Previous state (JSON)                                               |
 | `after`     | New state (JSON)                                                    |
@@ -151,6 +158,9 @@ Every privileged action is recorded with:
 
 | Action                | Description                    |
 | --------------------- | ------------------------------ |
+| `game.create`         | New game registered            |
+| `game.update`         | Game metadata updated          |
+| `game.delete`         | Game deleted                   |
 | `flag.create`         | New feature flag created       |
 | `flag.update`         | Flag metadata updated          |
 | `flag.delete`         | Feature flag deleted           |

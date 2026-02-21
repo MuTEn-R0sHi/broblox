@@ -5,7 +5,7 @@ This repository will become a reusable, multi-game **Roblox-TS** platform optimi
 - Building multiple games from shared packages (framework, networking, security, UI, live ops)
 - Competitive-capable PvP (server-authoritative outcomes, strict remote validation, anti-abuse)
 - CI-driven releases (Open Cloud publishing + environment promotion)
-- A web dashboard for moderation, config/feature flags, and operational control
+- A **multi-game web dashboard** for game management, moderation, config/feature flags, and operational control across all registered games
 
 ## Non-negotiable principles
 
@@ -26,7 +26,8 @@ This repository will become a reusable, multi-game **Roblox-TS** platform optimi
 
 - A stable set of platform packages that any new game can adopt in <1 day
 - A CI pipeline that publishes dev builds automatically and promotes to prod with approvals
-- A dashboard that can:
-  - change feature flags and configs with approvals
-  - manage bans/mutes with evidence and audit logs
-  - view match history + anti-abuse signals
+- A **multi-game control plane dashboard** that can:
+  - register and manage multiple Roblox experiences (per-env universe IDs + place IDs)
+  - change feature flags globally or per-game, with environment scoping and approvals
+  - manage bans/mutes with evidence and audit logs, scoped per game
+  - view match history + anti-abuse signals across all games

@@ -14,7 +14,7 @@ async function getModerationStats() {
     prisma.mute.count({
       where: {
         isActive: true,
-        expiresAt: { gt: new Date() },
+        OR: [{ isPermanent: true }, { expiresAt: { gt: new Date() } }],
       },
     }),
   ]);

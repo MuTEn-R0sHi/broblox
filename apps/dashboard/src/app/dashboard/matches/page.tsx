@@ -16,6 +16,7 @@ interface SearchParams {
   status?: string;
   gameMode?: string;
   search?: string;
+  gameId?: string;
 }
 
 const PAGE_SIZE = 20;
@@ -32,9 +33,14 @@ export default async function MatchesPage({
   const status = params.status as MatchStatus | undefined;
   const gameMode = params.gameMode;
   const search = params.search;
+  const gameId = params.gameId;
 
   // Build where clause
   const where: Prisma.MatchWhereInput = {};
+
+  if (gameId) {
+    where.gameId = gameId;
+  }
 
   if (status) {
     where.status = status;

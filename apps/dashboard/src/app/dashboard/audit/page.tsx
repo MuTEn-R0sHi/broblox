@@ -13,6 +13,7 @@ interface SearchParams {
   details?: string;
   user?: string;
   page?: string;
+  gameId?: string;
 }
 
 async function getAuditLogs(params: SearchParams) {
@@ -24,6 +25,7 @@ async function getAuditLogs(params: SearchParams) {
     target?: { contains: string };
     reason?: { contains: string };
     userId?: string;
+    gameId?: string;
   } = {};
 
   if (params.action) {
@@ -38,6 +40,9 @@ async function getAuditLogs(params: SearchParams) {
   }
   if (params.user) {
     where.userId = params.user;
+  }
+  if (params.gameId) {
+    where.gameId = params.gameId;
   }
 
   const detailsQuery = params.details?.trim();
@@ -145,7 +150,12 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">No audit logs found.</p>
             <p className="text-sm text-muted-foreground mt-1">
-              {params.action || params.target || params.reason || params.details || params.user
+              {params.action ||
+              params.target ||
+              params.reason ||
+              params.details ||
+              params.user ||
+              params.gameId
                 ? "Try adjusting your filters."
                 : "Actions will appear here as users make changes."}
             </p>
@@ -224,7 +234,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                 <div className="flex gap-2">
                   {page > 1 && (
                     <a
-                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.details ? `&details=${params.details}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page - 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.details ? `&details=${params.details}` : ""}${params.user ? `&user=${params.user}` : ""}${params.gameId ? `&gameId=${params.gameId}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Previous
@@ -232,7 +242,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
                   )}
                   {page < totalPages && (
                     <a
-                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.details ? `&details=${params.details}` : ""}${params.user ? `&user=${params.user}` : ""}`}
+                      href={`?page=${page + 1}${params.action ? `&action=${params.action}` : ""}${params.target ? `&target=${params.target}` : ""}${params.reason ? `&reason=${params.reason}` : ""}${params.details ? `&details=${params.details}` : ""}${params.user ? `&user=${params.user}` : ""}${params.gameId ? `&gameId=${params.gameId}` : ""}`}
                       className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
                     >
                       Next

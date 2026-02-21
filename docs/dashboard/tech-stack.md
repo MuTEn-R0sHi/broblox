@@ -4,12 +4,14 @@ This page documents technology choices and deployment for the operations dashboa
 
 ## Overview
 
-The dashboard is the control plane for:
+The dashboard is the **multi-game control plane** for:
 
-- **Feature flags** - Per-environment toggles for game features
-- **Audit logging** - Complete history of privileged actions
+- **Game registry** - Register Roblox experiences with per-environment universe IDs and place IDs
+- **Feature flags** - Global and per-game flag toggles across dev / stage / prod environments
+- **Moderation** - Cross-game bans, mutes, evidence, and appeals workflow
+- **Audit logging** - Complete history of privileged actions (with game scope)
 - **Role-based access** - VIEWER, SUPPORT, MODERATOR, ENGINEER, ADMIN roles
-- **Configuration API** - REST endpoint for game servers
+- **Configuration API** - REST endpoint consumed by game servers, scoped by game or universe ID
 
 **Live Dashboard**: https://rbx-dashboard.vercel.app
 
@@ -65,23 +67,50 @@ enum Role {
   ADMIN
 }
 
+model Game {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  description      String?
+  iconUrl          String?
+  // Per-environment Roblox identifiers
+  universeIdDev    BigInt?
+  universeIdStage  BigInt?
+  universeIdProd   BigInt?
+  placeIdDev       BigInt?
+  placeIdStage     BigInt?
+  placeIdProd      BigInt?
+  isActive         Boolean  @default(true)
+  createdById      String
+  createdBy        User     @relation(fields: [createdById], references: [id])
+  flags            FeatureFlag[]
+  bans             Ban[]
+  matches          Match[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
 model FeatureFlag {
   id           String   @id @default(cuid())
-  name         String   @unique
+  key          String
   description  String?
+  gameId       String?  // null = global flag
+  game         Game?    @relation(fields: [gameId], references: [id])
   enabledDev   Boolean  @default(false)
   enabledStage Boolean  @default(false)
   enabledProd  Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  @@unique([key, gameId]) // global flags: (key, null); game flags: (key, gameId)
 }
 
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  action    String   // e.g., "flag.toggle.prod", "flag.create"
-  target    String?  // e.g., flag name
+  gameId    String?  // null = platform-level action, set = game-scoped action
+  action    String   // e.g., "flag.toggle.prod", "game.create"
+  target    String?  // e.g., flag key, game slug
   before    Json?    // previous state
   after     Json?    // new state
   reason    String?
@@ -118,14 +147,29 @@ model AuditLog {
 
 ### GET /api/flags/:environment
 
-Fetch feature flags for a specific environment.
+Fetch feature flags for a specific environment. Optionally scope to a registered game.
+Global flags are always included; game-specific flags shadow global flags on key conflict.
 
-**Request:**
+**Request (global flags):**
 
 ```http
 GET /api/flags/prod HTTP/1.1
 Host: rbx-dashboard.vercel.app
 x-api-key: optional-api-key
+```
+
+**Request (game-scoped flags by universe ID):**
+
+```http
+GET /api/flags/prod?universeId=123456789 HTTP/1.1
+Host: rbx-dashboard.vercel.app
+x-api-key: optional-api-key
+```
+
+**Request (game-scoped flags by dashboard game ID):**
+
+```http
+GET /api/flags/prod?gameId=cld123abc HTTP/1.1
 ```
 
 **Response:**
@@ -144,12 +188,17 @@ x-api-key: optional-api-key
 
 ### Roblox Integration Example
 
+Pass your universe ID to get game-scoped flags merged with globals:
+
 ```lua
 local HttpService = game:GetService("HttpService")
 
 local function fetchFlags(environment: string)
+    local universeId = game.GameId -- Roblox universe ID
     local response = HttpService:RequestAsync({
-        Url = "https://rbx-dashboard.vercel.app/api/flags/" .. environment,
+        Url = "https://rbx-dashboard.vercel.app/api/flags/"
+              .. environment
+              .. "?universeId=" .. tostring(universeId),
         Method = "GET",
         Headers = {
             ["x-api-key"] = "your-api-key" -- optional
@@ -214,4 +263,4 @@ end
 - [ ] Scheduled flag changes
 - [ ] Flag targeting (% rollout, user segments)
 - [ ] Webhook notifications for changes
-- [ ] Multi-game support
+- [ ] Game-scoped filter UI for matches, audit, and moderation pages
