@@ -11,9 +11,9 @@ import { RevokeMuteButton } from "./revoke-button";
 
 type MuteStatus = "ACTIVE" | "EXPIRED" | "INACTIVE";
 
-function getMuteStatus(mute: { isActive: boolean; expiresAt: Date }): MuteStatus {
+function getMuteStatus(mute: { isActive: boolean; expiresAt: Date | null }): MuteStatus {
   if (!mute.isActive) return "INACTIVE";
-  if (mute.expiresAt <= new Date()) return "EXPIRED";
+  if (mute.expiresAt !== null && mute.expiresAt <= new Date()) return "EXPIRED";
   return "ACTIVE";
 }
 
@@ -58,7 +58,7 @@ export default async function MuteDetailPage({
   }
 
   const status = getMuteStatus({ isActive: mute.isActive, expiresAt: mute.expiresAt });
-  const isExpired = mute.expiresAt <= new Date();
+  const isExpired = mute.expiresAt !== null && mute.expiresAt <= new Date();
 
   return (
     <div className="space-y-8">
@@ -116,7 +116,11 @@ export default async function MuteDetailPage({
             <div>
               <label className="text-sm font-medium text-muted-foreground">Expires</label>
               <p>
-                {format(mute.expiresAt, "PPP 'at' p")}
+                {mute.expiresAt ? (
+                  format(mute.expiresAt, "PPP 'at' p")
+                ) : (
+                  <span className="text-yellow-400">Permanent</span>
+                )}
                 {isExpired && <span className="text-muted-foreground ml-2">(Expired)</span>}
               </p>
             </div>

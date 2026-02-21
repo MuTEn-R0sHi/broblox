@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Trophy,
+  Gamepad2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
@@ -24,6 +25,7 @@ const navigation: Array<{
   permission: Permission;
 }> = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
+  { name: "Games", href: "/dashboard/games", icon: Gamepad2, permission: "games:view" },
   { name: "Matches", href: "/dashboard/matches", icon: Trophy, permission: "view:matches" },
   { name: "Feature Flags", href: "/dashboard/flags", icon: Flag, permission: "view:flags" },
   { name: "Players", href: "/dashboard/players", icon: Users, permission: "view:players" },

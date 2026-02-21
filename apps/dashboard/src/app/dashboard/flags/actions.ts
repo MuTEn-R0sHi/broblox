@@ -15,6 +15,8 @@ export type FeatureFlag = {
   key: string;
   name: string;
   description: string | null;
+  /** null = global flag; non-null = scoped to a specific game */
+  gameId: string | null;
   enabledDev: boolean;
   enabledStage: boolean;
   enabledProd: boolean;
@@ -31,16 +33,22 @@ export type FeatureFlag = {
   updatedAt: Date;
 };
 
-export async function getFlags(): Promise<FeatureFlag[]> {
+export async function getFlags(opts?: { gameId?: string | null }): Promise<FeatureFlag[]> {
   const auth = await checkPermission("view:flags");
   if (!auth) throw new Error("Unauthorized");
 
+  // When a gameId is provided, return that game's flags + global flags.
+  // When null/undefined, return all flags (legacy / platform-wide view).
+  const where = opts?.gameId != null ? { OR: [{ gameId: opts.gameId }, { gameId: null }] } : {};
+
   const flags = await prisma.featureFlag.findMany({
-    orderBy: { name: "asc" },
+    where,
+    orderBy: [{ gameId: "asc" }, { name: "asc" }],
   });
 
   return flags.map((f) => ({
     ...f,
+    gameId: f.gameId,
     segments: f.segments as string[] | null,
   }));
 }
@@ -48,8 +56,29 @@ export async function getFlags(): Promise<FeatureFlag[]> {
 async function bestEffortSyncFlagsToRoblox(opts: {
   userId: string;
   environments: Array<"dev" | "stage" | "prod">;
+  /** When provided, only syncs flags for this game (game-scoped + global). */
+  gameId?: string | null;
 }): Promise<void> {
+  // Resolve the game's per-environment universeIds for bridge routing
+  let universeIds: Partial<Record<"dev" | "stage" | "prod", number>> | undefined;
+  if (opts.gameId) {
+    const game = await prisma.game.findUnique({
+      where: { id: opts.gameId },
+      select: { universeIdDev: true, universeIdStage: true, universeIdProd: true },
+    });
+    if (game) {
+      universeIds = {};
+      if (game.universeIdDev) universeIds.dev = Number(game.universeIdDev);
+      if (game.universeIdStage) universeIds.stage = Number(game.universeIdStage);
+      if (game.universeIdProd) universeIds.prod = Number(game.universeIdProd);
+    }
+  }
+
+  // Fetch flags in scope: game-specific + global
+  const where = opts.gameId != null ? { OR: [{ gameId: opts.gameId }, { gameId: null }] } : {};
+
   const flags = await prisma.featureFlag.findMany({
+    where,
     select: {
       key: true,
       enabledDev: true,
@@ -64,6 +93,7 @@ async function bestEffortSyncFlagsToRoblox(opts: {
   const result = await bridgeSyncFeatureFlagsToRoblox({
     environments: opts.environments,
     flags: flags as DashboardFeatureFlagRecord[],
+    universeIds,
   });
 
   const envLabel: "dev" | "stage" | "prod" | "all" =
@@ -76,6 +106,8 @@ export async function createFlag(data: {
   key: string;
   name: string;
   description?: string;
+  /** Scope flag to a specific game. Omit for a global (platform-wide) flag. */
+  gameId?: string | null;
 }): Promise<FeatureFlag> {
   const auth = await checkPermission("flags:create");
   if (!auth) throw new Error("Unauthorized");
@@ -92,6 +124,7 @@ export async function createFlag(data: {
       key: data.key,
       name: data.name,
       description: data.description || null,
+      gameId: data.gameId ?? null,
     },
   });
 
@@ -100,6 +133,7 @@ export async function createFlag(data: {
   await bestEffortSyncFlagsToRoblox({
     userId: auth.user.id,
     environments: ["dev", "stage", "prod"],
+    gameId: data.gameId ?? null,
   });
 
   revalidatePath("/dashboard/flags");

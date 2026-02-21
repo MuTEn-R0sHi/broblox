@@ -77,6 +77,8 @@ export async function bridgeCreateBanToRoblox(opts: {
   expiresAt?: Date | null;
   moderatorId: string;
   createdAt: Date;
+  /** Route to a specific game's universe instead of the global fallback. */
+  universeId?: number;
 }): Promise<BanBridgeResult> {
   const cfg = getOpenCloudModerationBridgeConfig();
   if (!cfg.enabled) {
@@ -106,6 +108,7 @@ export async function bridgeCreateBanToRoblox(opts: {
     };
 
     await updateStandardDataStoreEntry<BanRecord[], BanRecord[]>({
+      universeIdOverride: opts.universeId,
       datastore: {
         datastoreName: `${cfg.datastoreName}_Bans`,
         scope: cfg.scope,
@@ -120,6 +123,7 @@ export async function bridgeCreateBanToRoblox(opts: {
 
     // Publish cross-server invalidation/event (Open Cloud requires a string payload).
     await publishMessagingService({
+      universeIdOverride: opts.universeId,
       topic: cfg.banTopic,
       message: JSON.stringify(record),
     });
@@ -136,6 +140,8 @@ export async function bridgeRevokeBanToRoblox(opts: {
   revokedById: string;
   revokeReason: string;
   revokedAt: Date;
+  /** Route to a specific game's universe instead of the global fallback. */
+  universeId?: number;
 }): Promise<BanBridgeResult> {
   const cfg = getOpenCloudModerationBridgeConfig();
   if (!cfg.enabled) {
@@ -154,6 +160,7 @@ export async function bridgeRevokeBanToRoblox(opts: {
     let updatedRecord: BanRecord | undefined;
 
     await updateStandardDataStoreEntry<BanRecord[], BanRecord[]>({
+      universeIdOverride: opts.universeId,
       datastore: {
         datastoreName: `${cfg.datastoreName}_Bans`,
         scope: cfg.scope,
@@ -199,6 +206,7 @@ export async function bridgeRevokeBanToRoblox(opts: {
       } as BanRecord);
 
     await publishMessagingService({
+      universeIdOverride: opts.universeId,
       topic: cfg.banTopic,
       message: JSON.stringify(publishRecord),
     });
@@ -215,9 +223,12 @@ export async function bridgeCreateMuteToRoblox(opts: {
   type: "CHAT" | "VOICE" | "ALL";
   reason: string;
   durationMinutes: number;
-  expiresAt: Date;
+  /** Null means the mute is permanent (no expiry). */
+  expiresAt?: Date | null;
   moderatorId: string;
   createdAt: Date;
+  /** Route to a specific game's universe instead of the global fallback. */
+  universeId?: number;
 }): Promise<MuteBridgeResult> {
   const cfg = getOpenCloudModerationBridgeConfig();
   if (!cfg.enabled) {
@@ -239,12 +250,13 @@ export async function bridgeCreateMuteToRoblox(opts: {
       isActive: true,
       reason: sanitizeText(opts.reason, 500) ?? "(no reason)",
       durationMinutes: opts.durationMinutes,
-      expiresAt: Math.floor(opts.expiresAt.getTime() / 1000),
+      expiresAt: opts.expiresAt ? Math.floor(opts.expiresAt.getTime() / 1000) : 0,
       moderatorId: opts.moderatorId,
       createdAt: nowUnix,
     };
 
     await updateStandardDataStoreEntry<MuteRecord[], MuteRecord[]>({
+      universeIdOverride: opts.universeId,
       datastore: {
         datastoreName: `${cfg.datastoreName}_Mutes`,
         scope: cfg.scope,
@@ -258,6 +270,7 @@ export async function bridgeCreateMuteToRoblox(opts: {
     });
 
     await publishMessagingService({
+      universeIdOverride: opts.universeId,
       topic: cfg.muteTopic,
       message: JSON.stringify(record),
     });
@@ -273,6 +286,8 @@ export async function bridgeRevokeMuteToRoblox(opts: {
   playerId: bigint;
   revokedById: string;
   revokedAt: Date;
+  /** Route to a specific game's universe instead of the global fallback. */
+  universeId?: number;
 }): Promise<MuteBridgeResult> {
   const cfg = getOpenCloudModerationBridgeConfig();
   if (!cfg.enabled) {
@@ -290,6 +305,7 @@ export async function bridgeRevokeMuteToRoblox(opts: {
     let updatedRecord: MuteRecord | undefined;
 
     await updateStandardDataStoreEntry<MuteRecord[], MuteRecord[]>({
+      universeIdOverride: opts.universeId,
       datastore: {
         datastoreName: `${cfg.datastoreName}_Mutes`,
         scope: cfg.scope,
@@ -323,6 +339,7 @@ export async function bridgeRevokeMuteToRoblox(opts: {
       } satisfies MuteRecord);
 
     await publishMessagingService({
+      universeIdOverride: opts.universeId,
       topic: cfg.muteTopic,
       message: JSON.stringify(publishRecord),
     });
