@@ -172,6 +172,18 @@
               "out": {
                 "$path": "node_modules/@rbx/world-systems/out"
               }
+            },
+            "security": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/security/out"
+              }
+            },
+            "events": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/events/out"
+              }
             }
           }
         }
