@@ -39,7 +39,7 @@ const handle = createAnalyticsService({
     },
     {
       name: "action.kill",
-      category: "action",
+      category: "combat",
       description: "Player confirmed a kill",
     },
   ],
