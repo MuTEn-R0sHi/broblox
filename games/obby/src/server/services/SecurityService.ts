@@ -15,11 +15,11 @@ import { PlayerLifecycleService } from "./PlayerLifecycleService";
 const handle = createSecurityService({
   onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
   enforcementConfig: {
-    onBan: (player, type, reason, durationHours) => {
+    onBan: (player, banType, reason, durationHours) => {
       getModeration("ObbyModeration").ban({
         playerId: player.UserId,
         playerName: player.Name,
-        type,
+        type: banType,
         reason,
         durationHours,
         moderatorId: "system:security",
