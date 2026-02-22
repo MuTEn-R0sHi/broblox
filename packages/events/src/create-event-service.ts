@@ -10,7 +10,7 @@
  *   - Player lifecycle hooks (reserved; future per-player event state)
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger, arraySize } from "@rbx/core";
 import { isFlagEnabled } from "@rbx/config-featureflags";
 import { EventDefinition, EventStartCallback, EventEndCallback } from "./types";
 import { EventScheduler } from "./event-scheduler";
@@ -125,15 +125,15 @@ export function createEventService(config: EventServiceConfig): EventServiceHand
           logger.debug(`Player ${player.UserId} removed — no per-player event state to clean.`);
         });
 
-        logger.info(`EventService initialized — ${config.events.length} event(s) scheduled.`);
+        logger.info(`EventService initialized — ${arraySize(config.events)} event(s) scheduled.`);
       },
 
       onStart() {
         // Notify caller when a player joins during an active event.
         config.onPlayerAdded?.((player) => {
           const active = scheduler.getActiveEvents(os.time());
-          if (active.length > 0) {
-            logger.debug(`Player ${player.UserId} joined — ${active.length} event(s) active.`);
+          if (arraySize(active) > 0) {
+            logger.debug(`Player ${player.UserId} joined — ${arraySize(active)} event(s) active.`);
           }
         });
 
