@@ -75,12 +75,14 @@ nav:
       - Tech stack: dashboard/tech-stack.md
   - Modules:
       - Template: modules/module-template.md
+      - Analytics: modules/analytics.md
       - Audio: modules/audio.md
       - Battle pass: modules/battle-pass.md
       - Core: modules/core.md
       - Cosmetics: modules/cosmetics.md
       - Daily rewards: modules/daily-rewards.md
       - Data: modules/data.md
+      - Events: modules/events.md
       - Gacha: modules/gacha.md
       - Localization: modules/localization.md
       - Net: modules/net.md
