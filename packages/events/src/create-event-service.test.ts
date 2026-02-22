@@ -22,6 +22,7 @@ describe("createEventService", () => {
 
     vi.doMock("@rbx/core", () => ({
       createLogger: () => mockLogger,
+      arraySize: (arr: unknown[]) => arr.length,
     }));
 
     vi.doMock("@rbx/config-featureflags", () => ({

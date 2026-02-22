@@ -347,9 +347,9 @@ export const CheckpointService: Service & {
       lastRespawnRequest.delete(player.UserId);
       lastCheckpointTouch.delete(player.UserId);
       // Remove player from all coin collection sets
-      for (const [, collected] of collectedCoins) {
+      collectedCoins.forEach((collected) => {
         collected.delete(player.UserId);
-      }
+      });
     });
 
     // Helper to setup kill zone

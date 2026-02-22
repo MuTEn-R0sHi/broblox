@@ -15,6 +15,7 @@
   "dependencies": {
     "@rbx/config-featureflags": "workspace:*",
     "@rbx/analytics": "workspace:*",
+    "@rbx/events": "workspace:*",
     "@rbx/codes": "workspace:*",
     "@rbx/constants": "workspace:*",
     "@rbx/leaderboards": "workspace:*",

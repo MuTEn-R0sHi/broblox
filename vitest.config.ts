@@ -25,6 +25,7 @@ export default defineConfig({
       "@rbx/codes": resolve(__dirname, "packages/codes/src/index.ts"),
       "@rbx/leaderboards": resolve(__dirname, "packages/leaderboards/src/index.ts"),
       "@rbx/analytics": resolve(__dirname, "packages/analytics/src/index.ts"),
+      "@rbx/events": resolve(__dirname, "packages/events/src/index.ts"),
       "@rbx/notifications": resolve(__dirname, "packages/notifications/src/index.ts"),
       "@rbx/inventory": resolve(__dirname, "packages/inventory/src/index.ts"),
       "@rbx/progression": resolve(__dirname, "packages/progression/src/index.ts"),

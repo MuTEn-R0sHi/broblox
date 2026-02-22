@@ -274,9 +274,9 @@ export const StageService: Service & {
 
     // Clean up per-player cooldown entries when a player leaves
     PlayerLifecycleService.onPlayerRemoving((player) => {
-      for (const [stageNumber] of stages) {
+      stages.forEach((_, stageNumber) => {
         lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
-      }
+      });
     });
 
     // Helper to setup end zone touch detection
