@@ -66,3 +66,19 @@ export function setSize<T>(s: Set<T>): number {
   });
   return count;
 }
+
+// ============================================================================
+// Map Helpers
+// ============================================================================
+
+/**
+ * Get Map size in a roblox-ts compatible way.
+ * In compiled Luau, `map.size()` is not directly available; iterate instead.
+ */
+export function mapSize<K, V>(m: ReadonlyMap<K, V>): number {
+  let count = 0;
+  m.forEach(() => {
+    count++;
+  });
+  return count;
+}

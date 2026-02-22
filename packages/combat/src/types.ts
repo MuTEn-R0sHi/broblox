@@ -138,6 +138,43 @@ export interface HitValidationConfig {
  */
 export type PositionProvider = (playerId: PlayerId) => Vector3Like | undefined;
 
+/**
+ * Raycast provider for obstruction checking.
+ *
+ * Abstracts `Workspace:Raycast` so hit-validation logic stays testable outside
+ * the Roblox runtime.  Injected via `setRaycastProvider`.
+ *
+ * @param origin    - Ray start point.
+ * @param direction - Normalised ray direction.
+ * @param magnitude - Distance to cast (metres).
+ * @returns `true` when the ray hits a solid obstruction before reaching the
+ *   target (i.e. the path is blocked); `false` when line-of-sight is clear.
+ *
+ * @example
+ * ```ts
+ * // Roblox runtime implementation
+ * import { setRaycastProvider } from "@rbx/combat";
+ * import { Workspace } from "@rbxts/services";
+ *
+ * const params = new RaycastParams();
+ * params.FilterType = Enum.RaycastFilterType.Exclude;
+ *
+ * setRaycastProvider((origin, direction, magnitude) => {
+ *   const result = Workspace.Raycast(
+ *     new Vector3(origin.X, origin.Y, origin.Z),
+ *     new Vector3(direction.X, direction.Y, direction.Z).mul(magnitude),
+ *     params,
+ *   );
+ *   return result !== undefined;
+ * });
+ * ```
+ */
+export type RaycastProvider = (
+  origin: Vector3Like,
+  direction: Vector3Like,
+  magnitude: number
+) => boolean;
+
 // ============================================================================
 // Events
 // ============================================================================

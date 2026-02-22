@@ -7,6 +7,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 describe("createSecurityService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
   let mockEnforcer: Record<string, ReturnType<typeof vi.fn>>;
+  let mockCleanupEnforcementState: ReturnType<typeof vi.fn>;
+  let mockCleanupPlayer: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -19,6 +21,9 @@ describe("createSecurityService", () => {
       handleViolation: vi.fn(),
     };
 
+    mockCleanupEnforcementState = vi.fn();
+    mockCleanupPlayer = vi.fn();
+
     vi.doMock("@rbx/core", () => ({
       createLogger: () => mockLogger,
     }));
@@ -26,6 +31,10 @@ describe("createSecurityService", () => {
       Enforcer: function () {
         return mockEnforcer;
       },
+      cleanupEnforcementState: mockCleanupEnforcementState,
+    }));
+    vi.doMock("./detectors", () => ({
+      cleanupPlayer: mockCleanupPlayer,
     }));
   });
 
@@ -73,6 +82,32 @@ describe("createSecurityService", () => {
   it("works with default config", async () => {
     const handle = await createService();
     expect(handle.Service.name).toBe("SecurityService");
+  });
+
+  it("calls onPlayerRemoving with a cleanup callback on init", async () => {
+    let registeredCallback: ((player: unknown) => void) | undefined;
+    const onPlayerRemoving = vi.fn((cb: (player: unknown) => void) => {
+      registeredCallback = cb;
+    });
+
+    const handle = await createService({ onPlayerRemoving } as never);
+    handle.Service.onInit!();
+
+    expect(onPlayerRemoving).toHaveBeenCalled();
+    expect(registeredCallback).toBeDefined();
+
+    const fakePlayer = { UserId: 42, Name: "TestPlayer" };
+    registeredCallback!(fakePlayer);
+
+    expect(mockCleanupEnforcementState).toHaveBeenCalledWith(fakePlayer);
+    expect(mockCleanupPlayer).toHaveBeenCalledWith(fakePlayer);
+  });
+
+  it("skips cleanup registration when onPlayerRemoving not provided", async () => {
+    const handle = await createService();
+    // Should not throw
+    handle.Service.onInit!();
+    expect(mockCleanupEnforcementState).not.toHaveBeenCalled();
   });
 
   it("each factory call creates independent services", async () => {

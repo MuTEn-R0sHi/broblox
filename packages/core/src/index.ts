@@ -11,7 +11,7 @@ export * from "./application";
 export * from "./create-player-lifecycle-service";
 
 // Roblox-TS compatible collection helpers
-export { arraySize, arrayRemoveAt, arrayTake, setSize } from "./collections";
+export { arraySize, arrayRemoveAt, arrayTake, setSize, mapSize } from "./collections";
 
 export enum LogLevel {
   Debug = 0,

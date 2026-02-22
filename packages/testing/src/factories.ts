@@ -162,9 +162,9 @@ export interface HandshakePayload {
 }
 
 export interface HandshakeResponse {
-  serverVersion: number;
+  serverProtocolVersion: number;
   serverTime: number;
-  minProtocolVersion?: number;
+  sessionId: string;
 }
 
 /**
@@ -195,8 +195,9 @@ export function createHandshakePayload(overrides?: Partial<HandshakePayload>): H
  */
 export function createHandshakeResponse(overrides?: Partial<HandshakeResponse>): HandshakeResponse {
   return {
-    serverVersion: PROTOCOL_VERSION,
+    serverProtocolVersion: PROTOCOL_VERSION,
     serverTime: Math.floor(Date.now() / 1000),
+    sessionId: `test-session-${Date.now()}`,
     ...overrides,
   };
 }

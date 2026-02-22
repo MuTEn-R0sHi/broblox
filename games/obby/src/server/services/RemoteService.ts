@@ -7,6 +7,7 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { createServerRegistry, ServerRemoteRegistry } from "@rbx/net";
+import { reportViolation } from "@rbx/security";
 import { ObbyRemotes, ObbyRemotesType } from "shared/remotes";
 
 const logger = createLogger("RemoteService");
@@ -27,7 +28,16 @@ export const RemoteService: Service & {
 
   onInit() {
     logger.debug("Initializing remotes...");
-    registry = createServerRegistry(ObbyRemotes, "ObbyRemotes");
+    registry = createServerRegistry(ObbyRemotes, {
+      folderName: "ObbyRemotes",
+      onRateLimited: (player, endpoint, retryAfterMs) => {
+        logger.warn(`Rate-limited: ${player.Name} on '${endpoint}' (retry in ${retryAfterMs}ms)`);
+        reportViolation(player, "rate-abuse", "medium", `Rate-limited on remote '${endpoint}'`, {
+          endpoint,
+          retryAfterMs,
+        });
+      },
+    });
     registry.initialize();
     logger.debug("Remotes initialized");
   },

@@ -6,6 +6,7 @@
  */
 
 import { createInventoryService } from "@rbx/inventory";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createInventoryService({
   items: [
@@ -58,6 +59,8 @@ const handle = createInventoryService({
   datastoreName: "ObbyInventory",
   defaultMaxSlots: 50,
   maxTotalItems: 200,
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 
 export const InventoryService = handle.Service;

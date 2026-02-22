@@ -13,6 +13,25 @@ Notes:
 
 ### Added
 
+- **Game service wiring & test coverage (notification callbacks, event remotes, analytics)**
+  - Added `onQuestCompleted` callback to `createQuestService` config; wired in both games to fire typed (obby) or generic Notification (starter) client events.
+  - Added `onAchievementCompleted` and `onDailyRewardClaimed` callbacks to `createRewardsService` config; wired in both games.
+  - **Obby typed remotes** — `LevelUp`, `PrestigeUnlocked`, `QuestCompleted`, `AchievementCompleted`, `DailyRewardClaimed` added to `ObbyRemotes`.
+  - **Event broadcast remotes** — `EventStarted` / `EventEnded` (typed `EventActivePayload`) added to both `GameRemotes` (starter) and `ObbyRemotes`, with `fireAllClients` wiring in both games' `EventService`; removes the long-standing TODO comment.
+  - **Stage achievements** — `StageService.completeStage` now increments `ach_first_stage`, `ach_stages_25`, `ach_stages_100` progress on every completion.
+  - **Level achievements** — Obby `ProgressionService.onLevelUp` sets `ach_level_25`; starter sets `ach_level_10` and `ach_level_50`.
+  - **Kill routing** — Starter `ActionService` routes `actionId === "kill"` to quest `incrementObjective("kill")`, achievement `incrementProgress` for `ach_first_kill` / `ach_kill_100`, and analytics `track("action.kill")`.
+  - `action.kill` event definition added to starter `AnalyticsService`.
+  - `player.level_up` analytics event now fired from starter `ProgressionService.onLevelUp`.
+  - Removed dead `initPlayerProgression` / `initPlayerQuests` / `initPlayerRewards` functions and unused loggers from both games.
+- **New test files (103 suites / 2,266 tests, up from 101 / 2,253)**
+  - `games/obby/src/server/services/AnalyticsService.test.ts` (14 tests) — datastoreName, event defs, funnel defs, lifecycle wiring.
+  - `games/obby/src/server/services/EventService.test.ts` (9 tests) — `EventStarted` / `EventEnded` broadcast, no-modifier path, lifecycle wiring.
+  - `games/starter/src/server/services/AnalyticsService.test.ts` (15 tests) — datastoreName, all 7 event defs incl. `action.kill`, funnel, lifecycle.
+  - `games/starter/src/server/services/EventService.test.ts` (9 tests) — same broadcast coverage.
+  - `games/starter/src/server/services/ActionService.test.ts` (9 tests) — kill quest/achievement/analytics routing, graceful undefined stores, validation-fail short-circuit.
+  - Updated `games/starter/src/server/services/ProgressionService.test.ts` — added `player.level_up` analytics assertion and `./AnalyticsService` mock.
+
 - **Defensive Guards (Deep Review Rounds 1–15)** — Systematic hardening across all packages:
   - `@rbx/progression` — NaN/Infinity XP guard, corrupt data clamping in `load()`.
   - `@rbx/pets` — Negative XP guard, nickname length validation, `equippedCount` cleanup.

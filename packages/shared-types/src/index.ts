@@ -74,9 +74,9 @@ export interface HandshakePayload {
 }
 
 export interface HandshakeResponse {
-  serverVersion: number;
+  serverProtocolVersion: number;
   serverTime: number;
-  minProtocolVersion?: number;
+  sessionId: string;
 }
 
 // ============================================================================

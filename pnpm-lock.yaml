@@ -198,6 +198,9 @@ importers:
       "@rbx/rewards":
         specifier: workspace:*
         version: link:../../packages/rewards
+      "@rbx/security":
+        specifier: workspace:*
+        version: link:../../packages/security
       "@rbx/tutorial":
         specifier: workspace:*
         version: link:../../packages/tutorial
@@ -286,6 +289,9 @@ importers:
       "@rbx/rewards":
         specifier: workspace:*
         version: link:../../packages/rewards
+      "@rbx/security":
+        specifier: workspace:*
+        version: link:../../packages/security
       "@rbx/shared-types":
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -547,6 +553,31 @@ importers:
       "@rbx/testing":
         specifier: workspace:*
         version: link:../testing
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.908
+        version: 1.0.908
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@types/node@25.3.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)
+
+  packages/events:
+    dependencies:
+      "@rbx/config-featureflags":
+        specifier: workspace:*
+        version: link:../config-featureflags
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0

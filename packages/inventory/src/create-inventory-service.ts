@@ -20,6 +20,16 @@ export interface InventoryServiceConfig {
   maxTotalItems?: number;
   /** Extra InventoryStore options. */
   storeOptions?: Partial<InventoryConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface InventoryServiceHandle {
@@ -35,7 +45,7 @@ export function createInventoryService(config: InventoryServiceConfig): Inventor
   const itemRegistry = new ItemRegistry();
   const playerInventories = new Map<number, InventoryStore>();
 
-  return {
+  const handle: InventoryServiceHandle = {
     Service: {
       name: "InventoryService",
 
@@ -44,10 +54,18 @@ export function createInventoryService(config: InventoryServiceConfig): Inventor
           itemRegistry.register(item);
         }
         logger.info(`Item registry initialized — ${itemRegistry.count()} items.`);
+        config.onPlayerRemoving?.((player) => {
+          const store = playerInventories.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerInventories.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("InventoryService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -92,4 +110,5 @@ export function createInventoryService(config: InventoryServiceConfig): Inventor
       playerInventories.delete(playerId);
     },
   };
+  return handle;
 }

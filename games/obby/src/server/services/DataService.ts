@@ -1,10 +1,14 @@
 /**
  * Data Service
  * Handles player data persistence.
+ *
+ * Uses the @rbx/data createDataService factory for the core session/store
+ * lifecycle (auto-save, retry, session locking, graceful shutdown).
+ * Game-specific mutations and timers are layered on top via the factory handle.
  */
 
 import { Service, createLogger } from "@rbx/core";
-import { createPlayerDataStore, createSessionManager, PlayerSession } from "@rbx/data";
+import { createDataService } from "@rbx/data";
 import { ObbyPlayerData, StageProgress } from "shared/types";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
@@ -28,20 +32,27 @@ const DEFAULT_PLAYER_DATA: ObbyPlayerData = {
   lastPlayedAt: 0,
 };
 
-const store = createPlayerDataStore<ObbyPlayerData>({
-  name: "obby_player_data",
-  version: STORE_VERSION,
-  defaultData: () => ({
-    ...DEFAULT_PLAYER_DATA,
-    lastPlayedAt: os.time(),
-  }),
-});
+// ── Factory handle ────────────────────────────────────────────────────────────
+// createDataService wraps PlayerDataStore + SessionManager and wires
+// auto-save, retry, and graceful shutdown automatically.
 
-const sessions = createSessionManager(store, 60);
+const dataHandle = createDataService<ObbyPlayerData>({
+  storeConfig: {
+    name: "obby_player_data",
+    version: STORE_VERSION,
+    defaultData: () => ({
+      ...DEFAULT_PLAYER_DATA,
+      lastPlayedAt: os.time(),
+    }),
+  },
+  autoSaveIntervalSec: 60,
+});
 
 // Runtime-only timing (not persisted)
 const stageStartClock = new Map<number, number>();
 const runStartClock = new Map<number, number>();
+
+// ── Public API ────────────────────────────────────────────────────────────────
 
 export const DataService: Service & {
   getData(player: Player): ObbyPlayerData | undefined;
@@ -55,7 +66,7 @@ export const DataService: Service & {
   incrementDeaths(player: Player): void;
 } = {
   getData(player: Player): ObbyPlayerData | undefined {
-    return sessions.getSession(player)?.data;
+    return dataHandle.getSessionManager().getSession(player)?.data;
   },
 
   startStageTimer(player: Player): void {
@@ -79,7 +90,7 @@ export const DataService: Service & {
   },
 
   updateData(player: Player, updates: Partial<ObbyPlayerData>): void {
-    const session = sessions.getSession(player);
+    const session = dataHandle.getSessionManager().getSession(player);
     if (!session) {
       logger.warn(`No session found for player ${player.UserId}`);
       return;
@@ -99,11 +110,11 @@ export const DataService: Service & {
       (data as { __version: number }).__version = updates.__version;
 
     session.markDirty();
-    store.markDirty(player);
+    dataHandle.getStore().markDirty(player);
   },
 
   updateStageProgress(player: Player, stageNumber: number, progress: Partial<StageProgress>): void {
-    const session = sessions.getSession(player);
+    const session = dataHandle.getSessionManager().getSession(player);
     if (!session) return;
 
     const data = session.data;
@@ -129,75 +140,77 @@ export const DataService: Service & {
     }
 
     session.markDirty();
-    store.markDirty(player);
+    dataHandle.getStore().markDirty(player);
   },
 
   addCoins(player: Player, amount: number): void {
-    const session = sessions.getSession(player);
+    const session = dataHandle.getSessionManager().getSession(player);
     if (!session) return;
 
     const data = session.data;
 
     data.coins += amount;
     session.markDirty();
-    store.markDirty(player);
+    dataHandle.getStore().markDirty(player);
 
     logger.debug(`Player ${player.Name} earned ${amount} coins (total: ${data.coins})`);
   },
 
   incrementDeaths(player: Player): void {
-    const session = sessions.getSession(player);
+    const session = dataHandle.getSessionManager().getSession(player);
     if (!session) return;
 
     const data = session.data;
 
     data.totalDeaths++;
     session.markDirty();
-    store.markDirty(player);
+    dataHandle.getStore().markDirty(player);
   },
 
   onInit() {
     logger.debug("Initializing data service...");
 
-    PlayerLifecycleService.onPlayerAdded((player) => {
-      logger.info(`Starting data session for player ${player.Name}...`);
+    // Boot the factory's internal state (store + session manager).
+    dataHandle.Service.onInit?.();
 
-      const session = sessions.startSession(player);
+    PlayerLifecycleService.onPlayerAdded((player) => {
+      // Factory handles startSession + logging.
+      dataHandle.initPlayer(player);
+
+      const session = dataHandle.getSessionManager().getSession(player);
       if (!session) {
         logger.warn(`Failed to start session for ${player.Name}`);
         return;
       }
 
-      // Mark activity and ensure the value is persisted.
+      // Obby-specific init: stamp activity time and start timers.
       session.data.lastPlayedAt = os.time();
       session.markDirty();
-      store.markDirty(player);
+      dataHandle.getStore().markDirty(player);
 
-      // Initialize timers for stage/run tracking.
-      this.startRunTimer(player);
-      this.startStageTimer(player);
+      DataService.startRunTimer(player);
+      DataService.startStageTimer(player);
 
-      // Initial client sync for HUD/state.
+      // Initial HUD sync.
       RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
         coins: session.data.coins,
         currentStage: session.data.currentStage,
         currentCheckpoint: session.data.currentCheckpoint,
       });
-
-      logger.info(`Session started for player ${player.Name}`);
     });
 
     PlayerLifecycleService.onPlayerRemoving((player) => {
       logger.info(`Ending data session for player ${player.Name}...`);
 
-      const session = sessions.getSession(player) as PlayerSession<ObbyPlayerData> | undefined;
+      const session = dataHandle.getSessionManager().getSession(player);
       if (session) {
         session.data.lastPlayedAt = os.time();
         session.markDirty();
-        store.markDirty(player);
+        dataHandle.getStore().markDirty(player);
       }
 
-      sessions.endSession(player);
+      // Factory handles endSession + final-save + logging.
+      dataHandle.cleanupPlayer(player);
 
       stageStartClock.delete(player.UserId);
       runStartClock.delete(player.UserId);
@@ -205,11 +218,13 @@ export const DataService: Service & {
   },
 
   onStart() {
-    sessions.startAutoSave();
+    // Factory starts the auto-save loop.
+    dataHandle.Service.onStart?.();
   },
 
   onDestroy() {
-    sessions.closeAll();
+    // Factory calls closeAll() — stops auto-save, saves dirty sessions, clears.
+    dataHandle.Service.onDestroy?.();
 
     stageStartClock.clear();
     runStartClock.clear();

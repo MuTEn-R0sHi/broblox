@@ -1,0 +1,31 @@
+{
+  "name": "@rbx/events",
+  "version": "0.1.0",
+  "description": "Scheduled in-game events with modifiers, flag integration, analytics, and notification hooks",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@rbx/core": "workspace:*",
+    "@rbx/config-featureflags": "workspace:*"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.908",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

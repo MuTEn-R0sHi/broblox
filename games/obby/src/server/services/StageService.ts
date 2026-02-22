@@ -6,10 +6,15 @@
 import { Service, createLogger } from "@rbx/core";
 import { CollectionService, Workspace } from "@rbxts/services";
 import { StageConfig, StageCompletedEvent, OBBY_CONSTANTS } from "shared/types";
-import { mapLen } from "shared/util";
+import { mapSize } from "@rbx/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { CheckpointService } from "./CheckpointService";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { getProgression } from "./ProgressionService";
+import { getQuests } from "./QuestService";
+import { getAchievements } from "./RewardsService";
+import { getEventTracker } from "./AnalyticsService";
 
 const logger = createLogger("StageService");
 
@@ -21,6 +26,10 @@ const lastStageCompletion = new Map<string, number>(); // "playerId-stageNumber"
 const STAGE_COMPLETION_COOLDOWN = 2;
 // Longer cooldown after completing entire obby
 const OBBY_COMPLETION_COOLDOWN = 10;
+// XP awarded per stage completion
+const STAGE_XP_REWARD = 100;
+// Achievement IDs that track cumulative stage completions
+const STAGE_ACHIEVEMENT_IDS = ["ach_first_stage", "ach_stages_25", "ach_stages_100"];
 
 // Helper to get completion key
 function getCompletionKey(playerId: number, stageNumber: number): string {
@@ -46,7 +55,7 @@ export const StageService: Service & {
   },
 
   getStageCount(): number {
-    return mapLen(stages);
+    return mapSize(stages);
   },
 
   completeStage(player: Player, stageNumber: number): void {
@@ -103,6 +112,32 @@ export const StageService: Service & {
 
     // Award coins
     DataService.addCoins(player, stage.coinReward);
+
+    // Award XP via the progression system
+    const progressionStore = getProgression(player.UserId);
+    if (progressionStore !== undefined) {
+      progressionStore.addXp(STAGE_XP_REWARD);
+    }
+
+    // Advance stage-completion quest objectives
+    const questStore = getQuests(player.UserId);
+    if (questStore !== undefined) {
+      questStore.incrementObjective("stage_complete", 1);
+    }
+
+    // Advance achievement progress for stage-count achievements
+    const achievementStore = getAchievements(player.UserId);
+    if (achievementStore !== undefined) {
+      for (const achId of STAGE_ACHIEVEMENT_IDS) {
+        achievementStore.incrementProgress(achId, 1);
+      }
+    }
+
+    // Emit structured analytics event
+    getEventTracker().track("stage.completed", player.UserId, {
+      stageId: tostring(stageNumber),
+      durationSec: completionTime,
+    });
 
     // Build event payload
     const completedEvent: StageCompletedEvent = {
@@ -235,7 +270,14 @@ export const StageService: Service & {
       }
     }
 
-    logger.info(`Loaded ${mapLen(stages)} stages`);
+    logger.info(`Loaded ${mapSize(stages)} stages`);
+
+    // Clean up per-player cooldown entries when a player leaves
+    PlayerLifecycleService.onPlayerRemoving((player) => {
+      for (const [stageNumber] of stages) {
+        lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
+      }
+    });
 
     // Helper to setup end zone touch detection
     const setupEndZone = (zone: BasePart, stageNum: number) => {
@@ -292,5 +334,6 @@ export const StageService: Service & {
 
   onDestroy() {
     stages.clear();
+    lastStageCompletion.clear();
   },
 };

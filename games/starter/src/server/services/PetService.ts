@@ -5,6 +5,7 @@
  */
 
 import { createPetService } from "@rbx/pets";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createPetService({
   pets: [
@@ -57,6 +58,8 @@ const handle = createPetService({
   ],
   datastoreName: "StarterPets",
   maxEquipped: 3,
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 
 export const PetService = handle.Service;

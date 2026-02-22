@@ -205,6 +205,7 @@ export const LeaderboardService: Service & {
     // Flush player entry on leave
     PlayerLifecycleService.onPlayerRemoving((player) => {
       this.updatePlayerEntry(player);
+      lastRefreshRequestAt.delete(player.UserId);
     });
 
     // Periodic refresh

@@ -6,7 +6,7 @@
 import { Service, createLogger } from "@rbx/core";
 import { CollectionService, Players, Workspace } from "@rbxts/services";
 import { CheckpointData, CheckpointReachedEvent, OBBY_CONSTANTS } from "shared/types";
-import { mapLen, arrLen } from "shared/util";
+import { mapSize, arraySize } from "@rbx/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 
@@ -17,6 +17,7 @@ const checkpoints = new Map<string, CheckpointData>();
 const lastCheckpointTouch = new Map<number, number>();
 const pendingRespawns = new Set<number>(); // Track players who died and need checkpoint respawn
 const lastRespawnRequest = new Map<number, number>();
+const collectedCoins = new Map<string, Set<number>>(); // coinKey -> set of playerIds who collected
 
 // Anti-spam cooldown (seconds)
 const CHECKPOINT_COOLDOWN = 0.5;
@@ -304,7 +305,7 @@ export const CheckpointService: Service & {
       }
     }
 
-    logger.info(`Loaded ${mapLen(checkpoints)} checkpoints`);
+    logger.info(`Loaded ${mapSize(checkpoints)} checkpoints`);
 
     // Handle player respawns - teleport to checkpoint after Roblox spawns them
     const handleCharacterAdded = (player: Player, character: Model) => {
@@ -344,6 +345,11 @@ export const CheckpointService: Service & {
     Players.PlayerRemoving.Connect((player) => {
       pendingRespawns.delete(player.UserId);
       lastRespawnRequest.delete(player.UserId);
+      lastCheckpointTouch.delete(player.UserId);
+      // Remove player from all coin collection sets
+      for (const [, collected] of collectedCoins) {
+        collected.delete(player.UserId);
+      }
     });
 
     // Helper to setup kill zone
@@ -402,7 +408,7 @@ export const CheckpointService: Service & {
     }
 
     logger.info(
-      `Set up ${arrLen(CollectionService.GetTagged(OBBY_CONSTANTS.KILL_ZONE_TAG))} kill zones`
+      `Set up ${arraySize(CollectionService.GetTagged(OBBY_CONSTANTS.KILL_ZONE_TAG) as defined[])} kill zones`
     );
 
     // Setup coin collection
@@ -410,8 +416,7 @@ export const CheckpointService: Service & {
   },
 
   setupCoins(): void {
-    const collectedCoins = new Map<string, Set<number>>(); // coinKey -> set of playerIds who collected
-
+    // collectedCoins is module-level so it can be cleaned in PlayerRemoving
     const setupCoin = (coin: BasePart, value: number) => {
       // Use position as unique identifier since GetDebugId isn't available
       const coinId = `${coin.Name}-${math.floor(coin.Position.X)}-${math.floor(coin.Position.Y)}-${math.floor(coin.Position.Z)}`;
@@ -506,7 +511,7 @@ export const CheckpointService: Service & {
     }
 
     logger.info(
-      `Set up ${arrLen(CollectionService.GetTagged(OBBY_CONSTANTS.COIN_TAG))} coins total`
+      `Set up ${arraySize(CollectionService.GetTagged(OBBY_CONSTANTS.COIN_TAG) as defined[])} coins total`
     );
   },
 
@@ -514,5 +519,7 @@ export const CheckpointService: Service & {
     checkpoints.clear();
     lastCheckpointTouch.clear();
     lastRespawnRequest.clear();
+    pendingRespawns.clear();
+    collectedCoins.clear();
   },
 };

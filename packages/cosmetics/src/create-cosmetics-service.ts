@@ -16,6 +16,16 @@ export interface CosmeticsServiceConfig {
   datastoreName: string;
   /** Extra CosmeticStore options. */
   storeOptions?: Partial<CosmeticsConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface CosmeticsServiceHandle {
@@ -31,7 +41,7 @@ export function createCosmeticsService(config: CosmeticsServiceConfig): Cosmetic
   const cosmeticRegistry = new CosmeticRegistry();
   const playerCosmetics = new Map<number, CosmeticStore>();
 
-  return {
+  const handle: CosmeticsServiceHandle = {
     Service: {
       name: "CosmeticsService",
 
@@ -40,10 +50,18 @@ export function createCosmeticsService(config: CosmeticsServiceConfig): Cosmetic
           cosmeticRegistry.register(cosmetic);
         }
         logger.info(`Cosmetic registry initialized — ${cosmeticRegistry.count()} items.`);
+        config.onPlayerRemoving?.((player) => {
+          const store = playerCosmetics.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerCosmetics.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("CosmeticsService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -86,4 +104,5 @@ export function createCosmeticsService(config: CosmeticsServiceConfig): Cosmetic
       playerCosmetics.delete(playerId);
     },
   };
+  return handle;
 }

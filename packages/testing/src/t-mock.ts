@@ -13,6 +13,13 @@ export const t = {
     },
   string: (v: unknown): boolean => typeof v === "string",
   number: (v: unknown): boolean => typeof v === "number",
+  /** Accepts any value, including nil/undefined. */
+  any: (_v: unknown): boolean => true,
+  /** Accepts undefined/nil or whatever the inner check accepts. */
+  optional:
+    (check: Validator) =>
+    (v: unknown): boolean =>
+      v === undefined || check(v),
   union:
     (...args: Validator[]) =>
     (v: unknown): boolean =>

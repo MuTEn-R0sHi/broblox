@@ -5,7 +5,13 @@
  * Both server and client import from here.
  */
 
-import { defineServerFunction, defineClientEvent } from "@rbx/net";
+import {
+  defineServerFunction,
+  defineClientEvent,
+  validateHandshakePayload,
+  validateDoActionPayload,
+} from "@rbx/net";
+import type { HandshakeResponse } from "@rbx/shared-types";
 
 // ============================================================================
 // Payload Types
@@ -18,12 +24,11 @@ export interface HandshakeRequest {
   deviceClass: "kbm" | "gamepad" | "touch";
 }
 
-/** Handshake response from server */
-export interface HandshakeResponse {
-  serverProtocolVersion: number;
-  serverTime: number;
-  sessionId: string;
-}
+/**
+ * Handshake response from server.
+ * @see @rbx/shared-types HandshakeResponse
+ */
+export type { HandshakeResponse };
 
 /** Action request from client */
 export interface ActionRequest {
@@ -45,6 +50,13 @@ export interface ServerNotification {
   data?: unknown;
 }
 
+/** Payload for a scheduled in-game event becoming active or inactive */
+export interface EventActivePayload {
+  id: string;
+  label: string;
+  modifiers?: Record<string, unknown>;
+}
+
 // ============================================================================
 // Remote Registry
 // ============================================================================
@@ -60,6 +72,7 @@ export const GameRemotes = {
   Handshake: defineServerFunction<HandshakeRequest, HandshakeResponse>("Net_Handshake", {
     rateLimit: { windowMs: 60000, maxRequests: 3 },
     description: "Client-server handshake for session establishment",
+    validate: (v): v is HandshakeRequest => validateHandshakePayload(v).ok,
   }),
 
   /**
@@ -69,6 +82,7 @@ export const GameRemotes = {
   DoAction: defineServerFunction<ActionRequest, ActionResponse>("Intent_DoAction", {
     rateLimit: { windowMs: 1000, maxRequests: 10 },
     description: "Client action intent",
+    validate: (v): v is ActionRequest => validateDoActionPayload(v).ok,
   }),
 
   /**
@@ -76,6 +90,20 @@ export const GameRemotes = {
    */
   Notification: defineClientEvent<ServerNotification>("Server_Notification", {
     description: "Server broadcasts notifications to clients",
+  }),
+
+  /**
+   * Server → All Clients: A scheduled in-game event has started.
+   */
+  EventStarted: defineClientEvent<EventActivePayload>("Server_EventStarted", {
+    description: "Server broadcasts that a scheduled event has become active",
+  }),
+
+  /**
+   * Server → All Clients: A scheduled in-game event has ended.
+   */
+  EventEnded: defineClientEvent<EventActivePayload>("Server_EventEnded", {
+    description: "Server broadcasts that a scheduled event has become inactive",
   }),
 } as const;
 

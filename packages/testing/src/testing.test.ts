@@ -550,8 +550,9 @@ describe("createHandshakePayload", () => {
 describe("createHandshakeResponse", () => {
   it("creates a valid default response", () => {
     const response = createHandshakeResponse();
-    expect(response.serverVersion).toBe(1);
+    expect(response.serverProtocolVersion).toBe(1);
     expect(response.serverTime).toBeGreaterThan(0);
+    expect(response.sessionId).toMatch(/^test-session-/);
   });
 
   it("applies overrides", () => {

@@ -1,121 +1,120 @@
 /**
  * Action Service Tests
  *
- * Unit tests for the ActionService validation logic.
- * These test the business logic without importing Roblox packages.
+ * Unit tests for the pure validateActionRequest function.
+ * Tests the actual production logic (not an inline reimplementation).
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
+import { validateActionRequest } from "../shared/action-validation";
 
-// Constants mirroring @rbx/constants
-const TIMESTAMP_TOLERANCE_MS = 5000; // 5 second tolerance
+// Use a fixed tolerance value matching @rbx/constants TIMESTAMP_TOLERANCE_MS
+const TIMESTAMP_TOLERANCE_MS = 5000;
 
-// Mock feature flag function
-const mockFlags: Record<string, boolean> = {
-  "doAction.enabled": true,
+const baseRequest = { actionId: "jump", timestamp: 1000 };
+const baseDeps = {
+  nowMs: 1000,
+  timestampToleranceMs: TIMESTAMP_TOLERANCE_MS,
+  isActionEnabled: true,
 };
 
-function isFlagEnabled(flag: string): boolean {
-  return mockFlags[flag] ?? false;
-}
-
-function setFlag(flag: string, value: boolean): void {
-  mockFlags[flag] = value;
-}
-
-describe("ActionService validation logic", () => {
-  beforeEach(() => {
-    // Reset flags
-    mockFlags["doAction.enabled"] = true;
-  });
-
+describe("validateActionRequest", () => {
   describe("feature flag check", () => {
-    it("should check if doAction.enabled flag is set", () => {
-      const isEnabled = isFlagEnabled("doAction.enabled");
-      expect(isEnabled).toBe(true);
+    it("returns ok when feature is enabled", () => {
+      const result = validateActionRequest(baseRequest, baseDeps);
+      expect(result.ok).toBe(true);
     });
 
-    it("should reject when feature is disabled", () => {
-      setFlag("doAction.enabled", false);
-      const isEnabled = isFlagEnabled("doAction.enabled");
-      expect(isEnabled).toBe(false);
+    it("returns feature_disabled when flag is off", () => {
+      const result = validateActionRequest(baseRequest, { ...baseDeps, isActionEnabled: false });
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.reason).toBe("feature_disabled");
+      }
+    });
+
+    it("feature_disabled short-circuits before timestamp check", () => {
+      // Even an invalid timestamp should not change the reason when flag is off
+      const result = validateActionRequest(
+        { actionId: "jump", timestamp: -999 },
+        { ...baseDeps, isActionEnabled: false }
+      );
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.reason).toBe("feature_disabled");
+      }
     });
   });
 
   describe("timestamp validation", () => {
-    it("should reject negative timestamps", () => {
-      const timestamp = -1;
-      const isValid = timestamp >= 0;
-      expect(isValid).toBe(false);
+    it("rejects negative timestamps", () => {
+      const result = validateActionRequest({ ...baseRequest, timestamp: -1 }, baseDeps);
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.reason).toBe("invalid_timestamp");
     });
 
-    it("should reject timestamps too far in the future", () => {
-      const nowMs = Date.now();
-      const futureTimestamp = nowMs + TIMESTAMP_TOLERANCE_MS + 1000;
-      const isValid = futureTimestamp <= nowMs + TIMESTAMP_TOLERANCE_MS;
-      expect(isValid).toBe(false);
+    it("rejects timestamps beyond nowMs + tolerance", () => {
+      const result = validateActionRequest(
+        { ...baseRequest, timestamp: baseDeps.nowMs + TIMESTAMP_TOLERANCE_MS + 1 },
+        baseDeps
+      );
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.reason).toBe("invalid_timestamp");
     });
 
-    it("should accept timestamps within tolerance", () => {
-      const nowMs = Date.now();
-      const validTimestamp = nowMs - 1000; // 1 second ago
-      const isValid = validTimestamp >= 0 && validTimestamp <= nowMs + TIMESTAMP_TOLERANCE_MS;
-      expect(isValid).toBe(true);
+    it("accepts timestamp exactly at nowMs + tolerance boundary", () => {
+      const result = validateActionRequest(
+        { ...baseRequest, timestamp: baseDeps.nowMs + TIMESTAMP_TOLERANCE_MS },
+        baseDeps
+      );
+      expect(result.ok).toBe(true);
     });
 
-    it("should accept current timestamp", () => {
-      const nowMs = Date.now();
-      const isValid = nowMs >= 0 && nowMs <= nowMs + TIMESTAMP_TOLERANCE_MS;
-      expect(isValid).toBe(true);
+    it("accepts timestamp of zero (epoch start)", () => {
+      const result = validateActionRequest({ ...baseRequest, timestamp: 0 }, baseDeps);
+      expect(result.ok).toBe(true);
+    });
+
+    it("accepts a recent past timestamp", () => {
+      const result = validateActionRequest(
+        { ...baseRequest, timestamp: baseDeps.nowMs - 500 },
+        baseDeps
+      );
+      expect(result.ok).toBe(true);
+    });
+
+    it("accepts timestamp equal to nowMs", () => {
+      const result = validateActionRequest({ ...baseRequest, timestamp: baseDeps.nowMs }, baseDeps);
+      expect(result.ok).toBe(true);
+    });
+  });
+
+  describe("actionId is not validated (payload shape is validated by the remote registry)", () => {
+    it("passes through any actionId string", () => {
+      const result = validateActionRequest(
+        { actionId: "any-action-123", timestamp: 1000 },
+        baseDeps
+      );
+      expect(result.ok).toBe(true);
     });
   });
 });
 
-describe("ActionRequest structure", () => {
-  it("should validate actionId is a string", () => {
-    const request = {
-      actionId: "jump",
-      timestamp: Date.now(),
-    };
-
-    expect(typeof request.actionId).toBe("string");
-    expect(request.actionId.length).toBeGreaterThan(0);
+describe("ActionValidationOutcome type narrowing", () => {
+  it("ok:true result has no reason field", () => {
+    const result = validateActionRequest(baseRequest, baseDeps);
+    expect(result.ok).toBe(true);
+    // TypeScript should narrow: result.reason does not exist when ok=true
+    if (result.ok) {
+      expect((result as Record<string, unknown>)["reason"]).toBeUndefined();
+    }
   });
 
-  it("should allow optional payload", () => {
-    const requestWithPayload = {
-      actionId: "attack",
-      timestamp: Date.now(),
-      payload: { targetId: "enemy_123" },
-    };
-
-    const requestWithoutPayload = {
-      actionId: "jump",
-      timestamp: Date.now(),
-    };
-
-    expect(requestWithPayload.payload).toBeDefined();
-    expect(requestWithoutPayload.payload).toBeUndefined();
-  });
-});
-
-describe("ActionResponse structure", () => {
-  it("should have accepted boolean", () => {
-    const response = {
-      accepted: true,
-      serverTimestamp: Date.now(),
-    };
-
-    expect(typeof response.accepted).toBe("boolean");
-  });
-
-  it("should have server timestamp", () => {
-    const response = {
-      accepted: true,
-      serverTimestamp: Date.now(),
-    };
-
-    expect(typeof response.serverTimestamp).toBe("number");
-    expect(response.serverTimestamp).toBeGreaterThan(0);
+  it("ok:false result carries the reason", () => {
+    const result = validateActionRequest(baseRequest, { ...baseDeps, isActionEnabled: false });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBeDefined();
+    }
   });
 });

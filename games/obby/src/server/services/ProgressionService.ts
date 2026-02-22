@@ -6,9 +6,10 @@
  */
 
 import { createProgressionService } from "@rbx/progression";
-import { createLogger } from "@rbx/core";
-
-const logger = createLogger("ProgressionService");
+import { Players } from "@rbxts/services";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { RemoteService } from "./RemoteService";
+import { getAchievements } from "./RewardsService";
 
 const handle = createProgressionService({
   datastoreName: "ObbyProgression",
@@ -20,22 +21,23 @@ const handle = createProgressionService({
   prestigeMinLevel: 50,
   maxPrestige: 5,
   prestigeXpBonus: 0.15,
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
+  onLevelUp: (playerId: number, level: number) => {
+    const player = Players.GetPlayerByUserId(playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("LevelUp", player, { newLevel: level });
+      getAchievements(playerId)?.setProgress("ach_level_25", level);
+    }
+  },
+  onPrestige: (playerId: number, prestige: number) => {
+    const player = Players.GetPlayerByUserId(playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("PrestigeUnlocked", player, { newPrestige: prestige });
+    }
+  },
 });
 
 export const ProgressionService = handle.Service;
 export const getProgression = (playerId: number) => handle.getProgressionStore(playerId);
 export const cleanupPlayerProgression = (playerId: number) => handle.cleanupPlayer(playerId);
-
-/** Initialize progression for a player — adds game-specific event callbacks. */
-export function initPlayerProgression(playerId: number) {
-  const store = handle.initPlayer(playerId);
-  store.onLevelUp((event) => {
-    logger.info(`Player ${event.playerId} leveled up: ${event.previousLevel} → ${event.newLevel}`);
-  });
-  store.onPrestige((event) => {
-    logger.info(
-      `Player ${event.playerId} prestiged: ${event.previousPrestige} → ${event.newPrestige}`
-    );
-  });
-  return store;
-}

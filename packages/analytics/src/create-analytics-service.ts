@@ -19,6 +19,16 @@ export interface AnalyticsServiceConfig {
   funnelDefinitions?: FunnelDefinition[];
   /** Analytics configuration (datastore, logging, etc.). */
   analyticsConfig?: Partial<AnalyticsConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface AnalyticsServiceHandle {
@@ -55,7 +65,7 @@ export function createAnalyticsService(config: AnalyticsServiceConfig): Analytic
   const sessionTracker = new SessionTracker(analyticsConfig);
   const retentionTracker = new RetentionTracker(analyticsConfig);
 
-  return {
+  const handle: AnalyticsServiceHandle = {
     Service: {
       name: "AnalyticsService",
 
@@ -73,10 +83,12 @@ export function createAnalyticsService(config: AnalyticsServiceConfig): Analytic
         }
 
         logger.info("AnalyticsService initialized.");
+        config.onPlayerRemoving?.((player) => handle.cleanupPlayer(player.UserId));
       },
 
       onStart() {
         logger.info("AnalyticsService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -111,4 +123,5 @@ export function createAnalyticsService(config: AnalyticsServiceConfig): Analytic
       logger.info(`Analytics cleaned up for player ${playerId}`);
     },
   };
+  return handle;
 }

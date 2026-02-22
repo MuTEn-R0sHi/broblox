@@ -5,6 +5,7 @@
  */
 
 import { createGachaService } from "@rbx/gacha";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createGachaService({
   eggs: [
@@ -43,6 +44,8 @@ const handle = createGachaService({
     },
   ],
   datastoreName: "StarterGacha",
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 
 export const GachaService = handle.Service;

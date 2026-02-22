@@ -17,12 +17,14 @@ describe("createNotificationService", () => {
     mockStore = {
       notify: vi.fn(),
       clearPlayer: vi.fn(),
+      clearAll: vi.fn(),
       getPlayerNotifications: vi.fn(() => []),
     };
 
     mockAnnouncementManager = {
       registerAnnouncement: vi.fn(),
       unregisterAnnouncement: vi.fn(),
+      tick: vi.fn(),
     };
 
     vi.doMock("@rbx/core", () => ({

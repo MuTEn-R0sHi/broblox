@@ -8,9 +8,13 @@ describe("createRewardsService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
   let mockDailyStore: Record<string, ReturnType<typeof vi.fn>>;
   let mockAchievementStore: Record<string, ReturnType<typeof vi.fn>>;
+  let capturedAchievementCompletedHandler: ((e: unknown) => void) | undefined;
+  let capturedDailyClaimedHandler: ((e: unknown) => void) | undefined;
 
   beforeEach(() => {
     vi.resetModules();
+    capturedAchievementCompletedHandler = undefined;
+    capturedDailyClaimedHandler = undefined;
 
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
     mockDailyStore = {
@@ -18,6 +22,9 @@ describe("createRewardsService", () => {
       load: vi.fn(),
       save: vi.fn(),
       isDirty: vi.fn(() => false),
+      onClaimed: vi.fn((cb: (e: unknown) => void) => {
+        capturedDailyClaimedHandler = cb;
+      }),
     };
     mockAchievementStore = {
       registerAll: vi.fn(),
@@ -25,6 +32,9 @@ describe("createRewardsService", () => {
       load: vi.fn(),
       save: vi.fn(),
       isDirty: vi.fn(() => false),
+      onAchievementCompleted: vi.fn((cb: (e: unknown) => void) => {
+        capturedAchievementCompletedHandler = cb;
+      }),
     };
 
     vi.doMock("@rbx/core", () => ({
@@ -161,5 +171,76 @@ describe("createRewardsService", () => {
     const h1 = mod.createRewardsService(makeConfig());
     const h2 = mod.createRewardsService(makeConfig());
     expect(h1.Service).not.toBe(h2.Service);
+  });
+
+  describe("onAchievementCompleted config callback", () => {
+    it("wires onAchievementCompleted to achievement store on initPlayer", async () => {
+      const onAchievementCompleted = vi.fn();
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({ ...makeConfig(), onAchievementCompleted });
+      handle.initPlayer(5);
+
+      expect(mockAchievementStore.onAchievementCompleted).toHaveBeenCalled();
+    });
+
+    it("invokes onAchievementCompleted with the full event when store fires", async () => {
+      const onAchievementCompleted = vi.fn();
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({ ...makeConfig(), onAchievementCompleted });
+      handle.initPlayer(5);
+
+      const fakeEvent = {
+        playerId: 5,
+        achievementId: "ach_first_stage",
+        rewards: [{ type: "xp", amount: 50 }],
+      };
+      capturedAchievementCompletedHandler!(fakeEvent);
+
+      expect(onAchievementCompleted).toHaveBeenCalledWith(fakeEvent);
+    });
+
+    it("does not subscribe when onAchievementCompleted is not provided", async () => {
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService(makeConfig());
+      handle.initPlayer(1);
+
+      expect(mockAchievementStore.onAchievementCompleted).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("onDailyRewardClaimed config callback", () => {
+    it("wires onDailyRewardClaimed to daily store on initPlayer", async () => {
+      const onDailyRewardClaimed = vi.fn();
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({ ...makeConfig(), onDailyRewardClaimed });
+      handle.initPlayer(9);
+
+      expect(mockDailyStore.onClaimed).toHaveBeenCalled();
+    });
+
+    it("invokes onDailyRewardClaimed with the full event when daily store fires", async () => {
+      const onDailyRewardClaimed = vi.fn();
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({ ...makeConfig(), onDailyRewardClaimed });
+      handle.initPlayer(9);
+
+      const fakeEvent = {
+        playerId: 9,
+        day: 3,
+        streak: 3,
+        rewards: [{ type: "item", amount: 1, itemId: "checkpoint_token" }],
+      };
+      capturedDailyClaimedHandler!(fakeEvent);
+
+      expect(onDailyRewardClaimed).toHaveBeenCalledWith(fakeEvent);
+    });
+
+    it("does not subscribe when onDailyRewardClaimed is not provided", async () => {
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService(makeConfig());
+      handle.initPlayer(1);
+
+      expect(mockDailyStore.onClaimed).not.toHaveBeenCalled();
+    });
   });
 });

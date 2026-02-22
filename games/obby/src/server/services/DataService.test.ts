@@ -69,8 +69,24 @@ describe("DataService", () => {
     }));
 
     vi.doMock("@rbx/data", () => ({
-      createPlayerDataStore: () => mockStore,
-      createSessionManager: () => mockSessionManager,
+      createDataService: () => ({
+        Service: {
+          name: "DataService",
+          onInit: vi.fn(),
+          onStart: vi.fn(() => mockSessionManager.startAutoSave()),
+          onDestroy: vi.fn(() => mockSessionManager.closeAll()),
+        },
+        getStore: () => mockStore,
+        getSessionManager: () => mockSessionManager,
+        initPlayer: vi.fn((player: unknown) => {
+          const session = mockSessionManager.startSession(player);
+          // Mirror factory behaviour: if startSession fails, getSession returns undefined.
+          if (session === undefined) mockSessionManager.getSession.mockReturnValue(undefined);
+        }),
+        cleanupPlayer: vi.fn((player: unknown) => {
+          mockSessionManager.endSession(player);
+        }),
+      }),
     }));
 
     vi.doMock("./RemoteService", () => ({

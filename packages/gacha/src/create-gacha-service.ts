@@ -16,6 +16,16 @@ export interface GachaServiceConfig {
   datastoreName: string;
   /** Extra GachaStore options. */
   storeOptions?: Partial<GachaConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface GachaServiceHandle {
@@ -31,7 +41,7 @@ export function createGachaService(config: GachaServiceConfig): GachaServiceHand
   const eggRegistry = new EggRegistry();
   const playerGacha = new Map<number, GachaStore>();
 
-  return {
+  const handle: GachaServiceHandle = {
     Service: {
       name: "GachaService",
 
@@ -40,10 +50,18 @@ export function createGachaService(config: GachaServiceConfig): GachaServiceHand
           eggRegistry.register(egg);
         }
         logger.info(`Egg registry initialized — ${eggRegistry.count()} eggs.`);
+        config.onPlayerRemoving?.((player) => {
+          const store = playerGacha.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerGacha.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("GachaService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -86,4 +104,5 @@ export function createGachaService(config: GachaServiceConfig): GachaServiceHand
       playerGacha.delete(playerId);
     },
   };
+  return handle;
 }

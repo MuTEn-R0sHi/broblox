@@ -16,6 +16,8 @@ import {
   onSuspiciousHit,
   onValidHit,
   resetHitValidation,
+  setRaycastProvider,
+  resetRaycastProvider,
 } from "./hit-validation";
 import type { HitIntent, Vector3Like, SuspiciousHitEvent, HitValidationResult } from "./types";
 import type { PlayerId } from "@rbx/shared-types";
@@ -676,6 +678,159 @@ describe("hit-validation", () => {
       expect(isInvulnerable(playerId)).toBe(false);
       expect(getSuspiciousHitCount(playerId)).toBe(0);
       expect(getHitValidationConfig().maxLagMs).toBe(200); // Default
+    });
+  });
+
+  describe("obstruction check", () => {
+    const shooterId = 1 as PlayerId;
+    const targetId = 2 as PlayerId;
+
+    /** Place target 5 units ahead of shooter, with a clear path */
+    function setupStandardShot() {
+      updatePlayerPosition(shooterId, { X: 0, Y: 0, Z: 0 });
+      updatePlayerPosition(targetId, { X: 5, Y: 0, Z: 0 });
+      configureHitValidation({ maxRange: 50 });
+    }
+
+    function makeIntent(): HitIntent {
+      return {
+        origin: { X: 0, Y: 0, Z: 0 },
+        direction: { X: 1, Y: 0, Z: 0 },
+        clientTimestamp: getCurrentTime(),
+        targetId,
+      };
+    }
+
+    it("should pass hit when checkObstruction=true but no provider is set", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      const result = validateHit(shooterId, makeIntent());
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.valid).toBe(true);
+      }
+    });
+
+    it("should pass hit when provider returns false (line-of-sight clear)", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      setRaycastProvider(() => false);
+      const result = validateHit(shooterId, makeIntent());
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.valid).toBe(true);
+      }
+    });
+
+    it("should reject hit as 'obstructed' when provider returns true", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      setRaycastProvider(() => true);
+      const result = validateHit(shooterId, makeIntent());
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.valid).toBe(false);
+        if (!result.value.valid) {
+          expect(result.value.reason).toBe("obstructed");
+        }
+      }
+    });
+
+    it("should call provider with correct origin, normalised direction and magnitude", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+
+      let capturedOrigin: Vector3Like | undefined;
+      let capturedDir: Vector3Like | undefined;
+      let capturedMag: number | undefined;
+
+      setRaycastProvider((origin, direction, magnitude) => {
+        capturedOrigin = origin;
+        capturedDir = direction;
+        capturedMag = magnitude;
+        return false;
+      });
+
+      validateHit(shooterId, makeIntent());
+
+      expect(capturedOrigin).toEqual({ X: 0, Y: 0, Z: 0 });
+      // Direction from (0,0,0) to (5,0,0) should normalise to (1,0,0)
+      expect(capturedDir!.X).toBeCloseTo(1, 5);
+      expect(capturedDir!.Y).toBeCloseTo(0, 5);
+      expect(capturedDir!.Z).toBeCloseTo(0, 5);
+      // Magnitude should equal the distance (5)
+      expect(capturedMag).toBeCloseTo(5, 5);
+    });
+
+    it("should skip provider when checkObstruction=false", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: false });
+
+      let called = false;
+      setRaycastProvider(() => {
+        called = true;
+        return true; // would block if reached
+      });
+
+      const result = validateHit(shooterId, makeIntent());
+      expect(called).toBe(false);
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.valid).toBe(true);
+      }
+    });
+
+    it("should not fire suspicious event for obstructed hits", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      setRaycastProvider(() => true);
+
+      let suspiciousFired = false;
+      onSuspiciousHit(() => {
+        suspiciousFired = true;
+      });
+
+      validateHit(shooterId, makeIntent());
+      expect(suspiciousFired).toBe(false);
+    });
+
+    it("should clear provider when resetHitValidation is called", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      setRaycastProvider(() => true); // blocks all hits
+
+      // Confirm it blocks
+      const blocked = validateHit(shooterId, makeIntent());
+      expect(blocked.ok).toBe(true);
+      if (blocked.ok) {
+        expect(blocked.value.valid).toBe(false);
+      }
+
+      // After reset, the same shot should pass (provider gone)
+      resetHitValidation();
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      advanceTime(1);
+      const clear = validateHit(shooterId, makeIntent());
+      expect(clear.ok).toBe(true);
+      if (clear.ok) {
+        expect(clear.value.valid).toBe(true);
+      }
+    });
+
+    it("should clear provider when resetRaycastProvider is called", () => {
+      setupStandardShot();
+      configureHitValidation({ checkObstruction: true });
+      setRaycastProvider(() => true);
+
+      resetRaycastProvider();
+
+      // Provider gone — obstruction check is skipped, hit is valid
+      const result = validateHit(shooterId, makeIntent());
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.valid).toBe(true);
+      }
     });
   });
 });

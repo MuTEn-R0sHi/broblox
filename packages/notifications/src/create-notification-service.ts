@@ -15,6 +15,11 @@ export interface NotificationServiceConfig {
   notificationsConfig?: Partial<NotificationsConfig>;
   /** Announcements to register at init. */
   announcements?: AnnouncementDefinition[];
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
 }
 
 export interface NotificationServiceHandle {
@@ -41,7 +46,7 @@ export function createNotificationService(
   const store = new NotificationStore(notifConfig);
   const announcements = new AnnouncementManager(store, notifConfig);
 
-  return {
+  const handle: NotificationServiceHandle = {
     Service: {
       name: "NotificationService",
 
@@ -52,13 +57,16 @@ export function createNotificationService(
           }
         }
         logger.info("NotificationService initialized.");
+        config.onPlayerRemoving?.((player) => handle.cleanupPlayer(player.UserId));
       },
 
       onStart() {
+        announcements.tick();
         logger.info("NotificationService started.");
       },
 
       onDestroy() {
+        store.clearAll();
         logger.info("NotificationService stopped.");
       },
     },
@@ -75,4 +83,5 @@ export function createNotificationService(
       store.clearPlayer(playerId);
     },
   };
+  return handle;
 }

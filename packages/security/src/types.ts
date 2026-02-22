@@ -57,6 +57,19 @@ export interface EnforcementConfig {
   windowSeconds: number;
   /** Custom kick message */
   kickMessage?: string;
+  /** Duration in hours for temp-ban actions (default: 24) */
+  tempBanDurationHours?: number;
+  /**
+   * Called when a ban action (temp-ban or perm-ban) is triggered.
+   * Wire this to your DataStore / @rbx/moderation to persist the ban.
+   * The enforcer still kicks the player immediately after calling this.
+   */
+  onBan?: (
+    player: Player,
+    type: "TEMPORARY" | "PERMANENT",
+    reason: string,
+    durationHours?: number
+  ) => void;
 }
 
 /** Default enforcement configuration */
@@ -70,6 +83,7 @@ export const DEFAULT_ENFORCEMENT_CONFIG: EnforcementConfig = {
   escalationThreshold: 3,
   windowSeconds: 60,
   kickMessage: "Suspicious activity detected",
+  tempBanDurationHours: 24,
 };
 
 // ============================================================================

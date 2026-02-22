@@ -40,6 +40,7 @@ export const bounded = {
 const doActionSchema = t.strictInterface({
   actionId: bounded.string(ACTION_ID_MAX_LENGTH, ACTION_ID_MIN_LENGTH),
   timestamp: t.number,
+  payload: t.optional(t.any),
 });
 
 export function validateDoActionPayload(value: unknown): Result<DoActionPayload> {

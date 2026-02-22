@@ -5,7 +5,13 @@
  */
 
 import { Service, createLogger } from "@rbx/core";
-import { DailyRewardDay, AchievementDefinition, RewardsConfig } from "./types";
+import {
+  DailyRewardDay,
+  AchievementDefinition,
+  RewardsConfig,
+  AchievementCompletedEvent,
+  DailyRewardClaimedEvent,
+} from "./types";
 import { DailyRewardStore } from "./daily-reward-store";
 import { AchievementStore } from "./achievement-store";
 
@@ -20,6 +26,24 @@ export interface RewardsServiceConfig {
   achievementDatastoreName: string;
   /** Extra DailyRewardStore options. */
   dailyStoreOptions?: Partial<RewardsConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
+  /**
+   * Fired when a player completes an achievement.
+   */
+  onAchievementCompleted?: (event: AchievementCompletedEvent) => void;
+  /**
+   * Fired when a player claims a daily reward.
+   */
+  onDailyRewardClaimed?: (event: DailyRewardClaimedEvent) => void;
 }
 
 export interface RewardsServiceHandle {
@@ -35,7 +59,7 @@ export function createRewardsService(config: RewardsServiceConfig): RewardsServi
   const playerDaily = new Map<number, DailyRewardStore>();
   const playerAchievements = new Map<number, AchievementStore>();
 
-  return {
+  const handle: RewardsServiceHandle = {
     Service: {
       name: "RewardsService",
 
@@ -43,10 +67,23 @@ export function createRewardsService(config: RewardsServiceConfig): RewardsServi
         logger.info(
           `Rewards config: ${config.rewardCycle.size()}-day cycle, ${config.achievements.size()} achievements`
         );
+        config.onPlayerRemoving?.((player) => {
+          const daily = playerDaily.get(player.UserId);
+          if (daily && daily.isDirty()) {
+            daily.save();
+          }
+          playerDaily.delete(player.UserId);
+          const ach = playerAchievements.get(player.UserId);
+          if (ach && ach.isDirty()) {
+            ach.save();
+          }
+          playerAchievements.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("RewardsService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -91,6 +128,16 @@ export function createRewardsService(config: RewardsServiceConfig): RewardsServi
       achievements.registerAll(config.achievements);
       achievements.init();
       achievements.load();
+      if (config.onAchievementCompleted) {
+        achievements.onAchievementCompleted((event) => {
+          config.onAchievementCompleted!(event);
+        });
+      }
+      if (config.onDailyRewardClaimed) {
+        daily.onClaimed((event) => {
+          config.onDailyRewardClaimed!(event);
+        });
+      }
       playerAchievements.set(playerId, achievements);
 
       logger.info(`Rewards loaded for player ${playerId}`);
@@ -111,4 +158,5 @@ export function createRewardsService(config: RewardsServiceConfig): RewardsServi
       playerAchievements.delete(playerId);
     },
   };
+  return handle;
 }

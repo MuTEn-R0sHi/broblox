@@ -50,8 +50,7 @@ export function createDataService<T extends VersionedData>(
       },
 
       onDestroy() {
-        sessionManager.stopAutoSave();
-        sessionManager.saveAllDirty();
+        sessionManager.closeAll();
         logger.info("DataService stopped.");
       },
     },

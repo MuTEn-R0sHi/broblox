@@ -5,7 +5,7 @@
  */
 
 import { Service, createLogger } from "@rbx/core";
-import { QuestDefinition, QuestsConfig } from "./types";
+import { QuestDefinition, QuestsConfig, QuestCompletedEvent } from "./types";
 import { QuestRegistry } from "./quest-registry";
 import { QuestStore } from "./quest-store";
 
@@ -18,6 +18,22 @@ export interface QuestServiceConfig {
   maxActiveQuests?: number;
   /** Extra QuestStore options. */
   storeOptions?: Partial<QuestsConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
+  /**
+   * Fired when a player completes a quest.
+   * Receives the full completed-quest event so callers can fire remotes, grant
+   * rewards, etc.
+   */
+  onQuestCompleted?: (event: QuestCompletedEvent) => void;
 }
 
 export interface QuestServiceHandle {
@@ -33,7 +49,7 @@ export function createQuestService(config: QuestServiceConfig): QuestServiceHand
   const questRegistry = new QuestRegistry();
   const playerQuests = new Map<number, QuestStore>();
 
-  return {
+  const handle: QuestServiceHandle = {
     Service: {
       name: "QuestService",
 
@@ -42,10 +58,18 @@ export function createQuestService(config: QuestServiceConfig): QuestServiceHand
           questRegistry.register(quest);
         }
         logger.info(`Quest registry initialized — ${questRegistry.count()} quests.`);
+        config.onPlayerRemoving?.((player) => {
+          const store = playerQuests.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerQuests.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("QuestService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -76,6 +100,11 @@ export function createQuestService(config: QuestServiceConfig): QuestServiceHand
       });
       store.init();
       store.load();
+      if (config.onQuestCompleted) {
+        store.onQuestCompleted((event) => {
+          config.onQuestCompleted!(event);
+        });
+      }
       playerQuests.set(playerId, store);
       logger.info(`Quests loaded for player ${playerId}`);
       return store;
@@ -89,4 +118,5 @@ export function createQuestService(config: QuestServiceConfig): QuestServiceHand
       playerQuests.delete(playerId);
     },
   };
+  return handle;
 }

@@ -18,6 +18,7 @@
     "@rbx/constants": "workspace:*",
     "@rbx/core": "workspace:*",
     "@rbx/data": "workspace:*",
+    "@rbx/security": "workspace:*",
     "@rbx/leaderboards": "workspace:*",
     "@rbx/moderation": "workspace:*",
     "@rbx/movement": "workspace:*",

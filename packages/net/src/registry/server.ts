@@ -35,11 +35,19 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
   private folder: Folder;
   private instances = new Map<string, RemoteFunction | RemoteEvent>();
   private rateLimiters = new Map<string, RateLimiter>();
+  private onRateLimitedCallback?: (player: Player, endpoint: string, retryAfterMs: number) => void;
 
   constructor(
     private registry: TRegistry,
-    folderName = "Remotes"
+    options?: {
+      /** Folder name in ReplicatedStorage (default: "Remotes"). */
+      folderName?: string;
+      /** Called whenever a player is rate-limited on an endpoint. Wire to security/telemetry. */
+      onRateLimited?: (player: Player, endpoint: string, retryAfterMs: number) => void;
+    }
   ) {
+    this.onRateLimitedCallback = options?.onRateLimited;
+    const folderName = options?.folderName ?? "Remotes";
     // Create or find the remotes folder
     const ReplicatedStorage = game.GetService("ReplicatedStorage");
     let folder = ReplicatedStorage.FindFirstChild(folderName) as Folder | undefined;
@@ -102,7 +110,11 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
       if (def.rateLimit) {
         const limiter = this.getOrCreateRateLimiter(key as string, def.rateLimit);
         const rl = limiter.check(player.UserId);
-        if (!rl.ok) return err(ErrorCode.RateLimited, { retryAfterMs: rl.retryAfterMs });
+        if (!rl.ok) {
+          const retryMs = rl.retryAfterMs ?? 0;
+          this.onRateLimitedCallback?.(player, key as string, retryMs);
+          return err(ErrorCode.RateLimited, { retryAfterMs: retryMs });
+        }
       }
 
       // Validation
@@ -144,7 +156,10 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
       if (def.rateLimit) {
         const limiter = this.getOrCreateRateLimiter(key as string, def.rateLimit);
         const rl = limiter.check(player.UserId);
-        if (!rl.ok) return; // Silently drop rate-limited events
+        if (!rl.ok) {
+          this.onRateLimitedCallback?.(player, key as string, rl.retryAfterMs ?? 0);
+          return; // Silently drop rate-limited events
+        }
       }
 
       // Validation
@@ -236,7 +251,12 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
  */
 export function createServerRegistry<T extends RemoteRegistry>(
   registry: T,
-  folderName?: string
+  options?: {
+    /** Folder name in ReplicatedStorage (default: "Remotes"). */
+    folderName?: string;
+    /** Called whenever a player is rate-limited on an endpoint. Wire to security/telemetry. */
+    onRateLimited?: (player: Player, endpoint: string, retryAfterMs: number) => void;
+  }
 ): ServerRemoteRegistry<T> {
-  return new ServerRemoteRegistry(registry, folderName);
+  return new ServerRemoteRegistry(registry, options);
 }

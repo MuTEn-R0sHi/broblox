@@ -5,9 +5,11 @@
  */
 
 import { createProgressionService } from "@rbx/progression";
-import { createLogger } from "@rbx/core";
-
-const logger = createLogger("ProgressionService");
+import { Players } from "@rbxts/services";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { RemoteService } from "./RemoteService";
+import { getAchievements } from "./RewardsService";
+import { getEventTracker } from "./AnalyticsService";
 
 const handle = createProgressionService({
   datastoreName: "StarterProgression",
@@ -19,22 +21,33 @@ const handle = createProgressionService({
   prestigeMinLevel: 100,
   maxPrestige: 10,
   prestigeXpBonus: 0.1,
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
+  onLevelUp: (playerId: number, level: number) => {
+    const player = Players.GetPlayerByUserId(playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("Notification", player, {
+        type: "level_up",
+        message: `You reached level ${level}!`,
+        data: { level },
+      });
+      getAchievements(playerId)?.setProgress("ach_level_10", level);
+      getAchievements(playerId)?.setProgress("ach_level_50", level);
+      getEventTracker().track("player.level_up", playerId, { level });
+    }
+  },
+  onPrestige: (playerId: number, prestige: number) => {
+    const player = Players.GetPlayerByUserId(playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("Notification", player, {
+        type: "prestige",
+        message: `You achieved prestige ${prestige}!`,
+        data: { prestige },
+      });
+    }
+  },
 });
 
 export const ProgressionService = handle.Service;
 export const getProgression = (playerId: number) => handle.getProgressionStore(playerId);
 export const cleanupPlayerProgression = (playerId: number) => handle.cleanupPlayer(playerId);
-
-/** Initialize progression for a player — adds game-specific event callbacks. */
-export function initPlayerProgression(playerId: number) {
-  const store = handle.initPlayer(playerId);
-  store.onLevelUp((event) => {
-    logger.info(`Player ${event.playerId} leveled up: ${event.previousLevel} → ${event.newLevel}`);
-  });
-  store.onPrestige((event) => {
-    logger.info(
-      `Player ${event.playerId} prestiged: ${event.previousPrestige} → ${event.newPrestige}`
-    );
-  });
-  return store;
-}

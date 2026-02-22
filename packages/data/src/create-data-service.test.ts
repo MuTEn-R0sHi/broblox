@@ -25,6 +25,7 @@ describe("createDataService", () => {
       startAutoSave: vi.fn(),
       stopAutoSave: vi.fn(),
       saveAllDirty: vi.fn(() => 0),
+      closeAll: vi.fn(),
     };
 
     vi.doMock("@rbx/core", () => ({
@@ -83,8 +84,7 @@ describe("createDataService", () => {
     const handle = await createService();
     handle.Service.onDestroy!();
 
-    expect(mockSessionManager.stopAutoSave).toHaveBeenCalled();
-    expect(mockSessionManager.saveAllDirty).toHaveBeenCalled();
+    expect(mockSessionManager.closeAll).toHaveBeenCalled();
   });
 
   it("initPlayer starts a session", async () => {

@@ -18,6 +18,16 @@ export interface PetServiceConfig {
   maxEquipped?: number;
   /** Extra PetStore options. */
   storeOptions?: Partial<PetConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface PetServiceHandle {
@@ -33,7 +43,7 @@ export function createPetService(config: PetServiceConfig): PetServiceHandle {
   const petRegistry = new PetRegistry();
   const playerPets = new Map<number, PetStore>();
 
-  return {
+  const handle: PetServiceHandle = {
     Service: {
       name: "PetService",
 
@@ -42,10 +52,18 @@ export function createPetService(config: PetServiceConfig): PetServiceHandle {
           petRegistry.register(pet);
         }
         logger.info(`Pet registry initialized — ${petRegistry.count()} species.`);
+        config.onPlayerRemoving?.((player) => {
+          const store = playerPets.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerPets.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("PetService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -89,4 +107,5 @@ export function createPetService(config: PetServiceConfig): PetServiceHandle {
       playerPets.delete(playerId);
     },
   };
+  return handle;
 }

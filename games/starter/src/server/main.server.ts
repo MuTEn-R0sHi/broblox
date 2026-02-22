@@ -5,6 +5,7 @@
 
 import { Application, createLogger } from "@rbx/core";
 import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
+import { SecurityService } from "./services/SecurityService";
 import { FeatureFlagSyncService } from "./services/FeatureFlagSyncService";
 import { MovementValidationService } from "./services/MovementValidationService";
 import { ModerationEnforcementService } from "./services/ModerationEnforcementService";
@@ -28,6 +29,7 @@ import { LocalizationService } from "./services/LocalizationService";
 import { AudioService } from "./services/AudioService";
 import { TutorialService } from "./services/TutorialService";
 import { WorldService } from "./services/WorldService";
+import { EventService } from "./services/EventService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -38,6 +40,7 @@ logger.info("Starting server...");
 // PlayerLifecycleService must be first (others depend on it)
 app
   .register(PlayerLifecycleService)
+  .register(SecurityService)
   .register(FeatureFlagSyncService)
   .register(MovementValidationService)
   .register(ModerationEnforcementService)
@@ -60,7 +63,8 @@ app
   .register(LocalizationService)
   .register(AudioService)
   .register(TutorialService)
-  .register(WorldService);
+  .register(WorldService)
+  .register(EventService);
 
 app.boot();
 logger.info("Server booted.");

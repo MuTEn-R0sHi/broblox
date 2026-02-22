@@ -5,6 +5,7 @@
  */
 
 import { createTutorialService } from "@rbx/tutorial";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createTutorialService({
   sequences: [
@@ -53,6 +54,8 @@ const handle = createTutorialService({
     },
   ],
   datastoreName: "ObbyTutorial",
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 
 export const TutorialService = handle.Service;

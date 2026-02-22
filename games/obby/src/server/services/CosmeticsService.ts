@@ -5,6 +5,7 @@
  */
 
 import { createCosmeticsService } from "@rbx/cosmetics";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createCosmeticsService({
   cosmetics: [
@@ -37,6 +38,8 @@ const handle = createCosmeticsService({
     },
   ],
   datastoreName: "ObbyCosmetics",
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 
 export const CosmeticsService = handle.Service;

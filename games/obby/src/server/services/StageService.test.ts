@@ -16,6 +16,15 @@ describe("StageService", () => {
   let mockCheckpointService: Record<string, ReturnType<typeof vi.fn>>;
   let mockCollectionService: Record<string, ReturnType<typeof vi.fn>>;
   let mockWorkspace: Record<string, ReturnType<typeof vi.fn>>;
+  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockGetProgression: ReturnType<typeof vi.fn>;
+  let mockGetQuests: ReturnType<typeof vi.fn>;
+  let mockGetAchievements: ReturnType<typeof vi.fn>;
+  let mockGetEventTracker: ReturnType<typeof vi.fn>;
+  let mockAddXp: ReturnType<typeof vi.fn>;
+  let mockIncrementObjective: ReturnType<typeof vi.fn>;
+  let mockIncrementProgress: ReturnType<typeof vi.fn>;
+  let mockTrackEvent: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -57,6 +66,7 @@ describe("StageService", () => {
     vi.doMock("@rbx/core", () => ({
       createLogger: () => mockLogger,
       Service: {},
+      mapSize: (m: Map<unknown, unknown>) => m.size,
     }));
 
     vi.doMock("@rbxts/services", () => ({
@@ -75,6 +85,29 @@ describe("StageService", () => {
     vi.doMock("./CheckpointService", () => ({
       CheckpointService: mockCheckpointService,
     }));
+
+    mockPlayerLifecycle = {
+      onPlayerAdded: vi.fn(),
+      onPlayerRemoving: vi.fn(),
+    };
+
+    vi.doMock("./PlayerLifecycleService", () => ({
+      PlayerLifecycleService: mockPlayerLifecycle,
+    }));
+
+    mockAddXp = vi.fn();
+    mockIncrementObjective = vi.fn();
+    mockIncrementProgress = vi.fn();
+    mockTrackEvent = vi.fn();
+    mockGetProgression = vi.fn(() => ({ addXp: mockAddXp }));
+    mockGetQuests = vi.fn(() => ({ incrementObjective: mockIncrementObjective }));
+    mockGetAchievements = vi.fn(() => ({ incrementProgress: mockIncrementProgress }));
+    mockGetEventTracker = vi.fn(() => ({ track: mockTrackEvent }));
+
+    vi.doMock("./ProgressionService", () => ({ getProgression: mockGetProgression }));
+    vi.doMock("./QuestService", () => ({ getQuests: mockGetQuests }));
+    vi.doMock("./RewardsService", () => ({ getAchievements: mockGetAchievements }));
+    vi.doMock("./AnalyticsService", () => ({ getEventTracker: mockGetEventTracker }));
   });
 
   async function loadStageService() {
@@ -470,6 +503,120 @@ describe("StageService", () => {
 
       svc.onDestroy!();
       expect(svc.getStageCount()).toBe(0);
+    });
+  });
+
+  // ─── stage completion side-effects ───────────────────────────────────
+
+  describe("stage completion side-effects", () => {
+    function setupWithTwoStages() {
+      const s1 = makeStagePartMock(1, { CoinReward: 10 });
+      const s2 = makeStagePartMock(2, { CoinReward: 20 });
+      mockCollectionService.GetTagged.mockImplementation((tag: string) =>
+        tag === "ObbyStage" ? [s1, s2] : []
+      );
+    }
+
+    it("awards XP via progression on stage completion", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockGetProgression).toHaveBeenCalledWith(42);
+      expect(mockAddXp).toHaveBeenCalledWith(100);
+    });
+
+    it("skips XP when progression store is unavailable", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockGetProgression.mockReturnValue(undefined);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      expect(() => svc.completeStage(makePlayer(), 1)).not.toThrow();
+      expect(mockAddXp).not.toHaveBeenCalled();
+    });
+
+    it("increments stage_complete quest objective on stage completion", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockGetQuests).toHaveBeenCalledWith(42);
+      expect(mockIncrementObjective).toHaveBeenCalledWith("stage_complete", 1);
+    });
+
+    it("skips quest increment when quest store is unavailable", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockGetQuests.mockReturnValue(undefined);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      expect(() => svc.completeStage(makePlayer(), 1)).not.toThrow();
+      expect(mockIncrementObjective).not.toHaveBeenCalled();
+    });
+
+    it("tracks stage.completed analytics event", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockDataService.getStageElapsedSeconds.mockReturnValue(7.5);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockGetEventTracker).toHaveBeenCalled();
+      expect(mockTrackEvent).toHaveBeenCalledWith("stage.completed", 42, {
+        stageId: "1",
+        durationSec: 7.5,
+      });
+    });
+
+    it("does not award XP when player data is missing", async () => {
+      mockDataService.getData.mockReturnValue(undefined);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockAddXp).not.toHaveBeenCalled();
+      expect(mockIncrementObjective).not.toHaveBeenCalled();
+      expect(mockIncrementProgress).not.toHaveBeenCalled();
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+    });
+
+    it("increments all stage-count achievement IDs on stage completion", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockGetAchievements).toHaveBeenCalledWith(42);
+      expect(mockIncrementProgress).toHaveBeenCalledTimes(3);
+      expect(mockIncrementProgress).toHaveBeenCalledWith("ach_first_stage", 1);
+      expect(mockIncrementProgress).toHaveBeenCalledWith("ach_stages_25", 1);
+      expect(mockIncrementProgress).toHaveBeenCalledWith("ach_stages_100", 1);
+    });
+
+    it("skips achievement increment when achievement store is unavailable", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockGetAchievements.mockReturnValue(undefined);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      expect(() => svc.completeStage(makePlayer(), 1)).not.toThrow();
+      expect(mockIncrementProgress).not.toHaveBeenCalled();
     });
   });
 });

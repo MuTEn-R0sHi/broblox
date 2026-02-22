@@ -10,6 +10,10 @@ import { isFlagEnabled } from "@rbx/config-featureflags";
 import { TIMESTAMP_TOLERANCE_MS } from "@rbx/constants";
 import { RemoteService } from "./RemoteService";
 import { ActionRequest } from "shared/remotes";
+import { validateActionRequest } from "shared/action-validation";
+import { getQuests } from "./QuestService";
+import { getAchievements } from "./RewardsService";
+import { getEventTracker } from "./AnalyticsService";
 
 const logger = createLogger("ActionService");
 
@@ -19,18 +23,30 @@ export const ActionService: Service = {
     const registry = RemoteService.getRegistry();
 
     registry.onFunction("DoAction", (player, request: ActionRequest) => {
-      // Check kill-switch
-      if (!isFlagEnabled("doAction.enabled")) {
-        return err(ErrorCode.FeatureDisabled, { message: "Action system disabled" });
-      }
-
-      // Timestamp validation
       const nowMs = os.clock() * 1000;
-      if (request.timestamp < 0 || request.timestamp > nowMs + TIMESTAMP_TOLERANCE_MS) {
+
+      const validation = validateActionRequest(request, {
+        nowMs,
+        timestampToleranceMs: TIMESTAMP_TOLERANCE_MS,
+        isActionEnabled: isFlagEnabled("doAction.enabled"),
+      });
+
+      if (!validation.ok) {
+        if (validation.reason === "feature_disabled") {
+          return err(ErrorCode.FeatureDisabled, { message: "Action system disabled" });
+        }
         return err(ErrorCode.InvalidPayload, { message: "Invalid timestamp" });
       }
 
       logger.debug(`Action from ${player.Name}: ${request.actionId}`);
+
+      // Route action to quest objectives and achievement progress trackers
+      if (request.actionId === "kill") {
+        getQuests(player.UserId)?.incrementObjective("kill", 1);
+        getAchievements(player.UserId)?.incrementProgress("ach_first_kill", 1);
+        getAchievements(player.UserId)?.incrementProgress("ach_kill_100", 1);
+        getEventTracker().track("action.kill", player.UserId, {});
+      }
 
       return ok({
         accepted: true,

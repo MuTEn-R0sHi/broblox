@@ -24,6 +24,45 @@ export interface PlayerDataSyncPayload {
   currentCheckpoint: number;
 }
 
+/** A single reward entry used across notification payloads. */
+export interface RemoteRewardEntry {
+  type: string;
+  amount: number;
+  itemId?: string;
+  label?: string;
+}
+
+export interface LevelUpPayload {
+  newLevel: number;
+}
+
+export interface PrestigeUnlockedPayload {
+  newPrestige: number;
+}
+
+export interface QuestCompletedPayload {
+  questId: string;
+  rewards: RemoteRewardEntry[];
+}
+
+export interface AchievementCompletedPayload {
+  achievementId: string;
+  rewards: RemoteRewardEntry[];
+}
+
+export interface DailyRewardClaimedPayload {
+  day: number;
+  streak: number;
+  rewards: RemoteRewardEntry[];
+}
+
+/** Payload for a scheduled in-game event becoming active or inactive */
+export interface EventActivePayload {
+  id: string;
+  label: string;
+  modifiers?: Record<string, unknown>;
+}
+
 // ============================================================================
 // Remote Registry
 // ============================================================================
@@ -46,6 +85,11 @@ export const ObbyRemotes = {
   RequestRespawn: defineServerEvent<RespawnRequestPayload>("RequestRespawn", {
     rateLimit: { windowMs: 1000, maxRequests: 2 },
     description: "Client requests respawn at a checkpoint",
+    validate: (v): v is RespawnRequestPayload => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return p["toCheckpoint"] === undefined || typeOf(p["toCheckpoint"]) === "number";
+    },
   }),
 
   /**
@@ -85,6 +129,55 @@ export const ObbyRemotes = {
    */
   LeaderboardUpdate: defineClientEvent<LeaderboardUpdatePayload>("LeaderboardUpdate", {
     description: "Server broadcasts leaderboard data to clients",
+  }),
+
+  /**
+   * Server → Client: Player leveled up.
+   */
+  LevelUp: defineClientEvent<LevelUpPayload>("LevelUp", {
+    description: "Notifies client that the player leveled up",
+  }),
+
+  /**
+   * Server → Client: Player prestiged.
+   */
+  PrestigeUnlocked: defineClientEvent<PrestigeUnlockedPayload>("PrestigeUnlocked", {
+    description: "Notifies client that the player achieved a new prestige rank",
+  }),
+
+  /**
+   * Server → Client: Player completed a quest.
+   */
+  QuestCompleted: defineClientEvent<QuestCompletedPayload>("QuestCompleted", {
+    description: "Notifies client that a quest was completed",
+  }),
+
+  /**
+   * Server → Client: Player unlocked an achievement.
+   */
+  AchievementCompleted: defineClientEvent<AchievementCompletedPayload>("AchievementCompleted", {
+    description: "Notifies client that an achievement was unlocked",
+  }),
+
+  /**
+   * Server → Client: Player claimed a daily reward.
+   */
+  DailyRewardClaimed: defineClientEvent<DailyRewardClaimedPayload>("DailyRewardClaimed", {
+    description: "Notifies client that a daily reward was claimed",
+  }),
+
+  /**
+   * Server → All Clients: A scheduled in-game event has started.
+   */
+  EventStarted: defineClientEvent<EventActivePayload>("Obby_EventStarted", {
+    description: "Server broadcasts that a scheduled event has become active",
+  }),
+
+  /**
+   * Server → All Clients: A scheduled in-game event has ended.
+   */
+  EventEnded: defineClientEvent<EventActivePayload>("Obby_EventEnded", {
+    description: "Server broadcasts that a scheduled event has become inactive",
   }),
 } as const;
 

@@ -68,6 +68,8 @@ describe("CheckpointService", () => {
     vi.doMock("@rbx/core", () => ({
       createLogger: () => mockLogger,
       Service: {},
+      mapSize: (m: Map<unknown, unknown>) => m.size,
+      arraySize: (a: unknown[]) => a.length,
     }));
 
     vi.doMock("@rbxts/services", () => ({

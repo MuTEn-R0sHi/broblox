@@ -5,6 +5,7 @@
 import { Application, createLogger } from "@rbx/core";
 import { Lighting } from "@rbxts/services";
 import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
+import { SecurityService } from "./services/SecurityService";
 import { RemoteService } from "./services/RemoteService";
 import { CheckpointService } from "./services/CheckpointService";
 import { StageService } from "./services/StageService";
@@ -27,6 +28,9 @@ import { LocalizationService } from "./services/LocalizationService";
 import { AudioService } from "./services/AudioService";
 import { TutorialService } from "./services/TutorialService";
 import { WorldService } from "./services/WorldService";
+import { AnalyticsService } from "./services/AnalyticsService";
+import { NotificationService } from "./services/NotificationService";
+import { EventService } from "./services/EventService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -40,11 +44,14 @@ logger.info("Starting Obby server...");
 // Register services in dependency order
 app
   .register(PlayerLifecycleService)
+  .register(SecurityService)
   .register(RemoteService)
   .register(DataService)
   .register(StageService)
   .register(CheckpointService)
   .register(LeaderboardService)
+  .register(AnalyticsService)
+  .register(NotificationService)
   .register(ModerationEnforcementService)
   .register(ChatModerationService)
   .register(MovementValidationService)
@@ -61,7 +68,8 @@ app
   .register(LocalizationService)
   .register(AudioService)
   .register(TutorialService)
-  .register(WorldService);
+  .register(WorldService)
+  .register(EventService);
 
 app.boot();
 logger.info("Obby server booted.");

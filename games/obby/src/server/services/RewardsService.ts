@@ -6,10 +6,10 @@
  */
 
 import { createRewardsService } from "@rbx/rewards";
-import { createLogger } from "@rbx/core";
 import type { DailyRewardDay } from "@rbx/rewards";
-
-const logger = createLogger("RewardsService");
+import { Players } from "@rbxts/services";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { RemoteService } from "./RemoteService";
 
 const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 50, label: "50 Coins" }] },
@@ -80,24 +80,30 @@ const handle = createRewardsService({
     streakGracePeriod: 86400,
     cycleLength: 7,
   },
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
+  onAchievementCompleted: (event) => {
+    const player = Players.GetPlayerByUserId(event.playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("AchievementCompleted", player, {
+        achievementId: event.achievementId,
+        rewards: event.rewards,
+      });
+    }
+  },
+  onDailyRewardClaimed: (event) => {
+    const player = Players.GetPlayerByUserId(event.playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("DailyRewardClaimed", player, {
+        day: event.day,
+        streak: event.streak,
+        rewards: event.rewards,
+      });
+    }
+  },
 });
 
 export const RewardsService = handle.Service;
 export const getDailyRewards = (playerId: number) => handle.getDailyRewardStore(playerId);
 export const getAchievements = (playerId: number) => handle.getAchievementStore(playerId);
 export const cleanupPlayerRewards = (playerId: number) => handle.cleanupPlayer(playerId);
-
-/** Initialize rewards for a player — adds game-specific event callbacks. */
-export function initPlayerRewards(playerId: number) {
-  const { daily, achievements } = handle.initPlayer(playerId);
-
-  daily.onClaimed((event) => {
-    logger.info(`Player ${event.playerId} claimed day ${event.day} — streak ${event.streak}`);
-  });
-
-  achievements.onAchievementCompleted((event) => {
-    logger.info(`Player ${event.playerId} unlocked achievement: ${event.achievementId}`);
-  });
-
-  return { daily, achievements };
-}

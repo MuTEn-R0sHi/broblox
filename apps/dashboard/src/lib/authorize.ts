@@ -275,3 +275,38 @@ export function getRateLimitKey(request: NextRequest): string {
     request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? "unknown";
   return `ip:${ip}`;
 }
+
+// ============================================================================
+// Cron Secret Validation
+// ============================================================================
+
+/**
+ * Validate the `Authorization: Bearer <secret>` header for cron/job routes.
+ *
+ * Uses constant-time comparison to prevent timing attacks.
+ *
+ * Set `CRON_SECRET` in your deployment environment. When `CRON_SECRET` is not
+ * set, this function always returns `false` (fail-closed).
+ *
+ * @example
+ * ```ts
+ * if (!validateCronSecret(request)) {
+ *   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+ * }
+ * ```
+ */
+export function validateCronSecret(request: NextRequest): boolean {
+  const expected = process.env.CRON_SECRET;
+  if (!expected) return false;
+
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader) return false;
+
+  const prefix = "Bearer ";
+  if (!authHeader.startsWith(prefix)) return false;
+
+  const provided = authHeader.slice(prefix.length);
+  if (provided.length !== expected.length) return false;
+
+  return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
+}

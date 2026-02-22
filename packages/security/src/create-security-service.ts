@@ -7,11 +7,17 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { EnforcementConfig } from "./types";
-import { Enforcer } from "./enforcer";
+import { Enforcer, cleanupEnforcementState } from "./enforcer";
+import { cleanupPlayer } from "./detectors";
 
 export interface SecurityServiceConfig {
   /** Override default enforcement thresholds. */
   enforcementConfig?: Partial<EnforcementConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
 }
 
 export interface SecurityServiceHandle {
@@ -30,6 +36,11 @@ export function createSecurityService(config: SecurityServiceConfig = {}): Secur
       name: "SecurityService",
 
       onInit() {
+        // Clean up per-player detector + enforcement state when players leave.
+        config.onPlayerRemoving?.((player) => {
+          cleanupEnforcementState(player);
+          cleanupPlayer(player);
+        });
         logger.info("SecurityService initialized.");
       },
 

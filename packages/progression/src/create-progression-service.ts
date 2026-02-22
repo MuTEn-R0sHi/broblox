@@ -25,6 +25,16 @@ export interface ProgressionServiceConfig {
   onPrestige?: (playerId: number, prestige: number) => void;
   /** Extra ProgressionStore options. */
   storeOptions?: Partial<ProgressionConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface ProgressionServiceHandle {
@@ -40,7 +50,7 @@ export function createProgressionService(
   const logger = createLogger("ProgressionService");
   const playerProgression = new Map<number, ProgressionStore>();
 
-  return {
+  const handle: ProgressionServiceHandle = {
     Service: {
       name: "ProgressionService",
 
@@ -48,10 +58,18 @@ export function createProgressionService(
         logger.info(
           `Progression config: maxLevel=${config.maxLevel}, curve=${config.xpCurve}, prestige=${config.prestigeEnabled ?? false}`
         );
+        config.onPlayerRemoving?.((player) => {
+          const store = playerProgression.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerProgression.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("ProgressionService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -110,4 +128,5 @@ export function createProgressionService(
       playerProgression.delete(playerId);
     },
   };
+  return handle;
 }

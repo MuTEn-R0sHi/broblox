@@ -16,6 +16,16 @@ export interface TutorialServiceConfig {
   datastoreName: string;
   /** Extra TutorialManager options. */
   storeOptions?: Partial<TutorialConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface TutorialServiceHandle {
@@ -31,7 +41,7 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
   const sequenceRegistry = new SequenceRegistry();
   const playerTutorials = new Map<number, TutorialManager>();
 
-  return {
+  const handle: TutorialServiceHandle = {
     Service: {
       name: "TutorialService",
 
@@ -40,10 +50,18 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
           sequenceRegistry.register(seq);
         }
         logger.info(`Tutorial sequences registered: ${sequenceRegistry.count()}`);
+        config.onPlayerRemoving?.((player) => {
+          const mgr = playerTutorials.get(player.UserId);
+          if (mgr && mgr.isDirty()) {
+            mgr.markClean();
+          }
+          playerTutorials.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("TutorialService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -81,4 +99,5 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
       playerTutorials.delete(playerId);
     },
   };
+  return handle;
 }

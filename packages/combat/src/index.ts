@@ -47,6 +47,8 @@ export {
   // Position management
   setPositionProvider,
   resetPositionProvider,
+  setRaycastProvider,
+  resetRaycastProvider,
   updatePlayerPosition,
   getPlayerPosition,
   clearPlayerPosition,

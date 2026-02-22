@@ -43,45 +43,36 @@ const { protocolVersion, buildId, deviceClass } = result.value;
 
 ### Rate Limiting
 
-Prevent abuse with per-player token bucket rate limiting:
+Rate limiting is built into the registry and enforced automatically per endpoint. Configure `rateLimit` on each remote definition; the registry creates a token-bucket limiter per endpoint and fires the `onRateLimited` callback on every hit.
+
+The `RateLimiter` class is available for advanced manual use outside the registry:
 
 ```typescript
-import { RateLimiter } from "@rbx/net";
-
-const limiter = new RateLimiter({
-  windowMs: 1000, // 1 second window
-  maxRequests: 5, // 5 requests per second
-  burstAllowance: 2, // optional burst
-});
-
-// Check rate limit
+const limiter = new RateLimiter({ windowMs: 1000, maxRequests: 5, burstAllowance: 2 });
 const result = limiter.check(player.UserId);
-if (!result.ok) {
-  return result; // Client rate limited (includes retryAfterMs)
-}
-
-print(`Remaining: ${result.value.remaining}`);
-
-// Optional: reset limit for player
-limiter.reset(player.UserId);
+if (!result.ok) return result; // includes retryAfterMs
 ```
 
 ### Remote Registry
 
-Single source of truth for all remote endpoints:
+`createServerRegistry` is the server entry point. Pass an optional options object to configure folder name and the security/telemetry hook:
 
 ```typescript
-import { REMOTES } from "@rbx/net";
+import { createServerRegistry } from "@rbx/net";
+import { reportViolation } from "@rbx/security";
 
-// Server: create remotes from registry
-const remote = new Instance("RemoteFunction");
-remote.Name = REMOTES.Handshake.name;
+const registry = createServerRegistry(MyRemotes, {
+  folderName: "MyGameRemotes", // optional, default: "Remotes"
+  onRateLimited: (player, endpoint, retryAfterMs) => {
+    // Route every rate-limit hit into the security violation pipeline
+    reportViolation(player, "rate-abuse", "medium", `Rate-limited on '${endpoint}'`, {
+      endpoint,
+      retryAfterMs,
+    });
+  },
+});
 
-// Client: reference remotes from registry
-const remote = folder.WaitForChild(REMOTES.Handshake.name);
-
-// Rate limit config attached to each remote
-const rateLimitConfig = REMOTES.Handshake.rateLimit;
+registry.initialize(); // call in onInit()
 ```
 
 **Current remotes:**
@@ -100,13 +91,13 @@ const rateLimitConfig = REMOTES.Handshake.rateLimit;
 
 ### Rate Limiting
 
-**RateLimiter class:**
+**`RateLimiter` class (for advanced manual use):**
 
 - `constructor(config: RateLimitConfig)`
 - `check(playerId: number): Result<{ remaining: number }>`
 - `reset(playerId: number): void`
 
-**RateLimitConfig:**
+**`RateLimitConfig`:**
 
 ```typescript
 interface RateLimitConfig {
@@ -116,11 +107,26 @@ interface RateLimitConfig {
 }
 ```
 
+### `createServerRegistry` Options
+
+```typescript
+createServerRegistry<T>(registry: T, options?: {
+  folderName?: string;    // ReplicatedStorage folder (default: "Remotes")
+  onRateLimited?: (player: Player, endpoint: string, retryAfterMs: number) => void;
+}): ServerRemoteRegistry<T>
+```
+
+`onRateLimited` is the bridge between the network layer and `@rbx/security`. Every rate-limit drop fires this callback, letting you call `reportViolation` to feed the enforcer pipeline:
+
+```
+Client request → rate limit hit → onRateLimited → reportViolation → Enforcer → kick/ban
+```
+
 ### Types
 
-- `DoActionPayload` - Generic action payload
+- `DoActionPayload` - Generic action payload (with optional `payload: unknown`)
 - `HandshakePayload` - Protocol handshake payload
-- `REMOTES` - Remote endpoint registry (readonly)
+- `RemoteRegistry` - Base type for remote definition maps
 
 ## Security Principles
 

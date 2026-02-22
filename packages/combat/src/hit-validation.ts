@@ -23,6 +23,7 @@ import type {
   Vector3Like,
   SuspiciousHitEvent,
   PositionProvider,
+  RaycastProvider,
 } from "./types";
 
 // ============================================================================
@@ -45,6 +46,12 @@ const internalPositions = new Map<number, Vector3Like>();
 
 /** Active position provider — defaults to internal cache */
 let positionProvider: PositionProvider = (playerId) => internalPositions.get(playerId as number);
+
+/**
+ * Optional raycast provider for obstruction checks.
+ * When undefined the obstruction check is skipped (fail-open).
+ */
+let raycastProvider: RaycastProvider | undefined = undefined;
 
 /** Player invulnerability state */
 const invulnerablePlayers = new Set<number>();
@@ -152,6 +159,32 @@ export function setPositionProvider(provider: PositionProvider): void {
  */
 export function resetPositionProvider(): void {
   positionProvider = (playerId) => internalPositions.get(playerId as number);
+}
+
+// ============================================================================
+// Raycast Provider
+// ============================================================================
+
+/**
+ * Set a raycast provider for server-side obstruction checks.
+ *
+ * When set, `validateHit` will invoke this provider after all geometry checks
+ * pass (range, angle) and reject the hit as `"obstructed"` if the provider
+ * returns `true`.  When not set the obstruction check is skipped (fail-open),
+ * so the game still works without Roblox Workspace access (e.g. in tests).
+ *
+ * See {@link RaycastProvider} for an example using `Workspace:Raycast`.
+ */
+export function setRaycastProvider(provider: RaycastProvider): void {
+  raycastProvider = provider;
+}
+
+/**
+ * Remove the active raycast provider.  Obstruction checks will be skipped
+ * until a new provider is registered.
+ */
+export function resetRaycastProvider(): void {
+  raycastProvider = undefined;
 }
 
 // ============================================================================
@@ -275,9 +308,19 @@ export function validateHit(shooterId: PlayerId, intent: HitIntent): Result<HitV
     }
   }
 
-  // NOTE: Obstruction raycasting (checkObstruction) is not implemented.
-  // It would require access to Roblox's Workspace:Raycast at runtime.
-  // The geometric checks above are sufficient for most use cases.
+  // Obstruction check — requires an injected raycast provider.
+  // If no provider is set the check is skipped (fail-open) so the validator
+  // works outside the Roblox runtime (tests, CI, etc.).
+  if (currentConfig.checkObstruction && raycastProvider !== undefined) {
+    const toTarget = subtract(targetPosition, intent.origin);
+    const dirNorm = normalize(toTarget);
+    const isBlocked = raycastProvider(intent.origin, dirNorm, dist);
+    if (isBlocked) {
+      // Obstruction is a server-side geometry rejection, not a cheat signal —
+      // bypass createFailure so the suspicious-hit counter/event is not triggered.
+      return ok({ valid: false, reason: "obstructed" as const, serverTimestamp });
+    }
+  }
 
   // Hit is valid
   const result: HitValidationResult = {
@@ -400,6 +443,7 @@ export function onValidHit(listener: EventListener<HitValidationResult>): () => 
 export function resetHitValidation(): void {
   internalPositions.clear();
   positionProvider = (playerId) => internalPositions.get(playerId as number);
+  raycastProvider = undefined;
   invulnerablePlayers.clear();
   suspiciousHitCounts.clear();
   lastHitTimes.clear();

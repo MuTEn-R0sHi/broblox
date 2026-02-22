@@ -380,7 +380,7 @@ describe("cleanupEnforcementState", () => {
 // ---------------------------------------------------------------------------
 
 describe("ban actions", () => {
-  it("falls back to kick for temp-ban", async () => {
+  it("falls back to kick for temp-ban when no onBan callback", async () => {
     const { createEnforcer } = await import("./enforcer");
     const enforcer = createEnforcer({
       severityActions: { low: "temp-ban", medium: "warn", high: "kick", critical: "kick" },
@@ -393,7 +393,7 @@ describe("ban actions", () => {
     expect(player.Kick).toHaveBeenCalledWith("You have been banned from this game");
   });
 
-  it("falls back to kick for perm-ban", async () => {
+  it("falls back to kick for perm-ban when no onBan callback", async () => {
     const { createEnforcer } = await import("./enforcer");
     const enforcer = createEnforcer({
       severityActions: { low: "perm-ban", medium: "warn", high: "kick", critical: "kick" },
@@ -403,5 +403,142 @@ describe("ban actions", () => {
     enforcer.handleViolation(createViolation(player, "low"));
 
     expect(player.Kick).toHaveBeenCalledWith("You have been banned from this game");
+  });
+
+  it("calls onBan callback with TEMPORARY type for temp-ban", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    const onBan = vi.fn();
+    const enforcer = createEnforcer({
+      severityActions: { low: "temp-ban", medium: "warn", high: "kick", critical: "kick" },
+      onBan,
+    });
+    const player = createMockPlayer(21);
+    const violation = createViolation(player, "low");
+
+    enforcer.handleViolation(violation);
+
+    expect(onBan).toHaveBeenCalledWith(player, "TEMPORARY", violation.description, 24);
+    expect(player.Kick).toHaveBeenCalledWith("You have been banned from this game");
+  });
+
+  it("calls onBan callback with PERMANENT type for perm-ban", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    const onBan = vi.fn();
+    const enforcer = createEnforcer({
+      severityActions: { low: "perm-ban", medium: "warn", high: "kick", critical: "kick" },
+      onBan,
+    });
+    const player = createMockPlayer(22);
+    const violation = createViolation(player, "low");
+
+    enforcer.handleViolation(violation);
+
+    expect(onBan).toHaveBeenCalledWith(player, "PERMANENT", violation.description, undefined);
+    expect(player.Kick).toHaveBeenCalledWith("You have been banned from this game");
+  });
+
+  it("passes custom tempBanDurationHours to onBan", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    const onBan = vi.fn();
+    const enforcer = createEnforcer({
+      severityActions: { low: "temp-ban", medium: "warn", high: "kick", critical: "kick" },
+      tempBanDurationHours: 48,
+      onBan,
+    });
+    const player = createMockPlayer(23);
+    const violation = createViolation(player, "low");
+
+    enforcer.handleViolation(violation);
+
+    expect(onBan).toHaveBeenCalledWith(player, "TEMPORARY", violation.description, 48);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Escalation chain — extended
+// ---------------------------------------------------------------------------
+
+describe("escalation chain", () => {
+  it("escalates kick to shadow at threshold", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    // Default: high → kick, threshold = 3
+    const enforcer = createEnforcer();
+    const player = createMockPlayer(30);
+
+    // First 2 high violations: below threshold, execute "kick" each time
+    enforcer.handleViolation(createViolation(player, "high"));
+    enforcer.handleViolation(createViolation(player, "high"));
+    expect(enforcer.isShadowBanned(player)).toBe(false);
+
+    // Third violation: 3 >= threshold → escalate kick → shadow
+    enforcer.handleViolation(createViolation(player, "high"));
+    expect(enforcer.isShadowBanned(player)).toBe(true);
+  });
+
+  it("escalates shadow to temp-ban at threshold", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    const onBan = vi.fn();
+    const enforcer = createEnforcer({
+      severityActions: { low: "none", medium: "none", high: "shadow", critical: "none" },
+      onBan,
+    });
+    const player = createMockPlayer(31);
+
+    // First 2 high violations: below threshold, execute "shadow"
+    enforcer.handleViolation(createViolation(player, "high"));
+    enforcer.handleViolation(createViolation(player, "high"));
+    expect(onBan).not.toHaveBeenCalled();
+
+    // Third violation: 3 >= threshold → escalate shadow → temp-ban
+    enforcer.handleViolation(createViolation(player, "high"));
+    expect(onBan).toHaveBeenCalledWith(player, "TEMPORARY", expect.any(String), expect.any(Number));
+    expect(player.Kick).toHaveBeenCalledWith("You have been banned from this game");
+  });
+
+  it("escalates temp-ban to perm-ban at threshold", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    const onBan = vi.fn();
+    const enforcer = createEnforcer({
+      severityActions: { low: "none", medium: "none", high: "temp-ban", critical: "none" },
+      onBan,
+    });
+    const player = createMockPlayer(32);
+
+    // First 2 high violations: execute "temp-ban" → onBan with TEMPORARY
+    enforcer.handleViolation(createViolation(player, "high"));
+    enforcer.handleViolation(createViolation(player, "high"));
+    expect(onBan).toHaveBeenCalledTimes(2);
+    expect(onBan).toHaveBeenLastCalledWith(
+      player,
+      "TEMPORARY",
+      expect.any(String),
+      expect.any(Number)
+    );
+
+    // Third violation: 3 >= threshold → escalate temp-ban → perm-ban
+    enforcer.handleViolation(createViolation(player, "high"));
+    expect(onBan).toHaveBeenCalledTimes(3);
+    expect(onBan).toHaveBeenLastCalledWith(player, "PERMANENT", expect.any(String), undefined);
+  });
+
+  it("perm-ban caps and stays at perm-ban when escalated", async () => {
+    const { createEnforcer } = await import("./enforcer");
+    const onBan = vi.fn();
+    const enforcer = createEnforcer({
+      severityActions: { low: "none", medium: "none", high: "perm-ban", critical: "none" },
+      onBan,
+    });
+    const player = createMockPlayer(33);
+
+    // Three violations — on 3rd, escalate perm-ban → perm-ban (cap)
+    enforcer.handleViolation(createViolation(player, "high"));
+    enforcer.handleViolation(createViolation(player, "high"));
+    enforcer.handleViolation(createViolation(player, "high"));
+
+    // All three should have triggered PERMANENT ban, not an unknown action
+    expect(onBan).toHaveBeenCalledTimes(3);
+    for (const call of onBan.mock.calls) {
+      expect(call[1]).toBe("PERMANENT");
+    }
   });
 });

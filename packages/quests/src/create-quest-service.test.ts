@@ -8,9 +8,11 @@ describe("createQuestService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
   let mockStore: Record<string, ReturnType<typeof vi.fn>>;
+  let capturedQuestCompletedHandler: ((e: unknown) => void) | undefined;
 
   beforeEach(() => {
     vi.resetModules();
+    capturedQuestCompletedHandler = undefined;
 
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
     mockRegistry = {
@@ -22,6 +24,9 @@ describe("createQuestService", () => {
       load: vi.fn(),
       save: vi.fn(),
       isDirty: vi.fn(() => false),
+      onQuestCompleted: vi.fn((cb: (e: unknown) => void) => {
+        capturedQuestCompletedHandler = cb;
+      }),
     };
 
     vi.doMock("@rbx/core", () => ({
@@ -129,5 +134,48 @@ describe("createQuestService", () => {
     const h1 = mod.createQuestService({ quests: [], datastoreName: "A" });
     const h2 = mod.createQuestService({ quests: [], datastoreName: "B" });
     expect(h1.Service).not.toBe(h2.Service);
+  });
+
+  describe("onQuestCompleted config callback", () => {
+    it("wires onQuestCompleted to store event on initPlayer", async () => {
+      const onQuestCompleted = vi.fn();
+      const mod = await import("./create-quest-service");
+      const handle = mod.createQuestService({
+        quests: [],
+        datastoreName: "TestQuests",
+        onQuestCompleted,
+      });
+      handle.initPlayer(42);
+
+      expect(mockStore.onQuestCompleted).toHaveBeenCalled();
+    });
+
+    it("invokes onQuestCompleted with the full event when store fires", async () => {
+      const onQuestCompleted = vi.fn();
+      const mod = await import("./create-quest-service");
+      const handle = mod.createQuestService({
+        quests: [],
+        datastoreName: "TestQuests",
+        onQuestCompleted,
+      });
+      handle.initPlayer(7);
+
+      const fakeEvent = {
+        playerId: 7,
+        questId: "daily_stages_5",
+        rewards: [{ type: "xp", amount: 300 }],
+      };
+      capturedQuestCompletedHandler!(fakeEvent);
+
+      expect(onQuestCompleted).toHaveBeenCalledWith(fakeEvent);
+    });
+
+    it("does not subscribe to store event when onQuestCompleted is not provided", async () => {
+      const mod = await import("./create-quest-service");
+      const handle = mod.createQuestService({ quests: [], datastoreName: "TestQuests" });
+      handle.initPlayer(1);
+
+      expect(mockStore.onQuestCompleted).not.toHaveBeenCalled();
+    });
   });
 });

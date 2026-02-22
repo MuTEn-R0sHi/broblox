@@ -14,6 +14,8 @@ export interface RemoteServiceConfig<TRegistry extends RemoteRegistry> {
   registry: TRegistry;
   /** Folder name in ReplicatedStorage (default "Remotes"). */
   folderName?: string;
+  /** Called whenever a player is rate-limited. Wire to security/telemetry. */
+  onRateLimited?: (player: Player, endpoint: string, retryAfterMs: number) => void;
 }
 
 export interface RemoteServiceHandle<TRegistry extends RemoteRegistry> {
@@ -27,7 +29,10 @@ export function createRemoteService<TRegistry extends RemoteRegistry>(
   config: RemoteServiceConfig<TRegistry>
 ): RemoteServiceHandle<TRegistry> {
   const logger = createLogger("RemoteService");
-  const registry = new ServerRemoteRegistry<TRegistry>(config.registry, config.folderName);
+  const registry = new ServerRemoteRegistry<TRegistry>(config.registry, {
+    folderName: config.folderName,
+    onRateLimited: config.onRateLimited,
+  });
 
   return {
     Service: {

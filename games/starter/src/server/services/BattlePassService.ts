@@ -6,6 +6,7 @@
  */
 
 import { createBattlePassService } from "@rbx/battle-pass";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createBattlePassService({
   seasons: [
@@ -99,6 +100,8 @@ const handle = createBattlePassService({
     },
   ],
   datastoreName: "StarterBattlePass",
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 
 export const BattlePassService = handle.Service;

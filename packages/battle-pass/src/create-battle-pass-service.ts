@@ -17,6 +17,16 @@ export interface BattlePassServiceConfig {
   datastoreName: string;
   /** Extra BattlePassStore options. */
   storeOptions?: Partial<BattlePassConfig>;
+  /**
+   * Wires player-leave cleanup.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
+  /**
+   * Wires player-join initialization.
+   * Typically: `(cb) => PlayerLifecycleService.onPlayerAdded(cb)`
+   */
+  onPlayerAdded?: (callback: (player: Player) => void) => void;
 }
 
 export interface BattlePassServiceHandle {
@@ -37,7 +47,7 @@ export function createBattlePassService(config: BattlePassServiceConfig): Battle
   const seasonRegistry = new SeasonRegistry();
   const playerStores = new Map<number, BattlePassStore>();
 
-  return {
+  const handle: BattlePassServiceHandle = {
     Service: {
       name: "BattlePassService",
 
@@ -46,10 +56,18 @@ export function createBattlePassService(config: BattlePassServiceConfig): Battle
           seasonRegistry.register(season);
         }
         logger.info(`Season registry initialized — ${seasonRegistry.count()} seasons.`);
+        config.onPlayerRemoving?.((player) => {
+          const store = playerStores.get(player.UserId);
+          if (store && store.isDirty()) {
+            store.save();
+          }
+          playerStores.delete(player.UserId);
+        });
       },
 
       onStart() {
         logger.info("BattlePassService started.");
+        config.onPlayerAdded?.((player) => handle.initPlayer(player.UserId));
       },
 
       onDestroy() {
@@ -96,4 +114,5 @@ export function createBattlePassService(config: BattlePassServiceConfig): Battle
       playerStores.delete(playerId);
     },
   };
+  return handle;
 }

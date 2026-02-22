@@ -6,9 +6,9 @@
  */
 
 import { createQuestService } from "@rbx/quests";
-import { createLogger } from "@rbx/core";
-
-const logger = createLogger("QuestService");
+import { Players } from "@rbxts/services";
+import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { RemoteService } from "./RemoteService";
 
 const handle = createQuestService({
   quests: [
@@ -78,19 +78,20 @@ const handle = createQuestService({
   ],
   datastoreName: "ObbyQuests",
   maxActiveQuests: 8,
+  onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
+  onQuestCompleted: (event) => {
+    const player = Players.GetPlayerByUserId(event.playerId);
+    if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("QuestCompleted", player, {
+        questId: event.questId,
+        rewards: event.rewards,
+      });
+    }
+  },
 });
 
 export const QuestService = handle.Service;
 export const getQuestRegistry = () => handle.getQuestRegistry();
 export const getQuests = (playerId: number) => handle.getQuestStore(playerId);
 export const cleanupPlayerQuests = (playerId: number) => handle.cleanupPlayer(playerId);
-
-/** Initialize quests for a player — adds game-specific event callbacks. */
-export function initPlayerQuests(playerId: number) {
-  const store = handle.initPlayer(playerId);
-  store.onQuestCompleted((event) => {
-    const xp = event.rewards.reduce((sum, r) => (r.type === "xp" ? sum + r.amount : sum), 0);
-    logger.info(`Player ${event.playerId} completed quest: ${event.questId} (+${xp} XP)`);
-  });
-  return store;
-}

@@ -166,7 +166,13 @@ export class Enforcer {
       case "warn":
         return "kick";
       case "kick":
-        return "kick"; // Already at kick
+        return "shadow";
+      case "shadow":
+        return "temp-ban";
+      case "temp-ban":
+        return "perm-ban";
+      case "perm-ban":
+        return "perm-ban"; // Already at maximum severity
       default:
         return action;
     }
@@ -195,11 +201,19 @@ export class Enforcer {
         break;
 
       case "temp-ban":
-      case "perm-ban":
-        // These would require DataStore integration
-        logger.warn(`Ban action not implemented: ${action} for ${player.Name}`);
+      case "perm-ban": {
+        const banType = action === "temp-ban" ? "TEMPORARY" : "PERMANENT";
+        const durationHours =
+          action === "temp-ban" ? (this.config.tempBanDurationHours ?? 24) : undefined;
+        if (this.config.onBan) {
+          this.config.onBan(player, banType, violation.description, durationHours);
+          logger.info(`${banType} ban issued for ${player.Name}: ${violation.description}`);
+        } else {
+          logger.warn(`Ban action not implemented: ${action} for ${player.Name}`);
+        }
         this.kick(player, "You have been banned from this game");
         break;
+      }
     }
   }
 }
