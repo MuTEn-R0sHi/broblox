@@ -39,6 +39,15 @@
   background-color: #09090b;
   border-bottom: 1px solid #27272a;
   box-shadow: none;
+  color: #fafafa;
+}
+
+.md-header__title,
+.md-header__topic,
+.md-header__ellipsis,
+.md-header__button,
+.md-header__button.md-icon {
+  color: #fafafa !important;
 }
 
 .md-header[data-md-state="shadow"] {
@@ -126,6 +135,15 @@
 .md-tabs {
   background-color: #09090b;
   border-bottom: 1px solid #27272a;
+}
+
+.md-tabs__link {
+  color: #a1a1aa !important;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  color: #fafafa !important;
 }
 
 /* Font — match dashboard system font stack */
