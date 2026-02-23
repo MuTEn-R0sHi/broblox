@@ -21,6 +21,8 @@
     "game:obby:build": "pnpm run build:obby",
     "game:obby:dev": "pnpm --filter @rbx/game-obby run dev",
     "game:obby:rojo": "pnpm --filter @rbx/game-obby run rojo:serve",
+    "website:dev": "pnpm --filter @rbx/website run dev",
+    "website:build": "pnpm --filter @rbx/website run build",
     "rojo:kill": "pkill -f 'rojo serve' || true",
     "prepare": "simple-git-hooks"
   },
