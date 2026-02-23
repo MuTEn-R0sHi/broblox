@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
-import { Trophy, Timer, Coins } from "lucide-react";
+import { Timer, Coins, TrendingUp } from "lucide-react";
+import { fetchGameStats, formatCount } from "@/lib/roblox";
 
 export const metadata: Metadata = {
   title: "Rankings – BroBlox",
   description: "Global leaderboards for all BroBlox games.",
 };
 
-// Static placeholder data — replace with live API calls once Roblox Open Cloud is wired up
+// Revalidate page every 60 seconds (ISR)
+export const revalidate = 60;
+
 const leaderboards = [
   {
     game: "BroBlox Obby",
     slug: "obby",
+    universeId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY ?? "9624221556",
     accent: "cyan" as const,
     boards: [
       {
@@ -40,11 +44,14 @@ const leaderboards = [
 ];
 
 const accentMap = {
-  cyan: { text: "#00e5ff", border: "#00e5ff33", bg: "#00e5ff0d" },
-  purple: { text: "#c084fc", border: "#c084fc33", bg: "#c084fc0d" },
+  cyan: { text: "#00e5ff", border: "#00e5ff33", bg: "#00e5ff0d", pill: "#00e5ff1a" },
+  purple: { text: "#c084fc", border: "#c084fc33", bg: "#c084fc0d", pill: "#c084fc1a" },
 };
 
-export default function RankingsPage() {
+export default async function RankingsPage() {
+  const universeIds = leaderboards.map((l) => l.universeId);
+  const stats = await fetchGameStats(universeIds);
+
   return (
     <main className="min-h-screen px-4 pb-24 pt-28 sm:px-6 lg:px-8">
       {/* Header */}
@@ -54,17 +61,19 @@ export default function RankingsPage() {
         </p>
         <h1 className="text-4xl font-black sm:text-5xl md:text-6xl">Rankings</h1>
         <p className="mx-auto mt-3 max-w-md text-sm text-[#71717a] sm:text-base">
-          Top players across all BroBlox games. Updated live.
+          Top players across all BroBlox games. Player counts refresh every 60 seconds.
         </p>
       </div>
 
       <div className="mx-auto flex max-w-5xl flex-col gap-12">
         {leaderboards.map((lb) => {
           const c = accentMap[lb.accent];
+          const gameStats = stats[lb.universeId];
+
           return (
             <section key={lb.slug}>
               {/* Game title */}
-              <div className="mb-6 flex items-center gap-3">
+              <div className="mb-4 flex items-center gap-3">
                 <div
                   className="h-px flex-1"
                   style={{ background: `linear-gradient(to right, ${c.text}44, transparent)` }}
@@ -77,6 +86,29 @@ export default function RankingsPage() {
                   style={{ background: `linear-gradient(to left, ${c.text}44, transparent)` }}
                 />
               </div>
+
+              {/* Live stats pills */}
+              {gameStats && (
+                <div className="mb-6 flex flex-wrap gap-2">
+                  <span
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold"
+                    style={{ color: c.text, borderColor: c.border, background: c.pill }}
+                  >
+                    <span
+                      className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
+                      style={{ backgroundColor: c.text }}
+                    />
+                    {formatCount(gameStats.playing)} playing now
+                  </span>
+                  <span
+                    className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold"
+                    style={{ color: c.text, borderColor: c.border, background: c.pill }}
+                  >
+                    <TrendingUp className="h-3 w-3" />
+                    {formatCount(gameStats.visits)} visits
+                  </span>
+                </div>
+              )}
 
               {/* Boards */}
               <div className="grid gap-6 sm:grid-cols-2">
@@ -99,9 +131,7 @@ export default function RankingsPage() {
                           <li
                             key={e.rank}
                             className="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
-                            style={{
-                              background: e.rank === 1 ? `${c.text}11` : "transparent",
-                            }}
+                            style={{ background: e.rank === 1 ? `${c.text}11` : "transparent" }}
                           >
                             <div className="flex items-center gap-3">
                               <span
@@ -132,9 +162,9 @@ export default function RankingsPage() {
           );
         })}
 
-        {/* Coming soon notice */}
         <p className="text-center text-xs text-[#3f3f60]">
-          Live player counts via Roblox Open Cloud — coming soon.
+          Leaderboard entries are updated via the BroBlox dashboard. Player counts via Roblox public
+          API.
         </p>
       </div>
     </main>
