@@ -1,5 +1,6 @@
-import Link from "next/link";
-import { Gamepad2, Trophy, Coins } from "lucide-react";
+"use client";
+
+import { Gamepad2, Trophy } from "lucide-react";
 
 interface Game {
   slug: string;
