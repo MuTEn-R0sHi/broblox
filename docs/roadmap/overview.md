@@ -139,7 +139,7 @@ Shipped:
 Remaining:
 
 - Dashboard news management route → feeds `/news` page dynamically
-- Roblox game deep links (needs games published + universe IDs configured)
+- Roblox game deep links (both games deployed to Roblox, 6 private experiences; activate when made public)
 - Live leaderboard data pipeline (game server → `@rbx/leaderboards` → dashboard API → website) — **deferred to Phase 6**
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI
@@ -183,7 +183,7 @@ Test coverage: 2,400+ tests across 115+ test suites.
 - `notifications`: in-game toasts, announcements ✅
 - `apps/website`: public portal, games, rankings, news — deployed ✅
 - Dashboard news management route (pending)
-- Roblox deep links (pending — needs published games)
+- Roblox deep links (pending — experiences deployed private, activate when public)
 - Dashboard worker jobs, performance budgets, Roblox Moments (pending)
 
 ### Phase 5a — Foundation (Complete ✅)
