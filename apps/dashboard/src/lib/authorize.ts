@@ -62,7 +62,7 @@ export async function requirePermission(permission: Permission): Promise<AuthRes
   const result = await requireAuth();
 
   if (!hasPermission(result.user.role, permission)) {
-    redirect("/dashboard?error=unauthorized");
+    redirect("/?error=unauthorized");
   }
 
   return result;
@@ -75,7 +75,7 @@ export async function requireAnyPermission(permissions: Permission[]): Promise<A
   const result = await requireAuth();
 
   if (!hasAnyPermission(result.user.role, permissions)) {
-    redirect("/dashboard?error=unauthorized");
+    redirect("/?error=unauthorized");
   }
 
   return result;
@@ -88,7 +88,7 @@ export async function requireRole(minimumRole: Role): Promise<AuthResult> {
   const result = await requireAuth();
 
   if (!isRoleHigherOrEqual(result.user.role, minimumRole)) {
-    redirect("/dashboard?error=unauthorized");
+    redirect("/?error=unauthorized");
   }
 
   return result;

@@ -138,5 +138,5 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/:path*"],
+  matcher: ["/((?!login|blocked|_next/static|_next/image|favicon\\.ico).*)"],
 };

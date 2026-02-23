@@ -24,20 +24,20 @@ const navigation: Array<{
   icon: typeof LayoutDashboard;
   permission: Permission;
 }> = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, permission: "view:dashboard" },
-  { name: "Games", href: "/dashboard/games", icon: Gamepad2, permission: "games:view" },
-  { name: "Matches", href: "/dashboard/matches", icon: Trophy, permission: "view:matches" },
-  { name: "Feature Flags", href: "/dashboard/flags", icon: Flag, permission: "view:flags" },
-  { name: "Players", href: "/dashboard/players", icon: Users, permission: "view:players" },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard, permission: "view:dashboard" },
+  { name: "Games", href: "/games", icon: Gamepad2, permission: "games:view" },
+  { name: "Matches", href: "/matches", icon: Trophy, permission: "view:matches" },
+  { name: "Feature Flags", href: "/flags", icon: Flag, permission: "view:flags" },
+  { name: "Players", href: "/players", icon: Users, permission: "view:players" },
   {
     name: "Moderation",
-    href: "/dashboard/moderation",
+    href: "/moderation",
     icon: Shield,
     permission: "moderation:view",
   },
-  { name: "Audit Log", href: "/dashboard/audit", icon: FileText, permission: "view:audit" },
-  { name: "Users", href: "/dashboard/users", icon: UserCog, permission: "users:view" },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings, permission: "settings:view" },
+  { name: "Audit Log", href: "/audit", icon: FileText, permission: "view:audit" },
+  { name: "Users", href: "/users", icon: UserCog, permission: "users:view" },
+  { name: "Settings", href: "/settings", icon: Settings, permission: "settings:view" },
 ];
 
 interface SidebarProps {
