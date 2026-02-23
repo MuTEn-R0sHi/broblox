@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "RBX Game Platform Dashboard",
-  description: "Operations dashboard for Roblox game platform",
+  title: "BroBlox Dashboard",
+  description: "Operations dashboard for BroBlox game studio",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -1,8 +1,8 @@
-# RBX Dashboard
+# BroBlox Dashboard
 
-Operations control plane for the rbx-game-platform.
+Operations control plane for the BroBlox game studio.
 
-**Live**: https://rbx-dashboard.vercel.app
+**Live**: https://dashboard.broblox-games.com
 
 ## Features
 
@@ -129,7 +129,7 @@ Fetch feature flags for a specific environment.
 **Example:**
 
 ```bash
-curl https://rbx-dashboard.vercel.app/api/flags/dev
+curl https://dashboard.broblox-games.com/api/flags/dev
 ```
 
 ## Role Permissions
@@ -174,7 +174,7 @@ local HttpService = game:GetService("HttpService")
 
 local function fetchFlags(environment: string)
     local response = HttpService:RequestAsync({
-        Url = "https://rbx-dashboard.vercel.app/api/flags/" .. environment,
+        Url = "https://dashboard.broblox-games.com/api/flags/" .. environment,
         Method = "GET",
         Headers = {
             ["x-api-key"] = "your-api-key" -- optional

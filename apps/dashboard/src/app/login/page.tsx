@@ -15,10 +15,10 @@ export default async function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">RBX</span>
+            <span className="text-primary-foreground font-bold text-lg">BBX</span>
           </div>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to access the game platform dashboard</CardDescription>
+          <CardDescription>Sign in to the BroBlox Dashboard</CardDescription>
         </CardHeader>
         <CardContent>
           <form

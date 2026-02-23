@@ -1,6 +1,6 @@
 # @rbx/constants
 
-Centralized configuration constants for the rbx-game-platform.
+Centralized configuration constants for the BroBlox platform.
 
 ## Purpose
 

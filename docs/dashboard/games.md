@@ -69,7 +69,7 @@ correct game and merge global + per-game flags automatically.
 ```lua
 local HttpService = game:GetService("HttpService")
 
-local DASHBOARD_URL = "https://rbx-dashboard.vercel.app"
+local DASHBOARD_URL = "https://dashboard.broblox-games.com"
 local FLAGS_API_KEY  = "your-optional-api-key"
 
 local function fetchFlags(environment: string): { [string]: boolean }

@@ -1,20 +1,20 @@
-# Roblox Studio Platform
+# BroBlox
 
-[![CI](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/ci.yml)
-[![Docs](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/docs-deploy-limacity.yml/badge.svg)](https://github.com/MuTEn-R0sHi/rbx-game-platform/actions/workflows/docs-deploy-limacity.yml)
-[![Dashboard](https://img.shields.io/badge/Dashboard-Live-brightgreen)](https://rbx-dashboard.vercel.app)
+[![CI](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/ci.yml/badge.svg)](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/ci.yml)
+[![Docs](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/docs-deploy-limacity.yml/badge.svg)](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/docs-deploy-limacity.yml)
+[![Dashboard](https://img.shields.io/badge/Dashboard-Live-brightgreen)](https://dashboard.broblox-games.com)
 
-Docs-first Roblox-TS multi-game platform + control-plane dashboard.
+BroBlox game studio — Roblox-TS multi-game platform + control-plane dashboard.
 
 ## Quick Links
 
-- **Dashboard**: https://rbx-dashboard.vercel.app
-- **Documentation**: https://roshi.lima-city.de (or run `mkdocs serve` locally)
+- **Dashboard**: https://dashboard.broblox-games.com
+- **Documentation**: https://docs.broblox-games.com (or run `mkdocs serve` locally)
 
 ## Repo layout
 
 ```
-rbx-game-platform/
+broblox/
 ├── packages/                 # 31 shared platform packages (TypeScript → Luau)
 │   ├── shared-types/         # Core type definitions, Result<T>, ErrorCode
 │   ├── constants/            # Numeric constants, timeouts, limits, validation helpers

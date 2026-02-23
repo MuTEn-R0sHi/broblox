@@ -1,5 +1,6 @@
-site_name: Roblox Studio Platform
-site_description: Docs-driven architecture plan for a reusable Roblox-TS multi-game framework.
+site_name: BroBlox Documentation
+site_description: Docs-driven architecture for the BroBlox multi-game Roblox-TS platform.
+site_url: https://docs.broblox-games.com
 site_dir: site
 
 theme:

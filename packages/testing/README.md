@@ -1,6 +1,6 @@
 # @rbx/testing
 
-Shared test utilities, mocks, and helpers for the rbx-game-platform monorepo.
+Shared test utilities, mocks, and helpers for the BroBlox monorepo.
 
 ## Purpose
 

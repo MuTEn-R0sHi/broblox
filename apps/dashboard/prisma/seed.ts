@@ -48,7 +48,7 @@ const GAMES = [
   {
     slug: "starter",
     name: "Starter Game",
-    description: "Starter combat/template game using the rbx-game-platform skeleton.",
+    description: "Starter combat/template game using the BroBlox platform skeleton.",
     universeIdDev: bigint(e.STARTER_DEV_UNIVERSE_ID),
     placeIdDev: bigint(e.STARTER_DEV_PLACE_ID),
     universeIdStage: bigint(e.STARTER_STAGING_UNIVERSE_ID),
@@ -59,7 +59,7 @@ const GAMES = [
   {
     slug: "obby",
     name: "Obby",
-    description: "Obstacle course game template using rbx-game-platform.",
+    description: "Obstacle course game template using the BroBlox platform.",
     universeIdDev: bigint(e.OBBY_DEV_UNIVERSE_ID),
     placeIdDev: bigint(e.OBBY_DEV_PLACE_ID),
     universeIdStage: bigint(e.OBBY_STAGING_UNIVERSE_ID),

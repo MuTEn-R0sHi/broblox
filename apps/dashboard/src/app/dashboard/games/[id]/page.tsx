@@ -289,7 +289,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
 
 local HttpService = game:GetService("HttpService")
 local response = HttpService:RequestAsync({
-    Url = "https://rbx-dashboard.vercel.app/api/flags/prod?universeId=<universeId>",
+    Url = "https://dashboard.broblox-games.com/api/flags/prod?universeId=<universeId>",
     Method = "GET",
     Headers = { ["x-api-key"] = "your-api-key" }
 })

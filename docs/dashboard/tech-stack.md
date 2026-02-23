@@ -13,7 +13,7 @@ The dashboard is the **multi-game control plane** for:
 - **Role-based access** - VIEWER, SUPPORT, MODERATOR, ENGINEER, ADMIN roles
 - **Configuration API** - REST endpoint consumed by game servers, scoped by game or universe ID
 
-**Live Dashboard**: https://rbx-dashboard.vercel.app
+**Live Dashboard**: https://dashboard.broblox-games.com
 
 ## Tech Stack
 
@@ -154,7 +154,7 @@ Global flags are always included; game-specific flags shadow global flags on key
 
 ```http
 GET /api/flags/prod HTTP/1.1
-Host: rbx-dashboard.vercel.app
+Host: dashboard.broblox-games.com
 x-api-key: optional-api-key
 ```
 
@@ -162,7 +162,7 @@ x-api-key: optional-api-key
 
 ```http
 GET /api/flags/prod?universeId=123456789 HTTP/1.1
-Host: rbx-dashboard.vercel.app
+Host: dashboard.broblox-games.com
 x-api-key: optional-api-key
 ```
 
@@ -196,7 +196,7 @@ local HttpService = game:GetService("HttpService")
 local function fetchFlags(environment: string)
     local universeId = game.GameId -- Roblox universe ID
     local response = HttpService:RequestAsync({
-        Url = "https://rbx-dashboard.vercel.app/api/flags/"
+        Url = "https://dashboard.broblox-games.com/api/flags/"
               .. environment
               .. "?universeId=" .. tostring(universeId),
         Method = "GET",

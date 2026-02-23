@@ -1,7 +1,7 @@
 # @rbx/config-featureflags
 
 Feature flags, kill-switches, segments, scheduling, and rollout history
-for Roblox games on the `rbx-game-platform`.
+for Roblox games on the BroBlox platform.
 
 ## Features
 
