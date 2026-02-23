@@ -1,0 +1,150 @@
+/* BroBlox Documentation — match dashboard zinc-dark palette */
+
+:root,
+[data-md-color-scheme="slate"] {
+  /* Backgrounds — zinc-950 */
+  --md-default-bg-color: #09090b;
+  --md-default-bg-color--light: #0f0f11;
+  --md-default-bg-color--lighter: #18181b;
+  --md-default-bg-color--lightest: #27272a;
+
+  /* Foregrounds — zinc-50 / zinc-400 */
+  --md-default-fg-color: #fafafa;
+  --md-default-fg-color--light: #d4d4d8;
+  --md-default-fg-color--lighter: #a1a1aa;
+  --md-default-fg-color--lightest: #71717a;
+
+  /* Code blocks — zinc-900 */
+  --md-code-bg-color: #18181b;
+  --md-code-fg-color: #e4e4e7;
+
+  /* Primary — white buttons/accents (matching dashboard primary:#fafafa) */
+  --md-primary-fg-color: #fafafa;
+  --md-primary-fg-color--light: #d4d4d8;
+  --md-primary-fg-color--dark: #a1a1aa;
+  --md-primary-bg-color: #09090b;
+  --md-primary-bg-color--light: #18181b;
+
+  /* Accent links */
+  --md-accent-fg-color: #d4d4d8;
+  --md-accent-fg-color--transparent: rgba(212, 212, 216, 0.1);
+  --md-accent-bg-color: #fafafa;
+
+  /* Typeset links */
+  --md-typeset-a-color: #a1a1aa;
+}
+
+/* Header — match sidebar-background */
+.md-header {
+  background-color: #09090b;
+  border-bottom: 1px solid #27272a;
+  box-shadow: none;
+}
+
+.md-header[data-md-state="shadow"] {
+  box-shadow: 0 1px 0 0 #27272a;
+}
+
+/* Nav sidebar */
+.md-nav {
+  background-color: #09090b;
+}
+
+.md-sidebar {
+  background-color: #09090b;
+  border-right: 1px solid #27272a;
+}
+
+/* Navigation items — active */
+.md-nav__item--active > .md-nav__link,
+.md-nav__link:hover {
+  color: #fafafa;
+}
+
+.md-nav__link--active {
+  color: #fafafa;
+  font-weight: 600;
+}
+
+/* Footer */
+.md-footer {
+  background-color: #09090b;
+  border-top: 1px solid #27272a;
+}
+
+.md-footer-meta {
+  background-color: #09090b;
+}
+
+/* Content area */
+.md-main__inner {
+  background-color: #09090b;
+}
+
+.md-content {
+  background-color: #09090b;
+}
+
+/* Tables */
+.md-typeset table:not([class]) th {
+  background-color: #18181b;
+  border-bottom: 1px solid #27272a;
+}
+
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid #27272a;
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background-color: #18181b;
+}
+
+/* Admonitions — tone down */
+.md-typeset .admonition,
+.md-typeset details {
+  background-color: #18181b;
+  border-left-color: #52525b;
+}
+
+/* Search */
+.md-search__form {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+}
+
+.md-search__input {
+  background-color: transparent;
+  color: #fafafa;
+}
+
+.md-search__output {
+  background-color: #09090b;
+  border: 1px solid #27272a;
+}
+
+/* Tabs */
+.md-tabs {
+  background-color: #09090b;
+  border-bottom: 1px solid #27272a;
+}
+
+/* Font — match dashboard system font stack */
+body,
+.md-typeset {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* Logo text styling */
+.md-header__button.md-logo {
+  padding: 6px 8px;
+  margin-right: 4px;
+}
+
+.md-header__topic {
+  font-weight: 600;
+}
