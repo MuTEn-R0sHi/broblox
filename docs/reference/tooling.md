@@ -79,3 +79,16 @@ From `apps/dashboard`:
 Or from repo root:
 
 - `pnpm --filter @rbx/dashboard dev`
+
+## Website ([broblox-games.com](https://broblox-games.com))
+
+From `apps/website`:
+
+- `pnpm dev`
+- `pnpm build`
+- `pnpm test`
+
+Or from repo root:
+
+- `pnpm --filter @rbx/website dev`
+- `pnpm --filter @rbx/website test`

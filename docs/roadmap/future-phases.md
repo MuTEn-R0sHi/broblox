@@ -138,7 +138,7 @@ Independent packages built in parallel with 5b.
 - `packages/audio` v1: SFX, music, spatial audio, playlists, per-channel volume ✅
 - `packages/tutorial` v1: FTUE framework with step sequencing and persistence ✅
 - `packages/world-systems` v1: day/night cycle, weather transitions, season progression ✅
-- 1,500+ tests across 70 test suites ✅
+- 2,400+ tests across 115+ test suites ✅
 
 ```
 packages/
@@ -322,9 +322,9 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Phase | Estimated Duration | Dependencies          |
 | ----- | ------------------ | --------------------- |
 | 4     | 🔄 In progress     | Phase 3 ✅            |
-| 5a    | 3–4 weeks          | Phase 4               |
-| 5b    | 4–6 weeks          | Phase 5a              |
-| 5c    | 3–4 weeks          | Phase 4 (parallel)    |
+| 5a    | ✅ Complete        | Phase 4               |
+| 5b    | ✅ Complete        | Phase 5a              |
+| 5c    | ✅ Complete        | Phase 4 (parallel)    |
 | 6     | 6–8 weeks          | Phase 5a (partial)    |
 | 7     | Ongoing            | Phases 5–6 (parallel) |
 | Hub   | 4–6 weeks          | Phases 5b + 6         |

@@ -157,3 +157,52 @@ The Rojo project file is `games/starter/default.project.json`.
 - Treat the server as the only authority for game outcomes.
 - Log violations (rate limits, invalid payloads) with a correlation id.
 - Keep client logs for UX and prediction debugging; do not use them as evidence.
+
+## Website workflow
+
+The website is a Next.js app deployed at [broblox-games.com](https://broblox-games.com).
+
+### Prerequisites
+
+- Node.js 22+
+- pnpm (via corepack)
+
+### Setup
+
+```bash
+cd apps/website
+cp .env.example .env  # or create .env manually
+```
+
+Configure `.env`:
+
+```bash
+# Roblox Open Cloud — live player counts on /rankings
+# Get a key at: https://create.roblox.com/credentials
+# Permission needed: Universe → Read (scope to the two universe IDs below)
+ROBLOX_API_KEY="your-key-here"
+
+# Universe IDs (already have defaults in .env.example)
+NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY="9624221556"
+NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER="9617061511"
+
+# Optional: direct Play button deep links (leave empty until games are published)
+NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY=""
+NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER=""
+```
+
+### Run development server
+
+```bash
+pnpm --filter @rbx/website dev
+# or from apps/website:
+pnpm dev
+```
+
+Open http://localhost:3000
+
+### Run tests
+
+```bash
+pnpm --filter @rbx/website test
+```

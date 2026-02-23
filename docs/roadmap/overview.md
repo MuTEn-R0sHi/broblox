@@ -76,7 +76,7 @@ Security baseline:
 - All inbound remotes are rate limited ✅
 - Server decides outcomes for any state mutation ✅
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,400+ tests across 115+ test suites.
 
 ### Phase 2 — PvP Alpha (competitive loop + ops visibility) ✅
 
@@ -114,7 +114,7 @@ Deliverables:
 - Feature flags v2: segments, scheduling, rollout history, kill-switch ✅
 - Both games (starter + obby) integrated with moderation + movement ✅
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,400+ tests across 115+ test suites.
 
 ### Phase 4 — Production (operational excellence) 🔄
 
@@ -146,7 +146,7 @@ Remaining:
 - Roblox Moments integration (auto-detect highlights, viral sharing)
 - Regular ADR + security review cadence
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,400+ tests across 115+ test suites.
 
 ### Phase 5a — Foundation ✅
 
@@ -162,7 +162,7 @@ Deliverables:
 - `packages/rewards` v1: daily login rewards with streaks/grace periods/cycles, achievement store with progress tracking, DataStore persistence ✅
 - Game integrations: both starter and obby games with themed items, quests, achievements ✅
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,400+ tests across 115+ test suites.
 
 ## Milestone mapping (packages)
 
