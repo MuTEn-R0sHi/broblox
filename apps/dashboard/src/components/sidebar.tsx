@@ -58,9 +58,9 @@ export function Sidebar({ user }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
         <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-          <span className="text-primary-foreground font-bold text-sm">RBX</span>
+          <span className="text-primary-foreground font-bold text-sm">BBX</span>
         </div>
-        <span className="font-semibold text-sidebar-foreground">Game Platform</span>
+        <span className="font-semibold text-sidebar-foreground">BroBlox</span>
       </div>
 
       {/* Navigation */}
