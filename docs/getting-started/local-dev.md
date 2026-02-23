@@ -96,7 +96,7 @@ Open http://localhost:3000
 
 - New users default to `VIEWER`, which only shows basic navigation.
 - If you set `ADMIN_GITHUB_USERS`, sign out/in after setting it so the role is applied.
-- Once you're Admin, manage roles at `/dashboard/users`.
+- Once you're Admin, manage roles at `/users`.
 
 ## Game workflow
 

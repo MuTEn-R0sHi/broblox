@@ -79,7 +79,7 @@ Notes:
 
 ## Managing roles
 
-Admins can manage roles from `/dashboard/users`:
+Admins can manage roles from `/users`:
 
 - Select a role from the dropdown on a user row
 - Click **Save** to apply
@@ -192,7 +192,7 @@ This is enforced server-side and the reason is stored in the audit log `reason` 
 
 ### Viewing Audit Logs
 
-Users with `SUPPORT` (or higher) can view audit logs at `/dashboard/audit`:
+Users with `SUPPORT` (or higher) can view audit logs at `/audit`:
 
 - Chronological list of all actions
 - User attribution with avatar

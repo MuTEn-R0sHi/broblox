@@ -108,10 +108,10 @@ type MatchStatus = "waiting" | "starting" | "in_progress" | "ended";
 
 ## Dashboard Routes
 
-| Route                     | Description               |
-| ------------------------- | ------------------------- |
-| `/dashboard/matches`      | Match list with filtering |
-| `/dashboard/matches/[id]` | Match detail view         |
+| Route           | Description               |
+| --------------- | ------------------------- |
+| `/matches`      | Match list with filtering |
+| `/matches/[id]` | Match detail view         |
 
 ## Related Documents
 

@@ -132,9 +132,9 @@ Four new permission tokens are added to the capability matrix:
 
 New UI surfaces added to the dashboard:
 
-- **`/dashboard/games`** — game card grid with per-game flag/match/ban counts
+- **`/games`** — game card grid with per-game flag/match/ban counts
   and linked environment badges.
-- **`/dashboard/games/[id]`** — per-game control page with Roblox identifier
+- **`/games/[id]`** — per-game control page with Roblox identifier
   table, stat cards, and quick links to game-scoped views of flags, matches,
   moderation, players, and audit log.
 - **Dashboard home** — "Games" stat card (count of active experiences) and a

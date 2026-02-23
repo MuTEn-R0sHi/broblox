@@ -102,15 +102,15 @@ record ID — only the Roblox universe ID that is already available as `game.Gam
 
 ## Game detail page
 
-Each registered game has a detail page at `/dashboard/games/:id` showing:
+Each registered game has a detail page at `/games/:id` showing:
 
 - Roblox IDs per environment (copy-to-clipboard)
 - Aggregated stats (flags, bans, matches)
 - Quick links to scoped views:
-  - `/dashboard/flags?gameId=…` — flags for this game
-  - `/dashboard/matches?gameId=…` — match history for this game
-  - `/dashboard/moderation/bans?gameId=…` — bans for this game
-  - `/dashboard/audit?gameId=…` — audit log scoped to this game
+  - `/flags?gameId=…` — flags for this game
+  - `/matches?gameId=…` — match history for this game
+  - `/moderation/bans?gameId=…` — bans for this game
+  - `/audit?gameId=…` — audit log scoped to this game
 
 ---
 
