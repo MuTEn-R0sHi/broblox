@@ -32,6 +32,14 @@ sourcemap.json
 coverage/
 .nyc_output/
 
+# Environment variables (never commit secrets)
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+
 # OS / editor
 .DS_Store
 .idea/
