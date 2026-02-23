@@ -2,7 +2,6 @@ import { Hero } from "@/components/hero";
 import { Games } from "@/components/games";
 import { Features } from "@/components/features";
 import { Stats } from "@/components/stats";
-import { Footer } from "@/components/footer";
 
 export default function HomePage() {
   return (
@@ -11,7 +10,6 @@ export default function HomePage() {
       <Games />
       <Features />
       <Stats />
-      <Footer />
     </main>
   );
 }

@@ -15,6 +15,8 @@ This project is intended to be a **monorepo** with many games sharing a common p
 
 - `apps/`
   - Non-Roblox apps (web dashboard, backend API, workers).
+  - `apps/dashboard` — studio operations dashboard ([dashboard.broblox-games.com](https://dashboard.broblox-games.com))
+  - `apps/website` — public marketing site and game portal ([broblox-games.com](https://broblox-games.com))
 
 - `tools/`
   - Scripts and templates for scaffolding, publishing, validation.

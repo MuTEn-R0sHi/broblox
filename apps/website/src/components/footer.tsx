@@ -16,6 +16,15 @@ export function Footer() {
 
         {/* Links */}
         <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[#71717a]">
+          <a href="/games" className="transition-colors hover:text-[#00e5ff]">
+            Games
+          </a>
+          <a href="/rankings" className="transition-colors hover:text-[#00e5ff]">
+            Rankings
+          </a>
+          <a href="/news" className="transition-colors hover:text-[#00e5ff]">
+            News
+          </a>
           <a
             href="https://dashboard.broblox-games.com"
             target="_blank"

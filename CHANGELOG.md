@@ -13,6 +13,28 @@ Notes:
 
 ### Added
 
+- **BroBlox website (`apps/website`)** — public-facing marketing and game portal at [broblox-games.com](https://broblox-games.com)
+  - Next.js 16 app with Tailwind CSS 4, neon cyan/purple (`#00e5ff` / `#c084fc`) brand theme.
+  - Responsive nav with mobile hamburger drawer.
+  - Homepage: hero with shimmer headline, games grid, platform features, animated stats counters, footer.
+  - `/games` — full games listing page.
+  - `/games/[slug]` — per-game detail page with features grid and wiki/Roblox CTAs.
+  - `/games/[slug]/wiki` — player wiki and mechanics reference (Obby + Starter World).
+  - `/rankings` — global leaderboard page (static placeholder; live Roblox Open Cloud wiring TBD).
+  - `/news` — studio announcements and patch notes.
+  - Root monorepo scripts: `pnpm website:dev`, `pnpm website:build`.
+
+- **Repo renamed to `broblox`** — GitHub repo moved from `rbx-game-platform` → `broblox`; all CI badge URLs, dashboard links, and docs `site_url` updated accordingly.
+
+- **Domains live**
+  - `broblox-games.com` — website (Vercel)
+  - `dashboard.broblox-games.com` — operations dashboard (Vercel)
+  - `docs.broblox-games.com` — documentation (lima-city via SFTP deploy)
+
+### Fixed
+
+- Removed `prisma db push` from the dashboard `build` script — it requires a live database which is not available in Vercel's build environment. Moved to a separate `db:push` script.
+
 - **Game service wiring & test coverage (notification callbacks, event remotes, analytics)**
   - Added `onQuestCompleted` callback to `createQuestService` config; wired in both games to fire typed (obby) or generic Notification (starter) client events.
   - Added `onAchievementCompleted` and `onDailyRewardClaimed` callbacks to `createRewardsService` config; wired in both games.

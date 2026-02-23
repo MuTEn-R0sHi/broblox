@@ -1,44 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { Gamepad2, Trophy } from "lucide-react";
+import { games, accentColors } from "@/lib/games";
+import type { Game } from "@/lib/games";
 
-interface Game {
-  slug: string;
-  name: string;
-  description: string;
-  tags: string[];
-  status: "live" | "coming-soon";
-  robloxUrl?: string;
-  accent: "cyan" | "purple";
-  icon: React.ReactNode;
-  highlights: string[];
-}
-
-const games: Game[] = [
-  {
-    slug: "obby",
-    name: "BroBlox Obby",
-    description:
-      "An obstacle course adventure with checkpoints, timed stages, and a global leaderboard. How fast can you finish?",
-    tags: ["Obby", "Parkour", "Leaderboards"],
-    status: "live",
-    robloxUrl: "https://www.roblox.com",
-    accent: "cyan",
-    icon: <Gamepad2 className="h-6 w-6" />,
-    highlights: ["Checkpoint saves", "Stage timers", "Coin rewards"],
-  },
-  {
-    slug: "starter",
-    name: "Starter World",
-    description:
-      "Our open sandbox starter experience. Explore the platform features before we ship the next big game.",
-    tags: ["Sandbox", "Explore"],
-    status: "coming-soon",
-    accent: "purple",
-    icon: <Trophy className="h-6 w-6" />,
-    highlights: ["Free roam", "Achievements", "More coming soon"],
-  },
-];
+const icons: Record<string, React.ReactNode> = {
+  obby: <Gamepad2 className="h-6 w-6" />,
+  starter: <Trophy className="h-6 w-6" />,
+};
 
 export function Games() {
   return (
@@ -63,56 +33,40 @@ export function Games() {
 }
 
 function GameCard({ game }: { game: Game }) {
-  const isCyan = game.accent === "cyan";
-  const accentColor = isCyan ? "#00e5ff" : "#c084fc";
-  const accentBg = isCyan ? "#00e5ff0d" : "#c084fc0d";
-  const accentBorder = isCyan ? "#00e5ff33" : "#c084fc33";
-  const accentBorderHover = isCyan ? "#00e5ff66" : "#c084fc66";
-  const glowClass = isCyan ? "glow-cyan" : "glow-purple";
+  const c = accentColors[game.accent];
 
   return (
     <div
-      className="group relative flex flex-col rounded-2xl border bg-[#0f0f1e] p-6 transition-all duration-300 hover:scale-[1.02]"
-      style={{
-        borderColor: accentBorder,
-        backgroundColor: accentBg,
-      }}
+      className="group relative flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:scale-[1.02]"
+      style={{ borderColor: c.border, backgroundColor: c.bg }}
     >
       {/* Status badge */}
       <div className="mb-4 flex items-start justify-between">
         <div
           className="flex h-10 w-10 items-center justify-center rounded-xl border"
-          style={{
-            color: accentColor,
-            borderColor: accentBorder,
-            background: accentBg,
-          }}
+          style={{ color: c.text, borderColor: c.border, background: c.bg }}
         >
-          {game.icon}
+          {icons[game.slug]}
         </div>
         <span
           className="rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide"
-          style={{
-            color: accentColor,
-            borderColor: accentBorder,
-            background: accentBg,
-          }}
+          style={{ color: c.text, borderColor: c.border, background: c.bg }}
         >
           {game.status === "live" ? "● Live" : "Coming Soon"}
         </span>
       </div>
 
       {/* Content */}
-      <h3 className="mb-2 text-xl font-bold" style={{ color: accentColor }}>
+      <h3 className="mb-2 text-xl font-bold" style={{ color: c.text }}>
         {game.name}
       </h3>
-      <p className="mb-4 flex-1 text-sm text-[#a1a1aa]">{game.description}</p>
+      <p className="mb-4 flex-1 text-sm text-[#a1a1aa]">{game.shortDescription}</p>
 
       {/* Highlights */}
       <ul className="mb-5 space-y-1.5">
         {game.highlights.map((h) => (
           <li key={h} className="flex items-center gap-2 text-xs text-[#71717a]">
-            <span className="h-1 w-1 rounded-full" style={{ backgroundColor: accentColor }} />
+            <span className="h-1 w-1 rounded-full" style={{ backgroundColor: c.text }} />
             {h}
           </li>
         ))}
@@ -124,51 +78,42 @@ function GameCard({ game }: { game: Game }) {
           <span
             key={tag}
             className="rounded-md px-2 py-0.5 text-xs font-medium"
-            style={{
-              color: accentColor,
-              background: accentBg,
-            }}
+            style={{ color: c.text, background: c.bg }}
           >
             {tag}
           </span>
         ))}
       </div>
 
-      {/* CTA */}
-      {game.status === "live" && game.robloxUrl ? (
-        <a
-          href={game.robloxUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-bold transition-all duration-200 hover:scale-[1.02]"
-          style={{
-            color: accentColor,
-            borderColor: accentBorder,
-            background: "transparent",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = accentBg;
-            (e.currentTarget as HTMLElement).style.borderColor = accentBorderHover;
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "transparent";
-            (e.currentTarget as HTMLElement).style.borderColor = accentBorder;
-          }}
+      {/* CTAs */}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        {game.status === "live" && game.robloxUrl ? (
+          <a
+            href={game.robloxUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex flex-1 items-center justify-center rounded-xl border px-3 py-2 text-sm font-bold transition-all duration-200 hover:scale-[1.01]"
+            style={{ color: c.text, borderColor: c.border, background: c.bgStrong }}
+          >
+            Play on Roblox ↗
+          </a>
+        ) : (
+          <span className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl border border-[#1e1e3a] px-3 py-2 text-sm font-bold text-[#3f3f60]">
+            Stay Tuned
+          </span>
+        )}
+        <Link
+          href={`/games/${game.slug}`}
+          className="inline-flex items-center justify-center rounded-xl border border-[#1e1e3a] px-3 py-2 text-sm font-semibold text-[#52525b] transition-colors hover:border-[#3f3f60] hover:text-[#a1a1aa]"
         >
-          Play on Roblox ↗
-        </a>
-      ) : (
-        <span className="inline-flex items-center justify-center rounded-xl border border-[#1e1e3a] px-4 py-2.5 text-sm font-bold text-[#3f3f60] cursor-not-allowed">
-          Stay Tuned
-        </span>
-      )}
+          Details
+        </Link>
+      </div>
 
-      {/* Hover glow border effect */}
+      {/* Hover glow */}
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          boxShadow: `inset 0 0 0 1px ${accentColor}44, 0 0 24px ${accentColor}22`,
-        }}
+        style={{ boxShadow: `inset 0 0 0 1px ${c.text}44, ${c.glow}` }}
       />
     </div>
   );

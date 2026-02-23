@@ -3,11 +3,13 @@
 [![CI](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/ci.yml/badge.svg)](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/ci.yml)
 [![Docs](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/docs-deploy-limacity.yml/badge.svg)](https://github.com/MuTEn-R0sHi/broblox/actions/workflows/docs-deploy-limacity.yml)
 [![Dashboard](https://img.shields.io/badge/Dashboard-Live-brightgreen)](https://dashboard.broblox-games.com)
+[![Website](https://img.shields.io/badge/Website-Live-brightgreen)](https://broblox-games.com)
 
 BroBlox game studio — Roblox-TS multi-game platform + control-plane dashboard.
 
 ## Quick Links
 
+- **Website**: https://broblox-games.com
 - **Dashboard**: https://dashboard.broblox-games.com
 - **Documentation**: https://docs.broblox-games.com (or run `mkdocs serve` locally)
 
