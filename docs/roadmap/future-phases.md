@@ -25,9 +25,9 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 ## Phase 4 — Production (Ops Excellence)
 
-> **Goal:** Safe continuous delivery and sustainable operations.
+> **Goal:** Safe continuous delivery, sustainable operations, and a live public-facing platform.
 
-**Status:** ✅ Complete
+**Status:** 🔄 In Progress
 
 ### Shipped
 
@@ -37,9 +37,19 @@ This document outlines planned phases beyond the completed roadmap, with feature
 - `packages/codes` v1: redeemable promo codes with single/multi-use, expiry, and limits ✅
 - Open Cloud publish/promote pipeline (ci.yml, promote.yml, release.yml) ✅
 - Rollback procedure + incident runbooks ✅
+- **`apps/website` v1** — public portal at [broblox-games.com](https://broblox-games.com) ✅
+  - Homepage (hero, games grid, features, animated stats, footer)
+  - `/games` listing + `/games/[slug]` detail + `/games/[slug]/wiki`
+  - `/rankings` — live player count pills via Roblox public API (60s ISR); leaderboard entries are placeholder pending Phase 6
+  - `/news` — static posts pending dashboard CMS route
+  - Responsive nav with mobile hamburger; neon cyan/purple brand theme
+  - Deployed to Vercel; `broblox-games.com` live
 
 ### Remaining Deliverables
 
+- **Dashboard news route** — `/dashboard/news` to manage announcements → feeds website `/news` page dynamically
+- **Roblox game deep links** — configure `NEXT_PUBLIC_ROBLOX_GAME_URL_*` env vars once games are published to Roblox
+- **Live leaderboard pipeline** — game server → `@rbx/leaderboards` DataStore → dashboard API → website `/rankings`; **deferred to Phase 6** (requires running game + economy backend)
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible
 - Regular ADR + security review cadence
@@ -48,6 +58,8 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 | Feature                 | Priority | Effort | Notes                                   |
 | ----------------------- | -------- | ------ | --------------------------------------- |
+| Dashboard news CMS      | 🟡 High  | Low    | Small route; unblocks `/news` page      |
+| Roblox deep links       | 🟡 High  | Low    | Needs published games first             |
 | Open Cloud hardening    | 🟡 High  | High   | Baseline implemented; hardening remains |
 | Roblox Moments          | 🟡 High  | Low    | Auto-detect highlights, viral sharing   |
 | Scheduled events system | 🟡 High  | Medium | Events section implementation           |
@@ -140,7 +152,7 @@ packages/
 
 ## Phase 6 — Economy & Social
 
-> **Goal:** Cross-game economy, guilds, social features.
+> **Goal:** Cross-game economy, guilds, social features, and live-data website integration.
 
 **Status:** 💡 Planned
 
@@ -150,6 +162,18 @@ packages/
 - Guild/Clan infrastructure
 - Global BroCoins currency across games
 - Social features (leaderboards, friend rewards)
+
+### Website Integration (Phase 6 dependency)
+
+Once Phase 6 backend packages exist, the website gains real data:
+
+| Page                              | Integration                                            | Prerequisite                          |
+| --------------------------------- | ------------------------------------------------------ | ------------------------------------- |
+| `/rankings`                       | Live scores from `@rbx/leaderboards` via dashboard API | Running game + leaderboard DataStores |
+| `/rankings`                       | BroCoins totals per player                             | Global economy (`@rbx/economy`)       |
+| Website `/guilds` (new)           | Guild finder, member counts                            | `@rbx/guilds`                         |
+| Website `/profile/[player]` (new) | Cross-game stats, achievements                         | `@rbx/social` + dashboard API         |
+| Website nav                       | BroCoins balance (if authenticated)                    | Auth + `@rbx/economy`                 |
 
 ### Feature Candidates
 
@@ -265,6 +289,10 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Open Cloud hardening               | 4      | ✅ Done    |
 | Rollback + runbooks                | 4      | ✅ Done    |
 | Roblox Moments                     | 4      | 💡 Planned |
+| Website (broblox-games.com)        | 4      | ✅ Done    |
+| Dashboard news CMS route           | 4      | 🔄 Pending |
+| Roblox game deep links             | 4      | 🔄 Pending |
+| Live leaderboard data pipeline     | 6      | 💡 Planned |
 | Inventory package                  | 5a     | ✅ Done    |
 | Progression (XP, prestige)         | 5a     | ✅ Done    |
 | Quest/mission system               | 5a     | ✅ Done    |
@@ -281,6 +309,9 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Trading                            | 6      | 💡 Planned |
 | Guilds                             | 6      | 💡 Planned |
 | Global BroCoins                    | 6      | 💡 Planned |
+| Website: live rankings             | 6      | 💡 Planned |
+| Website: guild finder page         | 6      | 💡 Planned |
+| Website: player profile page       | 6      | 💡 Planned |
 | Genre templates + games            | 7      | 💡 Planned |
 | BroBlox Hub                        | Post-6 | 💡 Planned |
 
@@ -290,7 +321,7 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 
 | Phase | Estimated Duration | Dependencies          |
 | ----- | ------------------ | --------------------- |
-| 4     | 3–4 weeks          | Phase 3 ✅            |
+| 4     | 🔄 In progress     | Phase 3 ✅            |
 | 5a    | 3–4 weeks          | Phase 4               |
 | 5b    | 4–6 weeks          | Phase 5a              |
 | 5c    | 3–4 weeks          | Phase 4 (parallel)    |

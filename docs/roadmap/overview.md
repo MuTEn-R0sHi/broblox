@@ -116,23 +116,33 @@ Deliverables:
 
 Test coverage: 1,500+ tests across 70 test suites.
 
-### Phase 4 — Production (operational excellence) ✅
+### Phase 4 — Production (operational excellence) 🔄
 
-**Status: COMPLETE**
+**Status: 🔄 In Progress**
 
-**Goal:** safe continuous delivery and sustainable operations.
+**Goal:** safe continuous delivery, sustainable operations, and a live public-facing platform.
 
-Deliverables:
+Shipped:
 
 - `packages/codes` v1: redeemable promo codes + dashboard management ✅
 - `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time) ✅
 - `packages/analytics` v1: player behavior events, funnels, retention ✅
 - `packages/notifications` v1: in-game toasts, announcements, news ✅
 - Game integrations (both starter + obby) ✅
-- Open Cloud publish/promote pipeline hardening + ops maturity
+- Open Cloud publish/promote pipeline + rollback runbooks ✅
+- **`apps/website` v1** — public portal at [broblox-games.com](https://broblox-games.com) ✅
+  - Homepage, games listing, per-game detail + wiki, rankings, news
+  - Live player count pills via Roblox public API (60s ISR)
+  - Neon cyan/purple brand theme, mobile-responsive nav
+  - Deployed to Vercel; domains live
+
+Remaining:
+
+- Dashboard news management route → feeds `/news` page dynamically
+- Roblox game deep links (needs games published + universe IDs configured)
+- Live leaderboard data pipeline (game server → `@rbx/leaderboards` → dashboard API → website) — **deferred to Phase 6**
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
-- Performance budgets enforced in CI where possible (lint/test + scripted checks)
-- Rollback procedure tested + incident runbooks (matchmaking, exploit waves)
+- Performance budgets enforced in CI
 - Roblox Moments integration (auto-detect highlights, viral sharing)
 - Regular ADR + security review cadence
 
@@ -165,12 +175,16 @@ Test coverage: 1,500+ tests across 70 test suites.
 - Games: `starter`, `obby`
 - Dashboard: RBAC, audit, ban workflow, flag propagation
 
-### Phase 4 (Complete ✅)
+### Phase 4 (🔄 In Progress)
 
 - `codes`: redeemable promo codes ✅
 - `leaderboards`: cross-game leaderboard infrastructure ✅
 - `analytics`: player behavior events, funnels ✅
 - `notifications`: in-game toasts, announcements ✅
+- `apps/website`: public portal, games, rankings, news — deployed ✅
+- Dashboard news management route (pending)
+- Roblox deep links (pending — needs published games)
+- Dashboard worker jobs, performance budgets, Roblox Moments (pending)
 
 ### Phase 5a — Foundation (Complete ✅)
 
@@ -200,6 +214,8 @@ Test coverage: 1,500+ tests across 70 test suites.
 ### Phase 6 — Economy & Social
 
 - `trading`, `guilds`, `economy`, `social`
+- Website: live leaderboard data pipeline (game server → dashboard API → `/rankings`)
+- Website: BroCoins shop page, guild finder, social profile pages
 
 ### Phase 7+ — Games & Hub
 
