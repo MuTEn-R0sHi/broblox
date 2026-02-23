@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "BroBlox – Games by Two Bros",
@@ -13,30 +16,22 @@ export const metadata: Metadata = {
     description: "Free-to-play Roblox games by BroBlox studio.",
     url: "https://broblox-games.com",
     siteName: "BroBlox",
-    images: [{ url: "/og.png", width: 1200, height: 630 }],
+    images: [{ url: "/logo.png", width: 500, height: 500 }],
     locale: "en_US",
     type: "website",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "BroBlox – Games by Two Bros",
     description: "Free-to-play Roblox games by BroBlox studio.",
-    images: ["/og.png"],
+    images: ["/logo.png"],
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="bg-[#08080f] text-[#fafafa] antialiased">
+      <body className={`${inter.className} bg-[#08080f] text-[#fafafa] antialiased`}>
         <Nav />
         {children}
         <Footer />

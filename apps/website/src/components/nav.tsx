@@ -52,9 +52,7 @@ export function Nav() {
 
         {/* Desktop CTA */}
         <a
-          href="https://www.roblox.com/games"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/games"
           className="hidden rounded-xl border border-[#00e5ff33] bg-[#00e5ff0d] px-4 py-1.5 text-sm font-bold text-[#00e5ff] transition-all hover:border-[#00e5ff66] hover:bg-[#00e5ff1a] sm:inline-flex"
         >
           Play Now ↗
@@ -94,13 +92,11 @@ export function Nav() {
             })}
           </ul>
           <a
-            href="https://www.roblox.com/games"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/games"
             onClick={() => setOpen(false)}
             className="mt-3 flex items-center justify-center rounded-xl border border-[#00e5ff33] bg-[#00e5ff0d] px-4 py-2.5 text-sm font-bold text-[#00e5ff]"
           >
-            Play on Roblox ↗
+            Play Now ↗
           </a>
         </div>
       )}

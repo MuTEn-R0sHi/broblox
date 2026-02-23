@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Timer, Coins, TrendingUp } from "lucide-react";
 import { fetchGameStats, formatCount } from "@/lib/roblox";
+import { accentColors } from "@/lib/games";
 
 export const metadata: Metadata = {
   title: "Rankings – BroBlox",
@@ -43,11 +44,6 @@ const leaderboards = [
   },
 ];
 
-const accentMap = {
-  cyan: { text: "#00e5ff", border: "#00e5ff33", bg: "#00e5ff0d", pill: "#00e5ff1a" },
-  purple: { text: "#c084fc", border: "#c084fc33", bg: "#c084fc0d", pill: "#c084fc1a" },
-};
-
 export default async function RankingsPage() {
   const universeIds = leaderboards.map((l) => l.universeId);
   const stats = await fetchGameStats(universeIds);
@@ -67,7 +63,7 @@ export default async function RankingsPage() {
 
       <div className="mx-auto flex max-w-5xl flex-col gap-12">
         {leaderboards.map((lb) => {
-          const c = accentMap[lb.accent];
+          const c = accentColors[lb.accent];
           const gameStats = stats[lb.universeId];
 
           return (
@@ -92,7 +88,7 @@ export default async function RankingsPage() {
                 <div className="mb-6 flex flex-wrap gap-2">
                   <span
                     className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold"
-                    style={{ color: c.text, borderColor: c.border, background: c.pill }}
+                    style={{ color: c.text, borderColor: c.border, background: c.bgStrong }}
                   >
                     <span
                       className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
@@ -102,7 +98,7 @@ export default async function RankingsPage() {
                   </span>
                   <span
                     className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold"
-                    style={{ color: c.text, borderColor: c.border, background: c.pill }}
+                    style={{ color: c.text, borderColor: c.border, background: c.bgStrong }}
                   >
                     <TrendingUp className="h-3 w-3" />
                     {formatCount(gameStats.visits)} visits

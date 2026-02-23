@@ -14,7 +14,6 @@ describe("EventService (starter)", () => {
   let capturedOnEventEnd:
     | ((ev: { id: string; label: string; modifiers?: unknown }) => void)
     | undefined;
-  let capturedConfig: Record<string, unknown> | undefined;
 
   let mockFireAllClients: ReturnType<typeof vi.fn>;
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
@@ -26,7 +25,6 @@ describe("EventService (starter)", () => {
     vi.resetModules();
     capturedOnEventStart = undefined;
     capturedOnEventEnd = undefined;
-    capturedConfig = undefined;
 
     mockFireAllClients = vi.fn();
     mockRegistry = { fireAllClients: mockFireAllClients };
@@ -42,7 +40,6 @@ describe("EventService (starter)", () => {
 
     vi.doMock("@rbx/events", () => ({
       createEventService: vi.fn((config: Record<string, unknown>) => {
-        capturedConfig = config;
         capturedOnEventStart = config["onEventStart"] as typeof capturedOnEventStart;
         capturedOnEventEnd = config["onEventEnd"] as typeof capturedOnEventEnd;
         // wire lifecycle so PlayerLifecycleService callbacks are invoked

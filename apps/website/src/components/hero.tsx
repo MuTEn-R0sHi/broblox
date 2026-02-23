@@ -51,12 +51,10 @@ export function Hero() {
             Explore Games
           </a>
           <a
-            href="https://www.roblox.com"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/games"
             className="inline-flex items-center justify-center rounded-xl border border-[#c084fc66] bg-[#c084fc0f] px-8 py-3.5 text-sm font-bold text-[#c084fc] transition-all duration-200 hover:bg-[#c084fc1a] hover:border-[#c084fc] hover:glow-purple focus:outline-none focus:ring-2 focus:ring-[#c084fc] focus:ring-offset-2 focus:ring-offset-[#08080f]"
           >
-            Play on Roblox ↗
+            Browse All Games
           </a>
         </div>
 

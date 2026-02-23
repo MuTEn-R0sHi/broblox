@@ -9,8 +9,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("AnalyticsService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let capturedOnPlayerAdded: ((player: unknown) => void) | undefined;
-  let capturedOnPlayerRemoving: ((player: unknown) => void) | undefined;
+  let _capturedOnPlayerAdded: ((player: unknown) => void) | undefined;
+  let _capturedOnPlayerRemoving: ((player: unknown) => void) | undefined;
 
   let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
   let mockOnPlayerAdded: ReturnType<typeof vi.fn>;
@@ -19,14 +19,14 @@ describe("AnalyticsService (starter)", () => {
   beforeEach(() => {
     vi.resetModules();
     capturedConfig = undefined;
-    capturedOnPlayerAdded = undefined;
-    capturedOnPlayerRemoving = undefined;
+    _capturedOnPlayerAdded = undefined;
+    _capturedOnPlayerRemoving = undefined;
 
     mockOnPlayerAdded = vi.fn((cb: unknown) => {
-      capturedOnPlayerAdded = cb as (player: unknown) => void;
+      _capturedOnPlayerAdded = cb as (player: unknown) => void;
     });
     mockOnPlayerRemoving = vi.fn((cb: unknown) => {
-      capturedOnPlayerRemoving = cb as (player: unknown) => void;
+      _capturedOnPlayerRemoving = cb as (player: unknown) => void;
     });
 
     mockHandle = {

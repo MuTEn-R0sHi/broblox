@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { accentColors } from "@/lib/games";
 
 export const metadata: Metadata = {
   title: "News – BroBlox",
@@ -29,11 +30,6 @@ const posts = [
   },
 ];
 
-const accentMap = {
-  cyan: { text: "#00e5ff", border: "#00e5ff33", bg: "#00e5ff0d", tag: "#00e5ff1a" },
-  purple: { text: "#c084fc", border: "#c084fc33", bg: "#c084fc0d", tag: "#c084fc1a" },
-};
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
     year: "numeric",
@@ -58,18 +54,18 @@ export default function NewsPage() {
 
       {/* Posts */}
       <div className="mx-auto flex max-w-3xl flex-col gap-6">
-        {posts.map((post, i) => {
-          const c = accentMap[post.accent];
+        {posts.map((post) => {
+          const c = accentColors[post.accent];
           return (
             <article
-              key={i}
+              key={`${post.date}-${post.tag}`}
               className="rounded-2xl border p-6 sm:p-8"
               style={{ borderColor: c.border, background: c.bg }}
             >
               <div className="mb-3 flex flex-wrap items-center gap-3">
                 <span
                   className="rounded-md px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide"
-                  style={{ color: c.text, background: c.tag }}
+                  style={{ color: c.text, background: c.bgStrong }}
                 >
                   {post.tag}
                 </span>
