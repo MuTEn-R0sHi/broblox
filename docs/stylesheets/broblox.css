@@ -121,9 +121,17 @@
   border: 1px solid #27272a;
 }
 
+.md-search__icon.md-icon {
+  color: #d4d4d8 !important;
+}
+
 .md-search__input {
   background-color: transparent;
   color: #fafafa;
+}
+
+.md-search__input::placeholder {
+  color: #d4d4d8;
 }
 
 .md-search__output {
