@@ -29,7 +29,7 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - name: Checkout source ref
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.source_ref }}
           fetch-tags: true
@@ -74,7 +74,7 @@ jobs:
           echo "Requested by: ${{ github.actor }}"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
 
