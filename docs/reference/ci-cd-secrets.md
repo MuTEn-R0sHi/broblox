@@ -244,3 +244,29 @@ Important: `ROBLOX_FEATUREFLAGS_DATASTORE_NAME` must match what the game server 
 ### Variables summary
 
 No additional repository-level variables are required. The workflows read game-specific variables (`STARTER_*`, `OBBY_*`) from the selected GitHub Actions Environment.
+
+## Website Environment Variables (`apps/website`)
+
+The website is deployed to Vercel and reads its secrets from Vercel environment variables (not GitHub Actions environments).
+
+### Vercel Environment Variables
+
+| Name                                     | Where  | Description                                                     |
+| ---------------------------------------- | ------ | --------------------------------------------------------------- |
+| `ROBLOX_API_KEY`                         | Secret | Open Cloud API key for live player counts. See setup below.     |
+| `NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY`    | Plain  | Roblox universe ID for the Obby game (`9624221556`)             |
+| `NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER` | Plain  | Roblox universe ID for the Starter game (`9617061511`)          |
+| `NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY`       | Plain  | Full Roblox game URL for deep link (empty until game published) |
+| `NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER`    | Plain  | Full Roblox game URL for deep link (empty until game published) |
+
+### Creating the website Roblox API key
+
+1. Go to [create.roblox.com/credentials](https://create.roblox.com/credentials)
+2. Create a new API key:
+   - **Name**: `Vercel-Website-PlayerCounts`
+   - **Permission**: Universe → **Read**
+   - **Experience restriction**: add both universe IDs (`9624221556`, `9617061511`)
+3. Add the key to Vercel: **Project Settings → Environment Variables → `ROBLOX_API_KEY`**
+
+> **Security note:** This key is separate from the `ROBLOX_OPEN_CLOUD_API_KEY` used for game publishing.
+> It is read-only (universe:read) and scoped to those two universe IDs only.

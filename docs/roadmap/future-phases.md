@@ -48,7 +48,7 @@ This document outlines planned phases beyond the completed roadmap, with feature
 ### Remaining Deliverables
 
 - **Dashboard news route** — `/dashboard/news` to manage announcements → feeds website `/news` page dynamically
-- **Roblox game deep links** — configure `NEXT_PUBLIC_ROBLOX_GAME_URL_*` env vars once games are published to Roblox
+- **Roblox game deep links** — both games deployed to Roblox across dev/staging/live (6 private experiences); set `NEXT_PUBLIC_ROBLOX_GAME_URL_*` env vars in Vercel when experiences are made public
 - **Live leaderboard pipeline** — game server → `@rbx/leaderboards` DataStore → dashboard API → website `/rankings`; **deferred to Phase 6** (requires running game + economy backend)
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible
@@ -56,14 +56,14 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 ### Feature Candidates
 
-| Feature                 | Priority | Effort | Notes                                   |
-| ----------------------- | -------- | ------ | --------------------------------------- |
-| Dashboard news CMS      | 🟡 High  | Low    | Small route; unblocks `/news` page      |
-| Roblox deep links       | 🟡 High  | Low    | Needs published games first             |
-| Open Cloud hardening    | 🟡 High  | High   | Baseline implemented; hardening remains |
-| Roblox Moments          | 🟡 High  | Low    | Auto-detect highlights, viral sharing   |
-| Scheduled events system | 🟡 High  | Medium | Events section implementation           |
-| Performance monitoring  | 🟡 High  | Medium | Budgets + alerts                        |
+| Feature                 | Priority | Effort | Notes                                                 |
+| ----------------------- | -------- | ------ | ----------------------------------------------------- |
+| Dashboard news CMS      | 🟡 High  | Low    | Small route; unblocks `/news` page                    |
+| Roblox deep links       | 🟡 High  | Low    | Experiences deployed (private) — activate when public |
+| Open Cloud hardening    | 🟡 High  | High   | Baseline implemented; hardening remains               |
+| Roblox Moments          | 🟡 High  | Low    | Auto-detect highlights, viral sharing                 |
+| Scheduled events system | 🟡 High  | Medium | Events section implementation                         |
+| Performance monitoring  | 🟡 High  | Medium | Budgets + alerts                                      |
 
 ---
 
@@ -138,7 +138,7 @@ Independent packages built in parallel with 5b.
 - `packages/audio` v1: SFX, music, spatial audio, playlists, per-channel volume ✅
 - `packages/tutorial` v1: FTUE framework with step sequencing and persistence ✅
 - `packages/world-systems` v1: day/night cycle, weather transitions, season progression ✅
-- 1,500+ tests across 70 test suites ✅
+- 2,400+ tests across 115+ test suites ✅
 
 ```
 packages/
@@ -155,6 +155,11 @@ packages/
 > **Goal:** Cross-game economy, guilds, social features, and live-data website integration.
 
 **Status:** 💡 Planned
+
+### Prerequisites (must land before Phase 6 is real)
+
+- **`packages/marketplace`** — `MarketplaceService` wrapper: developer products, game passes, purchase receipt validation. Currently missing entirely; `packages/gacha`, `packages/battle-pass`, and `packages/pets` all assume Robux purchases exist but nothing processes them. Needs design + ADR first.
+- **Roblox OAuth for website** — `/profile/[player]`, BroCoins balance in nav, and guild pages all require an authenticated Roblox identity. No auth flow is designed yet — needs its own scope and ADR before Phase 6 website features are built.
 
 ### Scope
 
@@ -322,9 +327,9 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Phase | Estimated Duration | Dependencies          |
 | ----- | ------------------ | --------------------- |
 | 4     | 🔄 In progress     | Phase 3 ✅            |
-| 5a    | 3–4 weeks          | Phase 4               |
-| 5b    | 4–6 weeks          | Phase 5a              |
-| 5c    | 3–4 weeks          | Phase 4 (parallel)    |
+| 5a    | ✅ Complete        | Phase 4               |
+| 5b    | ✅ Complete        | Phase 5a              |
+| 5c    | ✅ Complete        | Phase 4 (parallel)    |
 | 6     | 6–8 weeks          | Phase 5a (partial)    |
 | 7     | Ongoing            | Phases 5–6 (parallel) |
 | Hub   | 4–6 weeks          | Phases 5b + 6         |

@@ -150,6 +150,12 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - In-game toasts, announcements, and news feed.
   - Priority queue with dismiss/expire logic.
 
+- `events`
+  - Scheduled in-game events with time-window management and start/end callbacks.
+  - Per-event feature-flag kill-switch via `@rbx/config-featureflags`.
+  - Optional gameplay modifiers (`xpMultiplier`, `dropRateMultiplier`, `coinMultiplier`).
+  - Player-join notification when events are in progress.
+
 ## Phase 5a packages
 
 - `inventory`
