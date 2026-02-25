@@ -40,6 +40,21 @@ function setupGlobals() {
       return [false, e];
     }
   };
+
+  // DataStore mock for persistence tests
+  const mockDataStore: Record<string, unknown> = {};
+  const mockStoreInstance = {
+    GetAsync: vi.fn((key: string) => mockDataStore[key]),
+    SetAsync: vi.fn((key: string, value: unknown) => {
+      mockDataStore[key] = value;
+    }),
+  };
+  g.game = {
+    GetService: vi.fn(() => ({
+      GetDataStore: vi.fn(() => mockStoreInstance),
+    })),
+  };
+  return { mockDataStore, mockStoreInstance };
 }
 
 // ---------------------------------------------------------------------------
@@ -441,5 +456,94 @@ describe("TutorialManager", () => {
     expect(manager.totalStepsCompleted()).toBe(0);
     const progress = manager.getProgress();
     expect(progress.lastActivityAt).toBe(0);
+  });
+
+  // ------ Persistence (DataStore) ------
+
+  it("init() connects to DataStoreService", async () => {
+    const { manager } = await loadManager([makeSequence()]);
+    manager.init();
+    const g = globalThis as unknown as Record<string, { GetService: ReturnType<typeof vi.fn> }>;
+    expect(g.game.GetService).toHaveBeenCalledWith("DataStoreService");
+  });
+
+  it("save() persists progress and clears dirty flag", async () => {
+    const mocks = setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    manager.init();
+    manager.startSequence("seq-1");
+    expect(manager.isDirty()).toBe(true);
+
+    const result = manager.save();
+    expect(result).toBe(true);
+    expect(manager.isDirty()).toBe(false);
+    expect(mocks.mockStoreInstance.SetAsync).toHaveBeenCalledWith(
+      "tutorial_1",
+      expect.objectContaining({ activeStepIndex: 0 })
+    );
+  });
+
+  it("save() returns false when store is not initialized", async () => {
+    const { manager } = await loadManager([makeSequence()]);
+    // don't call init()
+    const result = manager.save();
+    expect(result).toBe(false);
+  });
+
+  it("load() restores saved progress", async () => {
+    const mocks = setupGlobals();
+    // Pre-populate mock DataStore
+    mocks.mockDataStore["tutorial_1"] = {
+      completedSequences: ["old-seq"],
+      activeStepIndex: 0,
+      skippedSequences: [],
+      totalStepsCompleted: 3,
+      lastActivityAt: 500,
+      version: 1,
+    };
+
+    const { manager } = await loadManager([makeSequence()]);
+    manager.init();
+    const result = manager.load();
+    expect(result).toBe(true);
+    expect(manager.isCompleted("old-seq")).toBe(true);
+    expect(manager.totalStepsCompleted()).toBe(3);
+    expect(manager.isDirty()).toBe(false);
+  });
+
+  it("load() returns false when store is not initialized", async () => {
+    const { manager } = await loadManager([makeSequence()]);
+    const result = manager.load();
+    expect(result).toBe(false);
+  });
+
+  it("load() with no saved data keeps defaults", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    manager.init();
+    const result = manager.load();
+    expect(result).toBe(true);
+    expect(manager.completedCount()).toBe(0);
+    expect(manager.isDirty()).toBe(false);
+  });
+
+  it("round-trip: save then load restores state", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence({ steps: [makeStep()] })]);
+    manager.init();
+    manager.startSequence("seq-1");
+    manager.advanceStep(); // completes seq
+    manager.save();
+
+    // Create fresh manager that loads
+    const { TutorialManager: TM } = await import("./tutorial-manager");
+    const { SequenceRegistry: SR } = await import("./sequence-registry");
+    const r2 = new SR();
+    r2.register(makeSequence({ steps: [makeStep()] }));
+    const m2 = new TM(1, r2);
+    m2.init();
+    m2.load();
+    expect(m2.isCompleted("seq-1")).toBe(true);
+    expect(m2.totalStepsCompleted()).toBe(1);
   });
 });

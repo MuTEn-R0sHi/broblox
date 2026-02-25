@@ -81,12 +81,12 @@ export default async function WikiPage({ params }: Props) {
     <main className="min-h-screen px-4 pb-24 pt-28 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         {/* Breadcrumb */}
-        <nav className="mb-8 flex items-center gap-2 text-sm text-[#52525b]">
-          <Link href="/games" className="transition-colors hover:text-[#a1a1aa]">
+        <nav className="mb-8 flex items-center gap-2 text-sm text-dim">
+          <Link href="/games" className="transition-colors hover:text-subtle">
             Games
           </Link>
           <span>/</span>
-          <Link href={`/games/${slug}`} className="transition-colors hover:text-[#a1a1aa]">
+          <Link href={`/games/${slug}`} className="transition-colors hover:text-subtle">
             {game.name}
           </Link>
           <span>/</span>
@@ -98,7 +98,7 @@ export default async function WikiPage({ params }: Props) {
           <h1 className="text-3xl font-black sm:text-4xl">
             <span style={{ color: c.text }}>{game.name}</span> Wiki
           </h1>
-          <p className="mt-2 text-sm text-[#71717a]">Community guide and mechanics reference.</p>
+          <p className="mt-2 text-sm text-muted">Community guide and mechanics reference.</p>
         </div>
 
         {/* Content */}
@@ -112,7 +112,7 @@ export default async function WikiPage({ params }: Props) {
                 >
                   {s.heading}
                 </h2>
-                <p className="leading-relaxed text-[#a1a1aa]">{s.body}</p>
+                <p className="leading-relaxed text-subtle">{s.body}</p>
               </section>
             ))}
           </div>
@@ -121,7 +121,7 @@ export default async function WikiPage({ params }: Props) {
             className="rounded-2xl border p-8 text-center"
             style={{ borderColor: c.border, background: c.bg }}
           >
-            <p className="text-[#71717a]">Wiki content coming soon.</p>
+            <p className="text-muted">Wiki content coming soon.</p>
           </div>
         )}
 
@@ -129,7 +129,7 @@ export default async function WikiPage({ params }: Props) {
         <div className="mt-12">
           <Link
             href={`/games/${slug}`}
-            className="text-sm text-[#52525b] transition-colors hover:text-[#a1a1aa]"
+            className="text-sm text-dim transition-colors hover:text-subtle"
           >
             ← Back to {game.name}
           </Link>

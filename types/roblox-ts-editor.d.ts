@@ -36,6 +36,10 @@ interface String {
   sub(i: number, j?: number): string;
   /** Returns the byte (char code) at position i (1-indexed). */
   byte(i: number): [number];
+  /** Converts the string to uppercase (Lua `string.upper`). */
+  upper(): string;
+  /** Converts the string to lowercase (Lua `string.lower`). */
+  lower(): string;
 }
 
 /**

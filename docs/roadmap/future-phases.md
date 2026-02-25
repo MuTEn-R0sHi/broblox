@@ -27,7 +27,7 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 > **Goal:** Safe continuous delivery, sustainable operations, and a live public-facing platform.
 
-**Status:** 🔄 In Progress
+**Status:** ✅ Complete
 
 ### Shipped
 
@@ -40,16 +40,17 @@ This document outlines planned phases beyond the completed roadmap, with feature
 - **`apps/website` v1** — public portal at [broblox-games.com](https://broblox-games.com) ✅
   - Homepage (hero, games grid, features, animated stats, footer)
   - `/games` listing + `/games/[slug]` detail + `/games/[slug]/wiki`
-  - `/rankings` — live player count pills via Roblox public API (60s ISR); leaderboard entries are placeholder pending Phase 6
-  - `/news` — static posts pending dashboard CMS route
+  - `/rankings` — live leaderboards from OrderedDataStore via dashboard API (60s ISR)
+  - `/news` — live posts from dashboard News CMS (5-min ISR)
   - Responsive nav with mobile hamburger; neon cyan/purple brand theme
   - Deployed to Vercel; `broblox-games.com` live
+- **Dashboard news CMS** — full CRUD for news posts with RBAC, audit, and public API ✅
+- **Live leaderboard pipeline** — game → `@rbx/leaderboards` OrderedDataStore → dashboard API → website `/rankings` ✅
+- `@rbx/ui` v1: 8 screen templates (daily-rewards, quest-tracker, pet-collection, inventory, cosmetics, gacha, settings, battle-pass) ✅
 
 ### Remaining Deliverables
 
-- **Dashboard news route** — `/dashboard/news` to manage announcements → feeds website `/news` page dynamically
 - **Roblox game deep links** — both games deployed to Roblox across dev/staging/live (6 private experiences); set `NEXT_PUBLIC_ROBLOX_GAME_URL_*` env vars in Vercel when experiences are made public
-- **Live leaderboard pipeline** — game server → `@rbx/leaderboards` DataStore → dashboard API → website `/rankings`; **deferred to Phase 6** (requires running game + economy backend)
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI where possible
 - Regular ADR + security review cadence
@@ -58,7 +59,6 @@ This document outlines planned phases beyond the completed roadmap, with feature
 
 | Feature                 | Priority | Effort | Notes                                                 |
 | ----------------------- | -------- | ------ | ----------------------------------------------------- |
-| Dashboard news CMS      | 🟡 High  | Low    | Small route; unblocks `/news` page                    |
 | Roblox deep links       | 🟡 High  | Low    | Experiences deployed (private) — activate when public |
 | Open Cloud hardening    | 🟡 High  | High   | Baseline implemented; hardening remains               |
 | Roblox Moments          | 🟡 High  | Low    | Auto-detect highlights, viral sharing                 |
@@ -91,8 +91,6 @@ packages/
   quests/          # Quest/mission framework               ✅
   rewards/         # Daily login, achievements             ✅
 ```
-
-### Phase 5b — Collection & Monetization
 
 ### Phase 5b — Collection & Monetization
 
@@ -295,9 +293,10 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Rollback + runbooks                | 4      | ✅ Done    |
 | Roblox Moments                     | 4      | 💡 Planned |
 | Website (broblox-games.com)        | 4      | ✅ Done    |
-| Dashboard news CMS route           | 4      | 🔄 Pending |
+| Dashboard news CMS route           | 4      | ✅ Done    |
+| UI screen templates                | 4      | ✅ Done    |
 | Roblox game deep links             | 4      | 🔄 Pending |
-| Live leaderboard data pipeline     | 6      | 💡 Planned |
+| Live leaderboard data pipeline     | 4      | ✅ Done    |
 | Inventory package                  | 5a     | ✅ Done    |
 | Progression (XP, prestige)         | 5a     | ✅ Done    |
 | Quest/mission system               | 5a     | ✅ Done    |
@@ -314,7 +313,7 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Trading                            | 6      | 💡 Planned |
 | Guilds                             | 6      | 💡 Planned |
 | Global BroCoins                    | 6      | 💡 Planned |
-| Website: live rankings             | 6      | 💡 Planned |
+| Website: live rankings             | 4      | ✅ Done    |
 | Website: guild finder page         | 6      | 💡 Planned |
 | Website: player profile page       | 6      | 💡 Planned |
 | Genre templates + games            | 7      | 💡 Planned |

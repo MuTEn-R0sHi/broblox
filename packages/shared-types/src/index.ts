@@ -38,12 +38,16 @@ export type ServerId = Brand<string, "ServerId">;
 /** Session identifier */
 export type SessionId = Brand<string, "SessionId">;
 
+/** Config / data-schema version — prevents accidental mixing of raw numbers. */
+export type ConfigVersion = Brand<number, "ConfigVersion">;
+
 // Brand constructors (runtime no-op, compile-time safety)
 export const createPlayerId = (id: number): PlayerId => id as PlayerId;
 export const createMatchId = (id: string): MatchId => id as MatchId;
 export const createRequestId = (id: string): RequestId => id as RequestId;
 export const createServerId = (id: string): ServerId => id as ServerId;
 export const createSessionId = (id: string): SessionId => id as SessionId;
+export const createConfigVersion = (v: number): ConfigVersion => v as ConfigVersion;
 
 // ============================================================================
 // Protocol Version

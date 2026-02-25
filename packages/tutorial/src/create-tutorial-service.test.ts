@@ -20,6 +20,9 @@ describe("createTutorialService", () => {
     mockManager = {
       isDirty: vi.fn(() => false),
       markClean: vi.fn(),
+      init: vi.fn(),
+      load: vi.fn(() => true),
+      save: vi.fn(() => true),
     };
 
     vi.doMock("@rbx/core", () => ({
@@ -81,32 +84,52 @@ describe("createTutorialService", () => {
     expect(handle.getTutorialManager(999)).toBeUndefined();
   });
 
-  it("cleanupPlayer calls markClean on dirty manager", async () => {
+  it("initPlayer calls init() and load() on the manager", async () => {
+    const handle = await createService();
+    handle.initPlayer(42);
+
+    expect(mockManager.init).toHaveBeenCalled();
+    expect(mockManager.load).toHaveBeenCalled();
+  });
+
+  it("cleanupPlayer calls save on dirty manager", async () => {
     mockManager.isDirty.mockReturnValue(true);
     const handle = await createService();
     handle.initPlayer(1);
     handle.cleanupPlayer(1);
 
-    expect(mockManager.markClean).toHaveBeenCalled();
+    expect(mockManager.save).toHaveBeenCalled();
     expect(handle.getTutorialManager(1)).toBeUndefined();
   });
 
-  it("cleanupPlayer skips markClean for clean manager", async () => {
+  it("cleanupPlayer skips save for clean manager", async () => {
     mockManager.isDirty.mockReturnValue(false);
     const handle = await createService();
     handle.initPlayer(1);
     handle.cleanupPlayer(1);
 
-    expect(mockManager.markClean).not.toHaveBeenCalled();
+    expect(mockManager.save).not.toHaveBeenCalled();
   });
 
-  it("onDestroy logs cleanup for all players", async () => {
+  it("onDestroy saves dirty managers", async () => {
+    mockManager.isDirty.mockReturnValue(true);
     const handle = await createService();
     handle.initPlayer(1);
     handle.initPlayer(2);
     handle.Service.onDestroy!();
 
-    expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("cleanup"));
+    expect(mockManager.save).toHaveBeenCalled();
+    expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("Saved"));
+  });
+
+  it("onDestroy skips save for clean managers", async () => {
+    mockManager.isDirty.mockReturnValue(false);
+    const handle = await createService();
+    handle.initPlayer(1);
+    handle.Service.onDestroy!();
+
+    // save should not be called (but stopped message still logged)
+    expect(mockManager.save).not.toHaveBeenCalled();
   });
 
   it("exposes getSequenceRegistry", async () => {

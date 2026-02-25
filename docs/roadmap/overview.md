@@ -116,7 +116,7 @@ Deliverables:
 
 Test coverage: 2,400+ tests across 115+ test suites.
 
-### Phase 4 — Production (operational excellence) 🔄
+### Phase 4 — Production (operational excellence) ✅
 
 **Status: 🔄 In Progress**
 
@@ -175,16 +175,16 @@ Test coverage: 2,400+ tests across 115+ test suites.
 - Games: `starter`, `obby`
 - Dashboard: RBAC, audit, ban workflow, flag propagation
 
-### Phase 4 (🔄 In Progress)
+### Phase 4 (✅ Complete)
 
 - `codes`: redeemable promo codes ✅
 - `leaderboards`: cross-game leaderboard infrastructure ✅
 - `analytics`: player behavior events, funnels ✅
 - `notifications`: in-game toasts, announcements ✅
 - `apps/website`: public portal, games, rankings, news — deployed ✅
-- Dashboard news management route (pending)
-- Roblox deep links (pending — experiences deployed private, activate when public)
-- Dashboard worker jobs, performance budgets, Roblox Moments (pending)
+- Dashboard news CMS: full CRUD with public API ✅
+- Live leaderboard pipeline: OrderedDataStore → API → website ✅
+- `@rbx/ui` v1: 8 screen templates ✅
 
 ### Phase 5a — Foundation (Complete ✅)
 
@@ -214,7 +214,6 @@ Test coverage: 2,400+ tests across 115+ test suites.
 ### Phase 6 — Economy & Social
 
 - `trading`, `guilds`, `economy`, `social`
-- Website: live leaderboard data pipeline (game server → dashboard API → `/rankings`)
 - Website: BroCoins shop page, guild finder, social profile pages
 
 ### Phase 7+ — Games & Hub

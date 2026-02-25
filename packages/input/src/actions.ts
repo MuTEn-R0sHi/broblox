@@ -4,7 +4,10 @@
  * Action registration and state management.
  */
 
+import { createLogger } from "@rbx/core";
 import { InputAction, ActionState, ActionCallback } from "./types";
+
+const _logger = createLogger("InputActions");
 
 // ============================================================================
 // Action Registry

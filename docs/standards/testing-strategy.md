@@ -309,7 +309,7 @@ All 25 packages have `create*Service()` factory test suites covering:
 - [x] Config propagation
 - [x] Mock isolation with `vi.resetModules()` + `vi.doMock()`
 
-**Total: 1,500+ tests across 70 test suites.**
+**Total: 2,400+ tests across 115+ test suites.**
 
 ## Definition of done for new features
 

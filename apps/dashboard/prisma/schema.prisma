@@ -58,6 +58,7 @@ model User {
   mutesIssued   Mute[]    @relation("MutesIssued")
   evidenceUploaded Evidence[]
   appealsResolved Appeal[]
+  newsPosts     NewsPost[] @relation("NewsAuthor")
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -294,6 +295,7 @@ model Game {
   mutes     Mute[]
   auditLogs AuditLog[]
   metrics   MetricPoint[]
+  newsPosts NewsPost[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -491,4 +493,43 @@ model MetricPoint {
   @@index([gameId])
   @@index([serverId])
   @@index([ingestedAt])
+}
+
+// ============================================================================
+// News / Announcements CMS
+// ============================================================================
+
+enum NewsStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model NewsPost {
+  id          String     @id @default(cuid())
+
+  title       String
+  slug        String     @unique   // URL-safe, e.g. "v0-3-patch-notes"
+  body        String     @db.LongText  // Markdown content
+  excerpt     String?    @db.Text      // Short summary for list views
+
+  status      NewsStatus @default(DRAFT)
+  tags        Json?      // Array of string tags, e.g. ["patch-notes", "event"]
+
+  // Optional game scope
+  gameId      String?
+  game        Game?      @relation(fields: [gameId], references: [id])
+
+  // Author (dashboard user who created/last edited)
+  authorId    String
+  author      User       @relation("NewsAuthor", fields: [authorId], references: [id])
+
+  publishedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([status])
+  @@index([publishedAt])
+  @@index([authorId])
+  @@index([gameId])
 }

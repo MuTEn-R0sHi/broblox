@@ -13,6 +13,43 @@ Notes:
 
 ### Added
 
+- **Dashboard News CMS** — full CRUD for studio news posts (`/dashboard/news`).
+  - `NewsPost` Prisma model (title, slug, content, excerpt, coverImage, published, author).
+  - Server actions for create / update / delete with RBAC enforcement (ENGINEER+ required).
+  - Public API endpoint `GET /api/news` consumed by website with ISR (5-min revalidation).
+  - Dashboard list view with status badges and edit page with live preview.
+
+- **Live leaderboard pipeline** — OrderedDataStore → Dashboard API → Website.
+  - In-game `LeaderboardService` publishes scores to Roblox OrderedDataStore.
+  - Dashboard API `GET /api/leaderboards` queries Open Cloud OrderedDataStore.
+  - Website `/rankings` page renders live player rankings with period selector.
+
+- **@rbx/ui v1** — 8 full-screen UI modules for roblox-ts games.
+  - `daily-rewards.ts` — reward calendar with streak tracking and claim animations.
+  - `quest-tracker.ts` — HUD overlay with objective progress and tier badges.
+  - `pet-collection.ts` — grid browser with equip/unequip and XP bars.
+  - `inventory.ts` — item grid with search, filters, and drag-to-equip.
+  - `cosmetics.ts` — appearance customizer with category tabs and preview.
+  - `gacha.ts` — egg/banner opening screen with pity display and animations.
+  - `settings.ts` — accessibility and preference panel with sliders and toggles.
+  - `battle-pass.ts` — seasonal pass viewer with tier progression and reward previews.
+
+- **Module documentation** — 10 new module docs (combat, matchmaking, moderation, movement, codes, notifications, leaderboards, inventory, progression, quests).
+- **Dashboard documentation** — News CMS and Website docs added to dashboard section.
+- **ADR-0007** — Multi-game dashboard design decision record added to nav.
+- **Roblox type declarations** — Comprehensive GUI types (`Frame`, `TextLabel`, `TextButton`, `ScrollingFrame`, `UIListLayout`, `UICorner`, `UIPadding`, `UIStroke`, `UIGradient`), `Enum` namespace, `TweenInfo`, `UDim2`, `UDim`, `Color3`, `NumberSequence` added to `types/roblox-runtime.d.ts`.
+- **String.upper / String.lower** — Added to `types/roblox-ts-editor.d.ts` for roblox-ts string method compat.
+
+### Changed
+
+- **Test suite** — 2,307 tests across 105 test suites (up from 2,266 / 103).
+- **Roadmap** — Phase 4 marked complete; future-phases and overview docs updated with deliverables.
+- **mkdocs.yml** — Navigation updated: 10 new module entries, 2 new dashboard entries, ADR-0007.
+- **docs/modules/rewards.md** — Rewritten with accurate DailyRewardStore + AchievementStore coverage (47 tests).
+- **docs/modules/daily-rewards.md** — Consolidated into rewards.md (redirect note).
+
+---
+
 - **BroBlox website (`apps/website`)** — public-facing marketing and game portal at [broblox-games.com](https://broblox-games.com)
   - Next.js 16 app with Tailwind CSS 4, neon cyan/purple (`#00e5ff` / `#c084fc`) brand theme.
   - Responsive nav with mobile hamburger drawer.

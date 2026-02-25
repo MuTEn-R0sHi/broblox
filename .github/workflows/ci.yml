@@ -43,6 +43,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Build packages
+        run: pnpm run build:packages
+
       - name: Typecheck
         run: pnpm typecheck
 
@@ -51,9 +54,6 @@ jobs:
 
       - name: Test
         run: pnpm test
-
-      - name: Build packages
-        run: pnpm run build:packages
 
       - name: Build starter game
         run: pnpm run build:starter

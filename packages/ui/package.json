@@ -16,13 +16,27 @@
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
     "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.908",
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "@rbx/testing": "workspace:*"
+  },
+  "dependencies": {
+    "@rbx/audio": "workspace:*",
+    "@rbx/battle-pass": "workspace:*",
+    "@rbx/core": "workspace:*",
+    "@rbx/cosmetics": "workspace:*",
+    "@rbx/gacha": "workspace:*",
+    "@rbx/input": "workspace:*",
+    "@rbx/inventory": "workspace:*",
+    "@rbx/pets": "workspace:*",
+    "@rbx/quests": "workspace:*",
+    "@rbx/rewards": "workspace:*",
+    "@rbx/shared-types": "workspace:*"
   }
 }

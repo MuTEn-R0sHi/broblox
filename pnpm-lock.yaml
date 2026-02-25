@@ -129,6 +129,9 @@ importers:
       "@vitejs/plugin-react":
         specifier: ^5.1.4
         version: 5.1.4(vite@7.3.1(@types/node@25.3.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
       jsdom:
         specifier: ^28.1.0
         version: 28.1.0
@@ -394,6 +397,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -416,6 +422,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -444,6 +453,9 @@ importers:
         specifier: workspace:*
         version: link:../rewards
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -472,6 +484,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -522,6 +537,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -540,6 +558,9 @@ importers:
 
   packages/constants:
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -558,6 +579,9 @@ importers:
 
   packages/core:
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -586,6 +610,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -639,6 +666,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -667,6 +697,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -684,7 +717,14 @@ importers:
         version: 4.0.18(@types/node@25.3.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/input:
+    dependencies:
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -713,6 +753,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -741,6 +784,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -763,6 +809,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -825,6 +874,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -853,6 +905,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -915,6 +970,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -971,6 +1029,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -999,6 +1060,9 @@ importers:
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -1027,6 +1091,9 @@ importers:
         specifier: workspace:*
         version: link:../rewards
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -1052,6 +1119,9 @@ importers:
         specifier: workspace:*
         version: link:../observability
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -1098,6 +1168,9 @@ importers:
 
   packages/shared-types:
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -1126,6 +1199,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -1143,7 +1219,44 @@ importers:
         version: 4.0.18(@types/node@25.3.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/ui:
+    dependencies:
+      "@rbx/audio":
+        specifier: workspace:*
+        version: link:../audio
+      "@rbx/battle-pass":
+        specifier: workspace:*
+        version: link:../battle-pass
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+      "@rbx/cosmetics":
+        specifier: workspace:*
+        version: link:../cosmetics
+      "@rbx/gacha":
+        specifier: workspace:*
+        version: link:../gacha
+      "@rbx/input":
+        specifier: workspace:*
+        version: link:../input
+      "@rbx/inventory":
+        specifier: workspace:*
+        version: link:../inventory
+      "@rbx/pets":
+        specifier: workspace:*
+        version: link:../pets
+      "@rbx/quests":
+        specifier: workspace:*
+        version: link:../quests
+      "@rbx/rewards":
+        specifier: workspace:*
+        version: link:../rewards
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -1166,6 +1279,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
       "@rbxts/compiler-types":
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
@@ -3616,6 +3732,13 @@ packages:
     resolution:
       {
         integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==,
+      }
+    engines: { node: ">=12" }
+
+  dotenv@17.3.1:
+    resolution:
+      {
+        integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==,
       }
     engines: { node: ">=12" }
 
@@ -7179,6 +7302,8 @@ snapshots:
       is-obj: 2.0.0
 
   dotenv@16.6.1: {}
+
+  dotenv@17.3.1: {}
 
   effect@3.18.4:
     dependencies:

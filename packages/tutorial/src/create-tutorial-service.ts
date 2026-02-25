@@ -53,7 +53,7 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
         config.onPlayerRemoving?.((player) => {
           const mgr = playerTutorials.get(player.UserId);
           if (mgr && mgr.isDirty()) {
-            mgr.markClean();
+            mgr.save();
           }
           playerTutorials.delete(player.UserId);
         });
@@ -65,8 +65,11 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
       },
 
       onDestroy() {
-        playerTutorials.forEach((_mgr, playerId) => {
-          logger.info(`Tutorial cleanup for player ${playerId}`);
+        playerTutorials.forEach((mgr, playerId) => {
+          if (mgr.isDirty()) {
+            mgr.save();
+            logger.info(`Saved tutorial for player ${playerId}`);
+          }
         });
         logger.info("TutorialService stopped.");
       },
@@ -86,6 +89,8 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
         enableLogging: true,
         ...config.storeOptions,
       });
+      mgr.init();
+      mgr.load();
       playerTutorials.set(playerId, mgr);
       logger.info(`Tutorial loaded for player ${playerId}`);
       return mgr;
@@ -94,7 +99,7 @@ export function createTutorialService(config: TutorialServiceConfig): TutorialSe
     cleanupPlayer(playerId: number) {
       const mgr = playerTutorials.get(playerId);
       if (mgr && mgr.isDirty()) {
-        mgr.markClean();
+        mgr.save();
       }
       playerTutorials.delete(playerId);
     },

@@ -38,8 +38,8 @@ export default async function GameDetailPage({ params }: Props) {
     <main className="min-h-screen px-4 pb-24 pt-28 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         {/* Breadcrumb */}
-        <nav className="mb-8 flex items-center gap-2 text-sm text-[#52525b]">
-          <Link href="/games" className="transition-colors hover:text-[#a1a1aa]">
+        <nav className="mb-8 flex items-center gap-2 text-sm text-dim">
+          <Link href="/games" className="transition-colors hover:text-subtle">
             Games
           </Link>
           <span>/</span>
@@ -69,13 +69,13 @@ export default async function GameDetailPage({ params }: Props) {
                 >
                   {game.status === "live" ? "● Live" : "Coming Soon"}
                 </span>
-                <span className="text-xs text-[#52525b]">{game.genre}</span>
+                <span className="text-xs text-dim">{game.genre}</span>
               </div>
 
               <h1 className="mb-3 text-3xl font-black sm:text-4xl" style={{ color: c.text }}>
                 {game.name}
               </h1>
-              <p className="text-sm leading-relaxed text-[#a1a1aa] sm:text-base">
+              <p className="text-sm leading-relaxed text-subtle sm:text-base">
                 {game.longDescription}
               </p>
             </div>
@@ -108,13 +108,13 @@ export default async function GameDetailPage({ params }: Props) {
                 Play on Roblox
               </a>
             ) : (
-              <span className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-[#1e1e3a] px-6 py-3 text-sm font-bold text-[#3f3f60]">
+              <span className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-bold text-faint">
                 Coming Soon
               </span>
             )}
             <Link
               href={`/games/${game.slug}/wiki`}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#1e1e3a] px-6 py-3 text-sm font-semibold text-[#71717a] transition-all hover:border-[#3f3f60] hover:text-[#a1a1aa]"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-semibold text-muted transition-all hover:border-faint hover:text-subtle"
             >
               <BookOpen className="h-4 w-4" />
               Player Wiki
@@ -135,17 +135,14 @@ export default async function GameDetailPage({ params }: Props) {
                 <h3 className="mb-1.5 font-semibold" style={{ color: c.text }}>
                   {f.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-[#71717a]">{f.description}</p>
+                <p className="text-sm leading-relaxed text-muted">{f.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Back link */}
-        <Link
-          href="/games"
-          className="text-sm text-[#52525b] transition-colors hover:text-[#a1a1aa]"
-        >
+        <Link href="/games" className="text-sm text-dim transition-colors hover:text-subtle">
           ← Back to all games
         </Link>
       </div>

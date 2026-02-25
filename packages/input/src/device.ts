@@ -4,7 +4,10 @@
  * Detects current input device and platform.
  */
 
+import { createLogger } from "@rbx/core";
 import { DeviceType, PlatformInfo } from "./types";
+
+const logger = createLogger("InputDevice");
 
 // Declare Roblox services
 declare const game: {
@@ -125,6 +128,7 @@ export function onDeviceChange(callback: (device: DeviceType) => void): () => vo
     const index = deviceChangeCallbacks.indexOf(callback);
     if (index >= 0) {
       deviceChangeCallbacks.remove(index);
+      logger.debug("Removed device-change listener");
     }
   };
 }

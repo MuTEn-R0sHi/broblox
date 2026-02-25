@@ -327,7 +327,7 @@ describe("applyRemoteFeatureFlagSnapshot", () => {
   });
 
   it("applies schedule from snapshot", () => {
-    const now = os.clock();
+    const now = os.time();
     applyRemoteFeatureFlagSnapshot({
       flags: {
         "doAction.enabled": {
@@ -404,7 +404,7 @@ describe("segments", () => {
 
 describe("scheduling", () => {
   it("flag is active when within schedule window", () => {
-    const now = os.clock();
+    const now = os.time();
     setFlagSchedule("doAction.enabled", {
       startTime: now - 100,
       endTime: now + 100,
@@ -413,7 +413,7 @@ describe("scheduling", () => {
   });
 
   it("flag falls back to default when before schedule starts", () => {
-    const now = os.clock();
+    const now = os.time();
     // doAction.enabled defaults to true, so with override off + schedule not yet active,
     // schedule check returns default
     setFlagEnabledOverride("doAction.enabled", false);
@@ -425,7 +425,7 @@ describe("scheduling", () => {
   });
 
   it("flag falls back to default when after schedule expires", () => {
-    const now = os.clock();
+    const now = os.time();
     setFlagEnabledOverride("doAction.enabled", false);
     setFlagSchedule("doAction.enabled", {
       endTime: now - 100,
@@ -435,7 +435,7 @@ describe("scheduling", () => {
   });
 
   it("clearFlagSchedule removes schedule gating", () => {
-    const now = os.clock();
+    const now = os.time();
     setFlagEnabledOverride("doAction.enabled", false);
     setFlagSchedule("doAction.enabled", {
       startTime: now + 9999,
@@ -449,7 +449,7 @@ describe("scheduling", () => {
   });
 
   it("schedule works with isFlagEnabledForUser", () => {
-    const now = os.clock();
+    const now = os.time();
     setFlagEnabledOverride("experiment.newMatchmaking", true);
     setFlagRolloutPercentageOverride("experiment.newMatchmaking", 100);
     setFlagSchedule("experiment.newMatchmaking", {
