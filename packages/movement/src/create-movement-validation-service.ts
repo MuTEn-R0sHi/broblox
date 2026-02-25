@@ -83,7 +83,10 @@ export function createMovementValidationService(
       const heartbeatConn = RunService.Heartbeat.Connect((dt: number) => {
         if (!isEnabled()) return;
 
-        const deltaTime = math.min(dt, 0.25);
+        // Cap dt at 1s to remain protective during extreme lag, but allow
+        // Studio-scale frame hitches (0.3-0.8s) to be handled accurately
+        // by the teleport distance formula that includes gravity.
+        const deltaTime = math.min(dt, 1.0);
 
         for (const player of Players.GetPlayers()) {
           const character = player.Character;

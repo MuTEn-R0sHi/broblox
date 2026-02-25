@@ -530,6 +530,32 @@ describe("MovementValidator", () => {
       );
       expect(teleportViolations).toHaveLength(0);
     });
+
+    it("should allow large fall during lag spike when both velocities are low (gravity term)", () => {
+      // Simulates a Studio lag spike (~0.8s frame) where the player:
+      // 1. Was walking on a platform (velocity ~16 horizontal)
+      // 2. Walked off the edge and fell ~65 studs during the spike
+      // 3. Landed on the kill zone, velocity dampened to near zero
+      // Both start and end velocities are low, but gravity accounts for the distance.
+      playerState.updateState({
+        position: vec3(0, 45, 40),
+        velocity: vec3(16, 0, 0), // walking speed
+      });
+
+      const input = createInput({
+        position: vec3(5, -20, 40), // fell to kill zone (65 studs 3D distance)
+        velocity: vec3(2, -3, 0), // dampened after landing
+        isGrounded: true,
+        sequenceNumber: 1,
+      });
+
+      // dt = 0.8 simulates the lag spike frame
+      const result = validator.validate(input, playerState, 0.8);
+      const teleportViolations = result.violations.filter(
+        (v: MovementViolation) => v.type === "teleport"
+      );
+      expect(teleportViolations).toHaveLength(0);
+    });
   });
 
   // --------------------------------------------------------------------------

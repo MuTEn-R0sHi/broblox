@@ -280,7 +280,7 @@ describe("createMovementValidationService", () => {
     expect(state.getState().isGrounded).toBe(true);
   });
 
-  it("clamps large dt values to 0.25", async () => {
+  it("clamps large dt values to 1.0", async () => {
     const player = makePlayer(1);
     mockPlayers.push(player);
 

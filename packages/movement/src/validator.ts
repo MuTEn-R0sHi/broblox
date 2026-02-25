@@ -182,9 +182,16 @@ export class MovementValidator {
     // because gravity increases velocity mid-tick beyond the start estimate.
     const maxVelocity = math.max(currentState.velocity.Magnitude, input.velocity.Magnitude);
 
-    // Calculate expected maximum distance based on velocity and time
+    // Gravity contribution: during a lag spike the player can fall far even
+    // when both endpoint velocities are low (e.g. started walking, ended
+    // landed).  d = 0.5 * g * t² accounts for the displacement from
+    // gravitational acceleration that velocity alone cannot explain.
+    const gravityDistance = 0.5 * math.abs(this.config.gravity) * deltaTime * deltaTime;
+
+    // Calculate expected maximum distance based on velocity, gravity and time
     const expectedMaxDistance =
       maxVelocity * deltaTime * this.violationThresholds.positionTolerance +
+      gravityDistance +
       NETWORK_CONSTANTS.maxPositionError;
 
     // Add minimum threshold to account for network conditions
