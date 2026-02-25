@@ -112,7 +112,7 @@ export function createCombatService(config: CombatServiceConfig): CombatServiceH
           for (const ability of config.abilities) {
             registerAbility(ability);
           }
-          logger.info(`Registered ${config.abilities.size()} abilities`);
+          logger.info(`Registered ${config.abilities.length} abilities`);
         }
 
         // Configure hit validation
