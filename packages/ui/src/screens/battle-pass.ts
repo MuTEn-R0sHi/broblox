@@ -85,8 +85,8 @@ function formatTime(seconds: number): string {
   return `${hours}h ${mins}m`;
 }
 
-function rewardEmoji(type: string): string {
-  switch (type) {
+function rewardEmoji(rewardType: string): string {
+  switch (rewardType) {
     case "currency":
       return "💰";
     case "xp":
