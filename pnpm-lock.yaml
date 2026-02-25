@@ -226,6 +226,9 @@ importers:
       "@rbx/gacha":
         specifier: workspace:*
         version: link:../../packages/gacha
+      "@rbx/input":
+        specifier: workspace:*
+        version: link:../../packages/input
       "@rbx/inventory":
         specifier: workspace:*
         version: link:../../packages/inventory
@@ -247,6 +250,9 @@ importers:
       "@rbx/notifications":
         specifier: workspace:*
         version: link:../../packages/notifications
+      "@rbx/observability":
+        specifier: workspace:*
+        version: link:../../packages/observability
       "@rbx/pets":
         specifier: workspace:*
         version: link:../../packages/pets
@@ -262,6 +268,9 @@ importers:
       "@rbx/security":
         specifier: workspace:*
         version: link:../../packages/security
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       "@rbx/tutorial":
         specifier: workspace:*
         version: link:../../packages/tutorial

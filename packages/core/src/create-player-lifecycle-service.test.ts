@@ -49,7 +49,7 @@ describe("createPlayerLifecycleService", () => {
     connections = [];
     mockGetPlayers = vi.fn().mockReturnValue([]);
 
-    vi.doMock("./index", () => ({
+    vi.doMock("./logger", () => ({
       createLogger: () => mockLogger,
     }));
 

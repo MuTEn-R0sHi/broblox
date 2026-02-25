@@ -6,7 +6,7 @@
  * instead of connecting to `Players` events directly.
  */
 
-import { createLogger } from "./index";
+import { createLogger } from "./logger";
 import type { Service } from "./application";
 
 declare const Players: {
