@@ -115,6 +115,13 @@ export function createMovementValidationService(
 
           const state = stateManager.getState(player.UserId, hrp.Position);
 
+          // Use time since last successful validation — NOT the heartbeat
+          // dt — so that skipped ticks (no character, HRP nil, dead, etc.)
+          // correctly contribute to the time budget.  Without this, the
+          // position delta accumulates over skipped ticks while dt stays
+          // at one frame, causing false teleport violations.
+          const stateDelta = math.min(os.clock() - state.getState().lastValidatedAt, 1.0);
+
           // Detect server-side teleport: if the HRP moved far from last
           // validated position, assume the server teleported them (e.g.
           // respawn) and reset state instead of validating this tick.
@@ -124,7 +131,7 @@ export function createMovementValidationService(
           // safety margin so legitimate high-speed movement (launch pads,
           // speed boosts) is not flagged.
           const velocityMagnitude = hrp.AssemblyLinearVelocity.Magnitude;
-          const expectedMaxDistance = velocityMagnitude * deltaTime;
+          const expectedMaxDistance = velocityMagnitude * stateDelta;
           const serverTeleportLimit =
             expectedMaxDistance + VALIDATION_THRESHOLDS.serverTeleportThreshold;
           if (positionDelta > serverTeleportLimit) {
@@ -154,7 +161,7 @@ export function createMovementValidationService(
             sequenceNumber: seq,
           };
 
-          const result = validator.validate(input, state, deltaTime);
+          const result = validator.validate(input, state, stateDelta);
 
           if (!result.isValid) {
             for (const v of result.violations) {

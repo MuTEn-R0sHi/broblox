@@ -198,9 +198,11 @@ export class MovementValidator {
       gravityDistance +
       NETWORK_CONSTANTS.maxPositionError;
 
-    // Combine into a 3D threshold via Euclidean norm so gravity only
-    // inflates the vertical allowance, not horizontal.
-    const combinedBudget = math.sqrt(horizBudget * horizBudget + vertBudget * vertBudget);
+    // Combine via additive sum — horizontal and vertical movements are
+    // independent (a player can move at max speed in both axes at once),
+    // so the total 3D budget is their sum.  Gravity only contributes to
+    // vertBudget, keeping horizontal detection tight.
+    const combinedBudget = horizBudget + vertBudget;
 
     // Apply minimum threshold to account for network conditions
     const minThreshold = this.violationThresholds.teleportDistanceMin;
