@@ -14,7 +14,6 @@ import type {
   RaycastProvider,
   SuspiciousHitEvent,
   HitValidationResult,
-  HitIntent,
 } from "./types";
 import { registerAbility, clearPlayerCooldowns, resetCooldowns } from "./cooldown";
 import {
@@ -48,7 +47,7 @@ export interface CombatServiceConfig {
   /**
    * Called when a validated hit is confirmed. Wire damage application here.
    */
-  onHit?: (result: HitValidationResult, intent: HitIntent) => void;
+  onHit?: (result: HitValidationResult) => void;
 
   /**
    * Called when a suspicious hit pattern is detected.
@@ -136,7 +135,7 @@ export function createCombatService(config: CombatServiceConfig): CombatServiceH
         if (config.onHit) {
           const hitCb = config.onHit;
           unsubValidHit = onValidHit((event) => {
-            hitCb(event.result, event.intent);
+            hitCb(event);
           });
         }
 
