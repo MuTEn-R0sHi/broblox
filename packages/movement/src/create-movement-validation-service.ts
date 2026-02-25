@@ -11,6 +11,7 @@
 import { Service, createLogger } from "@rbx/core";
 import { MovementStateManager } from "./state";
 import { getMovementValidator } from "./validator";
+import { VALIDATION_THRESHOLDS } from "./constants";
 import type { MovementInput } from "./types";
 
 export interface MovementValidationConfig {
@@ -111,7 +112,14 @@ export function createMovementValidationService(
           // respawn) and reset state instead of validating this tick.
           const lastPos = state.getState().position;
           const positionDelta = hrp.Position.sub(lastPos).Magnitude;
-          if (positionDelta > 50) {
+          // Use velocity-aware threshold: expected travel distance plus a
+          // safety margin so legitimate high-speed movement (launch pads,
+          // speed boosts) is not flagged.
+          const velocityMagnitude = hrp.AssemblyLinearVelocity.Magnitude;
+          const expectedMaxDistance = velocityMagnitude * deltaTime;
+          const serverTeleportLimit =
+            expectedMaxDistance + VALIDATION_THRESHOLDS.serverTeleportThreshold;
+          if (positionDelta > serverTeleportLimit) {
             state.notifyTeleport(hrp.Position);
             logger.debug(
               `Detected server teleport for ${player.Name} (${math.floor(positionDelta)} studs), resetting state`

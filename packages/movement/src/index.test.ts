@@ -248,6 +248,13 @@ describe("PlayerMovementState", () => {
       state.notifyTeleport(vec3(0, 5, 0));
       expect(state.getAirTime()).toBe(0);
     });
+
+    it("should reset isRunning to false", () => {
+      state.updateState({ isRunning: true });
+      expect(state.getState().isRunning).toBe(true);
+      state.notifyTeleport(vec3(0, 5, 0));
+      expect(state.getState().isRunning).toBe(false);
+    });
   });
 });
 

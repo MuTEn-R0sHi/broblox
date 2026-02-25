@@ -87,6 +87,7 @@ export class PlayerMovementState {
     this.state.isGrounded = true;
     this.state.isJumping = false;
     this.state.isFalling = false;
+    this.state.isRunning = false;
     this.state.lastValidatedAt = os.clock();
     this.airTimeStart = undefined;
   }
