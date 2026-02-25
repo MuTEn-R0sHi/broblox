@@ -9,6 +9,7 @@ import { CheckpointData, CheckpointReachedEvent, OBBY_CONSTANTS } from "shared/t
 import { mapSize, arraySize } from "@rbx/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
+import { movementStateManager } from "./MovementValidationService";
 
 const logger = createLogger("CheckpointService");
 
@@ -167,6 +168,7 @@ export const CheckpointService: Service & {
       // Reset velocity to prevent any momentum
       humanoidRootPart.AssemblyLinearVelocity = Vector3.zero;
       humanoidRootPart.CFrame = cf;
+      movementStateManager.notifyTeleport(player.UserId, spawnPos);
       logger.info(`Respawned at adjusted position: ${spawnPos}`);
     } else {
       // Respawn at stage start (checkpoint 0)
@@ -180,6 +182,7 @@ export const CheckpointService: Service & {
         const cf = new CFrame(spawnPos).mul(CFrame.Angles(0, math.rad(stageStart.rotation), 0));
         humanoidRootPart.AssemblyLinearVelocity = Vector3.zero;
         humanoidRootPart.CFrame = cf;
+        movementStateManager.notifyTeleport(player.UserId, spawnPos);
         logger.info(`Respawned at stage start: ${spawnPos}`);
       } else {
         logger.warn(`No checkpoint found for respawn!`);

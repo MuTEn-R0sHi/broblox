@@ -85,6 +85,12 @@ describe("CheckpointService", () => {
     vi.doMock("./RemoteService", () => ({
       RemoteService: { getRegistry: () => mockRegistry },
     }));
+
+    vi.doMock("./MovementValidationService", () => ({
+      movementStateManager: {
+        notifyTeleport: vi.fn(),
+      },
+    }));
   });
 
   async function loadCheckpointService() {

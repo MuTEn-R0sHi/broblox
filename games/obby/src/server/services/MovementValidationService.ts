@@ -8,3 +8,4 @@ const handle = createMovementValidationService({
 });
 
 export const MovementValidationService = handle.Service;
+export const movementStateManager = handle.stateManager;
