@@ -1,0 +1,13 @@
+{
+  "className": "Part",
+  "properties": {
+    "Name": "Baseplate",
+    "Anchored": true,
+    "CanCollide": true,
+    "Size": [512, 1, 512],
+    "Position": [0, -0.5, 0],
+    "Color3": [0.388, 0.373, 0.384],
+    "Material": { "EnumType": "Material", "Name": "Slate" },
+    "Locked": true
+  }
+}

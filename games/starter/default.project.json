@@ -205,6 +205,16 @@
           "$path": "out/client"
         }
       }
+    },
+
+    "Workspace": {
+      "$className": "Workspace",
+      "Baseplate": {
+        "$path": "map/Baseplate.model.json"
+      },
+      "Spawn": {
+        "$path": "map/Spawn.model.json"
+      }
     }
   }
 }
