@@ -119,6 +119,32 @@ export interface AbilityState {
 }
 
 // ============================================================================
+// Threshold Types
+// ============================================================================
+
+/** Validation thresholds — all fields optional when used as overrides. */
+export interface ValidationThresholds {
+  /** Multiplier for max speed before flagging (accounts for lag) */
+  speedTolerance: number;
+  /** Minimum distance for teleport detection (studs) */
+  teleportDistanceMin: number;
+  /** Maximum distance that's still correctable (studs) */
+  teleportDistanceMax: number;
+  /** Position error tolerance multiplier */
+  positionTolerance: number;
+  /** Maximum air time before fly flag (seconds) */
+  maxAirTime: number;
+  /** Minimum ground contact time to reset air timer (seconds) */
+  groundResetTime: number;
+  /** Distance threshold for server-side teleport detection (studs) */
+  serverTeleportThreshold: number;
+  /** Maximum consecutive violations before escalation */
+  violationEscalationThreshold: number;
+  /** Time window for violation counting (seconds) */
+  violationWindow: number;
+}
+
+// ============================================================================
 // Physics Types
 // ============================================================================
 

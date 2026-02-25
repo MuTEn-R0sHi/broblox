@@ -154,6 +154,7 @@ describe("createMovementValidationService", () => {
               FloorMaterial: "Grass", // not Air = grounded
               GetState: () => "Running",
               WalkSpeed: 16,
+              Health: 100,
             };
           }
           return undefined;
@@ -162,9 +163,15 @@ describe("createMovementValidationService", () => {
     };
   }
 
-  async function createService(config?: ReturnType<typeof makeConfig>) {
+  async function createService(
+    config?: ReturnType<typeof makeConfig>,
+    thresholds?: Record<string, number>
+  ) {
     const mod = await import("./create-movement-validation-service");
-    return mod.createMovementValidationService(config ?? makeConfig());
+    return mod.createMovementValidationService({
+      ...(config ?? makeConfig()),
+      thresholds,
+    });
   }
 
   it("returns a Service with onInit and onDestroy", async () => {
@@ -235,7 +242,51 @@ describe("createMovementValidationService", () => {
     heartbeatCallbacks[0](1 / 60);
   });
 
-  it("clamps large dt values to 0.25", async () => {
+  it("skips validation for dead characters (Health <= 0)", async () => {
+    const player = {
+      UserId: 1,
+      Name: "DeadPlayer",
+      Character: {
+        FindFirstChild: (name: string) => {
+          if (name === "HumanoidRootPart") {
+            return {
+              IsA: (cls: string) => cls === "BasePart",
+              Position: new MockVector3(0, -50, 0),
+              AssemblyLinearVelocity: new MockVector3(0, -100, 0),
+              CFrame: { Position: new MockVector3(0, -50, 0) },
+            };
+          }
+          return undefined;
+        },
+        FindFirstChildOfClass: (cls: string) => {
+          if (cls === "Humanoid") {
+            return {
+              FloorMaterial: "Air",
+              GetState: () => "Dead",
+              WalkSpeed: 0,
+              Health: 0,
+            };
+          }
+          return undefined;
+        },
+      },
+    };
+    mockPlayers.push(player);
+
+    const handle = await createService();
+    handle.Service.onInit!();
+
+    // Should not create state or record violations for dead character
+    heartbeatCallbacks[0](1 / 60);
+    heartbeatCallbacks[0](1 / 60);
+
+    // No state should exist for this player
+    const state = handle.stateManager.getState(1);
+    // State is lazily created — but since we skipped, it should be fresh
+    expect(state.getState().isGrounded).toBe(true);
+  });
+
+  it("clamps large dt values to 1.0", async () => {
     const player = makePlayer(1);
     mockPlayers.push(player);
 
@@ -320,6 +371,7 @@ describe("createMovementValidationService", () => {
               FloorMaterial: "Grass",
               GetState: () => "Running",
               WalkSpeed: 16,
+              Health: 100,
             };
           }
           return undefined;
@@ -365,6 +417,7 @@ describe("createMovementValidationService", () => {
             FloorMaterial: "Grass",
             GetState: () => "Running",
             WalkSpeed: 16,
+            Health: 100,
           };
         }
         return undefined;
@@ -401,5 +454,60 @@ describe("createMovementValidationService", () => {
     const stateAfter = handle.stateManager.getState(1);
     expect(stateAfter.getState().isGrounded).toBe(true);
     expect(stateAfter.getAirTime()).toBe(0);
+  });
+
+  it("accepts custom thresholds override", async () => {
+    const hrpState = {
+      Position: new MockVector3(0, 5, 0),
+      AssemblyLinearVelocity: new MockVector3(0, 0, 0),
+      CFrame: new MockVector3(0, 5, 0),
+    };
+
+    const player = {
+      UserId: 1,
+      Name: "ThresholdPlayer",
+      Character: {
+        FindFirstChild: (name: string) => {
+          if (name === "HumanoidRootPart") {
+            return {
+              IsA: (cls: string) => cls === "BasePart",
+              Position: hrpState.Position,
+              AssemblyLinearVelocity: hrpState.AssemblyLinearVelocity,
+              CFrame: { Position: hrpState.Position },
+            };
+          }
+          return undefined;
+        },
+        FindFirstChildOfClass: (cls: string) => {
+          if (cls === "Humanoid") {
+            return {
+              FloorMaterial: "Grass",
+              GetState: () => "Running",
+              WalkSpeed: 16,
+              Health: 100,
+            };
+          }
+          return undefined;
+        },
+      },
+    };
+    mockPlayers.push(player);
+
+    // Create service with high teleportDistanceMin — 50-stud move should pass
+    const handle = await createService(makeConfig(), { teleportDistanceMin: 75 });
+    handle.Service.onInit!();
+
+    // First tick — establish state
+    heartbeatCallbacks[0](1 / 60);
+
+    // Move 50 studs (would violate default min of 30, but custom min is 75)
+    hrpState.Position = new MockVector3(0, 5, 50);
+
+    // Second tick — should NOT flag as teleport
+    heartbeatCallbacks[0](1 / 60);
+
+    // If a correction happened, position would have been reset
+    const state = handle.stateManager.getState(1);
+    expect(state.getState().position.Z).toBe(50);
   });
 });

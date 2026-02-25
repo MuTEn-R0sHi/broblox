@@ -5,7 +5,13 @@
  * to detect exploits like speed hacks, teleportation, and fly hacks.
  */
 
-import { MovementConfig, MovementInput, MovementViolation, ValidationResult } from "./types";
+import {
+  MovementConfig,
+  MovementInput,
+  MovementViolation,
+  ValidationResult,
+  ValidationThresholds,
+} from "./types";
 import { DEFAULT_MOVEMENT_CONFIG, VALIDATION_THRESHOLDS, NETWORK_CONSTANTS } from "./constants";
 import { PlayerMovementState } from "./state";
 import { Counter, Histogram } from "@rbx/observability";
@@ -57,15 +63,15 @@ function getViolationCounter(violationType: string): Counter {
 
 export class MovementValidator {
   private config: MovementConfig;
-  private readonly violationThresholds: typeof VALIDATION_THRESHOLDS;
+  private readonly violationThresholds: ValidationThresholds;
 
-  constructor(config?: Partial<MovementConfig>) {
+  constructor(config?: Partial<MovementConfig>, thresholds?: Partial<ValidationThresholds>) {
     this.config = {
       ...DEFAULT_MOVEMENT_CONFIG,
       abilities: config?.abilities ?? new Map(),
       ...config,
     };
-    this.violationThresholds = VALIDATION_THRESHOLDS;
+    this.violationThresholds = { ...VALIDATION_THRESHOLDS, ...thresholds };
   }
 
   /**
@@ -176,17 +182,37 @@ export class MovementValidator {
     currentState: { position: Vector3; velocity: Vector3 },
     deltaTime: number
   ): MovementViolation | undefined {
-    // Calculate expected maximum distance based on velocity and time
-    const expectedMaxDistance =
-      currentState.velocity.Magnitude * deltaTime * this.violationThresholds.positionTolerance +
+    const delta = input.position.sub(currentState.position);
+    const distance = delta.Magnitude;
+
+    // ---- Horizontal budget (XZ plane) ----
+    const prevHoriz = new Vector3(currentState.velocity.X, 0, currentState.velocity.Z).Magnitude;
+    const currHoriz = new Vector3(input.velocity.X, 0, input.velocity.Z).Magnitude;
+    const maxHorizVelocity = math.max(prevHoriz, currHoriz);
+    const horizBudget =
+      maxHorizVelocity * deltaTime * this.violationThresholds.positionTolerance +
       NETWORK_CONSTANTS.maxPositionError;
 
-    // Add minimum threshold to account for network conditions
-    const minThreshold = this.violationThresholds.teleportDistanceMin;
-    const threshold = math.max(expectedMaxDistance, minThreshold);
+    // ---- Vertical budget (Y axis) ----
+    // Include gravity term: d = 0.5 * g * t² accounts for freefall
+    // displacement when both endpoint velocities are dampened (e.g.
+    // player walks off a platform during a lag spike and lands).
+    const maxVertVelocity = math.max(math.abs(currentState.velocity.Y), math.abs(input.velocity.Y));
+    const gravityDistance = 0.5 * math.abs(this.config.gravity) * deltaTime * deltaTime;
+    const vertBudget =
+      maxVertVelocity * deltaTime * this.violationThresholds.positionTolerance +
+      gravityDistance +
+      NETWORK_CONSTANTS.maxPositionError;
 
-    // Calculate actual distance moved
-    const distance = input.position.sub(currentState.position).Magnitude;
+    // Combine via additive sum — horizontal and vertical movements are
+    // independent (a player can move at max speed in both axes at once),
+    // so the total 3D budget is their sum.  Gravity only contributes to
+    // vertBudget, keeping horizontal detection tight.
+    const combinedBudget = horizBudget + vertBudget;
+
+    // Apply minimum threshold to account for network conditions
+    const minThreshold = this.violationThresholds.teleportDistanceMin;
+    const threshold = math.max(combinedBudget, minThreshold);
 
     if (distance > threshold) {
       let severity: "low" | "medium" | "high" = "low";
@@ -267,6 +293,11 @@ export class MovementValidator {
       // Coyote-time window: allow jumps shortly after leaving the ground
       // to account for network latency and physics-step timing.
       if (state.getAirTime() <= 0.5) return undefined;
+      // Player has downward velocity → they walked off an edge and are
+      // in Freefall, not exploiting a double-jump.  Roblox reports
+      // Freefall as a "jumping" humanoid state even though no jump
+      // input occurred.
+      if (input.velocity.Y < 0) return undefined;
 
       return {
         type: "invalid_jump",

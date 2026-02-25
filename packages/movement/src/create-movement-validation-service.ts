@@ -10,9 +10,9 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { MovementStateManager } from "./state";
-import { getMovementValidator } from "./validator";
+import { MovementValidator } from "./validator";
 import { VALIDATION_THRESHOLDS } from "./constants";
-import type { MovementInput } from "./types";
+import type { MovementInput, ValidationThresholds } from "./types";
 
 export interface MovementValidationConfig {
   /**
@@ -28,6 +28,15 @@ export interface MovementValidationConfig {
    * Defaults to always-enabled if omitted.
    */
   isEnabled?: () => boolean;
+
+  /**
+   * Override default validation thresholds.  Each game can tune
+   * detection sensitivity — e.g. an obby with large vertical drops
+   * should raise `teleportDistanceMin` to avoid false positives
+   * caused by physics running ahead of the Lua timing sources during
+   * Studio lag spikes.
+   */
+  thresholds?: Partial<ValidationThresholds>;
 }
 
 export interface MovementValidationHandle {
@@ -66,7 +75,8 @@ export function createMovementValidationService(
   const RunService = game.GetService("RunService") as RunService;
   const logger = createLogger("MovementValidationService");
   const stateManager = new MovementStateManager();
-  const validator = getMovementValidator();
+  const mergedThresholds = { ...VALIDATION_THRESHOLDS, ...config.thresholds };
+  const validator = new MovementValidator(undefined, mergedThresholds);
   const connections: RBXScriptConnection[] = [];
   /** Track character references to detect Roblox UI character resets. */
   const lastCharacter = new Map<number, Model>();
@@ -83,8 +93,6 @@ export function createMovementValidationService(
       const heartbeatConn = RunService.Heartbeat.Connect((dt: number) => {
         if (!isEnabled()) return;
 
-        const deltaTime = math.min(dt, 0.25);
-
         for (const player of Players.GetPlayers()) {
           const character = player.Character;
           if (!character) continue;
@@ -92,6 +100,11 @@ export function createMovementValidationService(
           const hrp = getHumanoidRootPart(character);
           const humanoid = getHumanoid(character);
           if (!hrp || !humanoid) continue;
+
+          // Skip validation for dead characters — the ragdolling body can
+          // slide/fall rapidly and trigger false teleport violations before
+          // Roblox destroys the character and spawns a new one.
+          if (humanoid.Health <= 0) continue;
 
           // Detect character change (Roblox UI reset creates a new character).
           // Reset movement state so the new character doesn't inherit stale
@@ -107,6 +120,16 @@ export function createMovementValidationService(
 
           const state = stateManager.getState(player.UserId, hrp.Position);
 
+          // Compute effective delta from TWO sources and take the larger:
+          //  • os.clock() delta — catches skipped ticks (no character,
+          //    dead, HRP nil) where dt stays at one frame.
+          //  • Heartbeat dt — catches Roblox Studio lag spikes where the
+          //    Lua VM pauses (os.clock barely advances) but the physics
+          //    engine continues to move the character.
+          // Clamp at 1 s to stay protective during extreme lag.
+          const clockDelta = os.clock() - state.getState().lastValidatedAt;
+          const stateDelta = math.min(math.max(dt, clockDelta), 1.0);
+
           // Detect server-side teleport: if the HRP moved far from last
           // validated position, assume the server teleported them (e.g.
           // respawn) and reset state instead of validating this tick.
@@ -116,9 +139,9 @@ export function createMovementValidationService(
           // safety margin so legitimate high-speed movement (launch pads,
           // speed boosts) is not flagged.
           const velocityMagnitude = hrp.AssemblyLinearVelocity.Magnitude;
-          const expectedMaxDistance = velocityMagnitude * deltaTime;
+          const expectedMaxDistance = velocityMagnitude * stateDelta;
           const serverTeleportLimit =
-            expectedMaxDistance + VALIDATION_THRESHOLDS.serverTeleportThreshold;
+            expectedMaxDistance + mergedThresholds.serverTeleportThreshold;
           if (positionDelta > serverTeleportLimit) {
             state.notifyTeleport(hrp.Position);
             logger.debug(
@@ -146,7 +169,7 @@ export function createMovementValidationService(
             sequenceNumber: seq,
           };
 
-          const result = validator.validate(input, state, deltaTime);
+          const result = validator.validate(input, state, stateDelta);
 
           if (!result.isValid) {
             for (const v of result.violations) {

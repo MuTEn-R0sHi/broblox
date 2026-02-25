@@ -16,6 +16,7 @@ export type {
   MovementInput,
   MovementViolation,
   ValidationResult,
+  ValidationThresholds,
   MovementAbility,
   PhysicsParams,
   AbilityState,
