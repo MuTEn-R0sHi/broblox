@@ -47,6 +47,8 @@ export const VALIDATION_THRESHOLDS = {
   maxAirTime: 3,
   /** Minimum ground contact time to reset air timer (seconds) */
   groundResetTime: 0.1,
+  /** Distance threshold for server-side teleport detection (studs) */
+  serverTeleportThreshold: 100,
   /** Maximum consecutive violations before escalation */
   violationEscalationThreshold: 3,
   /** Time window for violation counting (seconds) */

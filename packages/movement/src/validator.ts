@@ -261,16 +261,20 @@ export class MovementValidator {
   ): MovementViolation | undefined {
     // Can only start jumping from ground
     if (input.isJumping && !input.isGrounded && !currentState.isJumping) {
-      // Allow if they just left ground (within tolerance / coyote time)
-      if (!currentState.isGrounded && state.getAirTime() > 0.3) {
-        return {
-          type: "invalid_jump",
-          severity: "low",
-          details: "Jump initiated while airborne",
-          timestamp: os.clock(),
-          position: input.position,
-        };
-      }
+      // Previous state still grounded → normal jump transition, not a
+      // violation (the ground-leave hasn't been processed yet).
+      if (currentState.isGrounded) return undefined;
+      // Coyote-time window: allow jumps shortly after leaving the ground
+      // to account for network latency and physics-step timing.
+      if (state.getAirTime() <= 0.5) return undefined;
+
+      return {
+        type: "invalid_jump",
+        severity: "low",
+        details: "Jump initiated while airborne",
+        timestamp: os.clock(),
+        position: input.position,
+      };
     }
 
     return undefined;

@@ -77,6 +77,22 @@ export class PlayerMovementState {
   }
 
   /**
+   * Notify the state that the player was teleported by the server.
+   * Resets position, velocity, and air-time tracking so the next
+   * heartbeat tick does not flag the position jump as a violation.
+   */
+  notifyTeleport(newPosition: Vector3): void {
+    this.state.position = newPosition;
+    this.state.velocity = new Vector3(0, 0, 0);
+    this.state.isGrounded = true;
+    this.state.isJumping = false;
+    this.state.isFalling = false;
+    this.state.isRunning = false;
+    this.state.lastValidatedAt = os.clock();
+    this.airTimeStart = undefined;
+  }
+
+  /**
    * Record a violation.
    */
   recordViolation(violationType: string): void {
@@ -175,6 +191,18 @@ export class MovementStateManager {
    */
   removeState(playerId: number): void {
     this.states.delete(playerId);
+  }
+
+  /**
+   * Notify that a player was teleported by the server.
+   * Resets their movement state to the new position so the validator
+   * does not flag the position jump as a violation.
+   */
+  notifyTeleport(playerId: number, newPosition: Vector3): void {
+    const state = this.states.get(playerId);
+    if (state) {
+      state.notifyTeleport(newPosition);
+    }
   }
 
   /**

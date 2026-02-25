@@ -11,6 +11,7 @@
 import { Service, createLogger } from "@rbx/core";
 import { MovementStateManager } from "./state";
 import { getMovementValidator } from "./validator";
+import { VALIDATION_THRESHOLDS } from "./constants";
 import type { MovementInput } from "./types";
 
 export interface MovementValidationConfig {
@@ -67,11 +68,14 @@ export function createMovementValidationService(
   const stateManager = new MovementStateManager();
   const validator = getMovementValidator();
   const connections: RBXScriptConnection[] = [];
+  /** Track character references to detect Roblox UI character resets. */
+  const lastCharacter = new Map<number, Model>();
 
   const MovementValidationService: Service = {
     onInit() {
       config.onPlayerRemoving((player) => {
         stateManager.removeState(player.UserId);
+        lastCharacter.delete(player.UserId);
       });
 
       const isEnabled = config.isEnabled ?? (() => true);
@@ -89,7 +93,40 @@ export function createMovementValidationService(
           const humanoid = getHumanoid(character);
           if (!hrp || !humanoid) continue;
 
+          // Detect character change (Roblox UI reset creates a new character).
+          // Reset movement state so the new character doesn't inherit stale
+          // air-time / position data from the old one.
+          const prevCharacter = lastCharacter.get(player.UserId);
+          if (prevCharacter !== undefined && prevCharacter !== character) {
+            stateManager.removeState(player.UserId);
+            lastCharacter.set(player.UserId, character);
+            logger.debug(`Character changed for ${player.Name}, resetting movement state`);
+            // Re-create state at current position on this tick
+          }
+          lastCharacter.set(player.UserId, character);
+
           const state = stateManager.getState(player.UserId, hrp.Position);
+
+          // Detect server-side teleport: if the HRP moved far from last
+          // validated position, assume the server teleported them (e.g.
+          // respawn) and reset state instead of validating this tick.
+          const lastPos = state.getState().position;
+          const positionDelta = hrp.Position.sub(lastPos).Magnitude;
+          // Use velocity-aware threshold: expected travel distance plus a
+          // safety margin so legitimate high-speed movement (launch pads,
+          // speed boosts) is not flagged.
+          const velocityMagnitude = hrp.AssemblyLinearVelocity.Magnitude;
+          const expectedMaxDistance = velocityMagnitude * deltaTime;
+          const serverTeleportLimit =
+            expectedMaxDistance + VALIDATION_THRESHOLDS.serverTeleportThreshold;
+          if (positionDelta > serverTeleportLimit) {
+            state.notifyTeleport(hrp.Position);
+            logger.debug(
+              `Detected server teleport for ${player.Name} (${math.floor(positionDelta)} studs), resetting state`
+            );
+            continue;
+          }
+
           const seq = state.incrementSequence();
 
           const isGrounded = humanoid.FloorMaterial !== Enum.Material.Air;
