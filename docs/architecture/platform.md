@@ -26,6 +26,7 @@ A reusable set of packages and conventions that every game uses.
 | `leaderboards`        | Cross-game leaderboards with period support                     | 4     |
 | `analytics`           | Player behavior events, funnels, retention tracking             | 4     |
 | `notifications`       | In-game toasts, announcements, news feed                        | 4     |
+| `events`              | Scheduled in-game events: time windows, modifiers, flag gates   | 4     |
 | `inventory`           | Base item/slot system with stacking and weight                  | 5a    |
 | `progression`         | XP, levels, prestige/rebirth with configurable curves           | 5a    |
 | `quests`              | Quest and objective tracking with multi-step progress           | 5a    |
@@ -39,7 +40,7 @@ A reusable set of packages and conventions that every game uses.
 | `tutorial`            | FTUE framework, guided onboarding, step persistence             | 5c    |
 | `world-systems`       | Day/night cycle, weather, seasons                               | 5c    |
 
-**31 packages** total across 7 implementation phases.
+**32 packages** total across 7 implementation phases.
 
 ### Planned Packages (Roadmap)
 

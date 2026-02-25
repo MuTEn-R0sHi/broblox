@@ -31,6 +31,9 @@ git checkout -b feature/your-feature-name
 git checkout -b fix/issue-description
 ```
 
+> **Note:** `main` is a protected branch. All changes must go through a pull request.
+> The `build` CI check must pass before merging.
+
 ### 3. Make changes
 
 Follow our conventions:

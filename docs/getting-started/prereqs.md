@@ -3,7 +3,7 @@
 ## Local prerequisites (developer machine)
 
 - Roblox Studio (latest stable)
-- Node.js (>= 20.11.0)
+- Node.js (>= 22)
 - pnpm (via Corepack)
 - Git
 - Rojo (recommended, for Roblox Studio sync)
