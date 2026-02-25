@@ -5,7 +5,13 @@
  * to detect exploits like speed hacks, teleportation, and fly hacks.
  */
 
-import { MovementConfig, MovementInput, MovementViolation, ValidationResult } from "./types";
+import {
+  MovementConfig,
+  MovementInput,
+  MovementViolation,
+  ValidationResult,
+  ValidationThresholds,
+} from "./types";
 import { DEFAULT_MOVEMENT_CONFIG, VALIDATION_THRESHOLDS, NETWORK_CONSTANTS } from "./constants";
 import { PlayerMovementState } from "./state";
 import { Counter, Histogram } from "@rbx/observability";
@@ -57,15 +63,15 @@ function getViolationCounter(violationType: string): Counter {
 
 export class MovementValidator {
   private config: MovementConfig;
-  private readonly violationThresholds: typeof VALIDATION_THRESHOLDS;
+  private readonly violationThresholds: ValidationThresholds;
 
-  constructor(config?: Partial<MovementConfig>) {
+  constructor(config?: Partial<MovementConfig>, thresholds?: Partial<ValidationThresholds>) {
     this.config = {
       ...DEFAULT_MOVEMENT_CONFIG,
       abilities: config?.abilities ?? new Map(),
       ...config,
     };
-    this.violationThresholds = VALIDATION_THRESHOLDS;
+    this.violationThresholds = { ...VALIDATION_THRESHOLDS, ...thresholds };
   }
 
   /**

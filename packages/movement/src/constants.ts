@@ -2,7 +2,7 @@
  * Movement Constants
  */
 
-import { MovementConfig, PhysicsParams } from "./types";
+import { MovementConfig, PhysicsParams, ValidationThresholds } from "./types";
 
 // ============================================================================
 // Default Configuration
@@ -34,7 +34,7 @@ export const DEFAULT_PHYSICS: PhysicsParams = {
 // Validation Thresholds
 // ============================================================================
 
-export const VALIDATION_THRESHOLDS = {
+export const VALIDATION_THRESHOLDS: ValidationThresholds = {
   /** Multiplier for max speed before flagging (accounts for lag) */
   speedTolerance: 2.0,
   /** Minimum distance for teleport detection (studs) */

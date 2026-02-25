@@ -10,9 +10,9 @@
 
 import { Service, createLogger } from "@rbx/core";
 import { MovementStateManager } from "./state";
-import { getMovementValidator } from "./validator";
+import { MovementValidator } from "./validator";
 import { VALIDATION_THRESHOLDS } from "./constants";
-import type { MovementInput } from "./types";
+import type { MovementInput, ValidationThresholds } from "./types";
 
 export interface MovementValidationConfig {
   /**
@@ -28,6 +28,15 @@ export interface MovementValidationConfig {
    * Defaults to always-enabled if omitted.
    */
   isEnabled?: () => boolean;
+
+  /**
+   * Override default validation thresholds.  Each game can tune
+   * detection sensitivity — e.g. an obby with large vertical drops
+   * should raise `teleportDistanceMin` to avoid false positives
+   * caused by physics running ahead of the Lua timing sources during
+   * Studio lag spikes.
+   */
+  thresholds?: Partial<ValidationThresholds>;
 }
 
 export interface MovementValidationHandle {
@@ -66,7 +75,8 @@ export function createMovementValidationService(
   const RunService = game.GetService("RunService") as RunService;
   const logger = createLogger("MovementValidationService");
   const stateManager = new MovementStateManager();
-  const validator = getMovementValidator();
+  const mergedThresholds = { ...VALIDATION_THRESHOLDS, ...config.thresholds };
+  const validator = new MovementValidator(undefined, mergedThresholds);
   const connections: RBXScriptConnection[] = [];
   /** Track character references to detect Roblox UI character resets. */
   const lastCharacter = new Map<number, Model>();
@@ -131,7 +141,7 @@ export function createMovementValidationService(
           const velocityMagnitude = hrp.AssemblyLinearVelocity.Magnitude;
           const expectedMaxDistance = velocityMagnitude * stateDelta;
           const serverTeleportLimit =
-            expectedMaxDistance + VALIDATION_THRESHOLDS.serverTeleportThreshold;
+            expectedMaxDistance + mergedThresholds.serverTeleportThreshold;
           if (positionDelta > serverTeleportLimit) {
             state.notifyTeleport(hrp.Position);
             logger.debug(
