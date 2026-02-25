@@ -264,12 +264,12 @@ export async function getOrderedDataStoreEntries(opts: {
   const universeId = opts.universeIdOverride ?? cfg.universeId;
   const scope = opts.scope ?? "global";
   const maxPageSize = opts.maxPageSize ?? 25;
-  const orderBy = opts.orderBy === "asc" ? "" : "desc";
+  const orderBy = opts.orderBy === "asc" || opts.orderBy === "desc" ? opts.orderBy : undefined;
 
   const params = new URLSearchParams({
     max_page_size: String(maxPageSize),
   });
-  if (orderBy) params.set("order_by", orderBy);
+  if (orderBy !== undefined) params.set("order_by", orderBy);
   if (opts.pageToken) params.set("page_token", opts.pageToken);
 
   const path = `/ordered-data-stores/v1/universes/${universeId}/orderedDataStores/${encodeURIComponent(opts.datastoreName)}/scopes/${encodeURIComponent(scope)}/entries?${params.toString()}`;

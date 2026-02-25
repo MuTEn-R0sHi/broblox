@@ -51,10 +51,13 @@ function buildStoreName(prefix: string, boardId: string, period: Period): string
     case "weekly": {
       const now = new Date();
       const year = now.getUTCFullYear();
-      // ISO week number
-      const jan1 = new Date(Date.UTC(year, 0, 1));
-      const daysSinceJan1 = Math.floor((now.getTime() - jan1.getTime()) / (24 * 60 * 60 * 1000));
-      const weekNum = Math.ceil((daysSinceJan1 + jan1.getUTCDay() + 1) / 7);
+      // Match @rbx/leaderboards getWeeklyKey: weekNum = floor((yday - 1) / 7) + 1
+      const startOfYear = Date.UTC(year, 0, 1);
+      const daysSinceStartOfYear = Math.floor(
+        (now.getTime() - startOfYear) / (24 * 60 * 60 * 1000)
+      );
+      const yday = daysSinceStartOfYear + 1; // 1-based day of year
+      const weekNum = Math.floor((yday - 1) / 7) + 1;
       return `${base}_weekly_${year}W${String(weekNum).padStart(2, "0")}`;
     }
   }

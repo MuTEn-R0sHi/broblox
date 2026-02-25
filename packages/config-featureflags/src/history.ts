@@ -17,7 +17,7 @@ export function recordHistory(
     newValue,
     oldValue,
     source,
-    timestamp: os.clock !== undefined ? os.clock() : os.time(),
+    timestamp: os.time(),
   };
   rolloutHistory.push(record);
   // Cap history length

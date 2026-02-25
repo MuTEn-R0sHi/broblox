@@ -96,7 +96,7 @@ export function isWithinSchedule(name: string): boolean {
   const schedule = flagScheduleOverrides.get(name) ?? flagDefinitions.get(name)?.schedule;
   if (!schedule) return true;
 
-  const now = os.clock !== undefined ? os.clock() : os.time();
+  const now = os.time();
   if (schedule.startTime !== undefined && now < schedule.startTime) return false;
   if (schedule.endTime !== undefined && now >= schedule.endTime) return false;
   return true;

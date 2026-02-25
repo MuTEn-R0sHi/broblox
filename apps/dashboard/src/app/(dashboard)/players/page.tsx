@@ -95,27 +95,61 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       }
     }
 
-    // Gather stats for each player
-    for (const pid of playerIds) {
-      const [banCount, muteCount, matchCount, lastMatch] = await Promise.all([
-        prisma.ban.count({ where: { playerId: pid } }),
-        prisma.mute.count({ where: { playerId: pid } }),
-        prisma.matchPlayer.count({ where: { playerId: pid } }),
-        prisma.matchPlayer.findFirst({
-          where: { playerId: pid },
+    // Gather stats for each player in batched queries
+    const ids = Array.from(playerIds);
+    if (ids.length > 0) {
+      const [banGroups, muteGroups, matchGroups, lastMatches] = await Promise.all([
+        prisma.ban.groupBy({
+          by: ["playerId"],
+          where: { playerId: { in: ids } },
+          _count: { _all: true },
+        }),
+        prisma.mute.groupBy({
+          by: ["playerId"],
+          where: { playerId: { in: ids } },
+          _count: { _all: true },
+        }),
+        prisma.matchPlayer.groupBy({
+          by: ["playerId"],
+          where: { playerId: { in: ids } },
+          _count: { _all: true },
+        }),
+        prisma.matchPlayer.findMany({
+          where: { playerId: { in: ids } },
           orderBy: { joinedAt: "desc" },
-          select: { joinedAt: true },
+          select: { playerId: true, joinedAt: true },
         }),
       ]);
 
-      results.push({
-        playerId: pid,
-        playerName: playerNames.get(pid) ?? null,
-        banCount,
-        muteCount,
-        matchCount,
-        lastSeen: lastMatch?.joinedAt ?? null,
-      });
+      const banCountByPlayer = new Map<bigint, number>();
+      for (const g of banGroups) {
+        banCountByPlayer.set(g.playerId, g._count._all);
+      }
+      const muteCountByPlayer = new Map<bigint, number>();
+      for (const g of muteGroups) {
+        muteCountByPlayer.set(g.playerId, g._count._all);
+      }
+      const matchCountByPlayer = new Map<bigint, number>();
+      for (const g of matchGroups) {
+        matchCountByPlayer.set(g.playerId, g._count._all);
+      }
+      const lastSeenByPlayer = new Map<bigint, Date>();
+      for (const m of lastMatches) {
+        if (!lastSeenByPlayer.has(m.playerId)) {
+          lastSeenByPlayer.set(m.playerId, m.joinedAt);
+        }
+      }
+
+      for (const pid of ids) {
+        results.push({
+          playerId: pid,
+          playerName: playerNames.get(pid) ?? null,
+          banCount: banCountByPlayer.get(pid) ?? 0,
+          muteCount: muteCountByPlayer.get(pid) ?? 0,
+          matchCount: matchCountByPlayer.get(pid) ?? 0,
+          lastSeen: lastSeenByPlayer.get(pid) ?? null,
+        });
+      }
     }
   }
 

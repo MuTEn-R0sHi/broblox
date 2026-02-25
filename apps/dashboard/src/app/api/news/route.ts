@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   const slug = params.get("slug");
   if (slug) {
     try {
-      const post = await prisma.newsPost.findUnique({
+      const post = await prisma.newsPost.findFirst({
         where: { slug, status: "PUBLISHED" },
         select: {
           id: true,
@@ -64,6 +64,44 @@ export async function GET(request: NextRequest) {
     // For simplicity, we filter in-app after fetching if tag is specified
     // (MySQL JSON_CONTAINS with Prisma is cumbersome)
 
+    // When filtering by tag we must fetch all matching posts first,
+    // then paginate in-app so totals are accurate.
+    if (tag) {
+      const allPosts = await prisma.newsPost.findMany({
+        where,
+        orderBy: { publishedAt: "desc" },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          excerpt: true,
+          tags: true,
+          publishedAt: true,
+          author: { select: { name: true, image: true } },
+          game: { select: { name: true, slug: true } },
+        },
+      });
+
+      const filtered = allPosts.filter((p) => {
+        const tags = p.tags as string[] | null;
+        return tags?.includes(tag);
+      });
+
+      const total = filtered.length;
+      const paged = filtered.slice(skip, skip + limit);
+
+      return NextResponse.json({
+        posts: paged,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+        fetchedAt: new Date().toISOString(),
+      });
+    }
+
     const [posts, total] = await Promise.all([
       prisma.newsPost.findMany({
         where,
@@ -84,21 +122,13 @@ export async function GET(request: NextRequest) {
       prisma.newsPost.count({ where }),
     ]);
 
-    // Client-side tag filter (simple approach for JSON array)
-    const filtered = tag
-      ? posts.filter((p) => {
-          const tags = p.tags as string[] | null;
-          return tags?.includes(tag);
-        })
-      : posts;
-
     return NextResponse.json({
-      posts: filtered,
+      posts,
       pagination: {
         page,
         limit,
-        total: tag ? filtered.length : total,
-        totalPages: tag ? Math.ceil(filtered.length / limit) : Math.ceil(total / limit),
+        total,
+        totalPages: Math.ceil(total / limit),
       },
       fetchedAt: new Date().toISOString(),
     });
