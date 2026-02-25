@@ -678,6 +678,33 @@ describe("MovementValidator", () => {
       );
       expect(jumpViolations).toHaveLength(0);
     });
+
+    it("should not flag freefall from walking off a platform edge", () => {
+      // Player walked off an edge: airborne, isJumping=true (Freefall),
+      // but has downward velocity — this is passive falling, not a
+      // double-jump exploit.
+      setMockClock(10);
+      playerState.updateState({
+        isGrounded: false,
+        isJumping: false,
+      });
+
+      // Advance past grace period
+      setMockClock(10.6);
+
+      const input = createInput({
+        isGrounded: false,
+        isJumping: true, // Freefall reported as jumping
+        velocity: vec3(8, -30, 0), // Falling downward
+        sequenceNumber: 1,
+      });
+
+      const result = validator.validate(input, playerState, 0.1);
+      const jumpViolations = result.violations.filter(
+        (v: MovementViolation) => v.type === "invalid_jump"
+      );
+      expect(jumpViolations).toHaveLength(0);
+    });
   });
 
   // --------------------------------------------------------------------------

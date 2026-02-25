@@ -280,6 +280,11 @@ export class MovementValidator {
       // Coyote-time window: allow jumps shortly after leaving the ground
       // to account for network latency and physics-step timing.
       if (state.getAirTime() <= 0.5) return undefined;
+      // Player has downward velocity → they walked off an edge and are
+      // in Freefall, not exploiting a double-jump.  Roblox reports
+      // Freefall as a "jumping" humanoid state even though no jump
+      // input occurred.
+      if (input.velocity.Y < 0) return undefined;
 
       return {
         type: "invalid_jump",
