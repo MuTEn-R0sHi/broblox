@@ -94,7 +94,9 @@ export function createMovementValidationService(
 
           const isGrounded = humanoid.FloorMaterial !== Enum.Material.Air;
           const humanoidState = humanoid.GetState();
-          const isJumping = humanoidState === Enum.HumanoidStateType.Jumping;
+          const isJumping =
+            humanoidState === Enum.HumanoidStateType.Jumping ||
+            humanoidState === Enum.HumanoidStateType.Freefall;
           const isRunning = humanoid.WalkSpeed > 16;
 
           const input: MovementInput = {

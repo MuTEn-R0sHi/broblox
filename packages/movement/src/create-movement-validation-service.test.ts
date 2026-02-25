@@ -80,7 +80,7 @@ describe("createMovementValidationService", () => {
     };
     g.Enum = {
       Material: { Air: "Air" },
-      HumanoidStateType: { Jumping: "Jumping", Running: "Running" },
+      HumanoidStateType: { Jumping: "Jumping", Freefall: "Freefall", Running: "Running" },
     };
     g.string = {
       format: (fmt: string, ...args: unknown[]) => {
