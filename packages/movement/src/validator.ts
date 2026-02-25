@@ -176,30 +176,35 @@ export class MovementValidator {
     currentState: { position: Vector3; velocity: Vector3 },
     deltaTime: number
   ): MovementViolation | undefined {
-    // Use the higher of start-of-tick and end-of-tick velocities so that
-    // gravitational acceleration during freefall is accounted for.
-    // Without this, a player falling from a platform would be flagged
-    // because gravity increases velocity mid-tick beyond the start estimate.
-    const maxVelocity = math.max(currentState.velocity.Magnitude, input.velocity.Magnitude);
+    const delta = input.position.sub(currentState.position);
+    const distance = delta.Magnitude;
 
-    // Gravity contribution: during a lag spike the player can fall far even
-    // when both endpoint velocities are low (e.g. started walking, ended
-    // landed).  d = 0.5 * g * t² accounts for the displacement from
-    // gravitational acceleration that velocity alone cannot explain.
+    // ---- Horizontal budget (XZ plane) ----
+    const prevHoriz = new Vector3(currentState.velocity.X, 0, currentState.velocity.Z).Magnitude;
+    const currHoriz = new Vector3(input.velocity.X, 0, input.velocity.Z).Magnitude;
+    const maxHorizVelocity = math.max(prevHoriz, currHoriz);
+    const horizBudget =
+      maxHorizVelocity * deltaTime * this.violationThresholds.positionTolerance +
+      NETWORK_CONSTANTS.maxPositionError;
+
+    // ---- Vertical budget (Y axis) ----
+    // Include gravity term: d = 0.5 * g * t² accounts for freefall
+    // displacement when both endpoint velocities are dampened (e.g.
+    // player walks off a platform during a lag spike and lands).
+    const maxVertVelocity = math.max(math.abs(currentState.velocity.Y), math.abs(input.velocity.Y));
     const gravityDistance = 0.5 * math.abs(this.config.gravity) * deltaTime * deltaTime;
-
-    // Calculate expected maximum distance based on velocity, gravity and time
-    const expectedMaxDistance =
-      maxVelocity * deltaTime * this.violationThresholds.positionTolerance +
+    const vertBudget =
+      maxVertVelocity * deltaTime * this.violationThresholds.positionTolerance +
       gravityDistance +
       NETWORK_CONSTANTS.maxPositionError;
 
-    // Add minimum threshold to account for network conditions
-    const minThreshold = this.violationThresholds.teleportDistanceMin;
-    const threshold = math.max(expectedMaxDistance, minThreshold);
+    // Combine into a 3D threshold via Euclidean norm so gravity only
+    // inflates the vertical allowance, not horizontal.
+    const combinedBudget = math.sqrt(horizBudget * horizBudget + vertBudget * vertBudget);
 
-    // Calculate actual distance moved
-    const distance = input.position.sub(currentState.position).Magnitude;
+    // Apply minimum threshold to account for network conditions
+    const minThreshold = this.violationThresholds.teleportDistanceMin;
+    const threshold = math.max(combinedBudget, minThreshold);
 
     if (distance > threshold) {
       let severity: "low" | "medium" | "high" = "low";
