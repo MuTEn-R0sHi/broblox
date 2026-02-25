@@ -93,6 +93,11 @@ export function createMovementValidationService(
           const humanoid = getHumanoid(character);
           if (!hrp || !humanoid) continue;
 
+          // Skip validation for dead characters — the ragdolling body can
+          // slide/fall rapidly and trigger false teleport violations before
+          // Roblox destroys the character and spawns a new one.
+          if (humanoid.Health <= 0) continue;
+
           // Detect character change (Roblox UI reset creates a new character).
           // Reset movement state so the new character doesn't inherit stale
           // air-time / position data from the old one.

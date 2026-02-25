@@ -154,6 +154,7 @@ describe("createMovementValidationService", () => {
               FloorMaterial: "Grass", // not Air = grounded
               GetState: () => "Running",
               WalkSpeed: 16,
+              Health: 100,
             };
           }
           return undefined;
@@ -233,6 +234,50 @@ describe("createMovementValidationService", () => {
     handle.Service.onInit!();
 
     heartbeatCallbacks[0](1 / 60);
+  });
+
+  it("skips validation for dead characters (Health <= 0)", async () => {
+    const player = {
+      UserId: 1,
+      Name: "DeadPlayer",
+      Character: {
+        FindFirstChild: (name: string) => {
+          if (name === "HumanoidRootPart") {
+            return {
+              IsA: (cls: string) => cls === "BasePart",
+              Position: new MockVector3(0, -50, 0),
+              AssemblyLinearVelocity: new MockVector3(0, -100, 0),
+              CFrame: { Position: new MockVector3(0, -50, 0) },
+            };
+          }
+          return undefined;
+        },
+        FindFirstChildOfClass: (cls: string) => {
+          if (cls === "Humanoid") {
+            return {
+              FloorMaterial: "Air",
+              GetState: () => "Dead",
+              WalkSpeed: 0,
+              Health: 0,
+            };
+          }
+          return undefined;
+        },
+      },
+    };
+    mockPlayers.push(player);
+
+    const handle = await createService();
+    handle.Service.onInit!();
+
+    // Should not create state or record violations for dead character
+    heartbeatCallbacks[0](1 / 60);
+    heartbeatCallbacks[0](1 / 60);
+
+    // No state should exist for this player
+    const state = handle.stateManager.getState(1);
+    // State is lazily created — but since we skipped, it should be fresh
+    expect(state.getState().isGrounded).toBe(true);
   });
 
   it("clamps large dt values to 0.25", async () => {
@@ -320,6 +365,7 @@ describe("createMovementValidationService", () => {
               FloorMaterial: "Grass",
               GetState: () => "Running",
               WalkSpeed: 16,
+              Health: 100,
             };
           }
           return undefined;
@@ -365,6 +411,7 @@ describe("createMovementValidationService", () => {
             FloorMaterial: "Grass",
             GetState: () => "Running",
             WalkSpeed: 16,
+            Health: 100,
           };
         }
         return undefined;
