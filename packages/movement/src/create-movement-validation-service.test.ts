@@ -290,4 +290,59 @@ describe("createMovementValidationService", () => {
     const handle2 = mod.createMovementValidationService(makeConfig());
     expect(handle1.Service).not.toBe(handle2.Service);
   });
+
+  it("resets state on server-side teleport (large position change)", async () => {
+    // Create a mutable HRP so we can change position between ticks
+    const hrpState = {
+      Position: new MockVector3(0, 5, 0),
+      AssemblyLinearVelocity: new MockVector3(0, 0, 0),
+      CFrame: new MockVector3(0, 5, 0),
+    };
+
+    const player = {
+      UserId: 1,
+      Name: "TeleportPlayer",
+      Character: {
+        FindFirstChild: (name: string) => {
+          if (name === "HumanoidRootPart") {
+            return {
+              IsA: (cls: string) => cls === "BasePart",
+              Position: hrpState.Position,
+              AssemblyLinearVelocity: hrpState.AssemblyLinearVelocity,
+              CFrame: { Position: hrpState.Position },
+            };
+          }
+          return undefined;
+        },
+        FindFirstChildOfClass: (cls: string) => {
+          if (cls === "Humanoid") {
+            return {
+              FloorMaterial: "Grass",
+              GetState: () => "Running",
+              WalkSpeed: 16,
+            };
+          }
+          return undefined;
+        },
+      },
+    };
+    mockPlayers.push(player);
+
+    const handle = await createService();
+    handle.Service.onInit!();
+
+    // First tick — establishes state at position (0, 5, 0)
+    heartbeatCallbacks[0](1 / 60);
+
+    // Simulate server teleport — move HRP far away (>50 studs)
+    hrpState.Position = new MockVector3(0, 5, 200);
+
+    // Second tick — should detect teleport and reset state (no violations)
+    heartbeatCallbacks[0](1 / 60);
+
+    // State should now be at the new position
+    const state = handle.stateManager.getState(1);
+    expect(state.getState().position.Z).toBe(200);
+    expect(state.getState().isGrounded).toBe(true);
+  });
 });

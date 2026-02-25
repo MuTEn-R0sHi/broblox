@@ -212,6 +212,43 @@ describe("PlayerMovementState", () => {
       expect(state.isAbilityOnCooldown(10)).toBe(false);
     });
   });
+
+  // --------------------------------------------------------------------------
+  // notifyTeleport
+  // --------------------------------------------------------------------------
+
+  describe("notifyTeleport", () => {
+    it("should reset position to new location", () => {
+      state.updateState({ position: vec3(100, 50, 200) });
+      state.notifyTeleport(vec3(0, 5, 0));
+      expect(state.getState().position.X).toBe(0);
+      expect(state.getState().position.Y).toBe(5);
+      expect(state.getState().position.Z).toBe(0);
+    });
+
+    it("should reset velocity to zero", () => {
+      state.updateState({ velocity: vec3(30, 10, 15) });
+      state.notifyTeleport(vec3(0, 0, 0));
+      expect(state.getState().velocity.Magnitude).toBe(0);
+    });
+
+    it("should reset grounded state", () => {
+      state.updateState({ isGrounded: false, isJumping: true });
+      state.notifyTeleport(vec3(0, 5, 0));
+      expect(state.getState().isGrounded).toBe(true);
+      expect(state.getState().isJumping).toBe(false);
+    });
+
+    it("should reset air time", () => {
+      setMockClock(10);
+      state.updateState({ isGrounded: false });
+      setMockClock(15);
+      expect(state.getAirTime()).toBeGreaterThan(0);
+
+      state.notifyTeleport(vec3(0, 5, 0));
+      expect(state.getAirTime()).toBe(0);
+    });
+  });
 });
 
 // ============================================================================
@@ -256,6 +293,19 @@ describe("MovementStateManager", () => {
     const state = manager.getState(1001, vec3(100, 50, 200));
     const s = state.getState();
     expect(s.position).toBeDefined();
+  });
+
+  it("should notify teleport for existing player", () => {
+    const state = manager.getState(1001, vec3(0, 0, 0));
+    state.updateState({ isGrounded: false, velocity: vec3(50, 0, 50) });
+    manager.notifyTeleport(1001, vec3(100, 10, 200));
+    expect(state.getState().position.X).toBe(100);
+    expect(state.getState().velocity.Magnitude).toBe(0);
+    expect(state.getState().isGrounded).toBe(true);
+  });
+
+  it("should silently no-op notifyTeleport for unknown player", () => {
+    expect(() => manager.notifyTeleport(9999, vec3(0, 0, 0))).not.toThrow();
   });
 });
 
@@ -539,8 +589,8 @@ describe("MovementValidator", () => {
         isJumping: false,
       });
 
-      // Advance clock past the 0.3s grace period
-      setMockClock(10.5);
+      // Advance clock past the 0.5s grace period
+      setMockClock(10.6);
 
       const input = createInput({
         isGrounded: false,

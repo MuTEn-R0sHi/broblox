@@ -90,6 +90,20 @@ export function createMovementValidationService(
           if (!hrp || !humanoid) continue;
 
           const state = stateManager.getState(player.UserId, hrp.Position);
+
+          // Detect server-side teleport: if the HRP moved far from last
+          // validated position, assume the server teleported them (e.g.
+          // respawn) and reset state instead of validating this tick.
+          const lastPos = state.getState().position;
+          const positionDelta = hrp.Position.sub(lastPos).Magnitude;
+          if (positionDelta > 50) {
+            state.notifyTeleport(hrp.Position);
+            logger.debug(
+              `Detected server teleport for ${player.Name} (${math.floor(positionDelta)} studs), resetting state`
+            );
+            continue;
+          }
+
           const seq = state.incrementSequence();
 
           const isGrounded = humanoid.FloorMaterial !== Enum.Material.Air;
