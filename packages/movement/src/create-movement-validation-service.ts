@@ -83,11 +83,6 @@ export function createMovementValidationService(
       const heartbeatConn = RunService.Heartbeat.Connect((dt: number) => {
         if (!isEnabled()) return;
 
-        // Cap dt at 1s to remain protective during extreme lag, but allow
-        // Studio-scale frame hitches (0.3-0.8s) to be handled accurately
-        // by the teleport distance formula that includes gravity.
-        const deltaTime = math.min(dt, 1.0);
-
         for (const player of Players.GetPlayers()) {
           const character = player.Character;
           if (!character) continue;
@@ -115,12 +110,15 @@ export function createMovementValidationService(
 
           const state = stateManager.getState(player.UserId, hrp.Position);
 
-          // Use time since last successful validation — NOT the heartbeat
-          // dt — so that skipped ticks (no character, HRP nil, dead, etc.)
-          // correctly contribute to the time budget.  Without this, the
-          // position delta accumulates over skipped ticks while dt stays
-          // at one frame, causing false teleport violations.
-          const stateDelta = math.min(os.clock() - state.getState().lastValidatedAt, 1.0);
+          // Compute effective delta from TWO sources and take the larger:
+          //  • os.clock() delta — catches skipped ticks (no character,
+          //    dead, HRP nil) where dt stays at one frame.
+          //  • Heartbeat dt — catches Roblox Studio lag spikes where the
+          //    Lua VM pauses (os.clock barely advances) but the physics
+          //    engine continues to move the character.
+          // Clamp at 1 s to stay protective during extreme lag.
+          const clockDelta = os.clock() - state.getState().lastValidatedAt;
+          const stateDelta = math.min(math.max(dt, clockDelta), 1.0);
 
           // Detect server-side teleport: if the HRP moved far from last
           // validated position, assume the server teleported them (e.g.
