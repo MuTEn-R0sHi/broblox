@@ -95,7 +95,14 @@ class FeatureFlagSyncService {
   }
 
   refresh(): void {
-    const [raw] = this.store.GetAsync(this.entryKey);
+    const [ok, rawOrErr, _keyInfo] = pcall(() => this.store.GetAsync(this.entryKey));
+
+    if (!ok) {
+      logger.warn(`Failed to load feature flags (key=${this.entryKey}): ${tostring(rawOrErr)}`);
+      return;
+    }
+
+    const raw = rawOrErr as unknown;
 
     if (raw === undefined) {
       logger.debug(`No feature flag snapshot found (key=${this.entryKey})`);
@@ -120,29 +127,38 @@ class FeatureFlagSyncService {
   private subscribe(): void {
     if (this.connection) return;
 
-    this.connection = this.messaging.SubscribeAsync(this.topic, (message) => {
-      const raw = message.Data;
-      let decoded: SyncMessage | undefined;
+    const [ok, connOrErr] = pcall(() =>
+      this.messaging.SubscribeAsync(this.topic, (message) => {
+        const raw = message.Data;
+        let decoded: SyncMessage | undefined;
 
-      if (typeOf(raw) === "string") {
-        try {
-          decoded = this.http.JSONDecode(raw as string) as SyncMessage;
-        } catch (err) {
-          logger.warn(`Failed to decode feature flag sync message: ${tostring(err)}`);
+        if (typeOf(raw) === "string") {
+          try {
+            decoded = this.http.JSONDecode(raw as string) as SyncMessage;
+          } catch (err) {
+            logger.warn(`Failed to decode feature flag sync message: ${tostring(err)}`);
+            return;
+          }
+        } else if (typeOf(raw) === "table") {
+          decoded = raw as SyncMessage;
+        }
+
+        if (!decoded) return;
+
+        if (decoded.environment && decoded.environment !== this.environment) {
           return;
         }
-      } else if (typeOf(raw) === "table") {
-        decoded = raw as SyncMessage;
-      }
 
-      if (!decoded) return;
+        this.refresh();
+      })
+    );
 
-      if (decoded.environment && decoded.environment !== this.environment) {
-        return;
-      }
+    if (!ok) {
+      logger.warn(`Failed to subscribe to feature flag updates: ${tostring(connOrErr)}`);
+      return;
+    }
 
-      this.refresh();
-    });
+    this.connection = connOrErr as RBXScriptConnection;
   }
 }
 

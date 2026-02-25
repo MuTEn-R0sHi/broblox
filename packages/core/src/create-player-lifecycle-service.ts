@@ -53,9 +53,16 @@ export function createPlayerLifecycleService(
   const addedCallbacks: PlayerCallback[] = [];
   const removingCallbacks: PlayerCallback[] = [];
   const connections: RBXScriptConnection[] = [];
+  /** Tracks players that have already had their onPlayerAdded callbacks fired. */
+  const processedPlayers = new Set<number>();
 
   function fireAddedForExisting(): void {
     for (const player of Players.GetPlayers()) {
+      if (processedPlayers.has(player.UserId)) {
+        logger.debug(`Skipping already-processed player: ${player.Name}`);
+        continue;
+      }
+      processedPlayers.add(player.UserId);
       for (const callback of addedCallbacks) {
         const [success, err] = pcall(() => callback(player));
         if (!success) {
@@ -82,6 +89,11 @@ export function createPlayerLifecycleService(
       logger.debug("Initializing player lifecycle listeners...");
 
       const addedConnection = Players.PlayerAdded.Connect((player: Player) => {
+        if (processedPlayers.has(player.UserId)) {
+          logger.debug(`Skipping duplicate PlayerAdded for: ${player.Name}`);
+          return;
+        }
+        processedPlayers.add(player.UserId);
         logger.debug(`Player joined: ${player.Name}`);
         for (const callback of addedCallbacks) {
           const [success, err] = pcall(() => callback(player));
@@ -93,6 +105,7 @@ export function createPlayerLifecycleService(
 
       const removingConnection = Players.PlayerRemoving.Connect((player: Player) => {
         logger.debug(`Player leaving: ${player.Name}`);
+        processedPlayers.delete(player.UserId);
         for (const callback of removingCallbacks) {
           const [success, err] = pcall(() => callback(player));
           if (!success) {
@@ -123,6 +136,7 @@ export function createPlayerLifecycleService(
       connections.clear();
       addedCallbacks.clear();
       removingCallbacks.clear();
+      processedPlayers.clear();
     },
   };
 

@@ -42,15 +42,20 @@ export function createFeatureFlagSyncService(
   const logger = createLogger("FeatureFlagSyncService");
 
   const FeatureFlagSyncService: Service = {
+    name: "FeatureFlagSyncService",
     onStart() {
-      initFeatureFlagSync({
-        environment: config.environment,
-        datastoreName: config.datastoreName,
-        topic: config.topic ?? "FeatureFlagsSync",
-        entryKeyPrefix: config.entryKeyPrefix ?? "featureflags_",
-      });
+      try {
+        initFeatureFlagSync({
+          environment: config.environment,
+          datastoreName: config.datastoreName,
+          topic: config.topic ?? "FeatureFlagsSync",
+          entryKeyPrefix: config.entryKeyPrefix ?? "featureflags_",
+        });
 
-      logger.info(`Feature flag sync initialized (${config.environment})`);
+        logger.info(`Feature flag sync initialized (${config.environment})`);
+      } catch (err) {
+        logger.warn(`Feature flag sync unavailable, using defaults: ${tostring(err)}`);
+      }
     },
   };
 

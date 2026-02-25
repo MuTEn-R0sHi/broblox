@@ -146,4 +146,37 @@ describe("createFeatureFlagSyncService", () => {
     await createService();
     expect(mockInitFeatureFlagSync).not.toHaveBeenCalled();
   });
+
+  // --------------------------------------------------------------------------
+  // Service name
+  // --------------------------------------------------------------------------
+
+  it("has name property for application logging", async () => {
+    const handle = await createService();
+    expect(handle.Service.name).toBe("FeatureFlagSyncService");
+  });
+
+  // --------------------------------------------------------------------------
+  // Graceful fallback when initFeatureFlagSync throws
+  // --------------------------------------------------------------------------
+
+  it("does not throw when initFeatureFlagSync throws", async () => {
+    mockInitFeatureFlagSync.mockImplementation(() => {
+      throw "DataStore unavailable";
+    });
+
+    const handle = await createService();
+    expect(() => handle.Service.onStart!()).not.toThrow();
+  });
+
+  it("logs warning when initFeatureFlagSync throws", async () => {
+    mockInitFeatureFlagSync.mockImplementation(() => {
+      throw "DataStore unavailable";
+    });
+
+    const handle = await createService();
+    handle.Service.onStart!();
+
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("using defaults"));
+  });
 });
