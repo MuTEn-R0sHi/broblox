@@ -36,9 +36,9 @@ export const DEFAULT_PHYSICS: PhysicsParams = {
 
 export const VALIDATION_THRESHOLDS = {
   /** Multiplier for max speed before flagging (accounts for lag) */
-  speedTolerance: 1.5,
+  speedTolerance: 2.0,
   /** Minimum distance for teleport detection (studs) */
-  teleportDistanceMin: 20,
+  teleportDistanceMin: 30,
   /** Maximum distance that's still correctable (studs) */
   teleportDistanceMax: 100,
   /** Position error tolerance multiplier */
