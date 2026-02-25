@@ -80,7 +80,7 @@ describe("createMovementValidationService", () => {
     };
     g.Enum = {
       Material: { Air: "Air" },
-      HumanoidStateType: { Jumping: "Jumping", Running: "Running" },
+      HumanoidStateType: { Jumping: "Jumping", Freefall: "Freefall", Running: "Running" },
     };
     g.string = {
       format: (fmt: string, ...args: unknown[]) => {
@@ -105,6 +105,16 @@ describe("createMovementValidationService", () => {
           return conn;
         },
       },
+    });
+
+    // Override game.GetService to delegate to globalThis so module-scope calls resolve
+    setGlobal("game", {
+      GetService: (name: string) => {
+        const g = globalThis as unknown as Record<string, unknown>;
+        return g[name] ?? { _service: name };
+      },
+      JobId: "test-job-id",
+      PlaceId: 0,
     });
   });
 

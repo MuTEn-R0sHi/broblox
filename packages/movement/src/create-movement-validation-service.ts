@@ -13,13 +13,6 @@ import { MovementStateManager } from "./state";
 import { getMovementValidator } from "./validator";
 import type { MovementInput } from "./types";
 
-declare const Players: {
-  GetPlayers(): Player[];
-};
-declare const RunService: {
-  Heartbeat: RBXScriptSignal;
-};
-
 export interface MovementValidationConfig {
   /**
    * Register a callback for when a player is removed.
@@ -68,6 +61,8 @@ function getHumanoid(character: Model): Humanoid | undefined {
 export function createMovementValidationService(
   config: MovementValidationConfig
 ): MovementValidationHandle {
+  const Players = game.GetService("Players") as Players;
+  const RunService = game.GetService("RunService") as RunService;
   const logger = createLogger("MovementValidationService");
   const stateManager = new MovementStateManager();
   const validator = getMovementValidator();
@@ -99,7 +94,9 @@ export function createMovementValidationService(
 
           const isGrounded = humanoid.FloorMaterial !== Enum.Material.Air;
           const humanoidState = humanoid.GetState();
-          const isJumping = humanoidState === Enum.HumanoidStateType.Jumping;
+          const isJumping =
+            humanoidState === Enum.HumanoidStateType.Jumping ||
+            humanoidState === Enum.HumanoidStateType.Freefall;
           const isRunning = humanoid.WalkSpeed > 16;
 
           const input: MovementInput = {

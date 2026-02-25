@@ -9,7 +9,6 @@ import { SecurityService } from "./services/SecurityService";
 import { FeatureFlagSyncService } from "./services/FeatureFlagSyncService";
 import { MovementValidationService } from "./services/MovementValidationService";
 import { ModerationEnforcementService } from "./services/ModerationEnforcementService";
-import { ChatModerationService } from "./services/ChatModerationService";
 import { RemoteService } from "./services/RemoteService";
 import { HandshakeService } from "./services/HandshakeService";
 import { ActionService } from "./services/ActionService";
@@ -44,7 +43,6 @@ app
   .register(FeatureFlagSyncService)
   .register(MovementValidationService)
   .register(ModerationEnforcementService)
-  .register(ChatModerationService)
   .register(RemoteService)
   .register(HandshakeService)
   .register(ActionService)

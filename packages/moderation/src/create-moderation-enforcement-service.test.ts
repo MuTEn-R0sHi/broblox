@@ -61,6 +61,16 @@ describe("createModerationEnforcementService", () => {
       getModeration: () => mockModeration,
     }));
 
+    // game.GetService delegates to globalThis so module-scope calls resolve
+    setGlobal("game", {
+      GetService: (name: string) => {
+        const g = globalThis as unknown as Record<string, unknown>;
+        return g[name] ?? { _service: name };
+      },
+      JobId: "test-job-id",
+      PlaceId: 0,
+    });
+
     // Players global
     setGlobal("Players", {
       GetPlayerByUserId: (userId: number) => playersByUserId.get(userId) ?? undefined,

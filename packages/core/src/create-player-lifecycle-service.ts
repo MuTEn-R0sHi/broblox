@@ -6,14 +6,8 @@
  * instead of connecting to `Players` events directly.
  */
 
-import { createLogger } from "./index";
+import { createLogger } from "./logger";
 import type { Service } from "./application";
-
-declare const Players: {
-  PlayerAdded: RBXScriptSignal;
-  PlayerRemoving: RBXScriptSignal;
-  GetPlayers(): Player[];
-};
 
 type PlayerCallback = (player: Player) => void;
 
@@ -51,6 +45,7 @@ export interface PlayerLifecycleHandle {
 export function createPlayerLifecycleService(
   config?: PlayerLifecycleConfig
 ): PlayerLifecycleHandle {
+  const Players = game.GetService("Players") as Players;
   const loggerName = config?.loggerName ?? "PlayerLifecycleService";
   const catchUpPhase = config?.catchUpPhase ?? "onInit";
   const logger = createLogger(loggerName);

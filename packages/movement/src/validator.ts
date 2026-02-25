@@ -112,7 +112,7 @@ export class MovementValidator {
     if (flyResult) violations.push(flyResult);
 
     // Check for invalid jump
-    const jumpResult = this.checkJump(input, currentState);
+    const jumpResult = this.checkJump(input, currentState, state);
     if (jumpResult) violations.push(jumpResult);
 
     // Check for sequence errors
@@ -256,12 +256,13 @@ export class MovementValidator {
    */
   private checkJump(
     input: MovementInput,
-    currentState: { isGrounded: boolean; isJumping: boolean }
+    currentState: { isGrounded: boolean; isJumping: boolean },
+    state: PlayerMovementState
   ): MovementViolation | undefined {
     // Can only start jumping from ground
     if (input.isJumping && !input.isGrounded && !currentState.isJumping) {
-      // Allow if they just left ground (within tolerance)
-      if (!currentState.isGrounded) {
+      // Allow if they just left ground (within tolerance / coyote time)
+      if (!currentState.isGrounded && state.getAirTime() > 0.3) {
         return {
           type: "invalid_jump",
           severity: "low",

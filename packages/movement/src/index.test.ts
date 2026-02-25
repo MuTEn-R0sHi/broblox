@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals } from "@rbx/testing";
+import { mockRobloxGlobals, setMockClock } from "@rbx/testing";
 
 // ============================================================================
 // Vector3 Mock (Roblox-compatible)
@@ -532,10 +532,15 @@ describe("MovementValidator", () => {
     });
 
     it("should detect jump initiated while airborne", () => {
+      // Set initial clock, make player airborne
+      setMockClock(10);
       playerState.updateState({
         isGrounded: false,
         isJumping: false,
       });
+
+      // Advance clock past the 0.3s grace period
+      setMockClock(10.5);
 
       const input = createInput({
         isGrounded: false,

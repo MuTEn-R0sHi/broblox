@@ -12,7 +12,6 @@ import { StageService } from "./services/StageService";
 import { LeaderboardService } from "./services/LeaderboardService";
 import { DataService } from "./services/DataService";
 import { ModerationEnforcementService } from "./services/ModerationEnforcementService";
-import { ChatModerationService } from "./services/ChatModerationService";
 import { MovementValidationService } from "./services/MovementValidationService";
 import { FeatureFlagSyncService } from "./services/FeatureFlagSyncService";
 import { CodeRedemptionService } from "./services/CodeRedemptionService";
@@ -53,7 +52,6 @@ app
   .register(AnalyticsService)
   .register(NotificationService)
   .register(ModerationEnforcementService)
-  .register(ChatModerationService)
   .register(MovementValidationService)
   .register(FeatureFlagSyncService)
   .register(CodeRedemptionService)
