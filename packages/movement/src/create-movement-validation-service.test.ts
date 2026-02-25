@@ -106,6 +106,16 @@ describe("createMovementValidationService", () => {
         },
       },
     });
+
+    // Override game.GetService to delegate to globalThis so module-scope calls resolve
+    setGlobal("game", {
+      GetService: (name: string) => {
+        const g = globalThis as unknown as Record<string, unknown>;
+        return g[name] ?? { _service: name };
+      },
+      JobId: "test-job-id",
+      PlaceId: 0,
+    });
   });
 
   afterEach(() => {

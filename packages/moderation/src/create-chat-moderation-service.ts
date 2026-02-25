@@ -12,14 +12,6 @@ import { Service, createLogger } from "@rbx/core";
 
 const MUTED_ATTRIBUTE = "rbx.moderation.muted";
 
-declare const Players: {
-  GetPlayerByUserId(userId: number): Player | undefined;
-};
-
-declare const TextChatService: {
-  OnIncomingMessage: (message: { TextSource?: { UserId: number } }) => Instance | undefined;
-};
-
 export interface ChatModerationHandle {
   /** The Service to register with Application.register(). */
   Service: Service;
@@ -35,6 +27,8 @@ export interface ChatModerationHandle {
  * ```
  */
 export function createChatModerationService(): ChatModerationHandle {
+  const Players = game.GetService("Players") as Players;
+  const TextChatService = game.GetService("TextChatService") as TextChatService;
   const logger = createLogger("ChatModerationService");
 
   const ChatModerationService: Service = {

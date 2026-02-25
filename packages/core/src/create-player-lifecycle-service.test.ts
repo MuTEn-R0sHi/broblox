@@ -53,6 +53,16 @@ describe("createPlayerLifecycleService", () => {
       createLogger: () => mockLogger,
     }));
 
+    // game.GetService delegates to globalThis so module-scope calls resolve
+    setGlobal("game", {
+      GetService: (name: string) => {
+        const g = globalThis as unknown as Record<string, unknown>;
+        return g[name] ?? { _service: name };
+      },
+      JobId: "test-job-id",
+      PlaceId: 0,
+    });
+
     // Players global with RBXScriptSignal-like Connect
     setGlobal("Players", {
       PlayerAdded: {
