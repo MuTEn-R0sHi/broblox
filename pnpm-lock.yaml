@@ -846,6 +846,34 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.3.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
+  packages/marketplace:
+    dependencies:
+      "@rbx/core":
+        specifier: workspace:*
+        version: link:../core
+      "@rbx/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@rbx/testing":
+        specifier: workspace:*
+        version: link:../testing
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.908
+        version: 1.0.908
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@types/node@25.3.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+
   packages/matchmaking:
     dependencies:
       "@rbx/constants":
