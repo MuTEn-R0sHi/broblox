@@ -37,3 +37,4 @@ Each ADR should include:
 - ADR-0005: Schema validation library choice
 - ADR-0006: Framework choice — custom vs Flamework
 - ADR-0007: Multi-game dashboard design
+- ADR-0008: Marketplace / MonetizationService wrapper

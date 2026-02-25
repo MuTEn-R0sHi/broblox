@@ -40,27 +40,17 @@ Phase 4 is nearly done. The single remaining blocker:
 
 ## Gaps found this session (not in any planning doc)
 
-### 1. — `packages/marketplace` (MonetizationService wrapper)
+### 1. — `packages/marketplace` (MonetizationService wrapper) ✅
 
-**Severity: blocker for Phase 6 monetization**
+**Status: Complete (ADR-0008)**
 
-No `MarketplaceService` integration exists anywhere. `packages/gacha`, `packages/battle-pass`, and `packages/pets` all _assume_ Robux purchases happen — but nothing processes them. No developer product handling, no game pass validation, no purchase receipt verification.
+`packages/marketplace` has been implemented with:
+- `DeveloperProductRegistry` — product definitions + grant handlers; routes `ProcessReceipt`
+- `GamePassCache` — in-memory TTL cache for `UserOwnsGamePassAsync` (default TTL: 300 s)
+- `PurchaseValidator` — idempotent receipt processing (deduplicates on `PurchaseId`)
+- `createMarketplaceService` — factory wiring all three into a `Service`
 
-This must exist before Phase 6 economy (BroCoins, trading) is real money-linked.
-
-**Next action:** Write an ADR, then build `packages/marketplace`.
-
-Proposed scope:
-
-```
-packages/marketplace/
-  src/
-    MarketplaceService.ts    # Wraps Roblox MarketplaceService
-    DeveloperProducts.ts     # Registry + receipt handler
-    GamePasses.ts            # Ownership checks + caching
-    PurchaseValidator.ts     # Server-side receipt validation
-    index.ts
-```
+**Next action:** In the next Phase 6 session, wire `@rbx/marketplace` into the starter and obby games, then update `packages/gacha`, `packages/battle-pass`, and `packages/pets` to delegate Robux flows through `@rbx/marketplace`.
 
 ---
 
@@ -103,7 +93,7 @@ None of this works without an authenticated Roblox identity. No OAuth flow is de
 | 1   | Merge PR #83                               | 2 min  | Green + reviewed             |
 | 2   | Dashboard news CMS route                   | Low    | Closes Phase 4               |
 | 3   | Bro Companion ADR                          | Low    | Unblocks Hub + Phase 6 scope |
-| 4   | `packages/marketplace` ADR + stub          | Medium | Monetization blocker         |
+| 4   | Wire `@rbx/marketplace` into games         | Medium | Activates monetization       |
 | 5   | Phase 6 economy architecture               | High   | BroCoins design before build |
 | 6   | Roblox OAuth design                        | Medium | Phase 6 website prerequisite |
 | 7   | Flip games public + set deep link env vars | 10 min | When ready                   |
@@ -112,7 +102,7 @@ None of this works without an authenticated Roblox identity. No OAuth flow is de
 
 ## What is already done (do not re-work)
 
-- All 32 `@rbx/*` packages — fully implemented + tested
+- All 33 `@rbx/*` packages — fully implemented + tested (including `@rbx/marketplace`)
 - Both games (starter + obby) — integrated with all packages + deployed to Roblox (6 private experiences)
 - Dashboard v2 — RBAC, audit, bans, flags, match history, moderation
 - Website v1 — live at broblox-games.com, all pages, Vercel deployed

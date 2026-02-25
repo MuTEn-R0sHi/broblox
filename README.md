@@ -17,7 +17,7 @@ BroBlox game studio — Roblox-TS multi-game platform + control-plane dashboard.
 
 ```
 broblox/
-├── packages/                 # 31 shared platform packages (TypeScript → Luau)
+├── packages/                 # 33 shared platform packages (TypeScript → Luau)
 │   ├── shared-types/         # Core type definitions, Result<T>, ErrorCode
 │   ├── constants/            # Numeric constants, timeouts, limits, validation helpers
 │   ├── core/                 # Application lifecycle, Logger, Cleanup, collection helpers
@@ -48,6 +48,7 @@ broblox/
 │   ├── world-systems/        # Day/night cycle, weather, seasons
 │   ├── input/                # Unified input (keyboard, gamepad, touch)
 │   ├── ui/                   # UI components, theming, layout utilities
+│   ├── marketplace/          # MonetizationService wrapper: developer products, game passes, receipt validation
 │   └── testing/              # Test utilities and Roblox API mocks for vitest
 ├── games/                    # Roblox-TS game projects
 │   ├── starter/              # Starter game template
@@ -60,7 +61,7 @@ broblox/
 
 ## Prereqs
 
-- Node.js >= 20.11.0 (LTS recommended)
+- Node.js >= 22 (LTS recommended)
 - Corepack (bundled with modern Node) for `pnpm`
 - [Aftman](https://github.com/LPGhatguy/aftman) for Rojo (optional, for Roblox sync)
 
@@ -160,7 +161,7 @@ Layer 5a — Progression foundation
   (← core)
 
 Layer 5b — Collection & monetization
-  pets    gacha    cosmetics    battle-pass
+  pets    gacha    cosmetics    battle-pass    marketplace
   (← core)
 
 Layer 5c — Support systems

@@ -41,6 +41,7 @@ export default defineConfig({
       "@rbx/world-systems": resolve(__dirname, "packages/world-systems/src/index.ts"),
       "@rbx/input": resolve(__dirname, "packages/input/src/index.ts"),
       "@rbx/ui": resolve(__dirname, "packages/ui/src/index.ts"),
+      "@rbx/marketplace": resolve(__dirname, "packages/marketplace/src/index.ts"),
       "@rbx/testing": resolve(__dirname, "packages/testing/src/index.ts"),
       "@rbxts/t": resolve(__dirname, "packages/testing/src/t-mock.ts"),
 

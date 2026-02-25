@@ -42,7 +42,8 @@
       "@rbx/localization": ["./packages/localization/src/index.ts"],
       "@rbx/audio": ["./packages/audio/src/index.ts"],
       "@rbx/tutorial": ["./packages/tutorial/src/index.ts"],
-      "@rbx/world-systems": ["./packages/world-systems/src/index.ts"]
+      "@rbx/world-systems": ["./packages/world-systems/src/index.ts"],
+      "@rbx/marketplace": ["./packages/marketplace/src/index.ts"]
     }
   },
   "include": ["packages/*/src/**/*.ts"],

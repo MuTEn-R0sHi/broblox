@@ -195,6 +195,13 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Seasonal battle passes with free/premium tracks.
   - Tier progression via XP, milestone rewards, auto-claim.
 
+- `marketplace`
+  - `DeveloperProductRegistry`: register developer products with grant handlers; routes `ProcessReceipt`.
+  - `GamePassCache`: TTL-based in-memory cache for `UserOwnsGamePassAsync` results.
+  - `PurchaseValidator`: idempotent receipt processing — deduplicates on `PurchaseId` within a session.
+  - `createMarketplaceService`: factory composing all three into a standard `Service`.
+  - Prerequisite for Phase 6 economy (BroCoins, trading). See ADR-0008.
+
 ## Phase 5c packages
 
 - `localization`
