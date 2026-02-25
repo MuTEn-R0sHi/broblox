@@ -81,6 +81,8 @@ function rarityColor(rarity: ItemRarity): ColorSpec {
       return { r: 1.0, g: 0.65, b: 0.0 };
     case "mythic":
       return { r: 1.0, g: 0.2, b: 0.4 };
+    default:
+      return { r: 0.5, g: 0.5, b: 0.5 };
   }
 }
 
@@ -422,20 +424,20 @@ export function createInventoryScreen(
     items.sort((a, b) => {
       const defA = options.getItemDef(a.itemId);
       const defB = options.getItemDef(b.itemId);
-      if (!defA || !defB) return 0;
+      if (!defA || !defB) return false;
 
       switch (currentSort) {
         case "rarity": {
           const ra = RARITY_ORDER[defA.rarity] ?? 0;
           const rb = RARITY_ORDER[defB.rarity] ?? 0;
-          return rb - ra; // highest first
+          return rb - ra > 0; // highest first
         }
         case "name":
-          return defA.name < defB.name ? -1 : defA.name > defB.name ? 1 : 0;
+          return defA.name < defB.name;
         case "recent":
-          return b.acquiredAt - a.acquiredAt;
+          return b.acquiredAt - a.acquiredAt > 0;
         default:
-          return 0;
+          return false;
       }
     });
 

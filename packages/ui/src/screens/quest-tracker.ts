@@ -17,7 +17,13 @@
  */
 
 import { createLogger } from "@rbx/core";
-import type { QuestDefinition, QuestProgress, ObjectiveProgress, QuestSchedule } from "@rbx/quests";
+import type {
+  QuestDefinition,
+  QuestProgress,
+  ObjectiveProgress,
+  QuestSchedule,
+  QuestObjective,
+} from "@rbx/quests";
 import {
   createFrame,
   createLabel,
@@ -217,7 +223,7 @@ export function createQuestTracker(
       // Objectives with progress
       let yOffset = 20;
       for (const obj of qp.objectives) {
-        const objDef = def.objectives.find((o) => o.id === obj.objectiveId);
+        const objDef = def.objectives.find((o: QuestObjective) => o.id === obj.objectiveId);
         const desc = objDef?.description ?? obj.objectiveId;
 
         createLabel({
@@ -406,7 +412,7 @@ export function createQuestTracker(
         // Objectives
         let y = 44;
         for (const obj of qp.objectives) {
-          const objDef = def.objectives.find((o) => o.id === obj.objectiveId);
+          const objDef = def.objectives.find((o: QuestObjective) => o.id === obj.objectiveId);
           const desc = objDef?.description ?? obj.objectiveId;
 
           createLabel({

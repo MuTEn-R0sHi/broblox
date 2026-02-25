@@ -14,11 +14,24 @@
     "rootDir": "src",
     "outDir": "out",
     "declaration": true,
-    "declarationDir": "out"
+    "declarationDir": "out",
+    "paths": {
+      "@rbx/core": ["../core/src/index.ts"],
+      "@rbx/shared-types": ["../shared-types/src/index.ts"],
+      "@rbx/quests": ["../quests/src/index.ts"],
+      "@rbx/pets": ["../pets/src/index.ts"],
+      "@rbx/rewards": ["../rewards/src/index.ts"],
+      "@rbx/inventory": ["../inventory/src/index.ts"],
+      "@rbx/cosmetics": ["../cosmetics/src/index.ts"],
+      "@rbx/gacha": ["../gacha/src/index.ts"],
+      "@rbx/audio": ["../audio/src/index.ts"],
+      "@rbx/input": ["../input/src/index.ts"],
+      "@rbx/battle-pass": ["../battle-pass/src/index.ts"]
+    }
   },
   "rbxts": {
     "type": "package"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../../types/**/*.d.ts"],
   "exclude": ["src/**/*.test.ts"]
 }

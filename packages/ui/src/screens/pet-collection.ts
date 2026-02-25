@@ -95,6 +95,8 @@ function rarityColor(rarity: PetRarity): ColorSpec {
       return { r: 1.0, g: 0.65, b: 0.0 };
     case "mythic":
       return { r: 1.0, g: 0.2, b: 0.4 };
+    default:
+      return { r: 0.5, g: 0.5, b: 0.5 };
   }
 }
 
@@ -349,7 +351,9 @@ export function createPetCollection(
     statBar("Luck", stats.luck * pet.level, maxStat * species.maxLevel, detailPanel, 142, theme);
 
     // Abilities
-    const unlockedAbilities = species.abilities.filter(([lvl]) => lvl <= pet.level);
+    const unlockedAbilities = species.abilities.filter(
+      ([lvl]: [number, unknown]) => lvl <= pet.level
+    );
     if (unlockedAbilities.size() > 0) {
       createLabel({
         text: "Abilities:",

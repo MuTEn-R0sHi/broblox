@@ -363,13 +363,18 @@ export function createSettingsScreen(
         parent: row,
       });
 
-      function inputLabel(src: { type: string; key?: string; button?: string; gesture?: string }) {
+      const inputLabel = (src: {
+        type: string;
+        key?: string;
+        button?: string;
+        gesture?: string;
+      }) => {
         if (src.type === "key") return src.key ?? "?";
         if (src.type === "mouse") return src.button ?? "?";
         if (src.type === "gamepad") return src.button ?? "?";
         if (src.type === "touch") return src.gesture ?? "?";
         return "?";
-      }
+      };
 
       createLabel({
         text: inputLabel(binding.primary as never),

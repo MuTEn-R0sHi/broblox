@@ -325,7 +325,7 @@ export function createDailyRewardsPopup(
           claimBtn.AutoButtonColor = false;
 
           // Show reward toast
-          const rewardText = result.rewards.map((r) => rewardLabel(r)).join(", ");
+          const rewardText = result.rewards.map((r: RewardEntry) => rewardLabel(r)).join(", ");
           createLabel({
             text: `You received: ${rewardText}`,
             name: "RewardReveal",
