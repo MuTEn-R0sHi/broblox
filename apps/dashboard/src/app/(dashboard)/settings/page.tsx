@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { _Settings, Server, Key, Clock, Gamepad2, Shield, Globe, Database } from "lucide-react";
+import { Server, Key, Clock, Gamepad2, Shield, Globe, Database } from "lucide-react";
 import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/db";
 

@@ -3,11 +3,11 @@
   "crons": [
     {
       "path": "/api/jobs/expire-bans",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/jobs/expire-mutes",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/jobs/prune-telemetry",
@@ -15,7 +15,7 @@
     },
     {
       "path": "/api/jobs/sync-flag-schedules",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
