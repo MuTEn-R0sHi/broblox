@@ -16,6 +16,7 @@ import {
   createPlayerId,
   createMatchId,
   createSessionId,
+  createConfigVersion,
 } from "../src/index";
 
 describe("Result type", () => {
@@ -154,6 +155,11 @@ describe("Branded IDs", () => {
   it("creates valid SessionId", () => {
     const id = createSessionId("session-abc");
     expect(id).toBe("session-abc");
+  });
+
+  it("creates valid ConfigVersion", () => {
+    const v = createConfigVersion(3);
+    expect(v).toBe(3);
   });
 });
 

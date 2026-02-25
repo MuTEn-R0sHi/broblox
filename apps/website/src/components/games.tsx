@@ -15,9 +15,9 @@ export function Games() {
     <section id="games" className="relative px-4 py-24 sm:px-6 lg:px-8">
       {/* Section header */}
       <div className="mb-12 text-center">
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#00e5ff]">Our Games</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-cyan">Our Games</p>
         <h2 className="text-3xl font-black sm:text-4xl md:text-5xl">Jump In &amp; Play</h2>
-        <p className="mx-auto mt-3 max-w-md text-sm text-[#71717a] sm:text-base">
+        <p className="mx-auto mt-3 max-w-md text-sm text-muted sm:text-base">
           All our games are free to play on Roblox. No pay to win — just fun.
         </p>
       </div>
@@ -60,12 +60,12 @@ function GameCard({ game }: { game: Game }) {
       <h3 className="mb-2 text-xl font-bold" style={{ color: c.text }}>
         {game.name}
       </h3>
-      <p className="mb-4 flex-1 text-sm text-[#a1a1aa]">{game.shortDescription}</p>
+      <p className="mb-4 flex-1 text-sm text-subtle">{game.shortDescription}</p>
 
       {/* Highlights */}
       <ul className="mb-5 space-y-1.5">
         {game.highlights.map((h) => (
-          <li key={h} className="flex items-center gap-2 text-xs text-[#71717a]">
+          <li key={h} className="flex items-center gap-2 text-xs text-muted">
             <span className="h-1 w-1 rounded-full" style={{ backgroundColor: c.text }} />
             {h}
           </li>
@@ -98,13 +98,13 @@ function GameCard({ game }: { game: Game }) {
             Play on Roblox ↗
           </a>
         ) : (
-          <span className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl border border-[#1e1e3a] px-3 py-2 text-sm font-bold text-[#3f3f60]">
+          <span className="inline-flex flex-1 cursor-not-allowed items-center justify-center rounded-xl border border-border px-3 py-2 text-sm font-bold text-faint">
             Stay Tuned
           </span>
         )}
         <Link
           href={`/games/${game.slug}`}
-          className="inline-flex items-center justify-center rounded-xl border border-[#1e1e3a] px-3 py-2 text-sm font-semibold text-[#52525b] transition-colors hover:border-[#3f3f60] hover:text-[#a1a1aa]"
+          className="inline-flex items-center justify-center rounded-xl border border-border px-3 py-2 text-sm font-semibold text-dim transition-colors hover:border-faint hover:text-subtle"
         >
           Details
         </Link>

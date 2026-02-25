@@ -77,7 +77,7 @@ export function Stats() {
               >
                 <Counter end={s.value} suffix={s.suffix} />
               </span>
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#52525b]">
+              <span className="text-xs font-semibold uppercase tracking-widest text-dim">
                 {s.label}
               </span>
             </div>

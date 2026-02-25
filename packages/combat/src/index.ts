@@ -66,3 +66,6 @@ export {
   // Testing
   resetHitValidation,
 } from "./hit-validation";
+
+// Combat service factory
+export * from "./create-combat-service";

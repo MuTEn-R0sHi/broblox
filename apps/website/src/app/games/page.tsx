@@ -17,9 +17,9 @@ export default function GamesPage() {
     <main className="min-h-screen px-4 pb-24 pt-28 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-12 text-center">
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#00e5ff]">All Games</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-cyan">All Games</p>
         <h1 className="text-4xl font-black sm:text-5xl md:text-6xl">Jump In &amp; Play</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-[#71717a] sm:text-base">
+        <p className="mx-auto mt-3 max-w-md text-sm text-muted sm:text-base">
           All BroBlox games are free to play on Roblox. No pay to win — ever.
         </p>
       </div>
@@ -54,7 +54,7 @@ export default function GamesPage() {
               <h2 className="mb-2 text-xl font-bold" style={{ color: c.text }}>
                 {game.name}
               </h2>
-              <p className="mb-4 flex-1 text-sm text-[#a1a1aa]">{game.shortDescription}</p>
+              <p className="mb-4 flex-1 text-sm text-subtle">{game.shortDescription}</p>
 
               {/* Tags */}
               <div className="mb-4 flex flex-wrap gap-1.5">

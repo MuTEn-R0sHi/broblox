@@ -4,10 +4,13 @@
  * Central input processing and movement state calculation.
  */
 
+import { createLogger } from "@rbx/core";
 import { MovementState, MoveVector, InputSource } from "./types";
 import { getCurrentDevice, initDeviceDetection } from "./device";
 import { registerCommonActions, updateActionState, isActionActive } from "./actions";
 import { getBindingsForAction, initDefaultBindings } from "./bindings";
+
+const _logger = createLogger("Input");
 
 // Declare Roblox services
 declare const game: {

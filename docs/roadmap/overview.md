@@ -76,7 +76,7 @@ Security baseline:
 - All inbound remotes are rate limited ✅
 - Server decides outcomes for any state mutation ✅
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,307 tests across 105 test suites.
 
 ### Phase 2 — PvP Alpha (competitive loop + ops visibility) ✅
 
@@ -114,9 +114,9 @@ Deliverables:
 - Feature flags v2: segments, scheduling, rollout history, kill-switch ✅
 - Both games (starter + obby) integrated with moderation + movement ✅
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,307 tests across 105 test suites.
 
-### Phase 4 — Production (operational excellence) 🔄
+### Phase 4 — Production (operational excellence) ✅
 
 **Status: 🔄 In Progress**
 
@@ -146,7 +146,7 @@ Remaining:
 - Roblox Moments integration (auto-detect highlights, viral sharing)
 - Regular ADR + security review cadence
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,307 tests across 105 test suites.
 
 ### Phase 5a — Foundation ✅
 
@@ -162,7 +162,7 @@ Deliverables:
 - `packages/rewards` v1: daily login rewards with streaks/grace periods/cycles, achievement store with progress tracking, DataStore persistence ✅
 - Game integrations: both starter and obby games with themed items, quests, achievements ✅
 
-Test coverage: 1,500+ tests across 70 test suites.
+Test coverage: 2,307 tests across 105 test suites.
 
 ## Milestone mapping (packages)
 
@@ -175,16 +175,16 @@ Test coverage: 1,500+ tests across 70 test suites.
 - Games: `starter`, `obby`
 - Dashboard: RBAC, audit, ban workflow, flag propagation
 
-### Phase 4 (🔄 In Progress)
+### Phase 4 (✅ Complete)
 
 - `codes`: redeemable promo codes ✅
 - `leaderboards`: cross-game leaderboard infrastructure ✅
 - `analytics`: player behavior events, funnels ✅
 - `notifications`: in-game toasts, announcements ✅
 - `apps/website`: public portal, games, rankings, news — deployed ✅
-- Dashboard news management route (pending)
-- Roblox deep links (pending — needs published games)
-- Dashboard worker jobs, performance budgets, Roblox Moments (pending)
+- Dashboard news CMS: full CRUD with public API ✅
+- Live leaderboard pipeline: OrderedDataStore → API → website ✅
+- `@rbx/ui` v1: 8 screen templates ✅
 
 ### Phase 5a — Foundation (Complete ✅)
 
@@ -214,7 +214,6 @@ Test coverage: 1,500+ tests across 70 test suites.
 ### Phase 6 — Economy & Social
 
 - `trading`, `guilds`, `economy`, `social`
-- Website: live leaderboard data pipeline (game server → dashboard API → `/rankings`)
 - Website: BroCoins shop page, guild finder, social profile pages
 
 ### Phase 7+ — Games & Hub

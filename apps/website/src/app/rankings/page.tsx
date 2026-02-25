@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Timer, Coins, TrendingUp } from "lucide-react";
+import { Trophy, Swords, Timer, Medal, TrendingUp } from "lucide-react";
 import { fetchGameStats, formatCount } from "@/lib/roblox";
 import { accentColors } from "@/lib/games";
+import {
+  fetchGameLeaderboards,
+  GAME_BOARDS,
+  type LeaderboardResponse,
+  type BoardDef,
+} from "@/lib/leaderboards";
 
 export const metadata: Metadata = {
   title: "Rankings – BroBlox",
@@ -11,63 +17,86 @@ export const metadata: Metadata = {
 // Revalidate page every 60 seconds (ISR)
 export const revalidate = 60;
 
-const leaderboards = [
+// ── Board icon mapping ────────────────────────────────────────────────────
+
+const boardIcons: Record<string, typeof Trophy> = {
+  kills: Swords,
+  wins: Trophy,
+  playtime: Timer,
+  completions: Medal,
+};
+
+// ── Game definitions for the rankings page ────────────────────────────────
+
+const rankedGames = [
   {
-    game: "BroBlox Obby",
+    slug: "starter",
+    name: "Starter World",
+    universeId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER ?? "",
+    accent: "purple" as const,
+  },
+  {
     slug: "obby",
-    universeId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY ?? "9624221556",
+    name: "BroBlox Obby",
+    universeId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY ?? "",
     accent: "cyan" as const,
-    boards: [
-      {
-        label: "Fastest Clear",
-        icon: Timer,
-        entries: [
-          { rank: 1, name: "SpeedDemon99", value: "4m 12s" },
-          { rank: 2, name: "QuickFeet", value: "4m 38s" },
-          { rank: 3, name: "ZoomZoom", value: "4m 51s" },
-          { rank: 4, name: "RushHour", value: "5m 03s" },
-          { rank: 5, name: "BlazeRunner", value: "5m 17s" },
-        ],
-      },
-      {
-        label: "Most Coins",
-        icon: Coins,
-        entries: [
-          { rank: 1, name: "CoinKing", value: "48,200" },
-          { rank: 2, name: "Grinder42", value: "41,750" },
-          { rank: 3, name: "LoopFarm", value: "38,900" },
-          { rank: 4, name: "CashFlow", value: "33,100" },
-          { rank: 5, name: "BroBloxFan", value: "29,500" },
-        ],
-      },
-    ],
   },
 ];
 
+// ── Hardcoded fallback entries (shown if API is unreachable) ───────────────
+
+const fallbackEntries: Record<string, { rank: number; name: string; value: string }[]> = {
+  kills: [
+    { rank: 1, name: "FragMaster", value: "12,450" },
+    { rank: 2, name: "SnipeKing", value: "10,200" },
+    { rank: 3, name: "BlastZone", value: "8,900" },
+  ],
+  wins: [
+    { rank: 1, name: "ChampRBX", value: "342" },
+    { rank: 2, name: "VictoryLap", value: "298" },
+    { rank: 3, name: "TopDog", value: "265" },
+  ],
+  playtime: [
+    { rank: 1, name: "NoLifeRBX", value: "84h 12m" },
+    { rank: 2, name: "AlwaysOn", value: "71h 5m" },
+    { rank: 3, name: "Dedicated", value: "62h 30m" },
+  ],
+  completions: [
+    { rank: 1, name: "ObbyKing", value: "1,248" },
+    { rank: 2, name: "JumpPro", value: "1,102" },
+    { rank: 3, name: "SpeedDemon99", value: "980" },
+  ],
+};
+
+// ── Page ──────────────────────────────────────────────────────────────────
+
 export default async function RankingsPage() {
-  const universeIds = leaderboards.map((l) => l.universeId);
-  const stats = await fetchGameStats(universeIds);
+  const universeIds = rankedGames.map((g) => g.universeId).filter(Boolean);
+  const [stats, ...leaderboardMaps] = await Promise.all([
+    fetchGameStats(universeIds),
+    ...rankedGames.map((g) => fetchGameLeaderboards(g.slug)),
+  ]);
 
   return (
     <main className="min-h-screen px-4 pb-24 pt-28 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-12 text-center">
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#c084fc]">
-          Leaderboards
-        </p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-purple">Leaderboards</p>
         <h1 className="text-4xl font-black sm:text-5xl md:text-6xl">Rankings</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm text-[#71717a] sm:text-base">
-          Top players across all BroBlox games. Player counts refresh every 60 seconds.
+        <p className="mx-auto mt-3 max-w-md text-sm text-muted sm:text-base">
+          Top players across all BroBlox games. Updated every 5 minutes via Open Cloud.
         </p>
       </div>
 
       <div className="mx-auto flex max-w-5xl flex-col gap-12">
-        {leaderboards.map((lb) => {
-          const c = accentColors[lb.accent];
-          const gameStats = stats[lb.universeId];
+        {rankedGames.map((game, gameIdx) => {
+          const c = accentColors[game.accent];
+          const gameStats = stats[game.universeId];
+          const boards = GAME_BOARDS[game.slug] ?? [];
+          const lbMap = leaderboardMaps[gameIdx];
 
           return (
-            <section key={lb.slug}>
+            <section key={game.slug}>
               {/* Game title */}
               <div className="mb-4 flex items-center gap-3">
                 <div
@@ -75,7 +104,7 @@ export default async function RankingsPage() {
                   style={{ background: `linear-gradient(to right, ${c.text}44, transparent)` }}
                 />
                 <h2 className="text-lg font-bold" style={{ color: c.text }}>
-                  {lb.game}
+                  {game.name}
                 </h2>
                 <div
                   className="h-px flex-1"
@@ -107,62 +136,95 @@ export default async function RankingsPage() {
               )}
 
               {/* Boards */}
-              <div className="grid gap-6 sm:grid-cols-2">
-                {lb.boards.map((board) => {
-                  const Icon = board.icon;
-                  return (
-                    <div
-                      key={board.label}
-                      className="rounded-2xl border p-5"
-                      style={{ borderColor: c.border, background: c.bg }}
-                    >
-                      <div className="mb-4 flex items-center gap-2">
-                        <Icon className="h-4 w-4" style={{ color: c.text }} />
-                        <h3 className="font-bold" style={{ color: c.text }}>
-                          {board.label}
-                        </h3>
-                      </div>
-                      <ol className="flex flex-col gap-2">
-                        {board.entries.map((e) => (
-                          <li
-                            key={e.rank}
-                            className="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
-                            style={{ background: e.rank === 1 ? `${c.text}11` : "transparent" }}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span
-                                className="w-5 text-center text-xs font-black tabular-nums"
-                                style={{ color: e.rank <= 3 ? c.text : "#52525b" }}
-                              >
-                                {e.rank}
-                              </span>
-                              <span
-                                className={
-                                  e.rank === 1 ? "font-semibold text-[#fafafa]" : "text-[#a1a1aa]"
-                                }
-                              >
-                                {e.name}
-                              </span>
-                            </div>
-                            <span className="tabular-nums font-bold" style={{ color: c.text }}>
-                              {e.value}
-                            </span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  );
+              <div
+                className={`grid gap-6 ${boards.length > 1 ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}
+              >
+                {boards.map((board) => {
+                  const data = lbMap?.get(board.id);
+                  return <LeaderboardCard key={board.id} board={board} data={data} accent={c} />;
                 })}
               </div>
             </section>
           );
         })}
 
-        <p className="text-center text-xs text-[#3f3f60]">
-          Leaderboard entries are updated via the BroBlox dashboard. Player counts via Roblox public
-          API.
+        <p className="text-center text-xs text-faint">
+          Leaderboard data fetched from Roblox OrderedDataStores via Open Cloud API. Player counts
+          via Roblox public API. Both refresh automatically.
         </p>
       </div>
     </main>
+  );
+}
+
+// ── LeaderboardCard ───────────────────────────────────────────────────────
+
+function LeaderboardCard({
+  board,
+  data,
+  accent,
+}: {
+  board: BoardDef;
+  data: LeaderboardResponse | undefined;
+  accent: (typeof accentColors)[keyof typeof accentColors];
+}) {
+  const Icon = boardIcons[board.id] ?? Trophy;
+  const hasLiveData = data && data.entries.length > 0;
+  const fallback = fallbackEntries[board.id] ?? [];
+
+  const entries = hasLiveData
+    ? data.entries.map((e) => ({
+        rank: e.rank,
+        name: e.displayName,
+        value: board.formatValue ? board.formatValue(e.score) : String(e.score),
+      }))
+    : fallback;
+
+  return (
+    <div
+      className="rounded-2xl border p-5"
+      style={{ borderColor: accent.border, background: accent.bg }}
+    >
+      <div className="mb-4 flex items-center gap-2">
+        <Icon className="h-4 w-4" style={{ color: accent.text }} />
+        <h3 className="font-bold" style={{ color: accent.text }}>
+          {board.label}
+        </h3>
+        {!hasLiveData && entries.length > 0 && (
+          <span className="ml-auto rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-faint">
+            sample data
+          </span>
+        )}
+      </div>
+
+      {entries.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted">No entries yet — be the first!</p>
+      ) : (
+        <ol className="flex flex-col gap-2">
+          {entries.map((e) => (
+            <li
+              key={e.rank}
+              className="flex items-center justify-between rounded-lg px-3 py-2 text-sm"
+              style={{ background: e.rank === 1 ? `${accent.text}11` : "transparent" }}
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  className="w-5 text-center text-xs font-black tabular-nums"
+                  style={{ color: e.rank <= 3 ? accent.text : "#52525b" }}
+                >
+                  {e.rank}
+                </span>
+                <span className={e.rank === 1 ? "font-semibold text-foreground" : "text-subtle"}>
+                  {e.name}
+                </span>
+              </div>
+              <span className="tabular-nums font-bold" style={{ color: accent.text }}>
+                {e.value}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
   );
 }

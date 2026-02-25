@@ -29,6 +29,7 @@ export class TutorialManager {
   private progress: TutorialProgress;
   private dirty = false;
   private logger;
+  private store: DataStore | undefined;
 
   private stepStartedCallbacks: StepStartedCallback[] = [];
   private stepCompletedCallbacks: StepCompletedCallback[] = [];
@@ -47,6 +48,47 @@ export class TutorialManager {
       lastActivityAt: 0,
       version: PROGRESS_VERSION,
     };
+  }
+
+  // --------------------------------------------------------------------------
+  // Persistence (DataStore)
+  // --------------------------------------------------------------------------
+
+  /** Initialize DataStore connection (call before load). */
+  init(): void {
+    const dss = game.GetService("DataStoreService") as DataStoreService;
+    this.store = dss.GetDataStore(this.config.datastoreName);
+    this.logger?.info(`TutorialManager store initialized for player ${this.playerId}`);
+  }
+
+  /** Load tutorial progress from DataStore. */
+  load(): boolean {
+    if (!this.store) return false;
+    const [ok, raw] = pcall(() => this.store!.GetAsync(`tutorial_${this.playerId}`));
+    if (!ok) {
+      this.logger?.warn(`Failed to load tutorial data for player ${this.playerId}`);
+      return false;
+    }
+    if (raw !== undefined && typeIs(raw, "table")) {
+      const saved = raw as unknown as TutorialProgress;
+      this.restoreProgress(saved);
+    }
+    this.dirty = false;
+    this.logger?.info(`Loaded tutorial progress for player ${this.playerId}`);
+    return true;
+  }
+
+  /** Save tutorial progress to DataStore. */
+  save(): boolean {
+    if (!this.store) return false;
+    const [ok] = pcall(() => this.store!.SetAsync(`tutorial_${this.playerId}`, this.progress));
+    if (!ok) {
+      this.logger?.warn(`Failed to save tutorial data for player ${this.playerId}`);
+      return false;
+    }
+    this.dirty = false;
+    this.logger?.info(`Saved tutorial progress for player ${this.playerId}`);
+    return true;
   }
 
   // --------------------------------------------------------------------------

@@ -69,8 +69,8 @@ declare const math: {
   floor(n: number): number;
   ceil(n: number): number;
   abs(n: number): number;
-  min(a: number, b: number): number;
-  max(a: number, b: number): number;
+  min(...values: number[]): number;
+  max(...values: number[]): number;
   pow(base: number, exp: number): number;
   random(): number;
   random(m: number): number;
@@ -162,3 +162,321 @@ interface MessagingService {
     callback: (message: { Data: unknown; Sent: number }) => void
   ): RBXScriptConnection;
 }
+
+// ============================================================================
+// Roblox Value Types
+// ============================================================================
+
+/** 2D scale + offset pair used for UI sizing / positioning. */
+declare class UDim2 {
+  constructor(xScale: number, xOffset: number, yScale: number, yOffset: number);
+  readonly X: UDim;
+  readonly Y: UDim;
+  Lerp(goal: UDim2, alpha: number): UDim2;
+}
+
+/** Single-axis scale + offset value. */
+declare class UDim {
+  constructor(scale: number, offset: number);
+  readonly Scale: number;
+  readonly Offset: number;
+}
+
+/** 2D vector used for anchor points, positions, etc. */
+declare class Vector2 {
+  constructor(x: number, y: number);
+  readonly X: number;
+  readonly Y: number;
+  readonly Magnitude: number;
+}
+
+/** RGB colour value (each channel 0-1). */
+declare class Color3 {
+  constructor();
+  readonly R: number;
+  readonly G: number;
+  readonly B: number;
+  static fromRGB(r: number, g: number, b: number): Color3;
+  static fromHSV(h: number, s: number, v: number): Color3;
+  Lerp(goal: Color3, alpha: number): Color3;
+}
+
+/** Tween timing descriptor. */
+declare class TweenInfo {
+  constructor(
+    time?: number,
+    easingStyle?: EnumItem,
+    easingDirection?: EnumItem,
+    repeatCount?: number,
+    reverses?: boolean,
+    delayTime?: number
+  );
+}
+
+/** A running or completed tween. */
+interface Tween {
+  Play(): void;
+  Cancel(): void;
+  Pause(): void;
+  readonly Completed: RBXScriptSignal;
+}
+
+// ============================================================================
+// Roblox Instance Hierarchy
+// ============================================================================
+
+/** Base class for all Roblox objects. */
+interface Instance {
+  Name: string;
+  Parent: Instance | undefined;
+  ClassName: string;
+  Destroy(): void;
+  Clone(): this;
+  FindFirstChild(name: string, recursive?: boolean): Instance | undefined;
+  FindFirstChildOfClass(className: string): Instance | undefined;
+  GetChildren(): Instance[];
+  IsA(className: string): boolean;
+  SetAttribute(name: string, value: unknown): void;
+  GetAttribute(name: string): unknown;
+  WaitForChild(name: string, timeout?: number): Instance;
+}
+
+/** Constructor for creating new Roblox instances. */
+declare const Instance: {
+  new <T extends keyof CreatableInstances>(className: T): CreatableInstances[T];
+};
+
+/** Map of instance class names to their types. */
+interface CreatableInstances {
+  Frame: Frame;
+  TextLabel: TextLabel;
+  TextButton: TextButton;
+  ScrollingFrame: ScrollingFrame;
+  ImageLabel: ImageLabel;
+  ImageButton: ImageButton;
+  UICorner: UICorner;
+  UIPadding: UIPadding;
+  UIStroke: UIStroke;
+  UIListLayout: UIListLayout;
+  UIGridLayout: UIGridLayout;
+  ScreenGui: ScreenGui;
+}
+
+// ============================================================================
+// Roblox GUI Objects
+// ============================================================================
+
+/** Base class for all 2D GUI elements. */
+interface GuiObject extends Instance {
+  Size: UDim2;
+  Position: UDim2;
+  AnchorPoint: Vector2;
+  BackgroundColor3: Color3;
+  BackgroundTransparency: number;
+  BorderSizePixel: number;
+  Visible: boolean;
+  ZIndex: number;
+  LayoutOrder: number;
+  AutomaticSize: EnumItem;
+  ClipsDescendants: boolean;
+  Active: boolean;
+  MouseButton1Click: RBXScriptSignal;
+  MouseEnter: RBXScriptSignal;
+  MouseLeave: RBXScriptSignal;
+}
+
+/** Blank rectangular container. */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface Frame extends GuiObject {}
+
+/** Read-only text display. */
+interface TextLabel extends GuiObject {
+  Text: string;
+  TextColor3: Color3;
+  TextSize: number;
+  Font: EnumItem;
+  TextWrapped: boolean;
+  TextTruncate: EnumItem;
+  TextXAlignment: EnumItem;
+  TextYAlignment: EnumItem;
+  TextTransparency: number;
+  RichText: boolean;
+}
+
+/** Clickable text element. */
+interface TextButton extends GuiObject {
+  Text: string;
+  TextColor3: Color3;
+  TextSize: number;
+  Font: EnumItem;
+  TextWrapped: boolean;
+  TextXAlignment: EnumItem;
+  TextYAlignment: EnumItem;
+  TextTransparency: number;
+  AutoButtonColor: boolean;
+  MouseButton1Click: RBXScriptSignal;
+}
+
+/** Scrollable container. */
+interface ScrollingFrame extends GuiObject {
+  CanvasSize: UDim2;
+  ScrollBarThickness: number;
+  ScrollBarImageTransparency: number;
+  ScrollingDirection: EnumItem;
+  AutomaticCanvasSize: EnumItem;
+}
+
+/** Static image display. */
+interface ImageLabel extends GuiObject {
+  Image: string;
+  ImageColor3: Color3;
+  ImageTransparency: number;
+  ScaleType: EnumItem;
+}
+
+/** Clickable image element. */
+interface ImageButton extends GuiObject {
+  Image: string;
+  ImageColor3: Color3;
+  ImageTransparency: number;
+  ScaleType: EnumItem;
+  MouseButton1Click: RBXScriptSignal;
+}
+
+/** Top-level GUI container. */
+interface ScreenGui extends Instance {
+  ResetOnSpawn: boolean;
+  IgnoreGuiInset: boolean;
+  DisplayOrder: number;
+  Enabled: boolean;
+}
+
+// ============================================================================
+// Roblox UI Layout & Decoration Instances
+// ============================================================================
+
+interface UICorner extends Instance {
+  CornerRadius: UDim;
+}
+
+interface UIPadding extends Instance {
+  PaddingTop: UDim;
+  PaddingBottom: UDim;
+  PaddingLeft: UDim;
+  PaddingRight: UDim;
+}
+
+interface UIStroke extends Instance {
+  Thickness: number;
+  Color: Color3;
+  Transparency: number;
+  ApplyStrokeMode: EnumItem;
+}
+
+interface UIListLayout extends Instance {
+  SortOrder: EnumItem;
+  FillDirection: EnumItem;
+  HorizontalAlignment: EnumItem;
+  VerticalAlignment: EnumItem;
+  Padding: UDim;
+}
+
+interface UIGridLayout extends Instance {
+  SortOrder: EnumItem;
+  CellSize: UDim2;
+  CellPadding: UDim2;
+  FillDirection: EnumItem;
+  FillDirectionMaxCells: number;
+  HorizontalAlignment: EnumItem;
+  VerticalAlignment: EnumItem;
+  StartCorner: EnumItem;
+}
+
+// ============================================================================
+// Roblox Signals
+// ============================================================================
+
+interface RBXScriptSignal {
+  Connect(callback: (...args: unknown[]) => void): RBXScriptConnection;
+  Wait(): unknown;
+}
+
+/** A single enum item (e.g. Enum.Font.GothamBold). */
+type EnumItem = { Name: string; Value: number };
+
+// ============================================================================
+// Roblox Enum Namespace
+// ============================================================================
+
+declare const Enum: {
+  Font: {
+    GothamBold: EnumItem;
+    GothamMedium: EnumItem;
+    Gotham: EnumItem;
+    SourceSans: EnumItem;
+    SourceSansBold: EnumItem;
+  };
+  TextXAlignment: {
+    Left: EnumItem;
+    Center: EnumItem;
+    Right: EnumItem;
+  };
+  TextYAlignment: {
+    Top: EnumItem;
+    Center: EnumItem;
+    Bottom: EnumItem;
+  };
+  HorizontalAlignment: {
+    Left: EnumItem;
+    Center: EnumItem;
+    Right: EnumItem;
+  };
+  VerticalAlignment: {
+    Top: EnumItem;
+    Center: EnumItem;
+    Bottom: EnumItem;
+  };
+  SortOrder: {
+    LayoutOrder: EnumItem;
+    Name: EnumItem;
+  };
+  FillDirection: {
+    Horizontal: EnumItem;
+    Vertical: EnumItem;
+  };
+  AutomaticSize: {
+    None: EnumItem;
+    X: EnumItem;
+    Y: EnumItem;
+    XY: EnumItem;
+  };
+  ScaleType: {
+    Stretch: EnumItem;
+    Slice: EnumItem;
+    Tile: EnumItem;
+    Fit: EnumItem;
+    Crop: EnumItem;
+  };
+  ScrollingDirection: {
+    X: EnumItem;
+    Y: EnumItem;
+    XY: EnumItem;
+  };
+  EasingStyle: {
+    Linear: EnumItem;
+    Quad: EnumItem;
+    Cubic: EnumItem;
+    Back: EnumItem;
+    Bounce: EnumItem;
+    Elastic: EnumItem;
+  };
+  EasingDirection: {
+    In: EnumItem;
+    Out: EnumItem;
+    InOut: EnumItem;
+  };
+  ApplyStrokeMode: {
+    Contextual: EnumItem;
+    Border: EnumItem;
+  };
+};

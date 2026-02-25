@@ -8,14 +8,29 @@
   --color-border: #1e1e3a;
   --color-foreground: #fafafa;
   --color-muted: #71717a;
+  --color-subtle: #a1a1aa;
+  --color-dim: #52525b;
+  --color-faint: #3f3f60;
 
   /* Brand neons */
   --color-cyan: #00e5ff;
   --color-cyan-dim: #00b8cc;
   --color-cyan-glow: #00e5ff33;
+  --color-cyan-glow-strong: #00e5ff44;
+  --color-cyan-faint: #00e5ff11;
+  --color-cyan-bg: #00e5ff0f;
+  --color-cyan-hover: #00e5ff1a;
+  --color-cyan-border: #00e5ff66;
   --color-purple: #c084fc;
   --color-purple-dim: #9b59d9;
   --color-purple-glow: #c084fc33;
+  --color-purple-glow-strong: #c084fc44;
+  --color-purple-faint: #c084fc0f;
+  --color-purple-hover: #c084fc1a;
+  --color-purple-border: #c084fc66;
+
+  /* Misc */
+  --color-white-faint: #ffffff08;
 
   /* Font */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
@@ -31,15 +46,15 @@
   }
 
   body {
-    background-color: #08080f;
-    color: #fafafa;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
-    background: #00e5ff33;
-    color: #00e5ff;
+    background: var(--color-cyan-glow);
+    color: var(--color-cyan);
   }
 }
 

@@ -41,11 +41,16 @@ export type Permission =
   | "users:roles"
   // Settings
   | "settings:view"
-  | "settings:edit";
+  | "settings:edit"
+  // News CMS
+  | "news:view"
+  | "news:create"
+  | "news:edit"
+  | "news:delete";
 
 /** Permission matrix - maps roles to their permissions */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags"],
+  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags", "news:view"],
 
   SUPPORT: [
     "view:dashboard",
@@ -67,6 +72,9 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "moderation:ban",
     "moderation:appeal",
     "moderation:bulk",
+    "news:view",
+    "news:create",
+    "news:edit",
   ],
 
   ENGINEER: [
@@ -83,6 +91,9 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "flags:toggle:stage",
     "flags:create",
     "settings:view",
+    "news:view",
+    "news:create",
+    "news:edit",
   ],
 
   ADMIN: [
@@ -111,6 +122,10 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "users:roles",
     "settings:view",
     "settings:edit",
+    "news:view",
+    "news:create",
+    "news:edit",
+    "news:delete",
   ],
 };
 

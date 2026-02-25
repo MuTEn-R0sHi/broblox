@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/jobs/expire-bans",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/jobs/expire-mutes",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/jobs/prune-telemetry",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/jobs/sync-flag-schedules",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

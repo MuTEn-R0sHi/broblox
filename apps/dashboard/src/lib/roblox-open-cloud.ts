@@ -227,6 +227,71 @@ export async function publishMessagingService(opts: {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Ordered DataStore — Leaderboards
+// ---------------------------------------------------------------------------
+
+export interface OrderedDataStoreEntry {
+  path: string;
+  id: string;
+  value: number;
+}
+
+interface OrderedDataStoreListResponse {
+  orderedDataStoreEntries: OrderedDataStoreEntry[];
+  nextPageToken?: string;
+}
+
+/**
+ * Read entries from an OrderedDataStore via the Open Cloud v2 API.
+ *
+ * @see https://create.roblox.com/docs/cloud/reference/OrderedDataStore
+ */
+export async function getOrderedDataStoreEntries(opts: {
+  universeIdOverride?: number;
+  datastoreName: string;
+  scope?: string;
+  maxPageSize?: number;
+  orderBy?: "desc" | "asc";
+  pageToken?: string;
+}): Promise<{ entries: OrderedDataStoreEntry[]; nextPageToken?: string }> {
+  const cfg = getOpenCloudConfig();
+  if (!cfg) {
+    throw new Error(
+      "Roblox Open Cloud is not configured (set ROBLOX_OPEN_CLOUD_API_KEY and ROBLOX_UNIVERSE_ID)"
+    );
+  }
+  const universeId = opts.universeIdOverride ?? cfg.universeId;
+  const scope = opts.scope ?? "global";
+  const maxPageSize = opts.maxPageSize ?? 25;
+  const orderBy = opts.orderBy === "asc" ? "" : "desc";
+
+  const params = new URLSearchParams({
+    max_page_size: String(maxPageSize),
+  });
+  if (orderBy) params.set("order_by", orderBy);
+  if (opts.pageToken) params.set("page_token", opts.pageToken);
+
+  const path = `/ordered-data-stores/v1/universes/${universeId}/orderedDataStores/${encodeURIComponent(opts.datastoreName)}/scopes/${encodeURIComponent(scope)}/entries?${params.toString()}`;
+
+  const res = await openCloudFetch(path, { method: "GET" });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new OpenCloudError("Failed to read OrderedDataStore entries", {
+      status: res.status,
+      body,
+    });
+  }
+
+  const data = (await res.json()) as OrderedDataStoreListResponse;
+
+  return {
+    entries: data.orderedDataStoreEntries ?? [],
+    nextPageToken: data.nextPageToken,
+  };
+}
+
 export function summarizeOpenCloudError(error: unknown): string {
   if (error instanceof OpenCloudError) {
     const body = error.body.length > 500 ? `${error.body.slice(0, 497)}...` : error.body;

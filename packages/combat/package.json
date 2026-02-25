@@ -16,7 +16,7 @@
     "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
     "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@rbx/testing": "workspace:*",

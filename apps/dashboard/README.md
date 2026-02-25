@@ -158,6 +158,20 @@ curl https://dashboard.broblox-games.com/api/flags/dev
    - `GITHUB_ID`
    - `GITHUB_SECRET`
 5. Update GitHub OAuth App callback URL to production domain
+6. Set `CRON_SECRET` to a random string (e.g., `openssl rand -base64 32`)
+
+### Vercel Cron Jobs
+
+The dashboard includes scheduled background jobs configured in `vercel.json`:
+
+| Job                             | Schedule                         | Description                                                                          |
+| ------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------ |
+| `/api/jobs/expire-bans`         | Every hour (`0 * * * *`)         | Expires active temp bans whose `expiresAt` has passed, bridges revocations to Roblox |
+| `/api/jobs/expire-mutes`        | Every hour (`0 * * * *`)         | Expires active temp mutes, bridges revocations to Roblox                             |
+| `/api/jobs/prune-telemetry`     | Daily at 02:00 UTC (`0 2 * * *`) | Deletes telemetry events and metric points older than 90 days                        |
+| `/api/jobs/sync-flag-schedules` | Every 5 minutes (`*/5 * * * *`)  | Activates/deactivates feature flags based on their schedule windows                  |
+
+All cron endpoints are secured with `Authorization: Bearer <CRON_SECRET>`. Vercel automatically sends this header when `CRON_SECRET` is set in the project environment variables.
 
 ### Vercel Build Settings
 

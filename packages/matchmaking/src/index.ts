@@ -118,3 +118,6 @@ export type {
   TeleportInitiatedEvent,
   TeleportFailureEvent,
 } from "./server-allocation";
+
+// Matchmaking service factory
+export * from "./create-matchmaking-service";

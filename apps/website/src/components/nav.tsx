@@ -17,7 +17,7 @@ export function Nav() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#1e1e3a] bg-[#08080f]/80 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Logo */}
         <Link
@@ -39,8 +39,8 @@ export function Nav() {
                   href={l.href}
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                     active
-                      ? "bg-[#00e5ff11] text-[#00e5ff]"
-                      : "text-[#a1a1aa] hover:bg-[#ffffff08] hover:text-[#fafafa]"
+                      ? "bg-cyan-faint text-cyan"
+                      : "text-subtle hover:bg-white-faint hover:text-foreground"
                   }`}
                 >
                   {l.label}
@@ -53,14 +53,14 @@ export function Nav() {
         {/* Desktop CTA */}
         <a
           href="/games"
-          className="hidden rounded-xl border border-[#00e5ff33] bg-[#00e5ff0d] px-4 py-1.5 text-sm font-bold text-[#00e5ff] transition-all hover:border-[#00e5ff66] hover:bg-[#00e5ff1a] sm:inline-flex"
+          className="hidden rounded-xl border border-cyan-glow bg-cyan-bg px-4 py-1.5 text-sm font-bold text-cyan transition-all hover:border-cyan-border hover:bg-cyan-hover sm:inline-flex"
         >
           Play Now ↗
         </a>
 
         {/* Mobile hamburger */}
         <button
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#1e1e3a] text-[#a1a1aa] transition-colors hover:border-[#00e5ff33] hover:text-[#00e5ff] sm:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-subtle transition-colors hover:border-cyan-glow hover:text-cyan sm:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -70,7 +70,7 @@ export function Nav() {
 
       {/* Mobile drawer */}
       {open && (
-        <div className="border-t border-[#1e1e3a] bg-[#08080f] px-4 pb-4 pt-2 sm:hidden">
+        <div className="border-t border-border bg-background px-4 pb-4 pt-2 sm:hidden">
           <ul className="flex flex-col gap-1">
             {links.map((l) => {
               const active = pathname === l.href || pathname.startsWith(l.href + "/");
@@ -81,8 +81,8 @@ export function Nav() {
                     onClick={() => setOpen(false)}
                     className={`flex rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                       active
-                        ? "bg-[#00e5ff11] text-[#00e5ff]"
-                        : "text-[#a1a1aa] hover:bg-[#ffffff08] hover:text-[#fafafa]"
+                        ? "bg-cyan-faint text-cyan"
+                        : "text-subtle hover:bg-white-faint hover:text-foreground"
                     }`}
                   >
                     {l.label}
@@ -94,7 +94,7 @@ export function Nav() {
           <a
             href="/games"
             onClick={() => setOpen(false)}
-            className="mt-3 flex items-center justify-center rounded-xl border border-[#00e5ff33] bg-[#00e5ff0d] px-4 py-2.5 text-sm font-bold text-[#00e5ff]"
+            className="mt-3 flex items-center justify-center rounded-xl border border-cyan-glow bg-cyan-bg px-4 py-2.5 text-sm font-bold text-cyan"
           >
             Play Now ↗
           </a>
