@@ -59,6 +59,24 @@
                 "$path": "node_modules/@rbx/moderation/out"
               }
             },
+            "observability": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/observability/out"
+              }
+            },
+            "data": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/data/out"
+              }
+            },
+            "input": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@rbx/input/out"
+              }
+            },
             "codes": {
               "$className": "Folder",
               "out": {
