@@ -508,6 +508,28 @@ describe("MovementValidator", () => {
       );
       expect(teleportViolations).toHaveLength(0);
     });
+
+    it("should allow freefall when end-of-tick velocity is high (gravity acceleration)", () => {
+      // Player starts falling with low velocity but gravity accelerates them.
+      // By end of tick they're moving fast and covered 40 studs.
+      playerState.updateState({
+        position: vec3(0, 50, 0),
+        velocity: vec3(0, -10, 0), // slow initial downward velocity
+      });
+
+      const input = createInput({
+        position: vec3(0, 10, 0), // fell 40 studs
+        velocity: vec3(0, -80, 0), // gravity accelerated to high speed
+        isGrounded: false,
+        sequenceNumber: 1,
+      });
+
+      const result = validator.validate(input, playerState, 0.5);
+      const teleportViolations = result.violations.filter(
+        (v: MovementViolation) => v.type === "teleport"
+      );
+      expect(teleportViolations).toHaveLength(0);
+    });
   });
 
   // --------------------------------------------------------------------------

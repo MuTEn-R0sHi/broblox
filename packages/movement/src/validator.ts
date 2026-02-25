@@ -176,9 +176,15 @@ export class MovementValidator {
     currentState: { position: Vector3; velocity: Vector3 },
     deltaTime: number
   ): MovementViolation | undefined {
+    // Use the higher of start-of-tick and end-of-tick velocities so that
+    // gravitational acceleration during freefall is accounted for.
+    // Without this, a player falling from a platform would be flagged
+    // because gravity increases velocity mid-tick beyond the start estimate.
+    const maxVelocity = math.max(currentState.velocity.Magnitude, input.velocity.Magnitude);
+
     // Calculate expected maximum distance based on velocity and time
     const expectedMaxDistance =
-      currentState.velocity.Magnitude * deltaTime * this.violationThresholds.positionTolerance +
+      maxVelocity * deltaTime * this.violationThresholds.positionTolerance +
       NETWORK_CONSTANTS.maxPositionError;
 
     // Add minimum threshold to account for network conditions
