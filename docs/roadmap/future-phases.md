@@ -156,7 +156,7 @@ packages/
 
 ### Prerequisites (must land before Phase 6 is real)
 
-- **`packages/marketplace`** — `MarketplaceService` wrapper: developer products, game passes, purchase receipt validation. Currently missing entirely; `packages/gacha`, `packages/battle-pass`, and `packages/pets` all assume Robux purchases exist but nothing processes them. Needs design + ADR first.
+- ✅ **`packages/marketplace`** — `MarketplaceService` wrapper: developer products, game passes, purchase receipt validation. Built in Phase 5b close-out; see ADR-0008. Games must wire product handlers before Phase 6 Robux flows are activated.
 - **Roblox OAuth for website** — `/profile/[player]`, BroCoins balance in nav, and guild pages all require an authenticated Roblox identity. No auth flow is designed yet — needs its own scope and ADR before Phase 6 website features are built.
 
 ### Scope
@@ -310,6 +310,7 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 | Audio package                      | 5c     | ✅ Done    |
 | Tutorial/FTUE                      | 5c     | ✅ Done    |
 | World systems (day/night, weather) | 5c     | ✅ Done    |
+| `packages/marketplace` (MonetizationService) | 5b     | ✅ Done    |
 | Trading                            | 6      | 💡 Planned |
 | Guilds                             | 6      | 💡 Planned |
 | Global BroCoins                    | 6      | 💡 Planned |
