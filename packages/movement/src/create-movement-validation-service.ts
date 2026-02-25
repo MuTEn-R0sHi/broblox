@@ -67,11 +67,14 @@ export function createMovementValidationService(
   const stateManager = new MovementStateManager();
   const validator = getMovementValidator();
   const connections: RBXScriptConnection[] = [];
+  /** Track character references to detect Roblox UI character resets. */
+  const lastCharacter = new Map<number, Model>();
 
   const MovementValidationService: Service = {
     onInit() {
       config.onPlayerRemoving((player) => {
         stateManager.removeState(player.UserId);
+        lastCharacter.delete(player.UserId);
       });
 
       const isEnabled = config.isEnabled ?? (() => true);
@@ -88,6 +91,18 @@ export function createMovementValidationService(
           const hrp = getHumanoidRootPart(character);
           const humanoid = getHumanoid(character);
           if (!hrp || !humanoid) continue;
+
+          // Detect character change (Roblox UI reset creates a new character).
+          // Reset movement state so the new character doesn't inherit stale
+          // air-time / position data from the old one.
+          const prevCharacter = lastCharacter.get(player.UserId);
+          if (prevCharacter !== undefined && prevCharacter !== character) {
+            stateManager.removeState(player.UserId);
+            lastCharacter.set(player.UserId, character);
+            logger.debug(`Character changed for ${player.Name}, resetting movement state`);
+            // Re-create state at current position on this tick
+          }
+          lastCharacter.set(player.UserId, character);
 
           const state = stateManager.getState(player.UserId, hrp.Position);
 
