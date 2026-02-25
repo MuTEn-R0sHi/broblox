@@ -6,7 +6,7 @@
  */
 
 import { createLogger } from "@rbx/core";
-import { applyRemoteFeatureFlagSnapshot, type RemoteFeatureFlagSnapshot } from "./index";
+import { applyRemoteFeatureFlagSnapshot, type RemoteFeatureFlagSnapshot } from "./overrides";
 
 const logger = createLogger("FeatureFlags.Sync");
 
