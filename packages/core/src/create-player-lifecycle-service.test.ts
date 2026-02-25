@@ -366,4 +366,100 @@ describe("createPlayerLifecycleService", () => {
 
     expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining("Cleaning up"));
   });
+
+  // --------------------------------------------------------------------------
+  // Deduplication — prevents double-processing (Studio race condition)
+  // --------------------------------------------------------------------------
+
+  it("does not fire callbacks twice if PlayerAdded fires before catch-up (onStart)", async () => {
+    const player = { UserId: 42, Name: "Dupe" };
+    // Player is present in GetPlayers AND also triggers PlayerAdded signal
+    mockGetPlayers.mockReturnValue([player]);
+
+    const handle = await createService({ catchUpPhase: "onStart" });
+    const cb = vi.fn();
+    handle.Service.onPlayerAdded(cb);
+    handle.Service.onInit!();
+
+    // Simulate PlayerAdded firing between onInit and onStart (the race)
+    playerAddedCallbacks[0](player);
+    expect(cb).toHaveBeenCalledTimes(1);
+
+    // Now onStart calls fireAddedForExisting — should skip the already-processed player
+    handle.Service.onStart!();
+    expect(cb).toHaveBeenCalledTimes(1); // still 1, not 2
+  });
+
+  it("does not fire callbacks twice if PlayerAdded fires before catch-up (onInit)", async () => {
+    const player = { UserId: 43, Name: "DupeInit" };
+    mockGetPlayers.mockReturnValue([player]);
+
+    const handle = await createService({ catchUpPhase: "onInit" });
+    const cb = vi.fn();
+    handle.Service.onPlayerAdded(cb);
+    handle.Service.onInit!();
+
+    // Catch-up already fired during onInit, now simulate a duplicate PlayerAdded event
+    playerAddedCallbacks[0](player);
+
+    // Should still only be 1 — the catch-up call
+    expect(cb).toHaveBeenCalledTimes(1);
+  });
+
+  it("skips duplicate PlayerAdded signal for the same player", async () => {
+    const player = { UserId: 44, Name: "DoubleSignal" };
+
+    const handle = await createService();
+    const cb = vi.fn();
+    handle.Service.onPlayerAdded(cb);
+    handle.Service.onInit!();
+
+    // Signal fires twice with the same player (Studio quirk)
+    playerAddedCallbacks[0](player);
+    playerAddedCallbacks[0](player);
+
+    expect(cb).toHaveBeenCalledTimes(1);
+    expect(mockLogger.debug).toHaveBeenCalledWith(
+      expect.stringContaining("Skipping duplicate PlayerAdded")
+    );
+  });
+
+  it("allows re-processing after PlayerRemoving (rejoin)", async () => {
+    const player = { UserId: 45, Name: "Rejoiner" };
+
+    const handle = await createService();
+    const cb = vi.fn();
+    handle.Service.onPlayerAdded(cb);
+    handle.Service.onInit!();
+
+    // Player joins
+    playerAddedCallbacks[0](player);
+    expect(cb).toHaveBeenCalledTimes(1);
+
+    // Player leaves — should clear the processed set
+    playerRemovingCallbacks[0](player);
+
+    // Player rejoins
+    playerAddedCallbacks[0](player);
+    expect(cb).toHaveBeenCalledTimes(2);
+  });
+
+  it("logs when skipping already-processed player during catch-up", async () => {
+    const player = { UserId: 46, Name: "SkipLog" };
+    mockGetPlayers.mockReturnValue([player]);
+
+    const handle = await createService({ catchUpPhase: "onStart" });
+    const cb = vi.fn();
+    handle.Service.onPlayerAdded(cb);
+    handle.Service.onInit!();
+
+    // PlayerAdded fires first
+    playerAddedCallbacks[0](player);
+
+    // Catch-up should skip and log
+    handle.Service.onStart!();
+    expect(mockLogger.debug).toHaveBeenCalledWith(
+      expect.stringContaining("Skipping already-processed player")
+    );
+  });
 });
