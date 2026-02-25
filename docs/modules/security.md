@@ -60,7 +60,7 @@ Defense-in-depth layers:
 
 - `security.enabled` — global kill-switch.
 - `security.speedThreshold` — max studs/sec before flagging.
-- `security.teleportThreshold` — max position delta per frame.
+- `security.teleportThreshold` — max position delta per frame. Note: `@rbx/movement` has its own `ValidationThresholds.teleportDistanceMin` for movement-specific teleport detection with axis-split budgets and gravity compensation. The `@rbx/security` teleport detector operates at the action layer as a coarse check, while `@rbx/movement` provides fine-grained, physics-aware detection.
 - `security.damageMax` — max single-hit damage.
 - `security.trustRecoveryRate` — points recovered per minute of clean behavior.
 - `security.banDurationHours` — default ban length.

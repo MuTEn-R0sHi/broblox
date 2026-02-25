@@ -1,0 +1,11 @@
+{
+  "className": "SpawnLocation",
+  "properties": {
+    "Anchored": true,
+    "CanCollide": true,
+    "Size": [6, 1, 6],
+    "Position": [0, 0.5, 0],
+    "Neutral": true,
+    "AllowTeamChangeOnTouch": false
+  }
+}
