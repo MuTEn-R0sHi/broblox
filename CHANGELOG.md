@@ -13,6 +13,15 @@ Notes:
 
 ### Added
 
+- **@rbx/movement — configurable `ValidationThresholds`** — all detection thresholds are now tunable per-game via `createMovementValidationService({ thresholds: { ... } })`. New `ValidationThresholds` interface exported from `@rbx/movement`.
+- **@rbx/movement — axis-split teleport detection** — teleport checks now use separate horizontal and vertical budgets with a gravity term (`0.5 * g * dt²`) for accurate freefall detection.
+- **@rbx/movement — dead-character skip** — validation is paused when `humanoid.Health <= 0` to prevent false positives from ragdoll physics.
+- **@rbx/movement — `notifyTeleport()` API** — `MovementStateManager.notifyTeleport(player, newPos)` resets state after server-initiated teleports (checkpoint respawn, stage warp) to avoid false violations.
+- **@rbx/movement — server teleport auto-detection** — large server-side position changes are automatically detected and reset state instead of flagging a violation.
+- **@rbx/movement — character-change detection** — movement state resets when Roblox's UI character reset creates a new character model.
+- **@rbx/moderation — chat moderation** — `createChatModerationService()` prevents muted players from sending chat messages.
+- **Starter game — Baseplate and SpawnLocation** — added ground plane and spawn point via Rojo model JSON files and Workspace section in `default.project.json`.
+
 - **Dashboard News CMS** — full CRUD for studio news posts (`/dashboard/news`).
   - `NewsPost` Prisma model (title, slug, content, excerpt, coverImage, published, author).
   - Server actions for create / update / delete with RBAC enforcement (ENGINEER+ required).
@@ -42,7 +51,13 @@ Notes:
 
 ### Changed
 
-- **Test suite** — 2,307 tests across 105 test suites (up from 2,266 / 103).
+- **@rbx/movement — timing overhaul** — delta-time now uses `math.max(heartbeat dt, os.clock() delta)` capped at 1.0 s (replaces 0.25 s clamp). Prevents both large-dt exploits and Studio lag spike false positives.
+- **@rbx/movement — speed tolerance raised** — `speedTolerance` default changed from `1.5` to `2.0` for more lag-tolerant speed checks.
+- **@rbx/movement — teleportDistanceMin raised** — default `teleportDistanceMin` changed from `20` to `30` studs.
+- **Obby game — movement thresholds** — overrides `teleportDistanceMin: 75` for large vertical drops between stages.
+- **Starter game — added dependencies** — `@rbx/observability`, `@rbx/data`, `@rbx/input` added as dependencies with Rojo mappings.
+- **Test suite** — 2,329 tests across 105 test suites (up from 2,307 / 105).
+- **Documentation** — Updated movement.md (thresholds, axis-split detection, notifyTeleport API), core.md (153 tests, PlayerAdded dedup), security.md (threshold interaction with @rbx/movement), folders-and-packages.md (starter game deps, movement description).
 - **Roadmap** — Phase 4 marked complete; future-phases and overview docs updated with deliverables.
 - **mkdocs.yml** — Navigation updated: 10 new module entries, 2 new dashboard entries, ADR-0007.
 - **docs/modules/rewards.md** — Rewritten with accurate DailyRewardStore + AchievementStore coverage (47 tests).
@@ -69,6 +84,14 @@ Notes:
   - `docs.broblox-games.com` — documentation (lima-city via SFTP deploy)
 
 ### Fixed
+
+- **@rbx/core — circular dependency** — resolved circular import between core modules.
+- **@rbx/core — PlayerAdded deduplication** — `createPlayerLifecycleService` now deduplicates `PlayerAdded` events to prevent double-fire on rapid reconnects.
+- **@rbx/config-featureflags — pcall wrappers** — `GetAsync` and `Connect` calls wrapped in `pcall` for safe fallback when RemoteConfig is unavailable.
+- **@rbx/movement — checkpoint respawn false positives** — `CheckpointService` now calls `notifyTeleport()` after CFrame respawns so the movement validator doesn't flag the teleport.
+- **@rbx/movement — invalid_jump false positives** — early return when `input.velocity.Y < 0` (falling, not jumping).
+- **Starter game — missing module: observability** — added `@rbx/observability`, `@rbx/data`, `@rbx/input` Rojo mappings and package.json dependencies.
+- **Starter game — no ground** — added Baseplate (512×512 Part) and SpawnLocation via Rojo model JSON files; players no longer fall through the void.
 
 - Removed `prisma db push` from the dashboard `build` script — it requires a live database which is not available in Vercel's build environment. Moved to a separate `db:push` script.
 

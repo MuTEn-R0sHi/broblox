@@ -129,6 +129,8 @@ This project is intended to be a **monorepo** with many games sharing a common p
 - `movement`
   - Server-authoritative movement validation.
   - Speed hack, teleport, fly hack, and noclip detection.
+  - Axis-split teleport detection with gravity compensation.
+  - Configurable `ValidationThresholds` for per-game tuning.
   - Configurable walk/run speeds with ability modifiers.
   - Player movement state tracking with violation history.
 
@@ -226,7 +228,7 @@ If game-specific logic starts duplicating across games, it belongs in `packages/
 
 Current games:
 
-- `games/starter/` — Starter game template (Phase 1). Demonstrates core platform integration with handshake, actions, remotes, moderation, and feature flags.
+- `games/starter/` — Starter game template (Phase 1). Demonstrates core platform integration with handshake, actions, remotes, moderation, feature flags, observability, data persistence, and input handling. Includes a Baseplate and SpawnLocation via Rojo model files.
 - `games/obby/` — Obby game (Phase 3). Stages, checkpoints, coins, leaderboards, and remote payload validation.
 
 ## Roblox-TS monorepo setup

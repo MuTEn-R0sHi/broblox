@@ -1,6 +1,6 @@
 # Modules: Core
 
-Core framework — service lifecycle, logging, and error handling (`@rbx/core`). **Status: Implemented** (~130 tests).
+Core framework — service lifecycle, logging, and error handling (`@rbx/core`). **Status: Implemented** (153 tests).
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Core framework — service lifecycle, logging, and error handling (`@rbx/core`).
 
 - `Application` — top-level container that registers `Service` instances.
 - `Service` — base class with `onInit()` and `onStart()` lifecycle hooks.
-- `createPlayerLifecycleService()` — factory that wires up `Players.PlayerAdded` / `PlayerRemoving` events.
+- `createPlayerLifecycleService()` — factory that wires up `Players.PlayerAdded` / `PlayerRemoving` events. Includes built-in deduplication to prevent double-fire of `PlayerAdded` if a player reconnects before the previous session is fully torn down.
 
 ### Logging
 
@@ -54,4 +54,4 @@ No feature flags. Log level is set at `createLogger` call-site.
 
 ## Testing
 
-~130 unit tests covering service lifecycle, logger output, Janitor cleanup, Clock wrappers, and collection helpers.
+153 unit tests covering service lifecycle (including PlayerAdded deduplication), logger output, Janitor cleanup, Clock wrappers, application lifecycle, and collection helpers.
