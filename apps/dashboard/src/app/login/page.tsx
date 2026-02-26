@@ -14,9 +14,13 @@ export default async function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">BBX</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="BroBlox"
+            width={48}
+            height={48}
+            className="mx-auto mb-4 h-12 w-12 rounded-xl"
+          />
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>Sign in to the BroBlox Dashboard</CardDescription>
         </CardHeader>
