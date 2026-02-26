@@ -60,7 +60,7 @@ export function Sidebar({ user }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
         <img src="/logo.png" alt="BroBlox" width={32} height={32} className="h-8 w-8 rounded-lg" />
-        <span className="font-semibold text-sidebar-foreground">BroBlox</span>
+        <span className="shimmer-text font-bold text-lg tracking-tight">BroBlox</span>
       </div>
 
       {/* Navigation */}
@@ -76,7 +76,7 @@ export function Sidebar({ user }: SidebarProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    ? "bg-cyan-faint text-cyan"
                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
