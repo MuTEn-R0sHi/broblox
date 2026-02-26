@@ -1,15 +1,14 @@
 # Next Session — Planning Notes
 
-> **Date of this review:** 2026-02-24  
+> **Date of this review:** 2026-02-26  
 > **Prepared by:** GitHub Copilot session  
-> **Status of codebase:** All CI green, repo public, 32 packages, 2,400+ tests across 115+ suites
+> **Status of codebase:** All CI green, repo public, 33 packages, 2,400+ tests across 115+ suites
 
 ---
 
 ## Step 1 — Do this first
 
-- [ ] **Merge PR #83** (`docs/public-repo-audit`)  
-       CI is green. Copilot review comments addressed (commit `aa6c84c`). This PR fixes 9 categories of stale docs, adds the missing `@rbx/events` package to all docs, bumps `engines.node` to `>=22`, and fixes the website port to `3001`.
+- [x] **Merge PR #83** (`docs/public-repo-audit`) — merged as commit `daaf694`.
 
 ---
 
@@ -27,14 +26,20 @@ Deep links (`NEXT_PUBLIC_ROBLOX_GAME_URL_*`) activate when experiences are flipp
 
 ---
 
-## Phase 4 close-out (one item left)
+## Phase 4 close-out
 
-Phase 4 is nearly done. The single remaining blocker:
+Phase 4 is **complete**. All deliverables shipped:
 
-- [ ] **Dashboard news CMS route** — `/dashboard/news` in `apps/dashboard`
-  - Small CRUD route (list/create/edit/delete announcements)
-  - Website `/news` page switches from static posts to fetching from this API
-  - Once done: update `future-phases.md` Phase 4 status to ✅ Complete
+- [x] **Dashboard news CMS route** — `/dashboard/news` in `apps/dashboard` (full CRUD, RBAC, public API)
+- [x] **Live leaderboard pipeline** — OrderedDataStore → dashboard API → website `/rankings`
+- [x] **Website v1** — deployed to broblox-games.com
+
+Remaining Phase 4 "nice-to-haves" deferred:
+
+- Roblox game deep links (activate when experiences are made public)
+- Dashboard worker jobs (rollouts, ban propagation, scheduled events)
+- Performance budgets enforced in CI
+- Roblox Moments integration
 
 ---
 
@@ -45,6 +50,7 @@ Phase 4 is nearly done. The single remaining blocker:
 **Status: Complete (ADR-0008)**
 
 `packages/marketplace` has been implemented with:
+
 - `DeveloperProductRegistry` — product definitions + grant handlers; routes `ProcessReceipt`
 - `GamePassCache` — in-memory TTL cache for `UserOwnsGamePassAsync` (default TTL: 300 s)
 - `PurchaseValidator` — idempotent receipt processing (deduplicates on `PurchaseId`)
@@ -90,13 +96,11 @@ None of this works without an authenticated Roblox identity. No OAuth flow is de
 
 | #   | Task                                       | Effort | Why                          |
 | --- | ------------------------------------------ | ------ | ---------------------------- |
-| 1   | Merge PR #83                               | 2 min  | Green + reviewed             |
-| 2   | Dashboard news CMS route                   | Low    | Closes Phase 4               |
-| 3   | Bro Companion ADR                          | Low    | Unblocks Hub + Phase 6 scope |
-| 4   | Wire `@rbx/marketplace` into games         | Medium | Activates monetization       |
-| 5   | Phase 6 economy architecture               | High   | BroCoins design before build |
-| 6   | Roblox OAuth design                        | Medium | Phase 6 website prerequisite |
-| 7   | Flip games public + set deep link env vars | 10 min | When ready                   |
+| 1   | Bro Companion ADR                          | Low    | Unblocks Hub + Phase 6 scope |
+| 2   | Wire `@rbx/marketplace` into games         | Medium | Activates monetization       |
+| 3   | Phase 6 economy architecture               | High   | BroCoins design before build |
+| 4   | Roblox OAuth design                        | Medium | Phase 6 website prerequisite |
+| 5   | Flip games public + set deep link env vars | 10 min | When ready                   |
 
 ---
 
@@ -116,4 +120,4 @@ None of this works without an authenticated Roblox identity. No OAuth flow is de
 - PR #83: https://github.com/MuTEn-R0sHi/broblox/pull/83
 - Roadmap: `docs/roadmap/overview.md` + `docs/roadmap/future-phases.md`
 - Ideas/brainstorm: `ideas/IDEAS.md`
-- Current packages: `packages/` (32 total, see `docs/architecture/folders-and-packages.md`)
+- Current packages: `packages/` (33 total, see `docs/architecture/folders-and-packages.md`)

@@ -273,52 +273,52 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 
 ## Quick Reference: Feature → Phase Mapping
 
-| Feature                            | Phase  | Status     |
-| ---------------------------------- | ------ | ---------- |
-| Core packages (net, config, etc.)  | 1      | ✅ Done    |
-| Combat + hit validation            | 2      | ✅ Done    |
-| Matchmaking + match lifecycle      | 2      | ✅ Done    |
-| Dashboard match history            | 2      | ✅ Done    |
-| Moderation system                  | 3      | ✅ Done    |
-| Movement package                   | 3      | ✅ Done    |
-| RBAC + audit logs                  | 3      | ✅ Done    |
-| Feature flag v2 (segments, etc.)   | 3      | ✅ Done    |
-| Second game template (obby)        | 3      | ✅ Done    |
-| Dashboard moderation bridge        | 3      | ✅ Done    |
-| Analytics package                  | 4      | ✅ Done    |
-| Notifications package              | 4      | ✅ Done    |
-| Leaderboards package               | 4      | ✅ Done    |
-| Codes system                       | 4      | ✅ Done    |
-| Open Cloud hardening               | 4      | ✅ Done    |
-| Rollback + runbooks                | 4      | ✅ Done    |
-| Roblox Moments                     | 4      | 💡 Planned |
-| Website (broblox-games.com)        | 4      | ✅ Done    |
-| Dashboard news CMS route           | 4      | ✅ Done    |
-| UI screen templates                | 4      | ✅ Done    |
-| Roblox game deep links             | 4      | 🔄 Pending |
-| Live leaderboard data pipeline     | 4      | ✅ Done    |
-| Inventory package                  | 5a     | ✅ Done    |
-| Progression (XP, prestige)         | 5a     | ✅ Done    |
-| Quest/mission system               | 5a     | ✅ Done    |
-| Daily rewards                      | 5a     | ✅ Done    |
-| Pet system                         | 5b     | ✅ Done    |
-| Egg/gacha system                   | 5b     | ✅ Done    |
-| Bro Companion (LittleBro)          | 5b     | 💡 Planned |
-| Battle pass                        | 5b     | ✅ Done    |
-| Cosmetics system                   | 5b     | ✅ Done    |
-| Localization (i18n)                | 5c     | ✅ Done    |
-| Audio package                      | 5c     | ✅ Done    |
-| Tutorial/FTUE                      | 5c     | ✅ Done    |
-| World systems (day/night, weather) | 5c     | ✅ Done    |
+| Feature                                      | Phase  | Status     |
+| -------------------------------------------- | ------ | ---------- |
+| Core packages (net, config, etc.)            | 1      | ✅ Done    |
+| Combat + hit validation                      | 2      | ✅ Done    |
+| Matchmaking + match lifecycle                | 2      | ✅ Done    |
+| Dashboard match history                      | 2      | ✅ Done    |
+| Moderation system                            | 3      | ✅ Done    |
+| Movement package                             | 3      | ✅ Done    |
+| RBAC + audit logs                            | 3      | ✅ Done    |
+| Feature flag v2 (segments, etc.)             | 3      | ✅ Done    |
+| Second game template (obby)                  | 3      | ✅ Done    |
+| Dashboard moderation bridge                  | 3      | ✅ Done    |
+| Analytics package                            | 4      | ✅ Done    |
+| Notifications package                        | 4      | ✅ Done    |
+| Leaderboards package                         | 4      | ✅ Done    |
+| Codes system                                 | 4      | ✅ Done    |
+| Open Cloud hardening                         | 4      | ✅ Done    |
+| Rollback + runbooks                          | 4      | ✅ Done    |
+| Roblox Moments                               | 4      | 💡 Planned |
+| Website (broblox-games.com)                  | 4      | ✅ Done    |
+| Dashboard news CMS route                     | 4      | ✅ Done    |
+| UI screen templates                          | 4      | ✅ Done    |
+| Roblox game deep links                       | 4      | 🔄 Pending |
+| Live leaderboard data pipeline               | 4      | ✅ Done    |
+| Inventory package                            | 5a     | ✅ Done    |
+| Progression (XP, prestige)                   | 5a     | ✅ Done    |
+| Quest/mission system                         | 5a     | ✅ Done    |
+| Daily rewards                                | 5a     | ✅ Done    |
+| Pet system                                   | 5b     | ✅ Done    |
+| Egg/gacha system                             | 5b     | ✅ Done    |
+| Bro Companion (LittleBro)                    | 5b     | 💡 Planned |
+| Battle pass                                  | 5b     | ✅ Done    |
+| Cosmetics system                             | 5b     | ✅ Done    |
+| Localization (i18n)                          | 5c     | ✅ Done    |
+| Audio package                                | 5c     | ✅ Done    |
+| Tutorial/FTUE                                | 5c     | ✅ Done    |
+| World systems (day/night, weather)           | 5c     | ✅ Done    |
 | `packages/marketplace` (MonetizationService) | 5b     | ✅ Done    |
-| Trading                            | 6      | 💡 Planned |
-| Guilds                             | 6      | 💡 Planned |
-| Global BroCoins                    | 6      | 💡 Planned |
-| Website: live rankings             | 4      | ✅ Done    |
-| Website: guild finder page         | 6      | 💡 Planned |
-| Website: player profile page       | 6      | 💡 Planned |
-| Genre templates + games            | 7      | 💡 Planned |
-| BroBlox Hub                        | Post-6 | 💡 Planned |
+| Trading                                      | 6      | 💡 Planned |
+| Guilds                                       | 6      | 💡 Planned |
+| Global BroCoins                              | 6      | 💡 Planned |
+| Website: live rankings                       | 4      | ✅ Done    |
+| Website: guild finder page                   | 6      | 💡 Planned |
+| Website: player profile page                 | 6      | 💡 Planned |
+| Genre templates + games                      | 7      | 💡 Planned |
+| BroBlox Hub                                  | Post-6 | 💡 Planned |
 
 ---
 
@@ -326,7 +326,7 @@ The BroBlox Hub is a solar-system-inspired world where each planet is a giant bl
 
 | Phase | Estimated Duration | Dependencies          |
 | ----- | ------------------ | --------------------- |
-| 4     | 🔄 In progress     | Phase 3 ✅            |
+| 4     | ✅ Complete        | Phase 3 ✅            |
 | 5a    | ✅ Complete        | Phase 4               |
 | 5b    | ✅ Complete        | Phase 5a              |
 | 5c    | ✅ Complete        | Phase 4 (parallel)    |

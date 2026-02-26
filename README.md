@@ -153,7 +153,7 @@ Layer 3 — Domain systems
   (← core + infrastructure)
 
 Layer 4 — Ops & engagement
-  codes    leaderboards    analytics    notifications
+  codes    leaderboards    analytics    notifications    events
   (← core)
 
 Layer 5a — Progression foundation

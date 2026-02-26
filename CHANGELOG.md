@@ -13,6 +13,22 @@ Notes:
 
 ### Added
 
+- **@rbx/marketplace package (ADR-0008)** — Roblox `MarketplaceService` wrapper for developer products, game passes, and idempotent purchase receipt validation. Includes `DeveloperProductRegistry`, `GamePassCache` (TTL-based ownership cache), `PurchaseValidator` (deduplicates on `PurchaseId`), and `createMarketplaceService` factory. 47 tests across 5 suites.
+- **ADR-0008** — Architecture decision record for marketplace / MonetizationService wrapper.
+
+### Changed
+
+- **Rollup security patch** — added pnpm override `rollup@>=4.0.0 <4.59.0: ">=4.59.0"` to fix GHSA-mw96-cpmx-2vgc. All `@rollup/*` platform packages upgraded 4.55.2 → 4.59.0.
+- **tsconfig.roblox.json** — added `@rbx/marketplace` and `@rbx/events` path aliases.
+- **vitest.config.ts** — added `@rbx/marketplace` alias.
+- **Docs sync** — updated `NEXT-SESSION.md`, `README.md`, `docs/roadmap/overview.md`, `docs/roadmap/future-phases.md`, `docs/architecture/folders-and-packages.md`, and `docs/architecture/platform.md` to reflect 33 packages, Phase 4 complete status, and marketplace addition.
+
+---
+
+## Previous (pre-marketplace)
+
+### Added
+
 - **@rbx/movement — configurable `ValidationThresholds`** — all detection thresholds are now tunable per-game via `createMovementValidationService({ thresholds: { ... } })`. New `ValidationThresholds` interface exported from `@rbx/movement`.
 - **@rbx/movement — axis-split teleport detection** — teleport checks now use separate horizontal and vertical budgets with a gravity term (`0.5 * g * dt²`) for accurate freefall detection.
 - **@rbx/movement — dead-character skip** — validation is paused when `humanoid.Health <= 0` to prevent false positives from ragdoll physics.
