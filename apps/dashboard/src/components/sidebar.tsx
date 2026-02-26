@@ -59,9 +59,7 @@ export function Sidebar({ user }: SidebarProps) {
     <div className="flex h-full w-64 flex-col bg-sidebar-background border-r border-sidebar-border">
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
-        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-          <span className="text-primary-foreground font-bold text-sm">BBX</span>
-        </div>
+        <img src="/logo.png" alt="BroBlox" width={32} height={32} className="h-8 w-8 rounded-lg" />
         <span className="font-semibold text-sidebar-foreground">BroBlox</span>
       </div>
 
