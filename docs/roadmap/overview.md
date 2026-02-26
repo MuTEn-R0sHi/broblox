@@ -13,7 +13,7 @@ The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, 
 
 **But nobody has played the games yet.**
 
-Both games are deployed to Roblox across 3 environments (dev/staging/live) — all 6 experiences are **private**. The website is live at [broblox-games.com](https://broblox-games.com) but game links are inactive. There are zero public players, zero feedback, and zero revenue.
+Both games are deployed to Roblox across 3 environments (dev/staging/prod) — all 6 experiences are **private**. The website is live at [broblox-games.com](https://broblox-games.com), but deep links to the experiences are not configured yet (the "Play on Roblox" button currently points to roblox.com, not the specific games). There are zero public players, zero feedback, and zero revenue.
 
 | Asset            | Status                                                |
 | ---------------- | ----------------------------------------------------- |
