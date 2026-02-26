@@ -1,43 +1,43 @@
-/* BroBlox Documentation — match dashboard zinc-dark palette */
+/* BroBlox Documentation — neon dark theme (matching website) */
 
 :root,
 [data-md-color-scheme="slate"] {
-  /* Backgrounds — zinc-950 */
-  --md-default-bg-color: #09090b;
-  --md-default-bg-color--light: #0f0f11;
-  --md-default-bg-color--lighter: #18181b;
-  --md-default-bg-color--lightest: #27272a;
+  /* Backgrounds — deep blue-black (website: #08080f / #0d0d1a) */
+  --md-default-bg-color: #08080f;
+  --md-default-bg-color--light: #0d0d1a;
+  --md-default-bg-color--lighter: #0f0f1e;
+  --md-default-bg-color--lightest: #1e1e3a;
 
-  /* Foregrounds — zinc-50 / zinc-400 */
+  /* Foregrounds — matching website */
   --md-default-fg-color: #fafafa;
   --md-default-fg-color--light: #d4d4d8;
   --md-default-fg-color--lighter: #a1a1aa;
   --md-default-fg-color--lightest: #71717a;
 
-  /* Code blocks — zinc-900 */
-  --md-code-bg-color: #18181b;
+  /* Code blocks */
+  --md-code-bg-color: #0f0f1e;
   --md-code-fg-color: #e4e4e7;
 
-  /* Primary — white buttons/accents (matching dashboard primary:#fafafa) */
-  --md-primary-fg-color: #fafafa;
-  --md-primary-fg-color--light: #d4d4d8;
-  --md-primary-fg-color--dark: #a1a1aa;
-  --md-primary-bg-color: #09090b;
-  --md-primary-bg-color--light: #18181b;
+  /* Primary — cyan neon accent */
+  --md-primary-fg-color: #0d0d1a;
+  --md-primary-fg-color--light: #00e5ff;
+  --md-primary-fg-color--dark: #00b8cc;
+  --md-primary-bg-color: #0d0d1a;
+  --md-primary-bg-color--light: #0f0f1e;
 
-  /* Accent links */
-  --md-accent-fg-color: #d4d4d8;
-  --md-accent-fg-color--transparent: rgba(212, 212, 216, 0.1);
-  --md-accent-bg-color: #fafafa;
+  /* Accent links — cyan */
+  --md-accent-fg-color: #00e5ff;
+  --md-accent-fg-color--transparent: rgba(0, 229, 255, 0.1);
+  --md-accent-bg-color: #0d0d1a;
 
-  /* Typeset links */
-  --md-typeset-a-color: #a1a1aa;
+  /* Typeset links — cyan */
+  --md-typeset-a-color: #00e5ff;
 }
 
-/* Header — match sidebar-background */
+/* Header */
 .md-header {
-  background-color: #09090b;
-  border-bottom: 1px solid #27272a;
+  background-color: #0d0d1a;
+  border-bottom: 1px solid #1e1e3a;
   box-shadow: none;
   color: #fafafa;
 }
@@ -51,78 +51,83 @@
 }
 
 .md-header[data-md-state="shadow"] {
-  box-shadow: 0 1px 0 0 #27272a;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
 }
 
 /* Nav sidebar */
 .md-nav {
-  background-color: #09090b;
+  background-color: #08080f;
 }
 
 .md-sidebar {
-  background-color: #09090b;
-  border-right: 1px solid #27272a;
+  background-color: #08080f;
+  border-right: 1px solid #1e1e3a;
 }
 
 /* Navigation items — active */
 .md-nav__item--active > .md-nav__link,
 .md-nav__link:hover {
-  color: #fafafa;
+  color: #00e5ff;
 }
 
 .md-nav__link--active {
-  color: #fafafa;
+  color: #00e5ff;
   font-weight: 600;
 }
 
 /* Footer */
 .md-footer {
-  background-color: #09090b;
-  border-top: 1px solid #27272a;
+  background-color: #0d0d1a;
+  border-top: 1px solid #1e1e3a;
 }
 
 .md-footer-meta {
-  background-color: #09090b;
+  background-color: #0d0d1a;
+}
+
+/* Footer links — cyan on hover */
+.md-footer__link:hover {
+  color: #00e5ff;
 }
 
 /* Content area */
 .md-main__inner {
-  background-color: #09090b;
+  background-color: #08080f;
 }
 
 .md-content {
-  background-color: #09090b;
+  background-color: #08080f;
 }
 
 /* Tables */
 .md-typeset table:not([class]) th {
-  background-color: #18181b;
-  border-bottom: 1px solid #27272a;
+  background-color: #0f0f1e;
+  border-bottom: 1px solid #1e1e3a;
 }
 
 .md-typeset table:not([class]) td {
-  border-bottom: 1px solid #27272a;
+  border-bottom: 1px solid #1e1e3a;
 }
 
 .md-typeset table:not([class]) tr:hover {
-  background-color: #18181b;
+  background-color: #0f0f1e;
 }
 
-/* Admonitions — tone down */
+/* Admonitions — neon tint */
 .md-typeset .admonition,
 .md-typeset details {
-  background-color: #18181b;
-  border-left-color: #52525b;
+  background-color: #0f0f1e;
+  border-left-color: #1e1e3a;
 }
 
 /* Search */
 .md-search__form {
-  background-color: #18181b;
-  border: 1px solid #27272a;
+  background-color: #0f0f1e;
+  border: 1px solid #1e1e3a;
 }
 
 .md-search__icon.md-icon {
-  color: #d4d4d8 !important;
+  color: #a1a1aa !important;
 }
 
 .md-search__input {
@@ -131,38 +136,58 @@
 }
 
 .md-search__input::placeholder {
-  color: #d4d4d8;
+  color: #71717a;
+}
+
+.md-search__input:focus {
+  border-color: #00e5ff44;
+  box-shadow: 0 0 8px #00e5ff22;
 }
 
 .md-search__output {
-  background-color: #09090b;
-  border: 1px solid #27272a;
+  background-color: #0d0d1a;
+  border: 1px solid #1e1e3a;
 }
 
 /* Tabs */
 .md-tabs {
-  background-color: #09090b;
-  border-bottom: 1px solid #27272a;
+  background-color: #0d0d1a;
+  border-bottom: 1px solid #1e1e3a;
 }
 
 .md-tabs__link {
-  color: #a1a1aa !important;
+  color: #71717a !important;
 }
 
 .md-tabs__link--active,
 .md-tabs__link:hover {
-  color: #fafafa !important;
+  color: #00e5ff !important;
 }
 
-/* Font — match dashboard system font stack */
+/* Font — Inter to match website + dashboard */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap");
+
 body,
 .md-typeset {
   font-family:
+    "Inter",
     system-ui,
     -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
     sans-serif;
+}
+
+/* Code inline — subtle cyan tint */
+.md-typeset code {
+  background-color: #0f0f1e;
+  border: 1px solid #1e1e3a;
+  color: #00e5ff;
+  font-size: 0.85em;
+}
+
+/* Selection — cyan glow (matching website) */
+::selection {
+  background: rgba(0, 229, 255, 0.2);
+  color: #00e5ff;
 }
 
 /* Logo text styling */
@@ -173,4 +198,27 @@ body,
 
 .md-header__topic {
   font-weight: 600;
+}
+
+/* Glow line under header (subtle, like website section dividers) */
+.md-header::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00e5ff33, #c084fc33, transparent);
+}
+
+/* Scrollbar — subtle brand tint */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #08080f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e1e3a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00e5ff44;
 }
