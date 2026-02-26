@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createCosmeticsScreen } from "@rbx/ui/screens/cosmetics";
+ * import { createCosmeticsScreen } from "@broblox/ui/screens/cosmetics";
  *
  * const wardrobe = createCosmeticsScreen(playerGui, {
  *   getOwned: () => store.getOwned(),
@@ -18,8 +18,8 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
-import type { CosmeticDefinition, CosmeticCategory, EquipSlot } from "@rbx/cosmetics";
+import { createLogger } from "@broblox/core";
+import type { CosmeticDefinition, CosmeticCategory, EquipSlot } from "@broblox/cosmetics";
 import {
   createFrame,
   createLabel,

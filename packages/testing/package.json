@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/testing",
+  "name": "@broblox/testing",
   "version": "0.2.0",
   "private": true,
   "description": "Shared test utilities, mocks, and helpers for the rbx-game-platform",

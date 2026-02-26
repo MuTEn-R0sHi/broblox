@@ -1,5 +1,5 @@
 /**
- * Unit tests for @rbx/core package.
+ * Unit tests for @broblox/core package.
  * Tests Logger, Janitor, and Clock utilities.
  */
 

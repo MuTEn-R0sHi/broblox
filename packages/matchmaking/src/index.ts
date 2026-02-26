@@ -1,5 +1,5 @@
 /**
- * @rbx/matchmaking
+ * @broblox/matchmaking
  * Matchmaking system for the platform.
  *
  * **Integration status:**

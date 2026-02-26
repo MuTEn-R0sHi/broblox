@@ -1,4 +1,4 @@
-# @rbx/localization
+# @broblox/localization
 
 Internationalization and localization for Roblox games.
 
@@ -14,7 +14,7 @@ This package provides a full i18n system:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
+- `@broblox/core` — Service lifecycle, logging
 
 ## Architecture
 
@@ -35,7 +35,7 @@ Unlike most packages, localization uses a single `LocalizationService` (no regis
 ## Usage
 
 ```typescript
-import { createLocalizationService } from "@rbx/localization";
+import { createLocalizationService } from "@broblox/localization";
 
 const i18n = createLocalizationService({
   strings: [

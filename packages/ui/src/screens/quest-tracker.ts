@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createQuestTracker } from "@rbx/ui/screens/quest-tracker";
+ * import { createQuestTracker } from "@broblox/ui/screens/quest-tracker";
  *
  * const tracker = createQuestTracker(playerGui, {
  *   getActiveQuests: () => store.getActiveQuests(),
@@ -16,14 +16,14 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type {
   QuestDefinition,
   QuestProgress,
   ObjectiveProgress,
   QuestSchedule,
   QuestObjective,
-} from "@rbx/quests";
+} from "@broblox/quests";
 import {
   createFrame,
   createLabel,

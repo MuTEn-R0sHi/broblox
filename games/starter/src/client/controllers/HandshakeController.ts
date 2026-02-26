@@ -5,9 +5,9 @@
  */
 
 import { UserInputService } from "@rbxts/services";
-import { PROTOCOL_VERSION, isOk, isErr } from "@rbx/net";
-import { Controller, createLogger } from "@rbx/core";
-import { BUILD_ID } from "@rbx/constants";
+import { PROTOCOL_VERSION, isOk, isErr } from "@broblox/net";
+import { Controller, createLogger } from "@broblox/core";
+import { BUILD_ID } from "@broblox/constants";
 import { RemoteController } from "./RemoteController";
 import { UiController } from "./UiController";
 import { HandshakeRequest } from "shared/remotes";

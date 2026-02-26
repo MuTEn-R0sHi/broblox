@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeAll } from "vitest";
-import { mockRobloxGlobals } from "@rbx/testing";
+import { mockRobloxGlobals } from "@broblox/testing";
 import {
   validateProtocolVersion,
   isExactVersion,

@@ -38,7 +38,7 @@ describe("EventService (starter)", () => {
       getScheduler: vi.fn(() => ({})),
     };
 
-    vi.doMock("@rbx/events", () => ({
+    vi.doMock("@broblox/events", () => ({
       createEventService: vi.fn((config: Record<string, unknown>) => {
         capturedOnEventStart = config["onEventStart"] as typeof capturedOnEventStart;
         capturedOnEventEnd = config["onEventEnd"] as typeof capturedOnEventEnd;

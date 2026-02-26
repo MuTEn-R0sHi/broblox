@@ -1,5 +1,5 @@
 /**
- * @rbx/data
+ * @broblox/data
  *
  * Data persistence layer for Roblox games.
  * Provides type-safe player data storage with:

@@ -1,6 +1,6 @@
 # Error Code Reference
 
-This document is **auto-generated** from the `ErrorCode` enum in `@rbx/shared-types`.
+This document is **auto-generated** from the `ErrorCode` enum in `@broblox/shared-types`.
 
 ## Error Code Ranges
 

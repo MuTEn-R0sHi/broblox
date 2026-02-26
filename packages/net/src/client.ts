@@ -3,8 +3,8 @@
  * Provides timeout, retry, and error handling for RemoteFunction calls.
  */
 
-import { ErrorCode, Result, err, isRetryableError } from "@rbx/shared-types";
-import { REMOTE_INVOKE_TIMEOUT_MS } from "@rbx/constants";
+import { ErrorCode, Result, err, isRetryableError } from "@broblox/shared-types";
+import { REMOTE_INVOKE_TIMEOUT_MS } from "@broblox/constants";
 
 // ============================================================================
 // Types

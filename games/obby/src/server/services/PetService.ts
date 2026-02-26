@@ -4,7 +4,7 @@
  * Per-player pet management themed for obby gameplay.
  */
 
-import { createPetService } from "@rbx/pets";
+import { createPetService } from "@broblox/pets";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createPetService({

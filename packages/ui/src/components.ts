@@ -4,7 +4,7 @@
  * Higher-level reusable UI components.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { ColorSpec, Cleanup } from "./types";
 
 const _logger = createLogger("UIComponents");

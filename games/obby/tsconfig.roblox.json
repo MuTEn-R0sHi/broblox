@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "preserveSymlinks": true,
 
-    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@broblox"],
     "types": ["types", "compiler-types"],
 
     "rootDir": "src",
@@ -26,5 +26,5 @@
     "rojo": "default.project.json"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules/@rbx/*/src/**", "**/*.test.ts", "**/__test-*", "**/__tests__/**"]
+  "exclude": ["node_modules/@broblox/*/src/**", "**/*.test.ts", "**/__test-*", "**/__tests__/**"]
 }

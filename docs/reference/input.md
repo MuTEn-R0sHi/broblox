@@ -1,17 +1,17 @@
 # Reference: Input System
 
-The `@rbx/input` package provides a unified input abstraction for keyboard, gamepad, and touch controls.
+The `@broblox/input` package provides a unified input abstraction for keyboard, gamepad, and touch controls.
 
 ## Installation
 
 ```bash
-pnpm add @rbx/input
+pnpm add @broblox/input
 ```
 
 ## Quick Start
 
 ```typescript
-import { initInputManager, getMovementState, isActionActive, registerAction } from "@rbx/input";
+import { initInputManager, getMovementState, isActionActive, registerAction } from "@broblox/input";
 
 // Initialize on client
 initInputManager();
@@ -35,7 +35,7 @@ RunService.Heartbeat.Connect(() => {
 Automatically detect and respond to input device changes.
 
 ```typescript
-import { getCurrentDevice, onDeviceChange, getPlatformInfo } from "@rbx/input";
+import { getCurrentDevice, onDeviceChange, getPlatformInfo } from "@broblox/input";
 
 // Get current device type
 const device = getCurrentDevice(); // "keyboard" | "gamepad" | "touch"
@@ -71,7 +71,7 @@ Define named actions that can be triggered by various inputs.
 ### Registering Actions
 
 ```typescript
-import { registerAction, registerCommonActions } from "@rbx/input";
+import { registerAction, registerCommonActions } from "@broblox/input";
 
 // Register a single action
 registerAction({
@@ -94,7 +94,12 @@ registerCommonActions();
 ### Querying Action State
 
 ```typescript
-import { isActionActive, isActionJustPressed, getActionValue, getActionState } from "@rbx/input";
+import {
+  isActionActive,
+  isActionJustPressed,
+  getActionValue,
+  getActionState,
+} from "@broblox/input";
 
 // Check if action is currently held
 if (isActionActive("sprint")) {
@@ -118,7 +123,7 @@ const state = getActionState("attack");
 ### Action Callbacks
 
 ```typescript
-import { onAction, offAction } from "@rbx/input";
+import { onAction, offAction } from "@broblox/input";
 
 // Subscribe to action events
 const unsubscribe = onAction("jump", (actionName, state) => {
@@ -143,7 +148,7 @@ Map physical inputs to actions.
 ### Default Bindings
 
 ```typescript
-import { initDefaultBindings } from "@rbx/input";
+import { initDefaultBindings } from "@broblox/input";
 
 // Set up default bindings for common actions
 initDefaultBindings();
@@ -166,7 +171,7 @@ initDefaultBindings();
 ### Custom Bindings
 
 ```typescript
-import { addBinding, removeBinding, clearBindings, getBindingsForAction } from "@rbx/input";
+import { addBinding, removeBinding, clearBindings, getBindingsForAction } from "@broblox/input";
 
 // Add a keyboard binding
 addBinding({
@@ -221,7 +226,7 @@ clearBindings();
 Get unified movement input regardless of device.
 
 ```typescript
-import { getMovementState } from "@rbx/input";
+import { getMovementState } from "@broblox/input";
 
 RunService.Heartbeat.Connect(() => {
   const movement = getMovementState();
@@ -249,7 +254,7 @@ The movement state automatically combines input from:
 ## Lifecycle
 
 ```typescript
-import { initInputManager, shutdownInputManager, initDeviceDetection } from "@rbx/input";
+import { initInputManager, shutdownInputManager, initDeviceDetection } from "@broblox/input";
 
 // Initialize (call once on client startup)
 initInputManager();
@@ -268,7 +273,7 @@ shutdownInputManager();
 Get device-appropriate display names for bindings.
 
 ```typescript
-import { getBindingDisplayName, getActionDisplayHint } from "@rbx/input";
+import { getBindingDisplayName, getActionDisplayHint } from "@broblox/input";
 
 // Get display name for current device
 const hint = getActionDisplayHint("jump");
@@ -285,7 +290,7 @@ promptLabel.Text = `Press ${hint} to jump`;
 Pre-defined actions for typical game controls:
 
 ```typescript
-import { CommonActions } from "@rbx/input";
+import { CommonActions } from "@broblox/input";
 
 // CommonActions includes:
 // - moveForward, moveBackward, moveLeft, moveRight
@@ -300,7 +305,7 @@ import { CommonActions } from "@rbx/input";
 
 ```typescript
 // In your client entry point
-import { initInputManager } from "@rbx/input";
+import { initInputManager } from "@broblox/input";
 
 initInputManager();
 ```
@@ -352,7 +357,7 @@ import {
   isActionJustPressed,
   onDeviceChange,
   registerAction,
-} from "@rbx/input";
+} from "@broblox/input";
 
 // Initialize
 initInputManager();

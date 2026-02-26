@@ -1,4 +1,4 @@
-# @rbx/shared-types
+# @broblox/shared-types
 
 Core type definitions shared across the entire platform.
 
@@ -26,7 +26,7 @@ This package has **no dependencies** and must remain pure. It cannot import:
 Type-safe wrappers around primitives that prevent accidental misuse:
 
 ```typescript
-import { createPlayerId, createMatchId } from "@rbx/shared-types";
+import { createPlayerId, createMatchId } from "@broblox/shared-types";
 
 const playerId = createPlayerId(12345);
 const matchId = createMatchId("match-abc-123");
@@ -49,7 +49,7 @@ const matchId = createMatchId("match-abc-123");
 Functional error handling without exceptions:
 
 ```typescript
-import { ok, err, ErrorCode, type Result } from "@rbx/shared-types";
+import { ok, err, ErrorCode, type Result } from "@broblox/shared-types";
 
 function divide(a: number, b: number): Result<number> {
   if (b === 0) {

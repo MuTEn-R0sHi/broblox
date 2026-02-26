@@ -17,7 +17,7 @@
  * ```
  */
 
-import { mapSize } from "@rbx/core";
+import { mapSize } from "@broblox/core";
 import { DeveloperProduct, ProductHandler, ProductReceipt, PurchaseDecision } from "./types";
 
 export class DeveloperProductRegistry {

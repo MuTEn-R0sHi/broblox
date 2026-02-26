@@ -1,10 +1,10 @@
 /**
- * Tests for @rbx/marketplace public index
+ * Tests for @broblox/marketplace public index
  */
 
 import { describe, it, expect } from "vitest";
 
-describe("@rbx/marketplace index exports", () => {
+describe("@broblox/marketplace index exports", () => {
   it("exports createMarketplaceService", async () => {
     const mod = await import("./index");
     expect(typeof mod.createMarketplaceService).toBe("function");

@@ -8,7 +8,7 @@
 import { describe, it, expect } from "vitest";
 import { validateActionRequest } from "../shared/action-validation";
 
-// Use a fixed tolerance value matching @rbx/constants TIMESTAMP_TOLERANCE_MS
+// Use a fixed tolerance value matching @broblox/constants TIMESTAMP_TOLERANCE_MS
 const TIMESTAMP_TOLERANCE_MS = 5000;
 
 const baseRequest = { actionId: "jump", timestamp: 1000 };

@@ -1,5 +1,5 @@
 /**
- * @rbx/ui
+ * @broblox/ui
  *
  * UI component library for Roblox games.
  * Provides reusable UI primitives and components.

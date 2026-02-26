@@ -1,6 +1,6 @@
 # Modules: Localization
 
-Internationalization and localization system (`@rbx/localization`). **Status: Implemented** (35 tests).
+Internationalization and localization system (`@broblox/localization`). **Status: Implemented** (35 tests).
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 # Modules: Notifications
 
-In-game notification system with queues, announcements, and news (`@rbx/notifications`). **Status: Implemented** (44 tests).
+In-game notification system with queues, announcements, and news (`@broblox/notifications`). **Status: Implemented** (44 tests).
 
 ## Purpose
 

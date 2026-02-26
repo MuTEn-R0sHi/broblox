@@ -1,4 +1,4 @@
-# @rbx/config-featureflags
+# @broblox/config-featureflags
 
 Feature flags, kill-switches, segments, scheduling, and rollout history
 for Roblox games on the BroBlox platform.
@@ -24,7 +24,7 @@ for Roblox games on the BroBlox platform.
 ## Installation
 
 ```bash
-pnpm add @rbx/config-featureflags
+pnpm add @broblox/config-featureflags
 ```
 
 ## Quick Start
@@ -32,7 +32,7 @@ pnpm add @rbx/config-featureflags
 ### Define a flag
 
 ```typescript
-import { defineFlag, isFlagEnabled, isFlagEnabledForUser } from "@rbx/config-featureflags";
+import { defineFlag, isFlagEnabled, isFlagEnabledForUser } from "@broblox/config-featureflags";
 
 defineFlag({
   name: "experiment.newUI",
@@ -62,7 +62,7 @@ if (isFlagEnabledForUser("experiment.newUI", player.UserId)) {
 ### Kill switch
 
 ```typescript
-import { triggerKillSwitch, setFlagKilled } from "@rbx/config-featureflags";
+import { triggerKillSwitch, setFlagKilled } from "@broblox/config-featureflags";
 
 triggerKillSwitch("doAction.enabled"); // force off
 setFlagKilled("doAction.enabled", false); // restore
@@ -76,7 +76,11 @@ through to the rollout-percentage check; everyone else gets the
 flag's default value.
 
 ```typescript
-import { setFlagSegments, setUserAttribute, clearUserAttributes } from "@rbx/config-featureflags";
+import {
+  setFlagSegments,
+  setUserAttribute,
+  clearUserAttributes,
+} from "@broblox/config-featureflags";
 
 // Target by user ID list
 setFlagSegments("experiment.newUI", [{ name: "beta-testers", userIds: [100, 200, 300] }]);
@@ -99,7 +103,7 @@ window, all overrides are skipped and the flag's definition default is
 returned.
 
 ```typescript
-import { setFlagSchedule, clearFlagSchedule } from "@rbx/config-featureflags";
+import { setFlagSchedule, clearFlagSchedule } from "@broblox/config-featureflags";
 
 // Enable between two timestamps (seconds, Unix epoch or os.clock)
 setFlagSchedule("event.doubleXP", {
@@ -115,7 +119,11 @@ entries). Each record includes the flag name, old/new values, source
 (`local` | `remote` | `kill-switch` | `schedule`), and a timestamp.
 
 ```typescript
-import { getRolloutHistory, getFlagHistory, clearRolloutHistory } from "@rbx/config-featureflags";
+import {
+  getRolloutHistory,
+  getFlagHistory,
+  clearRolloutHistory,
+} from "@broblox/config-featureflags";
 
 const all = getRolloutHistory(); // all entries, oldest first
 const specific = getFlagHistory("doAction.enabled"); // filtered
@@ -128,7 +136,7 @@ clearRolloutHistory(); // reset
 dashboard-propagated flag overrides:
 
 ```typescript
-import { initFeatureFlagSync } from "@rbx/config-featureflags/out/sync";
+import { initFeatureFlagSync } from "@broblox/config-featureflags/out/sync";
 
 initFeatureFlagSync({
   environment: "production",
@@ -172,7 +180,7 @@ subscribes to MessagingService for live invalidation.
 ## Architecture
 
 ```
-@rbx/config-featureflags
+@broblox/config-featureflags
 ├── index.ts      - Flag engine: types, registry, overrides, segments,
 │                   scheduling, history, listeners
 ├── sync.ts       - DataStore + MessagingService sync service

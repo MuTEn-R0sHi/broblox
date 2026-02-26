@@ -1,4 +1,4 @@
-# @rbx/pets
+# @broblox/pets
 
 Pet system with hatching, equipping, leveling, evolution, and abilities.
 
@@ -16,9 +16,9 @@ This package provides a complete pet system:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
-- `@rbx/observability` — Metrics and telemetry
-- `@rbx/shared-types` — Rarity definitions
+- `@broblox/core` — Service lifecycle, logging
+- `@broblox/observability` — Metrics and telemetry
+- `@broblox/shared-types` — Rarity definitions
 
 ## Architecture
 
@@ -42,7 +42,7 @@ This package provides a complete pet system:
 ## Usage
 
 ```typescript
-import { createPetService } from "@rbx/pets";
+import { createPetService } from "@broblox/pets";
 
 const pets = createPetService({
   pets: [

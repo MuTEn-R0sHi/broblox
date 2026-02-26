@@ -1,10 +1,10 @@
 /**
- * Unit tests for @rbx/data package.
+ * Unit tests for @broblox/data package.
  * Tests persistence types, session management, and data operations.
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals, createMockPlayer, resetPlayerIdCounter } from "@rbx/testing";
+import { mockRobloxGlobals, createMockPlayer, resetPlayerIdCounter } from "@broblox/testing";
 import type {
   VersionedData,
   DataMetadata,

@@ -6,7 +6,7 @@ import { ErrorCode, PROTOCOL_VERSION } from "./error-codes";
 import { ok, err, type Result } from "./result";
 
 // ============================================================================
-// Branded ID Types (Mirrors @rbx/shared-types for Node.js testing)
+// Branded ID Types (Mirrors @broblox/shared-types for Node.js testing)
 // ============================================================================
 
 /** Branded type for Player IDs */
@@ -56,7 +56,7 @@ interface TokenBucket {
 
 /**
  * Mock RateLimiter that uses controllable time for testing.
- * Mirrors the API of @rbx/net RateLimiter.
+ * Mirrors the API of @broblox/net RateLimiter.
  */
 export class MockRateLimiter {
   private buckets = new Map<string, TokenBucket>();

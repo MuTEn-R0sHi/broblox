@@ -46,17 +46,17 @@ Compatibility rules:
 
 ## Implementation
 
-### Constants (\`@rbx/shared-types\`)
+### Constants (\`@broblox/shared-types\`)
 
 \`\`\`typescript
 export const PROTOCOL_VERSION = 1;
 export const MIN_PROTOCOL_VERSION = 1;
 \`\`\`
 
-### Validation (\`@rbx/net/protocol.ts\`)
+### Validation (\`@broblox/net/protocol.ts\`)
 
 \`\`\`typescript
-import { validateProtocolVersion } from "@rbx/net";
+import { validateProtocolVersion } from "@broblox/net";
 
 const result = validateProtocolVersion(clientVersion);
 if (!result.compatible) {

@@ -4,7 +4,7 @@
  * Centralized theming for consistent UI styling.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { ColorSpec, TextStyleSpec, CornerSpec, PaddingSpec } from "./types";
 
 const _logger = createLogger("UITheme");

@@ -2,10 +2,10 @@
  * Notification Service — Obby Game
  *
  * Sets up in-game notifications and announcements.
- * Uses the @rbx/notifications package.
+ * Uses the @broblox/notifications package.
  */
 
-import { createNotificationService } from "@rbx/notifications";
+import { createNotificationService } from "@broblox/notifications";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createNotificationService({

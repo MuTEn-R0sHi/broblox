@@ -1,4 +1,4 @@
-# @rbx/battle-pass
+# @broblox/battle-pass
 
 Seasonal battle pass system with tiers, XP, and reward tracks.
 
@@ -13,9 +13,9 @@ This package implements a full battle pass:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
-- `@rbx/observability` — Metrics and telemetry
-- `@rbx/rewards` — Reward entry definitions
+- `@broblox/core` — Service lifecycle, logging
+- `@broblox/observability` — Metrics and telemetry
+- `@broblox/rewards` — Reward entry definitions
 
 ## Architecture
 
@@ -35,7 +35,7 @@ This package implements a full battle pass:
 ## Usage
 
 ```typescript
-import { createBattlePassService } from "@rbx/battle-pass";
+import { createBattlePassService } from "@broblox/battle-pass";
 
 const bp = createBattlePassService({
   seasons: [

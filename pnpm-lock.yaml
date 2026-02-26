@@ -194,95 +194,95 @@ importers:
 
   games/obby:
     dependencies:
-      "@rbx/analytics":
+      "@broblox/analytics":
         specifier: workspace:*
         version: link:../../packages/analytics
-      "@rbx/audio":
+      "@broblox/audio":
         specifier: workspace:*
         version: link:../../packages/audio
-      "@rbx/battle-pass":
+      "@broblox/battle-pass":
         specifier: workspace:*
         version: link:../../packages/battle-pass
-      "@rbx/codes":
+      "@broblox/codes":
         specifier: workspace:*
         version: link:../../packages/codes
-      "@rbx/config-featureflags":
+      "@broblox/config-featureflags":
         specifier: workspace:*
         version: link:../../packages/config-featureflags
-      "@rbx/constants":
+      "@broblox/constants":
         specifier: workspace:*
         version: link:../../packages/constants
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../../packages/core
-      "@rbx/cosmetics":
+      "@broblox/cosmetics":
         specifier: workspace:*
         version: link:../../packages/cosmetics
-      "@rbx/data":
+      "@broblox/data":
         specifier: workspace:*
         version: link:../../packages/data
-      "@rbx/events":
+      "@broblox/events":
         specifier: workspace:*
         version: link:../../packages/events
-      "@rbx/gacha":
+      "@broblox/gacha":
         specifier: workspace:*
         version: link:../../packages/gacha
-      "@rbx/input":
+      "@broblox/input":
         specifier: workspace:*
         version: link:../../packages/input
-      "@rbx/inventory":
+      "@broblox/inventory":
         specifier: workspace:*
         version: link:../../packages/inventory
-      "@rbx/leaderboards":
+      "@broblox/leaderboards":
         specifier: workspace:*
         version: link:../../packages/leaderboards
-      "@rbx/localization":
+      "@broblox/localization":
         specifier: workspace:*
         version: link:../../packages/localization
-      "@rbx/moderation":
+      "@broblox/moderation":
         specifier: workspace:*
         version: link:../../packages/moderation
-      "@rbx/movement":
+      "@broblox/movement":
         specifier: workspace:*
         version: link:../../packages/movement
-      "@rbx/net":
+      "@broblox/net":
         specifier: workspace:*
         version: link:../../packages/net
-      "@rbx/notifications":
+      "@broblox/notifications":
         specifier: workspace:*
         version: link:../../packages/notifications
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../../packages/observability
-      "@rbx/pets":
+      "@broblox/pets":
         specifier: workspace:*
         version: link:../../packages/pets
-      "@rbx/progression":
+      "@broblox/progression":
         specifier: workspace:*
         version: link:../../packages/progression
-      "@rbx/quests":
+      "@broblox/quests":
         specifier: workspace:*
         version: link:../../packages/quests
-      "@rbx/rewards":
+      "@broblox/rewards":
         specifier: workspace:*
         version: link:../../packages/rewards
-      "@rbx/security":
+      "@broblox/security":
         specifier: workspace:*
         version: link:../../packages/security
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../../packages/shared-types
-      "@rbx/tutorial":
+      "@broblox/tutorial":
         specifier: workspace:*
         version: link:../../packages/tutorial
-      "@rbx/world-systems":
+      "@broblox/world-systems":
         specifier: workspace:*
         version: link:../../packages/world-systems
       "@rbxts/t":
         specifier: ^3.2.1
         version: 3.2.1
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../../packages/testing
       "@rbxts/compiler-types":
@@ -300,95 +300,95 @@ importers:
 
   games/starter:
     dependencies:
-      "@rbx/analytics":
+      "@broblox/analytics":
         specifier: workspace:*
         version: link:../../packages/analytics
-      "@rbx/audio":
+      "@broblox/audio":
         specifier: workspace:*
         version: link:../../packages/audio
-      "@rbx/battle-pass":
+      "@broblox/battle-pass":
         specifier: workspace:*
         version: link:../../packages/battle-pass
-      "@rbx/codes":
+      "@broblox/codes":
         specifier: workspace:*
         version: link:../../packages/codes
-      "@rbx/config-featureflags":
+      "@broblox/config-featureflags":
         specifier: workspace:*
         version: link:../../packages/config-featureflags
-      "@rbx/constants":
+      "@broblox/constants":
         specifier: workspace:*
         version: link:../../packages/constants
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../../packages/core
-      "@rbx/cosmetics":
+      "@broblox/cosmetics":
         specifier: workspace:*
         version: link:../../packages/cosmetics
-      "@rbx/data":
+      "@broblox/data":
         specifier: workspace:*
         version: link:../../packages/data
-      "@rbx/events":
+      "@broblox/events":
         specifier: workspace:*
         version: link:../../packages/events
-      "@rbx/gacha":
+      "@broblox/gacha":
         specifier: workspace:*
         version: link:../../packages/gacha
-      "@rbx/input":
+      "@broblox/input":
         specifier: workspace:*
         version: link:../../packages/input
-      "@rbx/inventory":
+      "@broblox/inventory":
         specifier: workspace:*
         version: link:../../packages/inventory
-      "@rbx/leaderboards":
+      "@broblox/leaderboards":
         specifier: workspace:*
         version: link:../../packages/leaderboards
-      "@rbx/localization":
+      "@broblox/localization":
         specifier: workspace:*
         version: link:../../packages/localization
-      "@rbx/moderation":
+      "@broblox/moderation":
         specifier: workspace:*
         version: link:../../packages/moderation
-      "@rbx/movement":
+      "@broblox/movement":
         specifier: workspace:*
         version: link:../../packages/movement
-      "@rbx/net":
+      "@broblox/net":
         specifier: workspace:*
         version: link:../../packages/net
-      "@rbx/notifications":
+      "@broblox/notifications":
         specifier: workspace:*
         version: link:../../packages/notifications
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../../packages/observability
-      "@rbx/pets":
+      "@broblox/pets":
         specifier: workspace:*
         version: link:../../packages/pets
-      "@rbx/progression":
+      "@broblox/progression":
         specifier: workspace:*
         version: link:../../packages/progression
-      "@rbx/quests":
+      "@broblox/quests":
         specifier: workspace:*
         version: link:../../packages/quests
-      "@rbx/rewards":
+      "@broblox/rewards":
         specifier: workspace:*
         version: link:../../packages/rewards
-      "@rbx/security":
+      "@broblox/security":
         specifier: workspace:*
         version: link:../../packages/security
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../../packages/shared-types
-      "@rbx/tutorial":
+      "@broblox/tutorial":
         specifier: workspace:*
         version: link:../../packages/tutorial
-      "@rbx/world-systems":
+      "@broblox/world-systems":
         specifier: workspace:*
         version: link:../../packages/world-systems
       "@rbxts/t":
         specifier: ^3.2.1
         version: 3.2.1
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../../packages/testing
       "@rbxts/compiler-types":
@@ -406,17 +406,17 @@ importers:
 
   packages/analytics:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -437,11 +437,11 @@ importers:
 
   packages/audio:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -462,17 +462,17 @@ importers:
 
   packages/battle-pass:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/rewards":
+      "@broblox/rewards":
         specifier: workspace:*
         version: link:../rewards
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -493,17 +493,17 @@ importers:
 
   packages/codes:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -524,14 +524,14 @@ importers:
 
   packages/combat:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -552,11 +552,11 @@ importers:
 
   packages/config-featureflags:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -577,7 +577,7 @@ importers:
 
   packages/constants:
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -598,7 +598,7 @@ importers:
 
   packages/core:
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -619,17 +619,17 @@ importers:
 
   packages/cosmetics:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -650,14 +650,14 @@ importers:
 
   packages/data:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -678,14 +678,14 @@ importers:
 
   packages/events:
     dependencies:
-      "@rbx/config-featureflags":
+      "@broblox/config-featureflags":
         specifier: workspace:*
         version: link:../config-featureflags
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -706,17 +706,17 @@ importers:
 
   packages/gacha:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -737,11 +737,11 @@ importers:
 
   packages/input:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -762,17 +762,17 @@ importers:
 
   packages/inventory:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -793,17 +793,17 @@ importers:
 
   packages/leaderboards:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -824,11 +824,11 @@ importers:
 
   packages/localization:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -849,14 +849,14 @@ importers:
 
   packages/marketplace:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -877,20 +877,20 @@ importers:
 
   packages/matchmaking:
     dependencies:
-      "@rbx/constants":
+      "@broblox/constants":
         specifier: workspace:*
         version: link:../constants
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -911,17 +911,17 @@ importers:
 
   packages/moderation:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -942,17 +942,17 @@ importers:
 
   packages/movement:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -973,20 +973,20 @@ importers:
 
   packages/net:
     dependencies:
-      "@rbx/constants":
+      "@broblox/constants":
         specifier: workspace:*
         version: link:../constants
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
       "@rbxts/t":
         specifier: ^3.2.1
         version: 3.2.1
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1007,17 +1007,17 @@ importers:
 
   packages/notifications:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1038,14 +1038,14 @@ importers:
 
   packages/observability:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1066,17 +1066,17 @@ importers:
 
   packages/pets:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1097,17 +1097,17 @@ importers:
 
   packages/progression:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1128,17 +1128,17 @@ importers:
 
   packages/quests:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
-      "@rbx/rewards":
+      "@broblox/rewards":
         specifier: workspace:*
         version: link:../rewards
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1159,14 +1159,14 @@ importers:
 
   packages/rewards:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/observability":
+      "@broblox/observability":
         specifier: workspace:*
         version: link:../observability
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1187,14 +1187,14 @@ importers:
 
   packages/security:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1215,7 +1215,7 @@ importers:
 
   packages/shared-types:
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1242,11 +1242,11 @@ importers:
 
   packages/tutorial:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1267,41 +1267,41 @@ importers:
 
   packages/ui:
     dependencies:
-      "@rbx/audio":
+      "@broblox/audio":
         specifier: workspace:*
         version: link:../audio
-      "@rbx/battle-pass":
+      "@broblox/battle-pass":
         specifier: workspace:*
         version: link:../battle-pass
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
-      "@rbx/cosmetics":
+      "@broblox/cosmetics":
         specifier: workspace:*
         version: link:../cosmetics
-      "@rbx/gacha":
+      "@broblox/gacha":
         specifier: workspace:*
         version: link:../gacha
-      "@rbx/input":
+      "@broblox/input":
         specifier: workspace:*
         version: link:../input
-      "@rbx/inventory":
+      "@broblox/inventory":
         specifier: workspace:*
         version: link:../inventory
-      "@rbx/pets":
+      "@broblox/pets":
         specifier: workspace:*
         version: link:../pets
-      "@rbx/quests":
+      "@broblox/quests":
         specifier: workspace:*
         version: link:../quests
-      "@rbx/rewards":
+      "@broblox/rewards":
         specifier: workspace:*
         version: link:../rewards
-      "@rbx/shared-types":
+      "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":
@@ -1322,11 +1322,11 @@ importers:
 
   packages/world-systems:
     dependencies:
-      "@rbx/core":
+      "@broblox/core":
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      "@rbx/testing":
+      "@broblox/testing":
         specifier: workspace:*
         version: link:../testing
       "@rbxts/compiler-types":

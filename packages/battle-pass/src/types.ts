@@ -1,16 +1,16 @@
 /**
- * @rbx/battle-pass — Types
+ * @broblox/battle-pass — Types
  *
  * Seasonal progression with free and premium tracks.
  */
 
 /**
- * Reward type (mirrors @rbx/rewards — inlined to avoid cross-package import
+ * Reward type (mirrors @broblox/rewards — inlined to avoid cross-package import
  * that breaks rbxtsc Rojo resolution with pnpm workspace symlinks).
  */
 type RewardType = "currency" | "xp" | "item" | "boost" | "cosmetic" | "custom";
 
-/** A single reward entry (structurally identical to @rbx/rewards RewardEntry). */
+/** A single reward entry (structurally identical to @broblox/rewards RewardEntry). */
 interface RewardEntry {
   type: RewardType;
   amount: number;

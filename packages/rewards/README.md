@@ -1,4 +1,4 @@
-# @rbx/rewards
+# @broblox/rewards
 
 Daily login rewards, streaks, and achievement tracking for Roblox games.
 
@@ -23,7 +23,7 @@ Daily login rewards, streaks, and achievement tracking for Roblox games.
 ### Daily Rewards
 
 ```ts
-import { DailyRewardStore } from "@rbx/rewards";
+import { DailyRewardStore } from "@broblox/rewards";
 
 const cycle = [
   { day: 1, rewards: [{ type: "currency", amount: 100 }] },
@@ -51,7 +51,7 @@ store.save();
 ### Achievements
 
 ```ts
-import { AchievementStore } from "@rbx/rewards";
+import { AchievementStore } from "@broblox/rewards";
 
 const store = new AchievementStore(player.UserId);
 store.init();
@@ -79,5 +79,5 @@ store.save();
 ## Tests
 
 ```bash
-pnpm --filter @rbx/rewards test
+pnpm --filter @broblox/rewards test
 ```

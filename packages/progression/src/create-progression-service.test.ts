@@ -21,7 +21,7 @@ describe("createProgressionService", () => {
       onPrestige: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./progression-store", () => ({

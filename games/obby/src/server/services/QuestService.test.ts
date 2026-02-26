@@ -37,7 +37,7 @@ describe("QuestService (obby)", () => {
       GetPlayerByUserId: vi.fn(() => mockPlayer),
     };
 
-    vi.doMock("@rbx/quests", () => ({
+    vi.doMock("@broblox/quests", () => ({
       createQuestService: vi.fn((config: Record<string, unknown>) => {
         capturedOnQuestCompleted = config["onQuestCompleted"] as typeof capturedOnQuestCompleted;
         return mockHandle;

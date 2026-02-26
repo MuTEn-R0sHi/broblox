@@ -7,8 +7,8 @@
  * @note Uses roblox-ts compatible patterns for Luau compilation.
  */
 
-import { Result, ok, err, ErrorCode, PlayerId, createMatchId } from "@rbx/shared-types";
-import { arraySize, arrayRemoveAt, arrayTake, setSize } from "@rbx/core";
+import { Result, ok, err, ErrorCode, PlayerId, createMatchId } from "@broblox/shared-types";
+import { arraySize, arrayRemoveAt, arrayTake, setSize } from "@broblox/core";
 import type {
   QueueEntry,
   QueueStatus,

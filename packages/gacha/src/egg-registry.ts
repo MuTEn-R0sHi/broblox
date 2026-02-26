@@ -1,5 +1,5 @@
 /**
- * @rbx/gacha — Egg Registry
+ * @broblox/gacha — Egg Registry
  *
  * Manages egg definitions (loot tables, costs, pity thresholds).
  */

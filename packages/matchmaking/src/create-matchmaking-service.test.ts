@@ -6,7 +6,7 @@ import {
 import { resetQueues, isInQueue } from "./queue";
 import { resetMatches, isInMatch } from "./match";
 import { resetServerAllocation } from "./server-allocation";
-import type { PlayerId } from "@rbx/shared-types";
+import type { PlayerId } from "@broblox/shared-types";
 import type { QueueConfig } from "./types";
 
 // ────────────────────────────────────────────────────────────────────────────

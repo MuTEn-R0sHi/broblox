@@ -5,8 +5,8 @@
  * reset (for repeating quests), and DataStore persistence.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import { QuestRegistry } from "./quest-registry";
 import type {
   QuestPlayerData,

@@ -37,7 +37,7 @@ describe("createRewardsService", () => {
       }),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./daily-reward-store", () => ({

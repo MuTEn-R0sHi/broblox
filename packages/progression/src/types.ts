@@ -1,5 +1,5 @@
 /**
- * @rbx/progression — Type Definitions
+ * @broblox/progression — Type Definitions
  *
  * Types for XP, levels, prestige/rebirth, and configuration.
  */

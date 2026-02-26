@@ -1,5 +1,5 @@
 /**
- * @rbx/battle-pass — Season Registry
+ * @broblox/battle-pass — Season Registry
  *
  * Manages season definitions.
  */

@@ -1,6 +1,13 @@
 import { t } from "@rbxts/t";
-import { ErrorCode, Result, ok, err, HandshakePayload, DoActionPayload } from "@rbx/shared-types";
-import { ACTION_ID_MAX_LENGTH, ACTION_ID_MIN_LENGTH } from "@rbx/constants";
+import {
+  ErrorCode,
+  Result,
+  ok,
+  err,
+  HandshakePayload,
+  DoActionPayload,
+} from "@broblox/shared-types";
+import { ACTION_ID_MAX_LENGTH, ACTION_ID_MIN_LENGTH } from "@broblox/constants";
 
 export type ValidationResult<T> = Result<T>;
 

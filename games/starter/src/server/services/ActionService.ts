@@ -4,10 +4,10 @@
  * Handles action intents from clients.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { ok, err, ErrorCode } from "@rbx/net";
-import { isFlagEnabled } from "@rbx/config-featureflags";
-import { TIMESTAMP_TOLERANCE_MS } from "@rbx/constants";
+import { Service, createLogger } from "@broblox/core";
+import { ok, err, ErrorCode } from "@broblox/net";
+import { isFlagEnabled } from "@broblox/config-featureflags";
+import { TIMESTAMP_TOLERANCE_MS } from "@broblox/constants";
 import { RemoteService } from "./RemoteService";
 import { ActionRequest } from "shared/remotes";
 import { validateActionRequest } from "shared/action-validation";

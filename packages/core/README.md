@@ -1,4 +1,4 @@
-# @rbx/core
+# @broblox/core
 
 Core utilities and primitives for the platform runtime.
 
@@ -12,13 +12,13 @@ This package provides fundamental building blocks used across all games:
 
 ## Dependencies
 
-- `@rbx/shared-types` - For branded types and error codes
+- `@broblox/shared-types` - For branded types and error codes
 
 This package must NOT depend on:
 
 - Roblox services directly (use adapters in game code)
-- `@rbx/net`
-- `@rbx/config-featureflags`
+- `@broblox/net`
+- `@broblox/config-featureflags`
 
 ## API Reference
 
@@ -27,7 +27,7 @@ This package must NOT depend on:
 Lifecycle management for Services (Server) and Controllers (Client).
 
 ```typescript
-import { Application, Service } from "@rbx/core";
+import { Application, Service } from "@broblox/core";
 
 const MyService: Service = {
   onInit() {
@@ -47,7 +47,7 @@ Application.boot();
 Structured logging with severity levels:
 
 ```typescript
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 
 const logger = createLogger("MySystem");
 
@@ -64,7 +64,7 @@ logger.error("Error occurred");
 Resource cleanup utility for managing connections, instances, and callbacks:
 
 ```typescript
-import { Janitor } from "@rbx/core";
+import { Janitor } from "@broblox/core";
 
 const janitor = new Janitor();
 
@@ -96,7 +96,7 @@ janitor.cleanup(); // or janitor.destroy()
 Time utilities:
 
 ```typescript
-import { Clock } from "@rbx/core";
+import { Clock } from "@broblox/core";
 
 const elapsed = Clock.now(); // os.clock() - high precision
 const timestamp = Clock.timestamp(); // os.time() - unix timestamp

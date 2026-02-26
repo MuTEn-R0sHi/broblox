@@ -1,6 +1,6 @@
 # Modules: Codes
 
-Redeemable promo-code system with DataStore persistence (`@rbx/codes`). **Status: Implemented** (46 tests).
+Redeemable promo-code system with DataStore persistence (`@broblox/codes`). **Status: Implemented** (46 tests).
 
 ## Purpose
 

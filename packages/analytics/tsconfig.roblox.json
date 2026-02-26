@@ -8,7 +8,7 @@
     "moduleResolution": "Node",
     "moduleDetection": "force",
     "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@broblox"],
     "types": ["types", "compiler-types"],
     "rootDir": "src",
     "outDir": "out",

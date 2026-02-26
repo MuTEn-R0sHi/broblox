@@ -1,4 +1,4 @@
-# @rbx/ui
+# @broblox/ui
 
 UI component library for Roblox games.
 
@@ -16,7 +16,7 @@ This package provides reusable UI components:
 ### Device-Aware Layout
 
 ```typescript
-import { ScreenUtil, DeviceLayout } from "@rbx/ui";
+import { ScreenUtil, DeviceLayout } from "@broblox/ui";
 
 // Get safe area insets (notch, home indicator)
 const insets = ScreenUtil.getSafeAreaInsets();
@@ -29,7 +29,7 @@ const buttonSize = DeviceLayout.getButtonSize();
 ### Common Components
 
 ```typescript
-import { Button, Panel, Modal, List } from "@rbx/ui";
+import { Button, Panel, Modal, List } from "@broblox/ui";
 
 // Styled button with device-appropriate sizing
 const confirmButton = Button.create({
@@ -52,7 +52,7 @@ Modal.show({
 ### Theming
 
 ```typescript
-import { Theme } from "@rbx/ui";
+import { Theme } from "@broblox/ui";
 
 // Set game theme
 Theme.set({
@@ -69,7 +69,7 @@ Theme.set({
 ### Touch Support
 
 ```typescript
-import { TouchControls } from "@rbx/ui";
+import { TouchControls } from "@broblox/ui";
 
 // Virtual joystick for mobile
 const joystick = TouchControls.createJoystick({

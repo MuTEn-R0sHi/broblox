@@ -1,6 +1,6 @@
 # Modules: Combat
 
-Server-authoritative combat systems — cooldowns, hit validation, and anti-cheat (`@rbx/combat`). **Status: Implemented** (138 tests).
+Server-authoritative combat systems — cooldowns, hit validation, and anti-cheat (`@broblox/combat`). **Status: Implemented** (138 tests).
 
 ## Purpose
 

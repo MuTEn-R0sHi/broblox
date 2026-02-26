@@ -1,4 +1,4 @@
-# @rbx/quests
+# @broblox/quests
 
 Quest and objective tracking system for Roblox games.
 
@@ -17,7 +17,7 @@ Quest and objective tracking system for Roblox games.
 ## Quick Start
 
 ```ts
-import { QuestRegistry, QuestStore } from "@rbx/quests";
+import { QuestRegistry, QuestStore } from "@broblox/quests";
 
 // 1. Define quests
 const registry = new QuestRegistry();
@@ -70,5 +70,5 @@ store.save();
 ## Tests
 
 ```bash
-pnpm --filter @rbx/quests test
+pnpm --filter @broblox/quests test
 ```

@@ -4,7 +4,7 @@
  * Covers both daily-login rewards and achievements with a single config.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import {
   DailyRewardDay,
   AchievementDefinition,

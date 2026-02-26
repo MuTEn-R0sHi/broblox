@@ -4,7 +4,7 @@
  * Encapsulates sound registry, audio manager, and playlist setup.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { SoundDefinition, Playlist } from "./types";
 import { SoundRegistry } from "./sound-registry";
 import { AudioManager } from "./audio-manager";

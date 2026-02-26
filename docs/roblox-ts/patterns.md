@@ -30,7 +30,7 @@ export interface Service {
 
 ```typescript
 // games/starter/src/server/main.server.ts
-import { Application } from "@rbx/core";
+import { Application } from "@broblox/core";
 
 // Import services to ensure side-effects run (loading into Application)
 import "./services/ActionService";
@@ -55,7 +55,7 @@ We prefer **Singletons** defined as objects over classes for simpler dependency 
 
 ```typescript
 // games/starter/src/server/services/ActionService.ts
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 
 const logger = createLogger("ActionService");
 
@@ -85,7 +85,7 @@ its configuration.
 
 ```typescript
 // packages/moderation/src/create-moderation-enforcement-service.ts
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { getModeration } from "./service";
 
 export interface ModerationEnforcementConfig {
@@ -120,7 +120,7 @@ export function createModerationEnforcementService(
 
 ```typescript
 // games/starter/src/server/services/ModerationEnforcementService.ts
-import { createModerationEnforcementService } from "@rbx/moderation";
+import { createModerationEnforcementService } from "@broblox/moderation";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createModerationEnforcementService({
@@ -151,7 +151,7 @@ export const ModerationEnforcementService = handle.Service;
 ```typescript
 // Server Service
 import { RemoteService } from "./RemoteService";
-import { validateMyPayload, ok, err } from "@rbx/net";
+import { validateMyPayload, ok, err } from "@broblox/net";
 
 RemoteService.Remotes.MyRemote.OnServerInvoke = (player, payload) => {
   const result = validateMyPayload(payload);
@@ -169,7 +169,7 @@ RemoteService.Remotes.MyRemote.OnServerInvoke = (player, payload) => {
 ```typescript
 // Client Controller
 import { RemoteController } from "./RemoteController";
-import { ok } from "@rbx/net";
+import { ok } from "@broblox/net";
 
 const result = RemoteController.Remotes.MyRemote.InvokeServer(payload);
 if (result.ok) {

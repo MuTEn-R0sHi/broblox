@@ -65,7 +65,7 @@ describe("CheckpointService", () => {
       FindFirstChild: vi.fn(() => undefined),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
       Service: {},
       mapSize: (m: Map<unknown, unknown>) => m.size,

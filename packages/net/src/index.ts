@@ -1,5 +1,5 @@
 /**
- * @rbx/net
+ * @broblox/net
  * Networking utilities for the platform.
  * Compatible with roblox-ts.
  */
@@ -13,7 +13,7 @@ export {
   ErrorCode,
   PROTOCOL_VERSION,
   MIN_PROTOCOL_VERSION,
-} from "@rbx/shared-types";
+} from "@broblox/shared-types";
 
 // Export Internal Modules
 export * from "./ratelimit";

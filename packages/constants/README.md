@@ -1,4 +1,4 @@
-# @rbx/constants
+# @broblox/constants
 
 Centralized configuration constants for the BroBlox platform.
 
@@ -19,7 +19,7 @@ import {
   TIMESTAMP_TOLERANCE_MS,
   BUILD_ID,
   isValidActionId,
-} from "@rbx/constants";
+} from "@broblox/constants";
 
 // Use constants instead of magic numbers
 const folder = ReplicatedStorage.WaitForChild("Remotes", REMOTES_WAIT_TIMEOUT_SECONDS);

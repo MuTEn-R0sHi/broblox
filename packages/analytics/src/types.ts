@@ -1,5 +1,5 @@
 /**
- * @rbx/analytics — Type Definitions
+ * @broblox/analytics — Type Definitions
  *
  * Types for event tracking, funnels, sessions, and retention.
  */
@@ -146,7 +146,7 @@ export interface AnalyticsConfig {
   heartbeatInterval: number;
   /** Enable debug logging */
   enableLogging: boolean;
-  /** Forward events to @rbx/observability telemetry sinks */
+  /** Forward events to @broblox/observability telemetry sinks */
   forwardToTelemetry: boolean;
   /** Callback when an event is tracked */
   onEvent?: (event: AnalyticsEvent) => void;

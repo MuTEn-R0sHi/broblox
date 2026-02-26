@@ -3,12 +3,12 @@
  *
  * Structured event tracking with optional schema validation.
  * Fires events to registered callbacks and optionally forwards
- * them to @rbx/observability telemetry sinks.
+ * them to @broblox/observability telemetry sinks.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
-import { emit } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
+import { emit } from "@broblox/observability";
 import type { AnalyticsEvent, EventCategory, EventDefinition, AnalyticsConfig } from "./types";
 
 const eventsTracked = new Counter("analytics_events_tracked");

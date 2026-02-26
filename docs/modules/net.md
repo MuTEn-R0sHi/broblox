@@ -1,6 +1,6 @@
 # Modules: Net
 
-Networking layer — remote events, rate limiting, and serialization (`@rbx/net`). **Status: Implemented** (~106 tests).
+Networking layer — remote events, rate limiting, and serialization (`@broblox/net`). **Status: Implemented** (~106 tests).
 
 ## Purpose
 
@@ -40,9 +40,9 @@ Networking layer — remote events, rate limiting, and serialization (`@rbx/net`
 
 ## Dependencies
 
-- `@rbx/core` (service lifecycle, logging).
-- `@rbx/shared-types` (Result type, error codes, protocol constants).
-- `@rbx/constants` (timeout and validation constants).
+- `@broblox/core` (service lifecycle, logging).
+- `@broblox/shared-types` (Result type, error codes, protocol constants).
+- `@broblox/constants` (timeout and validation constants).
 - `@rbxts/t` (runtime type checking).
 
 ## Data ownership

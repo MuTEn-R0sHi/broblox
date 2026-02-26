@@ -1,6 +1,6 @@
 # Modules: Data
 
-Data persistence layer for Roblox games (`@rbx/data`). **Status: Implemented** (~33 tests).
+Data persistence layer for Roblox games (`@broblox/data`). **Status: Implemented** (~33 tests).
 
 ## Purpose
 
@@ -28,8 +28,8 @@ Data persistence layer for Roblox games (`@rbx/data`). **Status: Implemented** (
 
 ## Dependencies
 
-- `@rbx/core` (service lifecycle, logging).
-- `@rbx/shared-types` (branded IDs, Result type).
+- `@broblox/core` (service lifecycle, logging).
+- `@broblox/shared-types` (branded IDs, Result type).
 
 ## Data ownership
 

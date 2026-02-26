@@ -2,11 +2,11 @@
  * Notification Service — Starter Game
  *
  * Sets up in-game notifications, announcements, and news.
- * Uses the @rbx/notifications package.
+ * Uses the @broblox/notifications package.
  */
 
-import { createLogger } from "@rbx/core";
-import { createNotificationService } from "@rbx/notifications";
+import { createLogger } from "@broblox/core";
+import { createNotificationService } from "@broblox/notifications";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const logger = createLogger("NotificationService");

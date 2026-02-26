@@ -14,7 +14,7 @@ describe("createFeatureFlagSyncService", () => {
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
     mockInitFeatureFlagSync = vi.fn();
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
 

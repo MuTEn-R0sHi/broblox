@@ -82,11 +82,11 @@ describe("ModerationService", () => {
       JSONDecode: vi.fn((s: string) => JSON.parse(s) as unknown),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
 
-    vi.doMock("@rbx/observability", () => ({
+    vi.doMock("@broblox/observability", () => ({
       Counter: class {
         inc = vi.fn();
       },

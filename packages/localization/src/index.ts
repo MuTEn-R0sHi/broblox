@@ -1,5 +1,5 @@
 /**
- * @rbx/localization
+ * @broblox/localization
  *
  * Internationalization and localization for Roblox games.
  * Provides:

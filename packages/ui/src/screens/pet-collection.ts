@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createPetCollection } from "@rbx/ui/screens/pet-collection";
+ * import { createPetCollection } from "@broblox/ui/screens/pet-collection";
  *
  * const petUI = createPetCollection(playerGui, {
  *   getPets: () => store.getAll(),
@@ -19,8 +19,8 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
-import type { PetInstance, PetSpecies, PetRarity } from "@rbx/pets";
+import { createLogger } from "@broblox/core";
+import type { PetInstance, PetSpecies, PetRarity } from "@broblox/pets";
 import {
   createFrame,
   createLabel,

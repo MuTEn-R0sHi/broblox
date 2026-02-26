@@ -1,5 +1,5 @@
 /**
- * @rbx/input
+ * @broblox/input
  *
  * Unified input abstraction for Roblox games.
  * Supports keyboard/mouse, gamepad, and touch controls.

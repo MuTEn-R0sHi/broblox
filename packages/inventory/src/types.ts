@@ -1,5 +1,5 @@
 /**
- * @rbx/inventory — Type Definitions
+ * @broblox/inventory — Type Definitions
  *
  * Types for items, slots, inventories, and configuration.
  */

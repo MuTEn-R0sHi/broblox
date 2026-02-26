@@ -5,7 +5,7 @@
  * Themed for obby gameplay (trail items, boosts, cosmetics).
  */
 
-import { createInventoryService } from "@rbx/inventory";
+import { createInventoryService } from "@broblox/inventory";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createInventoryService({

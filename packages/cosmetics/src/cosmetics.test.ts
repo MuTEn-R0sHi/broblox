@@ -1,5 +1,5 @@
 /**
- * @rbx/cosmetics — Tests
+ * @broblox/cosmetics — Tests
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

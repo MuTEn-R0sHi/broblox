@@ -45,8 +45,8 @@ This document outlines planned phases beyond the completed roadmap, with feature
   - Responsive nav with mobile hamburger; neon cyan/purple brand theme
   - Deployed to Vercel; `broblox-games.com` live
 - **Dashboard news CMS** — full CRUD for news posts with RBAC, audit, and public API ✅
-- **Live leaderboard pipeline** — game → `@rbx/leaderboards` OrderedDataStore → dashboard API → website `/rankings` ✅
-- `@rbx/ui` v1: 8 screen templates (daily-rewards, quest-tracker, pet-collection, inventory, cosmetics, gacha, settings, battle-pass) ✅
+- **Live leaderboard pipeline** — game → `@broblox/leaderboards` OrderedDataStore → dashboard API → website `/rankings` ✅
+- `@broblox/ui` v1: 8 screen templates (daily-rewards, quest-tracker, pet-collection, inventory, cosmetics, gacha, settings, battle-pass) ✅
 
 ### Remaining Deliverables
 
@@ -170,13 +170,13 @@ packages/
 
 Once Phase 6 backend packages exist, the website gains real data:
 
-| Page                              | Integration                                            | Prerequisite                          |
-| --------------------------------- | ------------------------------------------------------ | ------------------------------------- |
-| `/rankings`                       | Live scores from `@rbx/leaderboards` via dashboard API | Running game + leaderboard DataStores |
-| `/rankings`                       | BroCoins totals per player                             | Global economy (`@rbx/economy`)       |
-| Website `/guilds` (new)           | Guild finder, member counts                            | `@rbx/guilds`                         |
-| Website `/profile/[player]` (new) | Cross-game stats, achievements                         | `@rbx/social` + dashboard API         |
-| Website nav                       | BroCoins balance (if authenticated)                    | Auth + `@rbx/economy`                 |
+| Page                              | Integration                                                | Prerequisite                          |
+| --------------------------------- | ---------------------------------------------------------- | ------------------------------------- |
+| `/rankings`                       | Live scores from `@broblox/leaderboards` via dashboard API | Running game + leaderboard DataStores |
+| `/rankings`                       | BroCoins totals per player                                 | Global economy (`@broblox/economy`)   |
+| Website `/guilds` (new)           | Guild finder, member counts                                | `@broblox/guilds`                     |
+| Website `/profile/[player]` (new) | Cross-game stats, achievements                             | `@broblox/social` + dashboard API     |
+| Website nav                       | BroCoins balance (if authenticated)                        | Auth + `@broblox/economy`             |
 
 ### Feature Candidates
 

@@ -1,4 +1,4 @@
-# @rbx/game-obby
+# @broblox/game-obby
 
 An obstacle course (Obby) game template built with BroBlox.
 
@@ -140,26 +140,26 @@ Modify `StageService.ts` to add:
 
 This game uses:
 
-- `@rbx/core` - Application framework and logging
-- `@rbx/config-featureflags` - Feature flags and kill-switches
-- `@rbx/shared-types` - Shared constants, types, and limits
-- `@rbx/data` - Data persistence
-- `@rbx/net` - Remote registry and validation
-- `@rbx/input` - Input handling
-- `@rbx/movement` - Movement validation (anti-cheat)
-- `@rbx/moderation` - Ban/mute system
-- `@rbx/observability` - Telemetry and metrics
-- `@rbx/codes` - Promo code system
-- `@rbx/leaderboards` - Cross-game leaderboards
-- `@rbx/inventory` - Item/slot inventory
-- `@rbx/progression` - XP, levels, prestige
-- `@rbx/quests` - Quest/objective tracking
-- `@rbx/rewards` - Daily rewards and achievements
-- `@rbx/pets` - Pet system
-- `@rbx/gacha` - Egg/loot box system
-- `@rbx/cosmetics` - Cosmetic ownership and equipping
-- `@rbx/battle-pass` - Seasonal battle pass
-- `@rbx/localization` - Internationalization
-- `@rbx/audio` - Sound and music management
-- `@rbx/tutorial` - FTUE framework
-- `@rbx/world-systems` - Day/night cycle, weather, seasons
+- `@broblox/core` - Application framework and logging
+- `@broblox/config-featureflags` - Feature flags and kill-switches
+- `@broblox/shared-types` - Shared constants, types, and limits
+- `@broblox/data` - Data persistence
+- `@broblox/net` - Remote registry and validation
+- `@broblox/input` - Input handling
+- `@broblox/movement` - Movement validation (anti-cheat)
+- `@broblox/moderation` - Ban/mute system
+- `@broblox/observability` - Telemetry and metrics
+- `@broblox/codes` - Promo code system
+- `@broblox/leaderboards` - Cross-game leaderboards
+- `@broblox/inventory` - Item/slot inventory
+- `@broblox/progression` - XP, levels, prestige
+- `@broblox/quests` - Quest/objective tracking
+- `@broblox/rewards` - Daily rewards and achievements
+- `@broblox/pets` - Pet system
+- `@broblox/gacha` - Egg/loot box system
+- `@broblox/cosmetics` - Cosmetic ownership and equipping
+- `@broblox/battle-pass` - Seasonal battle pass
+- `@broblox/localization` - Internationalization
+- `@broblox/audio` - Sound and music management
+- `@broblox/tutorial` - FTUE framework
+- `@broblox/world-systems` - Day/night cycle, weather, seasons

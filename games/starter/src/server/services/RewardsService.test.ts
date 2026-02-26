@@ -40,7 +40,7 @@ describe("RewardsService (starter)", () => {
       GetPlayerByUserId: vi.fn(() => mockPlayer),
     };
 
-    vi.doMock("@rbx/rewards", () => ({
+    vi.doMock("@broblox/rewards", () => ({
       createRewardsService: vi.fn((config: Record<string, unknown>) => {
         capturedOnAchievementCompleted = config[
           "onAchievementCompleted"

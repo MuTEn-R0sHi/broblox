@@ -4,7 +4,7 @@
  * Encapsulates WorldManager lifecycle with game-specific config.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { WorldSystemsConfig } from "./types";
 import { WorldManager } from "./world-manager";
 

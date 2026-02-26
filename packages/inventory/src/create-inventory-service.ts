@@ -4,7 +4,7 @@
  * Encapsulates item registry + per-player inventory store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { ItemDefinition, InventoryConfig } from "./types";
 import { ItemRegistry } from "./item-registry";
 import { InventoryStore } from "./inventory-store";

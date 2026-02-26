@@ -1,4 +1,4 @@
-# @rbx/data
+# @broblox/data
 
 Data persistence layer for Roblox games.
 
@@ -13,8 +13,8 @@ This package provides reliable data persistence patterns:
 
 ## Dependencies
 
-- `@rbx/core` — Logging, cleanup utilities
-- `@rbx/shared-types` — Type definitions
+- `@broblox/core` — Logging, cleanup utilities
+- `@broblox/shared-types` — Type definitions
 
 ## Architecture
 
@@ -56,7 +56,7 @@ Changes are batched to reduce DataStore calls:
 ## Usage
 
 ```typescript
-import { PlayerDataStore } from "@rbx/data";
+import { PlayerDataStore } from "@broblox/data";
 
 // Load player profile
 const profile = await PlayerDataStore.load(player);

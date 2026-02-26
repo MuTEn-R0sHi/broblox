@@ -1,5 +1,5 @@
 /**
- * @rbx/audio
+ * @broblox/audio
  *
  * SFX, music, and spatial audio management for Roblox games.
  * Provides:

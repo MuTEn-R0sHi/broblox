@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/config-featureflags",
+  "name": "@broblox/config-featureflags",
   "version": "0.2.0",
   "description": "Runtime feature flags and configuration management",
   "private": true,
@@ -18,7 +18,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@rbx/core": "workspace:*"
+    "@broblox/core": "workspace:*"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
@@ -26,6 +26,6 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   }
 }

@@ -4,8 +4,8 @@
  * Daily login rewards and achievement tracking.
  */
 
-import { createRewardsService } from "@rbx/rewards";
-import type { DailyRewardDay } from "@rbx/rewards";
+import { createRewardsService } from "@broblox/rewards";
+import type { DailyRewardDay } from "@broblox/rewards";
 import { Players } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

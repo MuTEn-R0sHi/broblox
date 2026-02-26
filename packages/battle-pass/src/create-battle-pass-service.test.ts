@@ -26,7 +26,7 @@ describe("createBattlePassService", () => {
       setSeason: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./season-registry", () => ({

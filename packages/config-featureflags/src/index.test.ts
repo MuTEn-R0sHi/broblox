@@ -1,5 +1,5 @@
 /**
- * Unit tests for @rbx/config-featureflags package.
+ * Unit tests for @broblox/config-featureflags package.
  *
  * Tests the real exported API — defineFlag, getFlagValue, isFlagEnabled,
  * isFlagEnabledForUser, kill-switches, segments, scheduling, rollout

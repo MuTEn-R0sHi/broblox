@@ -16,7 +16,7 @@ describe("createLocalizationService", () => {
       registerStrings: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./localization-service", () => ({

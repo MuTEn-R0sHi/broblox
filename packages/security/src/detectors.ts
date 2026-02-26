@@ -4,7 +4,7 @@
  * Server-side checks for suspicious player behavior.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { Violation, ViolationCategory, ViolationSeverity, ViolationHandler } from "./types";
 
 const logger = createLogger("Security.Detectors");

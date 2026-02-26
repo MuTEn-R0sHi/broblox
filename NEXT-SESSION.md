@@ -56,7 +56,7 @@ Remaining Phase 4 "nice-to-haves" deferred:
 - `PurchaseValidator` — idempotent receipt processing (deduplicates on `PurchaseId`)
 - `createMarketplaceService` — factory wiring all three into a `Service`
 
-**Next action:** In the next Phase 6 session, wire `@rbx/marketplace` into the starter and obby games, then update `packages/gacha`, `packages/battle-pass`, and `packages/pets` to delegate Robux flows through `@rbx/marketplace`.
+**Next action:** In the next Phase 6 session, wire `@broblox/marketplace` into the starter and obby games, then update `packages/gacha`, `packages/battle-pass`, and `packages/pets` to delegate Robux flows through `@broblox/marketplace`.
 
 ---
 
@@ -97,7 +97,7 @@ None of this works without an authenticated Roblox identity. No OAuth flow is de
 | #   | Task                                       | Effort | Why                          |
 | --- | ------------------------------------------ | ------ | ---------------------------- |
 | 1   | Bro Companion ADR                          | Low    | Unblocks Hub + Phase 6 scope |
-| 2   | Wire `@rbx/marketplace` into games         | Medium | Activates monetization       |
+| 2   | Wire `@broblox/marketplace` into games     | Medium | Activates monetization       |
 | 3   | Phase 6 economy architecture               | High   | BroCoins design before build |
 | 4   | Roblox OAuth design                        | Medium | Phase 6 website prerequisite |
 | 5   | Flip games public + set deep link env vars | 10 min | When ready                   |
@@ -106,7 +106,7 @@ None of this works without an authenticated Roblox identity. No OAuth flow is de
 
 ## What is already done (do not re-work)
 
-- All 33 `@rbx/*` packages — fully implemented + tested (including `@rbx/marketplace`)
+- All 33 `@broblox/*` packages — fully implemented + tested (including `@broblox/marketplace`)
 - Both games (starter + obby) — integrated with all packages + deployed to Roblox (6 private experiences)
 - Dashboard v2 — RBAC, audit, bans, flags, match history, moderation
 - Website v1 — live at broblox-games.com, all pages, Vercel deployed

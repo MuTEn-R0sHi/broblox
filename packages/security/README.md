@@ -1,4 +1,4 @@
-# @rbx/security
+# @broblox/security
 
 Security utilities for Roblox games — anti-abuse and trust scoring.
 
@@ -9,19 +9,19 @@ This package provides server-side security infrastructure:
 - **Anomaly detection** — Detect suspicious player behavior
 - **Trust scoring** — Track player trustworthiness over time
 - **Enforcement** — Actions for policy violations
-- **Rate limiting** — Request throttling (used by `@rbx/net`)
+- **Rate limiting** — Request throttling (used by `@broblox/net`)
 
 ## Dependencies
 
-- `@rbx/core` — Logging utilities
-- `@rbx/shared-types` — Type definitions
+- `@broblox/core` — Logging utilities
+- `@broblox/shared-types` — Type definitions
 
 ## Features
 
 ### Anomaly Detectors
 
 ```typescript
-import { Detectors } from "@rbx/security";
+import { Detectors } from "@broblox/security";
 
 // Speed hack detection
 Detectors.movement.check(player, {
@@ -48,7 +48,7 @@ Detectors.damage.check(player, {
 ### Trust Scoring
 
 ```typescript
-import { TrustScore } from "@rbx/security";
+import { TrustScore } from "@broblox/security";
 
 // Get player's trust score (0-100)
 const score = TrustScore.get(player);
@@ -67,7 +67,7 @@ TrustScore.recordGoodBehavior(player);
 ### Enforcement Actions
 
 ```typescript
-import { Enforcer } from "@rbx/security";
+import { Enforcer } from "@broblox/security";
 
 // Escalating responses based on trust score
 if (trustScore < 20) {
@@ -83,7 +83,7 @@ if (trustScore < 20) {
 
 ### Defense in Depth
 
-1. **Network layer** — Rate limiting, schema validation (`@rbx/net`)
+1. **Network layer** — Rate limiting, schema validation (`@broblox/net`)
 2. **Action layer** — Server-authoritative outcomes
 3. **Detection layer** — Anomaly detection (this package)
 4. **Response layer** — Trust scoring and enforcement

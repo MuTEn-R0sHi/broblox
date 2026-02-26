@@ -1,4 +1,4 @@
-import { createModerationEnforcementService } from "@rbx/moderation";
+import { createModerationEnforcementService } from "@broblox/moderation";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createModerationEnforcementService({

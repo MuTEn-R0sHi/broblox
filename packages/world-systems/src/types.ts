@@ -1,5 +1,5 @@
 /**
- * @rbx/world-systems — Type Definitions
+ * @broblox/world-systems — Type Definitions
  *
  * Types for day/night cycle, weather, seasons, biomes, and world events.
  */

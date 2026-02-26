@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/core",
+  "name": "@broblox/core",
   "version": "0.2.0",
   "description": "Core framework — service lifecycle, logging, and error handling",
   "private": true,
@@ -23,6 +23,6 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   }
 }

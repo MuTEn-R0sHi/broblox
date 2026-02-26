@@ -14,7 +14,7 @@ import {
 } from "./types";
 import { DEFAULT_MOVEMENT_CONFIG, VALIDATION_THRESHOLDS, NETWORK_CONSTANTS } from "./constants";
 import { PlayerMovementState } from "./state";
-import { Counter, Histogram } from "@rbx/observability";
+import { Counter, Histogram } from "@broblox/observability";
 
 // ============================================================================
 // Metrics (lazily initialised to avoid calling Roblox globals at import time)

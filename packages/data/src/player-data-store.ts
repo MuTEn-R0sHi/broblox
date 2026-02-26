@@ -5,8 +5,8 @@
  * Uses synchronous patterns compatible with roblox-ts packages.
  */
 
-import { err, ok, ErrorCode } from "@rbx/shared-types";
-import { createLogger } from "@rbx/core";
+import { err, ok, ErrorCode } from "@broblox/shared-types";
+import { createLogger } from "@broblox/core";
 import { VersionedData, StoreConfig, DataMetadata, LoadResult, SaveResult } from "./types";
 
 const logger = createLogger("PlayerDataStore");

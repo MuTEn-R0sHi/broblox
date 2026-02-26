@@ -6,7 +6,7 @@
  *
  * Usage (server-side wiring):
  * ```ts
- * import { createDailyRewardsPopup } from "@rbx/ui/screens/daily-rewards";
+ * import { createDailyRewardsPopup } from "@broblox/ui/screens/daily-rewards";
  *
  * const popup = createDailyRewardsPopup(playerGui, {
  *   rewardCycle,
@@ -18,8 +18,8 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
-import type { DailyRewardDay, RewardEntry } from "@rbx/rewards";
+import { createLogger } from "@broblox/core";
+import type { DailyRewardDay, RewardEntry } from "@broblox/rewards";
 import {
   createFrame,
   createLabel,

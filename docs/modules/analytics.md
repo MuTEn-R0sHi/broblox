@@ -1,6 +1,6 @@
 # Modules: Analytics
 
-Structured event tracking, funnel analysis, session lifecycle, and player retention (`@rbx/analytics`). **Status: Implemented**.
+Structured event tracking, funnel analysis, session lifecycle, and player retention (`@broblox/analytics`). **Status: Implemented**.
 
 ## Purpose
 
@@ -16,7 +16,7 @@ Structured event tracking, funnel analysis, session lifecycle, and player retent
 
 - Server-authoritative event emission with schema validation (required fields, expected data keys).
 - Funnel and session state tracked in-memory per server; flushed on player leave.
-- Retention records persisted via `@rbx/data` DataStore.
+- Retention records persisted via `@broblox/data` DataStore.
 - `createAnalyticsService` factory that produces a plug-in Roblox `Service`.
 
 **Out of scope**
@@ -74,7 +74,7 @@ Games are expected to emit events with the following naming convention: `<catego
 ## Data ownership
 
 - Session and funnel state: in-memory per game server (lost on server crash).
-- Retention records: `@rbx/data` DataStore key `analytics:retention:{playerId}`.
+- Retention records: `@broblox/data` DataStore key `analytics:retention:{playerId}`.
 - The analytics service does **not** write to the player profile; it is side-effect-only.
 
 ## Trust & security
@@ -96,9 +96,9 @@ The analytics module itself emits no recursive analytics events. Errors and vali
 
 ## Dependencies
 
-- `@rbx/core` (service lifecycle, logger).
-- `@rbx/data` (DataStore for retention persistence).
-- `@rbx/config-featureflags` (kill-switch).
+- `@broblox/core` (service lifecycle, logger).
+- `@broblox/data` (DataStore for retention persistence).
+- `@broblox/config-featureflags` (kill-switch).
 
 ## Testing
 

@@ -5,7 +5,7 @@
  * then reference them by ID when adding items to inventories.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type { ItemDefinition, ItemCategory, ItemRarity } from "./types";
 
 const logger = createLogger("Inventory.ItemRegistry");

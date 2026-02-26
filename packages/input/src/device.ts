@@ -4,7 +4,7 @@
  * Detects current input device and platform.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { DeviceType, PlatformInfo } from "./types";
 
 const logger = createLogger("InputDevice");

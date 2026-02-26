@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/ui",
+  "name": "@broblox/ui",
   "version": "0.2.0",
   "private": true,
   "status": "integrated",
@@ -24,19 +24,19 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   },
   "dependencies": {
-    "@rbx/audio": "workspace:*",
-    "@rbx/battle-pass": "workspace:*",
-    "@rbx/core": "workspace:*",
-    "@rbx/cosmetics": "workspace:*",
-    "@rbx/gacha": "workspace:*",
-    "@rbx/input": "workspace:*",
-    "@rbx/inventory": "workspace:*",
-    "@rbx/pets": "workspace:*",
-    "@rbx/quests": "workspace:*",
-    "@rbx/rewards": "workspace:*",
-    "@rbx/shared-types": "workspace:*"
+    "@broblox/audio": "workspace:*",
+    "@broblox/battle-pass": "workspace:*",
+    "@broblox/core": "workspace:*",
+    "@broblox/cosmetics": "workspace:*",
+    "@broblox/gacha": "workspace:*",
+    "@broblox/input": "workspace:*",
+    "@broblox/inventory": "workspace:*",
+    "@broblox/pets": "workspace:*",
+    "@broblox/quests": "workspace:*",
+    "@broblox/rewards": "workspace:*",
+    "@broblox/shared-types": "workspace:*"
   }
 }

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createCombatService, type CombatServiceHandle } from "./create-combat-service";
 import { resetCooldowns, isOnCooldown, useAbility } from "./cooldown";
 import { resetHitValidation, getPlayerPosition, updatePlayerPosition } from "./hit-validation";
-import type { PlayerId } from "@rbx/shared-types";
+import type { PlayerId } from "@broblox/shared-types";
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers

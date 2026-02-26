@@ -2,7 +2,7 @@
  * Data persistence types
  */
 
-import { Result } from "@rbx/shared-types";
+import { Result } from "@broblox/shared-types";
 
 // ============================================================================
 // Schema & Versioning

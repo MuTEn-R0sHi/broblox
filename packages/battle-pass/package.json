@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/battle-pass",
+  "name": "@broblox/battle-pass",
   "version": "0.1.0",
   "description": "Seasonal battle pass with tiers, XP, and reward tracks",
   "private": true,
@@ -18,9 +18,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@rbx/core": "workspace:*",
-    "@rbx/observability": "workspace:*",
-    "@rbx/rewards": "workspace:*"
+    "@broblox/core": "workspace:*",
+    "@broblox/observability": "workspace:*",
+    "@broblox/rewards": "workspace:*"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
@@ -28,6 +28,6 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   }
 }

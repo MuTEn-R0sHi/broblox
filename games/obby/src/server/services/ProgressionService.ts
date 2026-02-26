@@ -5,7 +5,7 @@
  * Players earn XP from completing stages and objectives.
  */
 
-import { createProgressionService } from "@rbx/progression";
+import { createProgressionService } from "@broblox/progression";
 import { Players } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

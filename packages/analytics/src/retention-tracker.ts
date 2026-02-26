@@ -5,8 +5,8 @@
  * Computes D1/D7/D14/D30 retention for individual players.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type { RetentionRecord, RetentionDay, AnalyticsConfig } from "./types";
 
 // Local DataStore override: UpdateAsync callback returns plain value (not LuaTuple).

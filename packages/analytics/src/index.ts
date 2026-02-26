@@ -1,5 +1,5 @@
 /**
- * @rbx/analytics
+ * @broblox/analytics
  *
  * Player behavior analytics for Roblox games.
  * Provides:

@@ -4,7 +4,7 @@
  * Egg hatching with obby-themed loot tables.
  */
 
-import { createGachaService } from "@rbx/gacha";
+import { createGachaService } from "@broblox/gacha";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createGachaService({

@@ -4,7 +4,7 @@
  * Sound effects, music, and audio management.
  */
 
-import { createAudioService } from "@rbx/audio";
+import { createAudioService } from "@broblox/audio";
 
 const handle = createAudioService({
   sounds: [

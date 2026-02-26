@@ -1,5 +1,5 @@
 /**
- * @rbx/battle-pass — Tests
+ * @broblox/battle-pass — Tests
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

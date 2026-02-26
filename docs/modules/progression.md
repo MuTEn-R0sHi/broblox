@@ -1,6 +1,6 @@
 # Modules: Progression
 
-XP, levels, and prestige/rebirth system with configurable XP curves (`@rbx/progression`). **Status: Implemented** (48 tests).
+XP, levels, and prestige/rebirth system with configurable XP curves (`@broblox/progression`). **Status: Implemented** (48 tests).
 
 ## Purpose
 

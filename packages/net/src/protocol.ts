@@ -5,7 +5,7 @@
  * Supports N and N-1 versions for safe rollouts.
  */
 
-import { PROTOCOL_VERSION, MIN_PROTOCOL_VERSION } from "@rbx/shared-types";
+import { PROTOCOL_VERSION, MIN_PROTOCOL_VERSION } from "@broblox/shared-types";
 
 // ============================================================================
 // Types

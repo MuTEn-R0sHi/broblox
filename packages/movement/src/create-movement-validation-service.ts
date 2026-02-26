@@ -2,13 +2,13 @@
  * Movement Validation Service Factory
  *
  * Creates a Service that runs server-authoritative movement validation
- * on every Heartbeat tick.  Validates player positions via `@rbx/movement`
+ * on every Heartbeat tick.  Validates player positions via `@broblox/movement`
  * and applies soft corrections for violations.
  *
  * Gated by the `movement.validation.enabled` feature flag (kill-switch).
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { MovementStateManager } from "./state";
 import { MovementValidator } from "./validator";
 import { VALIDATION_THRESHOLDS } from "./constants";

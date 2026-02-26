@@ -3,7 +3,7 @@
  * Uses Application pattern for cleaner startup.
  */
 
-import { Application, createLogger } from "@rbx/core";
+import { Application, createLogger } from "@broblox/core";
 import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
 import { SecurityService } from "./services/SecurityService";
 import { FeatureFlagSyncService } from "./services/FeatureFlagSyncService";

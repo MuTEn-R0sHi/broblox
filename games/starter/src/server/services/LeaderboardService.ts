@@ -2,10 +2,10 @@
  * Leaderboard Service — Starter Game
  *
  * Registers game leaderboards and handles score submission.
- * Uses the @rbx/leaderboards package.
+ * Uses the @broblox/leaderboards package.
  */
 
-import { createLeaderboardService } from "@rbx/leaderboards";
+import { createLeaderboardService } from "@broblox/leaderboards";
 
 const handle = createLeaderboardService({
   storeConfig: {

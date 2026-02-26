@@ -4,7 +4,7 @@
  * Encapsulates per-player progression store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { ProgressionConfig } from "./types";
 import { ProgressionStore } from "./progression-store";
 

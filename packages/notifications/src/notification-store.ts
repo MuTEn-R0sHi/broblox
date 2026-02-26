@@ -5,8 +5,8 @@
  * expire, and broadcast notifications to players.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type {
   Notification,
   NotificationOptions,

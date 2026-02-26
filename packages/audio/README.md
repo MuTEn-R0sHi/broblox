@@ -1,4 +1,4 @@
-# @rbx/audio
+# @broblox/audio
 
 SFX, music, and spatial audio management for Roblox games.
 
@@ -14,7 +14,7 @@ This package provides a complete audio system:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging utilities
+- `@broblox/core` — Service lifecycle, logging utilities
 
 ## Architecture
 
@@ -31,7 +31,7 @@ Sounds are organized into channels: `sfx`, `music`, `ambient`, `ui`, and `voice`
 ## Usage
 
 ```typescript
-import { createAudioService } from "@rbx/audio";
+import { createAudioService } from "@broblox/audio";
 
 const audio = createAudioService({
   sounds: [

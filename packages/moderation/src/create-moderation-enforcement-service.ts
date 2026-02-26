@@ -7,7 +7,7 @@
  * - Reacts to cross-server ban/mute sync events
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { getModeration } from "./service";
 import type { BanRecord, MuteRecord } from "./types";
 

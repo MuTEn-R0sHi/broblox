@@ -4,7 +4,7 @@
  * Day/night cycle, weather, and world environment management.
  */
 
-import { createWorldService } from "@rbx/world-systems";
+import { createWorldService } from "@broblox/world-systems";
 
 const handle = createWorldService({
   cycleDurationSeconds: 720,

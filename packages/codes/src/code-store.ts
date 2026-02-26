@@ -5,8 +5,8 @@
  * Compatible with roblox-ts.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import {
   RedeemableCode,
   CodeRedemptionRecord,

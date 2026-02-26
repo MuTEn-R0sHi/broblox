@@ -4,7 +4,7 @@
  * check-testing-sync.mjs
  *
  * Verifies that the manual copies of error-codes.ts and result.ts in
- * @rbx/testing stay in sync with the canonical versions in @rbx/shared-types.
+ * @broblox/testing stay in sync with the canonical versions in @broblox/shared-types.
  *
  * Checks:
  * 1. ErrorCode enum members are identical (name + value)
@@ -189,7 +189,7 @@ if ([...stResultFns].every((f) => testResultFns.has(f))) {
 console.log("");
 if (errors > 0) {
   console.error(
-    `💥  ${errors} sync issue(s) found. Fix @rbx/testing copies to match @rbx/shared-types.`
+    `💥  ${errors} sync issue(s) found. Fix @broblox/testing copies to match @broblox/shared-types.`
   );
   process.exit(1);
 } else {

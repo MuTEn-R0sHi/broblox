@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { resetPlayerIdCounter } from "@rbx/testing";
+import { resetPlayerIdCounter } from "@broblox/testing";
 import { initContext } from "./context";
 import {
   Span,

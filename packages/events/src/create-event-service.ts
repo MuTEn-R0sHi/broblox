@@ -1,17 +1,17 @@
 /**
- * @rbx/events — createEventService factory
+ * @broblox/events — createEventService factory
  *
  * Creates a Roblox Service that polls for event transitions on a configurable
  * interval, fires `onEventStart` / `onEventEnd` callbacks, and exposes
  * scheduler queries to the rest of the game.
  *
  * Integrates with:
- *   - `@rbx/config-featureflags` — per-event kill-switch via `featureFlagId`
+ *   - `@broblox/config-featureflags` — per-event kill-switch via `featureFlagId`
  *   - Player lifecycle hooks (reserved; future per-player event state)
  */
 
-import { Service, createLogger, arraySize } from "@rbx/core";
-import { isFlagEnabled } from "@rbx/config-featureflags";
+import { Service, createLogger, arraySize } from "@broblox/core";
+import { isFlagEnabled } from "@broblox/config-featureflags";
 import { EventDefinition, EventStartCallback, EventEndCallback } from "./types";
 import { EventScheduler } from "./event-scheduler";
 

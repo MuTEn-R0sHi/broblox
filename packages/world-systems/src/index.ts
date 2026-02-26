@@ -1,5 +1,5 @@
 /**
- * @rbx/world-systems — Public API
+ * @broblox/world-systems — Public API
  */
 
 export { WorldManager } from "./world-manager";

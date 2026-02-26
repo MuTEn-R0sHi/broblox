@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags — Type definitions
+ * @broblox/config-featureflags — Type definitions
  */
 
 // ============================================================================

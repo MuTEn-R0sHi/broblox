@@ -37,13 +37,13 @@ BroBall is designed to be a first-class citizen in the monorepo, leveraging shar
 
 - **Domain logic** in `games/broball/` (no direct Roblox service calls)
 - **Shared packages** for:
-  - `@rbx/shared-types`: Pet, Team, Match, Item, League, etc. types
-  - `@rbx/data`: Player profiles, pet inventory, progression, market listings
-  - `@rbx/net`: Typed remotes for match actions, trading, scouting
-  - `@rbx/security`: Anti-cheat for match actions, trade validation
-  - `@rbx/observability`: Telemetry for match outcomes, economy, abuse signals
-  - `@rbx/ui`: Team management UI, match HUD, market screens
-  - `@rbx/config-featureflags`: Feature rollouts, tuning (e.g., stat caps, event toggles)
+  - `@broblox/shared-types`: Pet, Team, Match, Item, League, etc. types
+  - `@broblox/data`: Player profiles, pet inventory, progression, market listings
+  - `@broblox/net`: Typed remotes for match actions, trading, scouting
+  - `@broblox/security`: Anti-cheat for match actions, trade validation
+  - `@broblox/observability`: Telemetry for match outcomes, economy, abuse signals
+  - `@broblox/ui`: Team management UI, match HUD, market screens
+  - `@broblox/config-featureflags`: Feature rollouts, tuning (e.g., stat caps, event toggles)
 
 **Game folder provides:**
 
@@ -84,13 +84,13 @@ BroBall is designed to be a first-class citizen in the monorepo, leveraging shar
 - **Match history**: Results, replays, stats
 - **Market listings**: Pets for sale, bids, completed trades
 
-Use `@rbx/data` for versioned, migratable persistence. Session locking for profile safety. All grants idempotent.
+Use `@broblox/data` for versioned, migratable persistence. Session locking for profile safety. All grants idempotent.
 
 ---
 
 ## 5. Networking & Remotes
 
-- All remotes defined in `@rbx/net` registry
+- All remotes defined in `@broblox/net` registry
 - Typed payloads, runtime schema validation (`@rbxts/t`)
 - Rate limits on match actions, trading, scouting
 - Error codes for all failure cases
@@ -111,7 +111,7 @@ Use `@rbx/data` for versioned, migratable persistence. Session locking for profi
 
 ## 7. Extensibility & Roadmap
 
-- Future: PvP matchmaking (integrate `@rbx/matchmaking`)
+- Future: PvP matchmaking (integrate `@broblox/matchmaking`)
 - Future: Cross-game pet system (`bro-companion`)
 - Future: Analytics, moderation, notifications, localization
 

@@ -1,5 +1,5 @@
 /**
- * @rbx/events — Public API
+ * @broblox/events — Public API
  *
  * Scheduled in-game events with time-window management, feature-flag gates,
  * gameplay modifiers, and start/end callbacks.

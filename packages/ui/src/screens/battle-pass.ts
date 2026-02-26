@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createBattlePassScreen } from "@rbx/ui/screens/battle-pass";
+ * import { createBattlePassScreen } from "@broblox/ui/screens/battle-pass";
  *
  * const bp = createBattlePassScreen(playerGui, {
  *   getSeason: () => registry.getActive(),
@@ -17,13 +17,13 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type {
   SeasonDefinition,
   BattlePassPlayerData,
   BattlePassTier,
   RewardTrack,
-} from "@rbx/battle-pass";
+} from "@broblox/battle-pass";
 import {
   createFrame,
   createLabel,

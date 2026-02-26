@@ -3,10 +3,10 @@
  * Manages stage configuration and completion.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { CollectionService, Workspace } from "@rbxts/services";
 import { StageConfig, StageCompletedEvent, OBBY_CONSTANTS } from "shared/types";
-import { mapSize } from "@rbx/core";
+import { mapSize } from "@broblox/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { CheckpointService } from "./CheckpointService";

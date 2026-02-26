@@ -1,10 +1,10 @@
 /**
- * @rbx/pets — Pet Registry
+ * @broblox/pets — Pet Registry
  *
  * Holds static pet species definitions. Register once at startup.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type { PetSpecies } from "./types";
 
 export class PetRegistry {

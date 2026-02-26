@@ -1,5 +1,5 @@
 /**
- * @rbx/localization — Tests
+ * @broblox/localization — Tests
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

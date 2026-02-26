@@ -1,10 +1,10 @@
 /**
  * Unit tests for rate limiting module.
- * Uses @rbx/testing for consistent types and mocks.
+ * Uses @broblox/testing for consistent types and mocks.
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { ErrorCode, MockRateLimiter, isOk, isErr } from "@rbx/testing";
+import { ErrorCode, MockRateLimiter, isOk, isErr } from "@broblox/testing";
 
 describe("RateLimiter", () => {
   let limiter: MockRateLimiter;

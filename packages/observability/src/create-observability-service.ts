@@ -5,7 +5,7 @@
  * everything on shutdown.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { TelemetrySink, MetricSink, TelemetryLevel } from "./types";
 import { registerSink, flushAll, useConsoleSink } from "./telemetry";
 import { registerMetricSink, flushMetrics, useConsoleMetricSink } from "./metrics";

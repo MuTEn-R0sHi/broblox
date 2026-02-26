@@ -1,5 +1,5 @@
 /**
- * @rbx/cosmetics — Types
+ * @broblox/cosmetics — Types
  *
  * Cosmetic ownership, equip slots, and replication.
  */

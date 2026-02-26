@@ -1,5 +1,5 @@
 /**
- * @rbx/pets
+ * @broblox/pets
  *
  * Pet system for Roblox games.
  * Provides:

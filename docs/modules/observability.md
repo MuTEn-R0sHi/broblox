@@ -1,6 +1,6 @@
 # Modules: Observability
 
-Observability utilities — telemetry, metrics, and tracing (`@rbx/observability`). **Status: Implemented** (~44 tests).
+Observability utilities — telemetry, metrics, and tracing (`@broblox/observability`). **Status: Implemented** (~44 tests).
 
 ## Purpose
 
@@ -31,12 +31,12 @@ Observability utilities — telemetry, metrics, and tracing (`@rbx/observability
 
 ## Dependencies
 
-- `@rbx/core` (service lifecycle, logging).
-- `@rbx/shared-types` (branded IDs, Result type).
+- `@broblox/core` (service lifecycle, logging).
+- `@broblox/shared-types` (branded IDs, Result type).
 
 ## Related packages
 
-- `@rbx/analytics` — player behavior analytics (events, funnels, sessions, retention).
+- `@broblox/analytics` — player behavior analytics (events, funnels, sessions, retention).
 
 ## Data ownership
 

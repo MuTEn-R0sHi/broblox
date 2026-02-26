@@ -53,7 +53,7 @@ describe("createModerationEnforcementService", () => {
       onMute: vi.fn((cb: (record: unknown) => void) => muteCallbacks.push(cb)),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
 

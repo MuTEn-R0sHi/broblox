@@ -1,5 +1,5 @@
 /**
- * @rbx/tutorial — Public API
+ * @broblox/tutorial — Public API
  */
 
 export { SequenceRegistry } from "./sequence-registry";

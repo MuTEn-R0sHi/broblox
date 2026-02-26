@@ -1,4 +1,4 @@
-# @rbx/notifications
+# @broblox/notifications
 
 In-game notification system for Roblox games — toasts, announcements, news feed, and scheduled messages.
 
@@ -12,7 +12,7 @@ In-game notification system for Roblox games — toasts, announcements, news fee
 ## Quick Start
 
 ```ts
-import { NotificationStore, AnnouncementManager } from "@rbx/notifications";
+import { NotificationStore, AnnouncementManager } from "@broblox/notifications";
 
 const config = {
   maxQueueSize: 20,
@@ -123,5 +123,5 @@ store.clearPlayer(player.UserId);
 ## Tests
 
 ```bash
-pnpm --filter @rbx/notifications test
+pnpm --filter @broblox/notifications test
 ```

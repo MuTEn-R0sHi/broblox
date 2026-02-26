@@ -45,7 +45,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Application lifecycle: `start()`/`stop()`/`dispose()`.
   - Logger with child loggers and structured context.
   - Cleanup primitives (resource lifetimes).
-  - Roblox-TS compatible collection helpers (`arraySize`, `arrayRemoveAt`, `arrayTake`, `setSize`) — **all packages should import from `@rbx/core` instead of inlining these helpers**.
+  - Roblox-TS compatible collection helpers (`arraySize`, `arrayRemoveAt`, `arrayTake`, `setSize`) — **all packages should import from `@broblox/core` instead of inlining these helpers**.
 
 - `shared-types`
   - Branded ids: `PlayerId`, `MatchId`, `ConfigVersion`, etc.
@@ -112,14 +112,14 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Weapon definitions, cooldowns, ammunition.
   - Server-authoritative hit validation (raycast verification).
   - Damage calculation and ability system.
-  - Depends on `@rbx/core` for collection helpers and `@rbx/shared-types` for Result types.
+  - Depends on `@broblox/core` for collection helpers and `@broblox/shared-types` for Result types.
 
 - `matchmaking`
   - Queue management with skill-based matching.
   - Match lifecycle (waiting → starting → in-progress → ended).
   - Server allocation with reserved server provisioning.
   - Health monitoring and graceful shutdown.
-  - Depends on `@rbx/core` for collection helpers and `@rbx/shared-types` for Result types.
+  - Depends on `@broblox/core` for collection helpers and `@broblox/shared-types` for Result types.
 
 - `moderation`
   - Ban/mute system with evidence model.
@@ -154,7 +154,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
 
 - `events`
   - Scheduled in-game events with time-window management and start/end callbacks.
-  - Per-event feature-flag kill-switch via `@rbx/config-featureflags`.
+  - Per-event feature-flag kill-switch via `@broblox/config-featureflags`.
   - Optional gameplay modifiers (`xpMultiplier`, `dropRateMultiplier`, `coinMultiplier`).
   - Player-join notification when events are in progress.
 
@@ -244,7 +244,7 @@ The platform uses [roblox-ts](https://roblox-ts.com/) to compile TypeScript to L
 
 ### Package structure
 
-Each `@rbx/*` package has:
+Each `@broblox/*` package has:
 
 ```
 packages/example/
@@ -278,14 +278,14 @@ pnpm game:starter:build
 
 ### How games consume packages
 
-1. **pnpm workspaces** create symlinks in `node_modules/@rbx/*`
+1. **pnpm workspaces** create symlinks in `node_modules/@broblox/*`
 2. **Packages export** `.d.ts` files for TypeScript and compiled Luau
-3. **Rojo config** maps `node_modules/@rbx/*/out` to the game tree
+3. **Rojo config** maps `node_modules/@broblox/*/out` to the game tree
 4. **roblox-ts** resolves types from `.d.ts`, emits requires to the Rojo paths
 
 ### Key constraints
 
-- **Respect dependency direction** - Packages may depend on `@rbx/shared-types` and other packages per the dependency graph, but avoid cycles.
+- **Respect dependency direction** - Packages may depend on `@broblox/shared-types` and other packages per the dependency graph, but avoid cycles.
 - **Types point to `out/`** - `package.json` has `"types": "out/index.d.ts"` so roblox-ts doesn't recompile package sources
 - **Games use `--type game`** - This emits RuntimeLib requires in entry scripts
 - **Rojo `include` folder** - Must match `includePath` in tsconfig for RuntimeLib resolution

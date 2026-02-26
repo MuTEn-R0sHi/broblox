@@ -42,7 +42,7 @@ A reusable set of packages and conventions that every game uses.
 | `marketplace`         | MonetizationService: developer products, game passes, receipts  | 5b    |
 | `testing`             | Test utilities and Roblox API mocks for vitest                  | —     |
 
-**33 packages** total across 7 implementation phases (plus `testing` dev-only).
+**32 packages** across 7 implementation phases, plus `testing` (dev-only) = **33 total**.
 
 ### Planned Packages (Roadmap)
 

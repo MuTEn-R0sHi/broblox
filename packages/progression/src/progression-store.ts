@@ -5,8 +5,8 @@
  * Supports configurable XP curves (linear, quadratic, exponential, custom).
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type {
   ProgressionData,
   ProgressionConfig,

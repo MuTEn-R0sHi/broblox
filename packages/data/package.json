@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/data",
+  "name": "@broblox/data",
   "version": "0.2.0",
   "description": "Data persistence layer for Roblox games",
   "private": true,
@@ -28,7 +28,7 @@
     "datastore"
   ],
   "devDependencies": {
-    "@rbx/testing": "workspace:*",
+    "@broblox/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.908",
     "roblox-ts": "^3.0.0",
@@ -36,8 +36,8 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@rbx/core": "workspace:*",
-    "@rbx/shared-types": "workspace:*"
+    "@broblox/core": "workspace:*",
+    "@broblox/shared-types": "workspace:*"
   },
   "license": "MIT"
 }

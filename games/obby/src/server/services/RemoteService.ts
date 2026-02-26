@@ -5,9 +5,9 @@
  * Other services access remotes through this service.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { createServerRegistry, ServerRemoteRegistry } from "@rbx/net";
-import { reportViolation } from "@rbx/security";
+import { Service, createLogger } from "@broblox/core";
+import { createServerRegistry, ServerRemoteRegistry } from "@broblox/net";
+import { reportViolation } from "@broblox/security";
 import { ObbyRemotes, ObbyRemotesType } from "shared/remotes";
 
 const logger = createLogger("RemoteService");

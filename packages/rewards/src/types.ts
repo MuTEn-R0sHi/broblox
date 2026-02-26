@@ -1,5 +1,5 @@
 /**
- * @rbx/rewards — Type Definitions
+ * @broblox/rewards — Type Definitions
  *
  * Types for daily login rewards, streaks, milestones, and achievements.
  */

@@ -138,7 +138,7 @@ Deliverables:
   - Deployed to Vercel; domains live
 - Dashboard news CMS — full CRUD with RBAC, audit, and public API ✅
 - Live leaderboard pipeline — OrderedDataStore → dashboard API → website `/rankings` ✅
-- `@rbx/ui` v1: 8 screen templates ✅
+- `@broblox/ui` v1: 8 screen templates ✅
 
 Deferred (nice-to-have):
 
@@ -187,7 +187,7 @@ Test coverage: 2,400+ tests across 115+ test suites.
 - `apps/website`: public portal, games, rankings, news — deployed ✅
 - Dashboard news CMS: full CRUD with public API ✅
 - Live leaderboard pipeline: OrderedDataStore → API → website ✅
-- `@rbx/ui` v1: 8 screen templates ✅
+- `@broblox/ui` v1: 8 screen templates ✅
 
 ### Phase 5a — Foundation (Complete ✅)
 

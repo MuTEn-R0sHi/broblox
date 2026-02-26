@@ -15,7 +15,7 @@ import { getOrderedDataStoreEntries, summarizeOpenCloudError } from "@/lib/roblo
  * Board IDs correspond to the leaderboard `name` registered in-game:
  *   kills, wins, playtime, completions, etc.
  *
- * OrderedDataStore key format (set by @rbx/leaderboards):
+ * OrderedDataStore key format (set by @broblox/leaderboards):
  *   {prefix}_{boardId}_{period}           (alltime / seasonal)
  *   {prefix}_{boardId}_daily_{YYYYMMDD}   (daily)
  *   {prefix}_{boardId}_weekly_{YYYY}W{WW} (weekly)
@@ -51,7 +51,7 @@ function buildStoreName(prefix: string, boardId: string, period: Period): string
     case "weekly": {
       const now = new Date();
       const year = now.getUTCFullYear();
-      // Match @rbx/leaderboards getWeeklyKey: weekNum = floor((yday - 1) / 7) + 1
+      // Match @broblox/leaderboards getWeeklyKey: weekNum = floor((yday - 1) / 7) + 1
       const startOfYear = Date.UTC(year, 0, 1);
       const daysSinceStartOfYear = Math.floor(
         (now.getTime() - startOfYear) / (24 * 60 * 60 * 1000)

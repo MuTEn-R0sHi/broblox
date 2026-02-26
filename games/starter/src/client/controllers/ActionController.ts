@@ -5,8 +5,8 @@
  */
 
 import { UserInputService } from "@rbxts/services";
-import { Controller, createLogger } from "@rbx/core";
-import { isOk, isErr } from "@rbx/net";
+import { Controller, createLogger } from "@broblox/core";
+import { isOk, isErr } from "@broblox/net";
 import { RemoteController } from "./RemoteController";
 import { UiController } from "./UiController";
 import { ActionRequest } from "shared/remotes";

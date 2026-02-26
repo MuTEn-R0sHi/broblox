@@ -1,6 +1,6 @@
 # Modules: Moderation
 
-Server-side ban/mute management with DataStore persistence and cross-server sync via MessagingService (`@rbx/moderation`). **Status: Implemented** (86 tests).
+Server-side ban/mute management with DataStore persistence and cross-server sync via MessagingService (`@broblox/moderation`). **Status: Implemented** (86 tests).
 
 ## Purpose
 

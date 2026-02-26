@@ -1,10 +1,10 @@
 /**
- * @rbx/audio — Audio Manager
+ * @broblox/audio — Audio Manager
  *
  * Manages playback, channels, volume, playlists, and sound instances.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type {
   AudioConfig,
   AudioChannel,

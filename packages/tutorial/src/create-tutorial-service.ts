@@ -4,7 +4,7 @@
  * Encapsulates sequence registry + per-player tutorial manager lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { TutorialSequence, TutorialConfig } from "./types";
 import { SequenceRegistry } from "./sequence-registry";
 import { TutorialManager } from "./tutorial-manager";

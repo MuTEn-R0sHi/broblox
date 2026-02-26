@@ -1,11 +1,11 @@
 /**
  * Remote Controller
  * Handles client-server communication via Controller lifecycle.
- * Uses the type-safe @rbx/net registry.
+ * Uses the type-safe @broblox/net registry.
  */
 
-import { Controller, createLogger } from "@rbx/core";
-import { createClientRegistry, ClientRemoteRegistry } from "@rbx/net";
+import { Controller, createLogger } from "@broblox/core";
+import { createClientRegistry, ClientRemoteRegistry } from "@broblox/net";
 import { ObbyRemotes, ObbyRemotesType, PlayerDataSyncPayload } from "shared/remotes";
 import type {
   CheckpointReachedEvent,

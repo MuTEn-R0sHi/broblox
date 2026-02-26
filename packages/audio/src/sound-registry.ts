@@ -1,10 +1,10 @@
 /**
- * @rbx/audio — Sound Registry
+ * @broblox/audio — Sound Registry
  *
  * Registers and retrieves sound definitions.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type { SoundDefinition, AudioChannel } from "./types";
 
 export class SoundRegistry {

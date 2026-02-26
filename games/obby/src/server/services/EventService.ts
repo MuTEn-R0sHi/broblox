@@ -6,10 +6,10 @@
  * new events; the factory handles activation/deactivation automatically.
  */
 
-import { createEventService } from "@rbx/events";
+import { createEventService } from "@broblox/events";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
-import type { EventDefinition } from "@rbx/events";
+import type { EventDefinition } from "@broblox/events";
 
 // ============================================================================
 // Event Definitions

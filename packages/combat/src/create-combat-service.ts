@@ -5,8 +5,8 @@
  * so games get automatic per-player state management & cleanup.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import type { PlayerId } from "@rbx/shared-types";
+import { Service, createLogger } from "@broblox/core";
+import type { PlayerId } from "@broblox/shared-types";
 import type {
   CooldownConfig,
   HitValidationConfig,

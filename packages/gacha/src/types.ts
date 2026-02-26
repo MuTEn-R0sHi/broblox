@@ -1,5 +1,5 @@
 /**
- * @rbx/gacha — Types
+ * @broblox/gacha — Types
  *
  * Egg / gacha system with loot tables, pity counters, and rarity tiers.
  */

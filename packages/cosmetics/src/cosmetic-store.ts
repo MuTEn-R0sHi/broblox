@@ -1,5 +1,5 @@
 /**
- * @rbx/cosmetics — Cosmetic Store
+ * @broblox/cosmetics — Cosmetic Store
  *
  * Manages cosmetic ownership, equipping, and persistence per player.
  */

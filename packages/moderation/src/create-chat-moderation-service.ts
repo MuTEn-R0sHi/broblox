@@ -8,7 +8,7 @@
  * ModerationEnforcementService.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 
 const MUTED_ATTRIBUTE = "rbx.moderation.muted";
 

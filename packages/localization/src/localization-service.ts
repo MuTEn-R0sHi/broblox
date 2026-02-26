@@ -1,10 +1,10 @@
 /**
- * @rbx/localization — String Registry
+ * @broblox/localization — String Registry
  *
  * Manages string tables per locale with namespace support.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type {
   LocaleCode,
   InterpolationParams,

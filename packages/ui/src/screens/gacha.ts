@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createGachaScreen } from "@rbx/ui/screens/gacha";
+ * import { createGachaScreen } from "@broblox/ui/screens/gacha";
  *
  * const gacha = createGachaScreen(playerGui, {
  *   getEggs: () => registry.getAll(),
@@ -17,8 +17,8 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
-import type { EggDefinition, GachaRarity, HatchResult } from "@rbx/gacha";
+import { createLogger } from "@broblox/core";
+import type { EggDefinition, GachaRarity, HatchResult } from "@broblox/gacha";
 import {
   createFrame,
   createLabel,

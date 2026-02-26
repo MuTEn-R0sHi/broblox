@@ -1,6 +1,6 @@
 # Modules: Matchmaking
 
-Server-authoritative matchmaking — queue management, match formation, ready-up, and reserved server teleportation (`@rbx/matchmaking`). **Status: Implemented** (125 tests).
+Server-authoritative matchmaking — queue management, match formation, ready-up, and reserved server teleportation (`@broblox/matchmaking`). **Status: Implemented** (125 tests).
 
 ## Purpose
 

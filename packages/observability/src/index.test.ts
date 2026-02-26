@@ -1,10 +1,10 @@
 /**
- * Unit tests for @rbx/observability package.
+ * Unit tests for @broblox/observability package.
  * Tests telemetry, metrics, spans, and correlation context.
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals, createMockPlayer, resetPlayerIdCounter } from "@rbx/testing";
+import { mockRobloxGlobals, createMockPlayer, resetPlayerIdCounter } from "@broblox/testing";
 
 // Install Roblox globals
 beforeEach(() => {

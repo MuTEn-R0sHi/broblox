@@ -1,6 +1,6 @@
 # Modules: Shared types
 
-Shared TypeScript types and interfaces across all packages (`@rbx/shared-types`). **Status: Implemented** (~92 tests).
+Shared TypeScript types and interfaces across all packages (`@broblox/shared-types`). **Status: Implemented** (~92 tests).
 
 ## Purpose
 

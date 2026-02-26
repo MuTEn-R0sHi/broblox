@@ -4,7 +4,7 @@
  */
 
 import { UserInputService } from "@rbxts/services";
-import { Controller, createLogger } from "@rbx/core";
+import { Controller, createLogger } from "@broblox/core";
 import { RemoteController } from "./RemoteController";
 
 const logger = createLogger("InputController");

@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags — Flag registry & definitions
+ * @broblox/config-featureflags — Flag registry & definitions
  */
 
 import type { FlagDefinition, FlagCategory, FlagValue } from "./types";

@@ -1,4 +1,4 @@
-import { createChatModerationService } from "@rbx/moderation";
+import { createChatModerationService } from "@broblox/moderation";
 
 const handle = createChatModerationService();
 

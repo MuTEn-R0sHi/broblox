@@ -4,7 +4,7 @@
  * Per-player item management with DataStore persistence.
  */
 
-import { createInventoryService } from "@rbx/inventory";
+import { createInventoryService } from "@broblox/inventory";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createInventoryService({

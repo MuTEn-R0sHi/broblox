@@ -1,6 +1,6 @@
 # Modules: Leaderboards
 
-Cross-game leaderboard system with period rotation and OrderedDataStore persistence (`@rbx/leaderboards`). **Status: Implemented** (41 tests).
+Cross-game leaderboard system with period rotation and OrderedDataStore persistence (`@broblox/leaderboards`). **Status: Implemented** (41 tests).
 
 ## Purpose
 

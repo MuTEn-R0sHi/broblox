@@ -44,22 +44,22 @@ describe("ActionService (starter)", () => {
       }),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       Service: {},
       createLogger: () => ({ info: vi.fn(), debug: vi.fn(), warn: vi.fn(), error: vi.fn() }),
     }));
 
-    vi.doMock("@rbx/net", () => ({
+    vi.doMock("@broblox/net", () => ({
       ok: vi.fn((v: unknown) => ({ ok: true, value: v })),
       err: vi.fn((code: unknown, meta: unknown) => ({ ok: false, code, meta })),
       ErrorCode: { FeatureDisabled: "FeatureDisabled", InvalidPayload: "InvalidPayload" },
     }));
 
-    vi.doMock("@rbx/config-featureflags", () => ({
+    vi.doMock("@broblox/config-featureflags", () => ({
       isFlagEnabled: vi.fn(() => true),
     }));
 
-    vi.doMock("@rbx/constants", () => ({
+    vi.doMock("@broblox/constants", () => ({
       TIMESTAMP_TOLERANCE_MS: 5000,
     }));
 

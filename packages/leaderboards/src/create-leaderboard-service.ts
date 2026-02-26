@@ -5,7 +5,7 @@
  * pre-registers leaderboard definitions.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { LeaderboardsConfig, LeaderboardDefinition } from "./types";
 import { LeaderboardStore } from "./leaderboard-store";
 

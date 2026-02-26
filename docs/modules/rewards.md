@@ -1,6 +1,6 @@
 # Modules: Rewards
 
-Daily login rewards with streak tracking and an achievement/milestone system (`@rbx/rewards`). **Status: Implemented** (47 tests).
+Daily login rewards with streak tracking and an achievement/milestone system (`@broblox/rewards`). **Status: Implemented** (47 tests).
 
 ## Purpose
 

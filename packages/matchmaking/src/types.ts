@@ -2,7 +2,7 @@
  * Matchmaking type definitions.
  */
 
-import { PlayerId, MatchId } from "@rbx/shared-types";
+import { PlayerId, MatchId } from "@broblox/shared-types";
 
 // ============================================================================
 // Queue Types

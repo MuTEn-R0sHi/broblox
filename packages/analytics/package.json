@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/analytics",
+  "name": "@broblox/analytics",
   "version": "0.1.0",
   "description": "Player behavior analytics — events, funnels, sessions, and retention tracking for Roblox games",
   "private": true,
@@ -32,11 +32,11 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   },
   "dependencies": {
-    "@rbx/core": "workspace:*",
-    "@rbx/observability": "workspace:*",
-    "@rbx/shared-types": "workspace:*"
+    "@broblox/core": "workspace:*",
+    "@broblox/observability": "workspace:*",
+    "@broblox/shared-types": "workspace:*"
   }
 }

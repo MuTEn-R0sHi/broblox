@@ -5,7 +5,7 @@
  * Provides type-safe invocation.
  */
 
-import { REMOTES_WAIT_TIMEOUT_SECONDS } from "@rbx/constants";
+import { REMOTES_WAIT_TIMEOUT_SECONDS } from "@broblox/constants";
 import {
   RemoteDefinition,
   RemoteRegistry,

@@ -1,4 +1,4 @@
-# @rbx/gacha
+# @broblox/gacha
 
 Gacha / loot box system with weighted drops and pity timers.
 
@@ -13,9 +13,9 @@ This package implements a gacha (egg hatching) system:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
-- `@rbx/observability` — Metrics and telemetry
-- `@rbx/shared-types` — Rarity definitions
+- `@broblox/core` — Service lifecycle, logging
+- `@broblox/observability` — Metrics and telemetry
+- `@broblox/shared-types` — Rarity definitions
 
 ## Architecture
 
@@ -40,7 +40,7 @@ This package implements a gacha (egg hatching) system:
 ## Usage
 
 ```typescript
-import { createGachaService } from "@rbx/gacha";
+import { createGachaService } from "@broblox/gacha";
 
 const gacha = createGachaService({
   eggs: [

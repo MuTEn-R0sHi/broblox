@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createInventoryScreen } from "@rbx/ui/screens/inventory";
+ * import { createInventoryScreen } from "@broblox/ui/screens/inventory";
  *
  * const inv = createInventoryScreen(playerGui, {
  *   getItems: () => store.getAll(),
@@ -16,8 +16,8 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
-import type { ItemInstance, ItemDefinition, ItemRarity, ItemCategory } from "@rbx/inventory";
+import { createLogger } from "@broblox/core";
+import type { ItemInstance, ItemDefinition, ItemRarity, ItemCategory } from "@broblox/inventory";
 import {
   createFrame,
   createLabel,

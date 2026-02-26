@@ -5,7 +5,7 @@
  * Provides type-safe handlers with automatic validation and rate limiting.
  */
 
-import { err, ErrorCode } from "@rbx/shared-types";
+import { err, ErrorCode } from "@broblox/shared-types";
 import {
   RemoteDefinition,
   RemoteRegistry,

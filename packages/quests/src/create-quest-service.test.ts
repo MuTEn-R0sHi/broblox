@@ -29,7 +29,7 @@ describe("createQuestService", () => {
       }),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./quest-registry", () => ({

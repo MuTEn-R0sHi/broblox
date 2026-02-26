@@ -1,6 +1,6 @@
 # Modules: Gacha
 
-Gacha / loot box system with weighted drops and pity timers (`@rbx/gacha`). **Status: Implemented** (30 tests).
+Gacha / loot box system with weighted drops and pity timers (`@broblox/gacha`). **Status: Implemented** (30 tests).
 
 ## Purpose
 

@@ -1,5 +1,5 @@
 /**
- * @rbx/codes
+ * @broblox/codes
  *
  * Redeemable promo-code system for Roblox games.
  * Provides:

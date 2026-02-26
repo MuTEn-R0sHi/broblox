@@ -1,4 +1,4 @@
-# @rbx/leaderboards
+# @broblox/leaderboards
 
 Cross-game leaderboard system for Roblox games built on `roblox-ts`.
 
@@ -20,14 +20,14 @@ Already included as a workspace package:
 ```jsonc
 // package.json
 "dependencies": {
-  "@rbx/leaderboards": "workspace:*"
+  "@broblox/leaderboards": "workspace:*"
 }
 ```
 
 ## Quick Start
 
 ```ts
-import { LeaderboardStore } from "@rbx/leaderboards";
+import { LeaderboardStore } from "@broblox/leaderboards";
 
 const leaderboards = new LeaderboardStore({
   datastorePrefix: "lb", // default

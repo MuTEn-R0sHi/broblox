@@ -6,7 +6,7 @@ Utility scripts and templates for the platform.
 
 ### generate-error-catalog.mjs
 
-Generates error code documentation from the `ErrorCode` enum in `@rbx/shared-types`.
+Generates error code documentation from the `ErrorCode` enum in `@broblox/shared-types`.
 
 ```bash
 node tools/generate-error-catalog.mjs > docs/reference/error-codes.md
@@ -15,7 +15,7 @@ node tools/generate-error-catalog.mjs > docs/reference/error-codes.md
 ### check-testing-sync.mjs
 
 Verifies that the manual copies of `error-codes.ts` and `result.ts` in
-`@rbx/testing` stay in sync with the canonical versions in `@rbx/shared-types`.
+`@broblox/testing` stay in sync with the canonical versions in `@broblox/shared-types`.
 Runs automatically in CI.
 
 ```bash

@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals, createPlayerId } from "@rbx/testing";
+import { mockRobloxGlobals, createPlayerId } from "@broblox/testing";
 import {
   registerAbility,
   getAbilityConfig,

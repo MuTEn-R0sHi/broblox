@@ -20,7 +20,7 @@ describe("createRemoteService", () => {
       onEvent: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./registry/server", () => ({
