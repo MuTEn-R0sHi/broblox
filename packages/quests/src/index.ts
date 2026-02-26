@@ -1,5 +1,5 @@
 /**
- * @rbx/quests — Public API
+ * @broblox/quests — Public API
  */
 
 export type {

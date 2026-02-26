@@ -4,7 +4,7 @@
  * Takes action against players who violate rules.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import {
   Violation,
   ViolationSeverity,

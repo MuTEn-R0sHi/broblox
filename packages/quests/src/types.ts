@@ -1,16 +1,16 @@
 /**
- * @rbx/quests — Type Definitions
+ * @broblox/quests — Type Definitions
  *
  * Types for quest definitions, objectives, progress tracking, and configuration.
  */
 
 /**
- * Reward type (mirrors @rbx/rewards — inlined to avoid cross-package import
+ * Reward type (mirrors @broblox/rewards — inlined to avoid cross-package import
  * that breaks rbxtsc Rojo resolution with pnpm workspace symlinks).
  */
 export type RewardType = "currency" | "xp" | "item" | "boost" | "cosmetic" | "custom";
 
-/** A single reward entry (structurally identical to @rbx/rewards RewardEntry). */
+/** A single reward entry (structurally identical to @broblox/rewards RewardEntry). */
 export interface RewardEntry {
   type: RewardType;
   amount: number;

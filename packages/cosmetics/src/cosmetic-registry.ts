@@ -1,5 +1,5 @@
 /**
- * @rbx/cosmetics — Cosmetic Registry
+ * @broblox/cosmetics — Cosmetic Registry
  *
  * Manages cosmetic definitions and metadata.
  */

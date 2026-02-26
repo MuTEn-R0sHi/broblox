@@ -1,6 +1,6 @@
 # Modules: Tutorial
 
-FTUE and guided tutorial framework (`@rbx/tutorial`). **Status: Implemented** (42 tests).
+FTUE and guided tutorial framework (`@broblox/tutorial`). **Status: Implemented** (42 tests).
 
 ## Purpose
 

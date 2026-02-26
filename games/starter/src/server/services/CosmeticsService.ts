@@ -4,7 +4,7 @@
  * Cosmetic ownership, equip slots, and server-side validation.
  */
 
-import { createCosmeticsService } from "@rbx/cosmetics";
+import { createCosmeticsService } from "@broblox/cosmetics";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createCosmeticsService({

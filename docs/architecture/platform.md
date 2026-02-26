@@ -39,8 +39,10 @@ A reusable set of packages and conventions that every game uses.
 | `audio`               | SFX, music, spatial audio, playlists, volume management         | 5c    |
 | `tutorial`            | FTUE framework, guided onboarding, step persistence             | 5c    |
 | `world-systems`       | Day/night cycle, weather, seasons                               | 5c    |
+| `marketplace`         | MonetizationService: developer products, game passes, receipts  | 5b    |
+| `testing`             | Test utilities and Roblox API mocks for vitest                  | —     |
 
-**32 packages** total across 7 implementation phases.
+**32 packages** across 7 implementation phases, plus `testing` (dev-only) = **33 total**.
 
 ### Planned Packages (Roadmap)
 

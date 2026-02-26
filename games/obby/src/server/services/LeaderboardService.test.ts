@@ -86,12 +86,12 @@ describe("LeaderboardService", () => {
       SetAsync: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
       Service: {},
     }));
 
-    vi.doMock("@rbx/leaderboards", () => ({
+    vi.doMock("@broblox/leaderboards", () => ({
       LeaderboardStore: function () {
         return mockLeaderboardStore;
       },

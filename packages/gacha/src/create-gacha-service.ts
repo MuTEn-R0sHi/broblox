@@ -4,7 +4,7 @@
  * Encapsulates egg registry + per-player gacha store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { EggDefinition, GachaConfig } from "./types";
 import { EggRegistry } from "./egg-registry";
 import { GachaStore } from "./gacha-store";

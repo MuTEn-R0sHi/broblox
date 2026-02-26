@@ -3,9 +3,9 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals, createPlayerId, createMatchId } from "@rbx/testing";
-import { ok, err, ErrorCode } from "@rbx/shared-types";
-import type { PlayerId, MatchId, Result } from "@rbx/shared-types";
+import { mockRobloxGlobals, createPlayerId, createMatchId } from "@broblox/testing";
+import { ok, err, ErrorCode } from "@broblox/shared-types";
+import type { PlayerId, MatchId, Result } from "@broblox/shared-types";
 import {
   // Configuration
   configureServerAllocation,

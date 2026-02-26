@@ -1,5 +1,5 @@
 /**
- * @rbx/events — Type Definitions
+ * @broblox/events — Type Definitions
  *
  * Types for scheduled in-game events, modifiers, and callbacks.
  */

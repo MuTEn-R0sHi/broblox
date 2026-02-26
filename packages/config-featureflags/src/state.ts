@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags — Shared mutable state
+ * @broblox/config-featureflags — Shared mutable state
  *
  * All module-level Maps/Sets live here so every sub-module reads/writes
  * the same singletons.

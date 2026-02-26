@@ -11,8 +11,8 @@
  * @note TeleportService calls are stubbed for unit testing.
  */
 
-import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@rbx/shared-types";
-import { arraySize, arrayRemoveAt } from "@rbx/core";
+import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@broblox/shared-types";
+import { arraySize, arrayRemoveAt } from "@broblox/core";
 
 // ============================================================================
 // Types

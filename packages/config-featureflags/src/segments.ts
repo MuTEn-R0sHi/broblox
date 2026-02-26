@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags — Segment & scheduling helpers
+ * @broblox/config-featureflags — Segment & scheduling helpers
  */
 
 import type { FlagSegment, FlagSchedule } from "./types";

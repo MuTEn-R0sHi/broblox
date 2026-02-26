@@ -5,13 +5,13 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { ErrorCode, ok, err, isOk, isErr } from "@rbx/shared-types";
+import { ErrorCode, ok, err, isOk, isErr } from "@broblox/shared-types";
 import {
   createDoActionPayload,
   createHandshakePayload,
   createActionResult,
   createErrorResult,
-} from "@rbx/testing";
+} from "@broblox/testing";
 import { validateDoActionPayload, validateHandshakePayload } from "./validation";
 
 describe("Protocol Serialization", () => {

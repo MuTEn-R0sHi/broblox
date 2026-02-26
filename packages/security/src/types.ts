@@ -61,7 +61,7 @@ export interface EnforcementConfig {
   tempBanDurationHours?: number;
   /**
    * Called when a ban action (temp-ban or perm-ban) is triggered.
-   * Wire this to your DataStore / @rbx/moderation to persist the ban.
+   * Wire this to your DataStore / @broblox/moderation to persist the ban.
    * The enforcer still kicks the player immediately after calling this.
    */
   onBan?: (

@@ -4,7 +4,7 @@
  * Seasonal progression with obby-themed rewards.
  */
 
-import { createBattlePassService } from "@rbx/battle-pass";
+import { createBattlePassService } from "@broblox/battle-pass";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createBattlePassService({

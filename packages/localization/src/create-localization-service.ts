@@ -4,7 +4,7 @@
  * Encapsulates i18n string table setup with game-specific translations.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { LocalizationConfig, LocaleCode } from "./types";
 import { LocalizationService as I18n } from "./localization-service";
 

@@ -1,6 +1,6 @@
 # Modules: Audio
 
-SFX, music, and spatial audio management (`@rbx/audio`). **Status: Implemented** (38 tests).
+SFX, music, and spatial audio management (`@broblox/audio`). **Status: Implemented** (38 tests).
 
 ## Purpose
 

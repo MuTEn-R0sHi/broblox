@@ -38,7 +38,7 @@ describe("createMarketplaceService", () => {
       grantedCount: vi.fn(() => 0),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
       arraySize: (arr: unknown[]) => arr.length,
     }));

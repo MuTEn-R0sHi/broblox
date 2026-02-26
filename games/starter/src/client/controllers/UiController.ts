@@ -1,6 +1,6 @@
 import { Players } from "@rbxts/services";
-import { Controller } from "@rbx/core";
-import { PROTOCOL_VERSION } from "@rbx/net";
+import { Controller } from "@broblox/core";
+import { PROTOCOL_VERSION } from "@broblox/net";
 
 /**
  * UI Controller for status display.

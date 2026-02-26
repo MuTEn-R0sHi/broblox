@@ -1,5 +1,5 @@
-import { createMovementValidationService } from "@rbx/movement";
-import { isFlagEnabled } from "@rbx/config-featureflags";
+import { createMovementValidationService } from "@broblox/movement";
+import { isFlagEnabled } from "@broblox/config-featureflags";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createMovementValidationService({

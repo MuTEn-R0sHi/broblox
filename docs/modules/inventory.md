@@ -1,6 +1,6 @@
 # Modules: Inventory
 
-Base item and slot inventory system with DataStore persistence (`@rbx/inventory`). **Status: Implemented** (57 tests).
+Base item and slot inventory system with DataStore persistence (`@broblox/inventory`). **Status: Implemented** (57 tests).
 
 ## Purpose
 

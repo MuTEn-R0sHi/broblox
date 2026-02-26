@@ -1,10 +1,10 @@
 /**
- * @rbx/tutorial — Tutorial Manager
+ * @broblox/tutorial — Tutorial Manager
  *
  * Manages per-player tutorial progression, step advancement, and completion tracking.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type {
   TutorialConfig,
   TutorialProgress,

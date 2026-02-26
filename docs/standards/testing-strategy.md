@@ -69,7 +69,7 @@ Pure TypeScript logic runs in Node.js via vitest:
 
 ```bash
 pnpm test              # all packages
-pnpm --filter @rbx/net test  # single package
+pnpm --filter @broblox/net test  # single package
 pnpm test:coverage           # with coverage report
 ```
 
@@ -88,17 +88,17 @@ The root `vitest.config.ts` enforces minimum coverage on every CI run:
 
 Branches has a lower threshold because several infrastructure packages (observability, core) contain Roblox-specific code paths that cannot be fully exercised in Node.js tests.
 
-### @rbx/testing package
+### @broblox/testing package
 
-The `@rbx/testing` package provides shared test utilities:
+The `@broblox/testing` package provides shared test utilities:
 
-- **ErrorCode enum** - Mirrors `@rbx/shared-types` for Node.js tests
+- **ErrorCode enum** - Mirrors `@broblox/shared-types` for Node.js tests
 - **Result utilities** - `ok()`, `err()`, `isOk()`, `isErr()`
 - **Roblox mocks** - `mockRobloxGlobals()` for `os.clock()`, `typeOf()`, etc.
 - **Factories** - `MockRateLimiter`, `createMockPlayer()`, payload factories
 
 ```typescript
-import { ErrorCode, ok, err, mockRobloxGlobals } from "@rbx/testing";
+import { ErrorCode, ok, err, mockRobloxGlobals } from "@broblox/testing";
 
 beforeAll(() => mockRobloxGlobals());
 ```
@@ -157,7 +157,7 @@ describe("createChatModerationService", () => {
 
   beforeEach(() => {
     vi.resetModules();
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => ({ info: vi.fn(), warn: vi.fn() }),
     }));
     (globalThis as any).TextChatService = {

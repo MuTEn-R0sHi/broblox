@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/matchmaking",
+  "name": "@broblox/matchmaking",
   "version": "0.2.0",
   "description": "Queue-based matchmaking with Elo rating and server allocation",
   "private": true,
@@ -18,13 +18,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@rbx/constants": "workspace:*",
-    "@rbx/core": "workspace:*",
-    "@rbx/shared-types": "workspace:*",
-    "@rbx/observability": "workspace:*"
+    "@broblox/constants": "workspace:*",
+    "@broblox/core": "workspace:*",
+    "@broblox/shared-types": "workspace:*",
+    "@broblox/observability": "workspace:*"
   },
   "devDependencies": {
-    "@rbx/testing": "workspace:*",
+    "@broblox/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.908",
     "roblox-ts": "^3.0.0",

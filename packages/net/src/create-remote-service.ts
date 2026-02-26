@@ -5,7 +5,7 @@
  * Games call this from their server entry point.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { RemoteRegistry } from "./registry/types";
 import { ServerRemoteRegistry } from "./registry/server";
 

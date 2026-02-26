@@ -4,7 +4,7 @@
  * Manages player sessions with auto-save and cleanup.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { VersionedData, SessionState, PlayerSession, DataMetadata } from "./types";
 import { PlayerDataStore } from "./player-data-store";
 

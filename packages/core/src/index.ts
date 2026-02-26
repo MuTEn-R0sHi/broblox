@@ -1,5 +1,5 @@
 /**
- * @rbx/core
+ * @broblox/core
  * Core utilities for the platform.
  * Compatible with roblox-ts.
  */

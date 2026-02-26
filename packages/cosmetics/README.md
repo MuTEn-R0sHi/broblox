@@ -1,4 +1,4 @@
-# @rbx/cosmetics
+# @broblox/cosmetics
 
 Cosmetic items, skins, and appearance customization.
 
@@ -13,9 +13,9 @@ This package provides a cosmetic item system:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
-- `@rbx/observability` — Metrics and telemetry
-- `@rbx/shared-types` — Rarity definitions and constants
+- `@broblox/core` — Service lifecycle, logging
+- `@broblox/observability` — Metrics and telemetry
+- `@broblox/shared-types` — Rarity definitions and constants
 
 ## Architecture
 
@@ -32,7 +32,7 @@ Each player has typed equip slots (`head`, `body`, `trail`, `effect`, `emote_1`,
 ## Usage
 
 ```typescript
-import { createCosmeticsService } from "@rbx/cosmetics";
+import { createCosmeticsService } from "@broblox/cosmetics";
 
 const cosmetics = createCosmeticsService({
   cosmetics: [

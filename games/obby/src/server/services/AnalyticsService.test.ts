@@ -31,7 +31,7 @@ describe("AnalyticsService (obby)", () => {
       cleanupPlayer: vi.fn(),
     };
 
-    vi.doMock("@rbx/analytics", () => ({
+    vi.doMock("@broblox/analytics", () => ({
       createAnalyticsService: vi.fn((config: Record<string, unknown>) => {
         capturedConfig = config;
         if (typeof config["onPlayerAdded"] === "function") {

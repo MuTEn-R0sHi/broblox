@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createMockPlayer, resetPlayerIdCounter } from "@rbx/testing";
+import { createMockPlayer, resetPlayerIdCounter } from "@broblox/testing";
 import { initContext } from "./context";
 import {
   registerSink,

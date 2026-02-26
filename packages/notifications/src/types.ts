@@ -1,5 +1,5 @@
 /**
- * @rbx/notifications — Type Definitions
+ * @broblox/notifications — Type Definitions
  *
  * Types for in-game notifications: toasts, announcements, and news.
  */

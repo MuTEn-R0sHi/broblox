@@ -24,7 +24,7 @@ describe("createSecurityService", () => {
     mockCleanupEnforcementState = vi.fn();
     mockCleanupPlayer = vi.fn();
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./enforcer", () => ({

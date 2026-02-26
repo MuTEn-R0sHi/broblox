@@ -43,7 +43,7 @@ describe("createChatModerationService", () => {
     capturedOnIncomingMessage = undefined;
     playersByUserId.clear();
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
 

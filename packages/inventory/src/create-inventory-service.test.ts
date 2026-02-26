@@ -24,7 +24,7 @@ describe("createInventoryService", () => {
       isDirty: vi.fn(() => false),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./item-registry", () => ({

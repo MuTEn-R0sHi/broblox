@@ -4,7 +4,7 @@
  * This module defines the type system for type-safe remotes.
  */
 
-import { Result } from "@rbx/shared-types";
+import { Result } from "@broblox/shared-types";
 import { RateLimitConfig } from "../ratelimit";
 
 // Re-export for convenience

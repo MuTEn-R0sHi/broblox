@@ -5,8 +5,14 @@
  * Implements protocol versioning per ADR-0002.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { ok, err, ErrorCode, validateProtocolVersion, getCurrentProtocolVersion } from "@rbx/net";
+import { Service, createLogger } from "@broblox/core";
+import {
+  ok,
+  err,
+  ErrorCode,
+  validateProtocolVersion,
+  getCurrentProtocolVersion,
+} from "@broblox/net";
 import { RemoteService } from "./RemoteService";
 import { HandshakeRequest } from "shared/remotes";
 

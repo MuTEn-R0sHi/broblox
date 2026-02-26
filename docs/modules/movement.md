@@ -1,6 +1,6 @@
 # Modules: Movement
 
-Server-authoritative movement validation and anti-cheat (`@rbx/movement`). **Status: Implemented** (78 tests).
+Server-authoritative movement validation and anti-cheat (`@broblox/movement`). **Status: Implemented** (78 tests).
 
 ## Purpose
 

@@ -1,13 +1,13 @@
 /**
  * Leaderboard Service (Obby)
  *
- * Uses `@rbx/leaderboards` for completions ranking, DataStore persistence,
+ * Uses `@broblox/leaderboards` for completions ranking, DataStore persistence,
  * and automatic caching.  Enriches results with bestTime metadata and
  * broadcasts updates to clients via RemoteEvents.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { LeaderboardStore } from "@rbx/leaderboards";
+import { Service, createLogger } from "@broblox/core";
+import { LeaderboardStore } from "@broblox/leaderboards";
 import { DataService } from "./DataService";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

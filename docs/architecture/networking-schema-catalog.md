@@ -21,7 +21,7 @@ export interface DoActionPayload {
 ```typescript
 // packages/net/src/validation.ts
 import { t } from "@rbxts/t";
-import { validate, bounded } from "@rbx/net";
+import { validate, bounded } from "@broblox/net";
 
 const doActionSchema = t.strictInterface({
   actionId: bounded.string(50, 1),
@@ -49,8 +49,8 @@ export const REMOTES = {
 
 ```typescript
 // games/starter/src/server/services/ActionService.ts
-import { REMOTES, validateDoActionPayload, ErrorCode, Result } from "@rbx/net";
-import { isFlagEnabled } from "@rbx/config-featureflags";
+import { REMOTES, validateDoActionPayload, ErrorCode, Result } from "@broblox/net";
+import { isFlagEnabled } from "@broblox/config-featureflags";
 
 const playerState = new Map<number, number>();
 
@@ -90,7 +90,7 @@ export function handleDoAction(player: Player, rawPayload: unknown): Result<{ ne
 ```typescript
 // games/starter/src/client/controllers/ActionController.ts
 import { RemoteController } from "./RemoteController";
-import { type Result, type DoActionPayload } from "@rbx/net";
+import { type Result, type DoActionPayload } from "@broblox/net";
 
 const payload: DoActionPayload = {
   actionId: "intent_ping",

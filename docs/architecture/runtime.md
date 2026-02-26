@@ -24,7 +24,7 @@ The platform uses a unified `Application` class to manage startup order, depende
 ### Application API
 
 ```typescript
-import { Application } from "@rbx/core";
+import { Application } from "@broblox/core";
 
 // Start the application
 await Application.start();

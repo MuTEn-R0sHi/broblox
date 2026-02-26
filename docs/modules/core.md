@@ -1,6 +1,6 @@
 # Modules: Core
 
-Core framework — service lifecycle, logging, and error handling (`@rbx/core`). **Status: Implemented** (153 tests).
+Core framework — service lifecycle, logging, and error handling (`@broblox/core`). **Status: Implemented** (153 tests).
 
 ## Purpose
 
@@ -32,7 +32,7 @@ Core framework — service lifecycle, logging, and error handling (`@rbx/core`).
 
 ## Dependencies
 
-- `@rbx/shared-types` (zero-runtime-dep type package).
+- `@broblox/shared-types` (zero-runtime-dep type package).
 
 ## Data ownership
 

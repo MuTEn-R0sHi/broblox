@@ -1,5 +1,5 @@
 /**
- * @rbx/battle-pass — Public API
+ * @broblox/battle-pass — Public API
  */
 
 export type {

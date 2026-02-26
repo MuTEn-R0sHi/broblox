@@ -4,7 +4,7 @@
  * First-time user experience (FTUE) and guided onboarding.
  */
 
-import { createTutorialService } from "@rbx/tutorial";
+import { createTutorialService } from "@broblox/tutorial";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createTutorialService({

@@ -4,7 +4,7 @@
  * Encapsulates quest registry + per-player quest store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { QuestDefinition, QuestsConfig, QuestCompletedEvent } from "./types";
 import { QuestRegistry } from "./quest-registry";
 import { QuestStore } from "./quest-store";

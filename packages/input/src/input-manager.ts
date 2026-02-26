@@ -4,7 +4,7 @@
  * Central input processing and movement state calculation.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { MovementState, MoveVector, InputSource } from "./types";
 import { getCurrentDevice, initDeviceDetection } from "./device";
 import { registerCommonActions, updateActionState, isActionActive } from "./actions";

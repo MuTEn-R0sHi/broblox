@@ -1,15 +1,15 @@
 /**
  * Security Service
  *
- * Boots the @rbx/security enforcement pipeline:
+ * Boots the @broblox/security enforcement pipeline:
  *   reportViolation (any code) → onViolation bus → Enforcer → kick/shadow/warn
  *
  * Cleanup of per-player detector + enforcement state is wired automatically
  * via onPlayerRemoving.
  */
 
-import { createSecurityService } from "@rbx/security";
-import { getModeration } from "@rbx/moderation";
+import { createSecurityService } from "@broblox/security";
+import { getModeration } from "@broblox/moderation";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createSecurityService({

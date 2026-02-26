@@ -5,7 +5,7 @@
  * Service with player lifecycle helpers.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { NotificationsConfig, AnnouncementDefinition, DEFAULT_NOTIFICATIONS_CONFIG } from "./types";
 import { NotificationStore } from "./notification-store";
 import { AnnouncementManager } from "./announcement-manager";

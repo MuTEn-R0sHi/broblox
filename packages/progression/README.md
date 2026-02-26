@@ -1,4 +1,4 @@
-# @rbx/progression
+# @broblox/progression
 
 XP, levels, and prestige/rebirth system for Roblox games.
 
@@ -15,7 +15,7 @@ XP, levels, and prestige/rebirth system for Roblox games.
 ## Quick Start
 
 ```ts
-import { ProgressionStore } from "@rbx/progression";
+import { ProgressionStore } from "@broblox/progression";
 
 const store = new ProgressionStore(player.UserId, {
   maxLevel: 100,
@@ -67,5 +67,5 @@ store.save();
 ## Tests
 
 ```bash
-pnpm --filter @rbx/progression test
+pnpm --filter @broblox/progression test
 ```

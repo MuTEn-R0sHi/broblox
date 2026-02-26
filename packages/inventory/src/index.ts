@@ -1,5 +1,5 @@
 /**
- * @rbx/inventory
+ * @broblox/inventory
  *
  * Base item and slot inventory system for Roblox games.
  * Provides:

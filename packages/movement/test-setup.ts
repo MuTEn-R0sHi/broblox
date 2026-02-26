@@ -1,13 +1,13 @@
 /**
- * Test setup for @rbx/movement
+ * Test setup for @broblox/movement
  *
  * Roblox globals like `typeOf` must be available before any module-level
- * code runs (e.g. `@rbx/observability` eagerly creates CommonMetrics).
+ * code runs (e.g. `@broblox/observability` eagerly creates CommonMetrics).
  * Vitest `setupFiles` execute before module imports, so this is the right
  * place to install them.
  */
 
-import { mockRobloxGlobals } from "@rbx/testing";
+import { mockRobloxGlobals } from "@broblox/testing";
 
 mockRobloxGlobals();
 

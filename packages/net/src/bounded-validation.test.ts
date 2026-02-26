@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { ErrorCode, isOk, isErr } from "@rbx/shared-types";
+import { ErrorCode, isOk, isErr } from "@broblox/shared-types";
 import { validate, bounded } from "./validation";
 import { t } from "@rbxts/t";
 

@@ -14,7 +14,7 @@
  * unique.  It is safe to use as an idempotency key.
  */
 
-import { setSize } from "@rbx/core";
+import { setSize } from "@broblox/core";
 import { ProductReceipt, PurchaseDecision } from "./types";
 import { DeveloperProductRegistry } from "./developer-products";
 

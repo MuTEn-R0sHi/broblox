@@ -57,7 +57,7 @@ for (const entry of entries) {
 console.log("# Error Code Reference");
 console.log();
 console.log(
-  "This document is **auto-generated** from the `ErrorCode` enum in `@rbx/shared-types`."
+  "This document is **auto-generated** from the `ErrorCode` enum in `@broblox/shared-types`."
 );
 console.log();
 console.log("## Error Code Ranges");

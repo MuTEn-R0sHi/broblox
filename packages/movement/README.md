@@ -1,4 +1,4 @@
-# @rbx/movement
+# @broblox/movement
 
 Server-authoritative movement validation for competitive Roblox games.
 Detects speed hacks, teleporting, flying, and jump exploits, then optionally
@@ -9,14 +9,14 @@ soft-corrects the player's position/velocity.
 - **Server Authority** — validates every movement tick on the server
 - **Anomaly Detection** — speed, teleport, fly, and jump-sequence checks
 - **Soft Correction** — snaps exploiting players back to a legal position
-- **Observability** — counters and histograms via `@rbx/observability`
+- **Observability** — counters and histograms via `@broblox/observability`
 - **Feature-Flag Kill-Switch** — disable validation at runtime via
   `movement.validation.enabled`
 
 ## Installation
 
 ```bash
-pnpm add @rbx/movement
+pnpm add @broblox/movement
 ```
 
 ## Quick Start
@@ -24,8 +24,8 @@ pnpm add @rbx/movement
 ### 1. Server validation loop
 
 ```typescript
-import { getMovementValidator, MovementStateManager } from "@rbx/movement";
-import { isFlagEnabled } from "@rbx/config-featureflags";
+import { getMovementValidator, MovementStateManager } from "@broblox/movement";
+import { isFlagEnabled } from "@broblox/config-featureflags";
 
 const stateManager = new MovementStateManager();
 const validator = getMovementValidator();
@@ -98,7 +98,7 @@ Players.PlayerRemoving.Connect((player) => {
 ## Architecture
 
 ```
-@rbx/movement
+@broblox/movement
 ├── types.ts       - MovementConfig, MovementInput, ValidationResult, etc.
 ├── constants.ts   - Default config, physics params, validation thresholds
 ├── validator.ts   - MovementValidator (singleton via getMovementValidator)
@@ -118,7 +118,7 @@ Players.PlayerRemoving.Connect((player) => {
 ## Observability
 
 The validator emits the following metrics automatically (requires
-`@rbx/observability` as a dependency):
+`@broblox/observability` as a dependency):
 
 | Metric                            | Type      | Labels |
 | --------------------------------- | --------- | ------ |
@@ -130,7 +130,7 @@ The validator emits the following metrics automatically (requires
 ## Feature Flag
 
 The `movement.validation.enabled` flag (defined in
-`@rbx/config-featureflags`) acts as a kill-switch. When set to `false`,
+`@broblox/config-featureflags`) acts as a kill-switch. When set to `false`,
 the per-heartbeat validation loop exits early so no checks or corrections
 run. The flag defaults to `true`.
 

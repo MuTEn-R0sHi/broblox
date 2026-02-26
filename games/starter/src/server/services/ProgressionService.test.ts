@@ -45,7 +45,7 @@ describe("ProgressionService (starter)", () => {
       GetPlayerByUserId: vi.fn(() => mockPlayer),
     };
 
-    vi.doMock("@rbx/progression", () => ({
+    vi.doMock("@broblox/progression", () => ({
       createProgressionService: vi.fn((config: Record<string, unknown>) => {
         capturedOnLevelUp = config["onLevelUp"] as typeof capturedOnLevelUp;
         capturedOnPrestige = config["onPrestige"] as typeof capturedOnPrestige;

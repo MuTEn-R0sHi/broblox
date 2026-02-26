@@ -4,7 +4,7 @@
  * Per-player quest tracking with daily/weekly objectives.
  */
 
-import { createQuestService } from "@rbx/quests";
+import { createQuestService } from "@broblox/quests";
 import { Players } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

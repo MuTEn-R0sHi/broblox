@@ -45,7 +45,7 @@ describe("ProgressionService (obby)", () => {
       GetPlayerByUserId: vi.fn(() => mockPlayer),
     };
 
-    vi.doMock("@rbx/progression", () => ({
+    vi.doMock("@broblox/progression", () => ({
       createProgressionService: vi.fn((config: Record<string, unknown>) => {
         capturedOnLevelUp = config["onLevelUp"] as typeof capturedOnLevelUp;
         capturedOnPrestige = config["onPrestige"] as typeof capturedOnPrestige;
@@ -73,11 +73,11 @@ describe("ProgressionService (obby)", () => {
   }
 
   it("creates the progression service via factory", async () => {
-    const { default: progression } = await import("@rbx/progression").then(() => loadService());
+    const { default: progression } = await import("@broblox/progression").then(() => loadService());
     void progression;
     const progressionPkg = await vi.importMock<{
       createProgressionService: ReturnType<typeof vi.fn>;
-    }>("@rbx/progression");
+    }>("@broblox/progression");
     expect(progressionPkg.createProgressionService).toHaveBeenCalledOnce();
   });
 

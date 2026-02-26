@@ -1,5 +1,5 @@
 /**
- * @rbx/progression
+ * @broblox/progression
  *
  * XP, levels, and prestige/rebirth system for Roblox games.
  * Provides:

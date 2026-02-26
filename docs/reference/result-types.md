@@ -12,8 +12,8 @@ The `Result<T>` type provides explicit error handling across the platform. This 
 ## Basic Usage
 
 ```typescript
-import { ok, err, isOk, isErr, Result } from "@rbx/shared-types";
-import { ErrorCode } from "@rbx/shared-types";
+import { ok, err, isOk, isErr, Result } from "@broblox/shared-types";
+import { ErrorCode } from "@broblox/shared-types";
 
 // Creating results
 const success = ok({ userId: "123", name: "Player" });

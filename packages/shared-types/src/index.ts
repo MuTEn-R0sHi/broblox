@@ -1,5 +1,5 @@
 /**
- * @rbx/shared-types
+ * @broblox/shared-types
  * Core type definitions shared across the platform.
  * This package has NO dependencies and must remain pure.
  * Compatible with roblox-ts (noLib: true).

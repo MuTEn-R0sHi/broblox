@@ -13,8 +13,8 @@
  * @note Uses roblox-ts compatible patterns for Luau compilation.
  */
 
-import { Result, ok, err, ErrorCode, PlayerId } from "@rbx/shared-types";
-import { arrayRemoveAt } from "@rbx/core";
+import { Result, ok, err, ErrorCode, PlayerId } from "@broblox/shared-types";
+import { arrayRemoveAt } from "@broblox/core";
 import type {
   AbilityId,
   CooldownConfig,

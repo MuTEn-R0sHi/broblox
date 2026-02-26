@@ -4,7 +4,7 @@
  * First-time user experience for the obstacle course.
  */
 
-import { createTutorialService } from "@rbx/tutorial";
+import { createTutorialService } from "@broblox/tutorial";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createTutorialService({

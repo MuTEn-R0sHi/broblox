@@ -5,8 +5,8 @@
  * Computes playtime and emits session analytics.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type { SessionData, AnalyticsConfig } from "./types";
 
 const sessionsStarted = new Counter("analytics_sessions_started");

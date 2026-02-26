@@ -63,12 +63,12 @@ describe("DataService", () => {
       }),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
       Service: {},
     }));
 
-    vi.doMock("@rbx/data", () => ({
+    vi.doMock("@broblox/data", () => ({
       createDataService: () => ({
         Service: {
           name: "DataService",

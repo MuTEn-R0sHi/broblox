@@ -24,7 +24,7 @@ describe("createCosmeticsService", () => {
       isDirty: vi.fn(() => false),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./cosmetic-registry", () => ({

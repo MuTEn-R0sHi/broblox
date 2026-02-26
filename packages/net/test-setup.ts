@@ -1,5 +1,5 @@
 // Polyfill for Roblox types in Node environment
-import { mockRobloxGlobals } from "@rbx/testing";
+import { mockRobloxGlobals } from "@broblox/testing";
 
 mockRobloxGlobals();
 

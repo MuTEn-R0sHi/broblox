@@ -55,7 +55,7 @@ function formatCount(n: number): string {
 
 /**
  * Known leaderboards per game.
- * The `id` matches the board name registered via `@rbx/leaderboards`.
+ * The `id` matches the board name registered via `@broblox/leaderboards`.
  */
 export const GAME_BOARDS: Record<string, BoardDef[]> = {
   starter: [

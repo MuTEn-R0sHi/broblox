@@ -1,11 +1,11 @@
 /**
  * Unit tests for validation module.
- * Uses @rbx/testing for consistent types and mocks.
+ * Uses @broblox/testing for consistent types and mocks.
  */
 
 import { describe, it, expect } from "vitest";
 
-import { isOk, isErr, createDoActionPayload, createHandshakePayload } from "@rbx/testing";
+import { isOk, isErr, createDoActionPayload, createHandshakePayload } from "@broblox/testing";
 import { validateDoActionPayload, validateHandshakePayload } from "./validation";
 
 describe("DoAction payload validation", () => {

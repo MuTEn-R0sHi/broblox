@@ -6,8 +6,8 @@
  * capacity limits, and save/load lifecycle.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import { ItemRegistry } from "./item-registry";
 import type {
   ItemInstance,

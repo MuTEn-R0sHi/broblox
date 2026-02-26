@@ -2,7 +2,7 @@
  * Game-specific vitest config for the Obby game.
  * Extends root config but overrides shared/* aliases to point to this game's files.
  *
- * Usage: pnpm --filter @rbx/game-obby test
+ * Usage: pnpm --filter @broblox/game-obby test
  */
 import { defineConfig, mergeConfig } from "vitest/config";
 import { resolve } from "node:path";

@@ -5,8 +5,8 @@
  * Other controllers access remotes through this controller.
  */
 
-import { Controller, createLogger } from "@rbx/core";
-import { createClientRegistry, ClientRemoteRegistry } from "@rbx/net";
+import { Controller, createLogger } from "@broblox/core";
+import { createClientRegistry, ClientRemoteRegistry } from "@broblox/net";
 import { GameRemotes, GameRemotesType } from "shared/remotes";
 
 const logger = createLogger("RemoteController");

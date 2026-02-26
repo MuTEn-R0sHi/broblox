@@ -20,7 +20,7 @@ describe("createLeaderboardService", () => {
       getPlayerRank: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./leaderboard-store", () => ({

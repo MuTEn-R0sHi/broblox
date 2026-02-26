@@ -83,14 +83,14 @@ If a player leaves before flush completes, attempt synchronous save with timeout
 
 ## Profile schema
 
-Implemented across `@rbx/data`, `@rbx/progression`, `@rbx/inventory`, `@rbx/rewards`, and `@rbx/moderation`:
+Implemented across `@broblox/data`, `@broblox/progression`, `@broblox/inventory`, `@broblox/rewards`, and `@broblox/moderation`:
 
 - `schemaVersion`
-- `progression` (xp, level, prestige) — `@rbx/progression`
-- `mmr` (per mode) — `@rbx/matchmaking`
-- `inventory` (owned items, equipped loadouts) — `@rbx/inventory`
-- `moderation` (ban state, mutes, trust score) — `@rbx/moderation`
-- `receipts` / `grants` (idempotency keys) — `@rbx/rewards`
+- `progression` (xp, level, prestige) — `@broblox/progression`
+- `mmr` (per mode) — `@broblox/matchmaking`
+- `inventory` (owned items, equipped loadouts) — `@broblox/inventory`
+- `moderation` (ban state, mutes, trust score) — `@broblox/moderation`
+- `receipts` / `grants` (idempotency keys) — `@broblox/rewards`
 
 ## Idempotency (non-negotiable)
 

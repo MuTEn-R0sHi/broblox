@@ -8,14 +8,14 @@
 
 ## Monorepo package rules
 
-- Each `@rbx/*` package compiles independently with `--type package`
+- Each `@broblox/*` package compiles independently with `--type package`
 - Games compile with `--type game` to get RuntimeLib requires
 - Package `types` field points to `out/index.d.ts` (compiled declarations)
-- Packages should not import from other `@rbx/*` packages at compile time (inline shared types if needed)
+- Packages should not import from other `@broblox/*` packages at compile time (inline shared types if needed)
 
 ## Package Configuration (Critical)
 
-Every `@rbx/*` package **must** have proper configuration for both Node.js (vitest) and roblox-ts:
+Every `@broblox/*` package **must** have proper configuration for both Node.js (vitest) and roblox-ts:
 
 ### tsconfig.roblox.json
 
@@ -63,19 +63,19 @@ Package paths need nested `out` folder to match compiled imports:
 
 ```json
 {
-  "@rbx": {
+  "@broblox": {
     "$className": "Folder",
     "shared-types": {
       "$className": "Folder",
       "out": {
-        "$path": "node_modules/@rbx/shared-types/out"
+        "$path": "node_modules/@broblox/shared-types/out"
       }
     }
   }
 }
 ```
 
-**Why nested?** The compiled Luau does `TS.getModule(script, "@rbx", "shared-types").out` - it expects `.out` to be a child of the package folder.
+**Why nested?** The compiled Luau does `TS.getModule(script, "@broblox", "shared-types").out` - it expects `.out` to be a child of the package folder.
 
 ## Folder intent
 

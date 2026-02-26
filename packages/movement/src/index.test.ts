@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals, setMockClock } from "@rbx/testing";
+import { mockRobloxGlobals, setMockClock } from "@broblox/testing";
 
 // ============================================================================
 // Vector3 Mock (Roblox-compatible)

@@ -5,7 +5,7 @@
  * registry + per-player store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { SeasonDefinition, BattlePassConfig } from "./types";
 import { SeasonRegistry } from "./season-registry";
 import { BattlePassStore } from "./battle-pass-store";

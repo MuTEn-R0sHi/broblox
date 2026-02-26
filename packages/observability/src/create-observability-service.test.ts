@@ -29,7 +29,7 @@ describe("createObservabilityService", () => {
     mockFlushMetrics = vi.fn();
     mockUseConsoleMetricSink = vi.fn(() => metricSinkDisconnect);
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./telemetry", () => ({

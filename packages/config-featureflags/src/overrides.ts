@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags — Flag value overrides, boolean helpers, kill-switches,
+ * @broblox/config-featureflags — Flag value overrides, boolean helpers, kill-switches,
  * change listeners, and remote snapshot application.
  */
 

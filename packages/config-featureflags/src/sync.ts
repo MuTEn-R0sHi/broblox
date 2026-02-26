@@ -5,7 +5,7 @@
  * MessagingService events.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { applyRemoteFeatureFlagSnapshot, type RemoteFeatureFlagSnapshot } from "./overrides";
 
 const logger = createLogger("FeatureFlags.Sync");

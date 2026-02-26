@@ -1,6 +1,6 @@
 # Modules: Security
 
-Security utilities — anomaly detection, trust scoring, and enforcement (`@rbx/security`). **Status: Implemented** (~58 tests).
+Security utilities — anomaly detection, trust scoring, and enforcement (`@broblox/security`). **Status: Implemented** (~58 tests).
 
 ## Purpose
 
@@ -40,8 +40,8 @@ Security utilities — anomaly detection, trust scoring, and enforcement (`@rbx/
 
 ## Dependencies
 
-- `@rbx/core` (service lifecycle, logging).
-- `@rbx/shared-types` (branded IDs, Result type).
+- `@broblox/core` (service lifecycle, logging).
+- `@broblox/shared-types` (branded IDs, Result type).
 
 ## Data ownership
 
@@ -51,7 +51,7 @@ Security owns the `trustScore` and `violationHistory` sub-keys in the player pro
 
 Defense-in-depth layers:
 
-1. **Network layer** — rate limiting and payload validation (handled by `@rbx/net`).
+1. **Network layer** — rate limiting and payload validation (handled by `@broblox/net`).
 2. **Action layer** — action validation before processing.
 3. **Detection layer** — anomaly detectors run post-action.
 4. **Response layer** — enforcement based on accumulated trust score.
@@ -60,7 +60,7 @@ Defense-in-depth layers:
 
 - `security.enabled` — global kill-switch.
 - `security.speedThreshold` — max studs/sec before flagging.
-- `security.teleportThreshold` — max position delta per frame. Note: `@rbx/movement` has its own `ValidationThresholds.teleportDistanceMin` for movement-specific teleport detection with axis-split budgets and gravity compensation. The `@rbx/security` teleport detector operates at the action layer as a coarse check, while `@rbx/movement` provides fine-grained, physics-aware detection.
+- `security.teleportThreshold` — max position delta per frame. Note: `@broblox/movement` has its own `ValidationThresholds.teleportDistanceMin` for movement-specific teleport detection with axis-split budgets and gravity compensation. The `@broblox/security` teleport detector operates at the action layer as a coarse check, while `@broblox/movement` provides fine-grained, physics-aware detection.
 - `security.damageMax` — max single-hit damage.
 - `security.trustRecoveryRate` — points recovered per minute of clean behavior.
 - `security.banDurationHours` — default ban length.

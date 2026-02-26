@@ -1,5 +1,5 @@
 /**
- * @rbx/cosmetics — Public API
+ * @broblox/cosmetics — Public API
  */
 
 export type {

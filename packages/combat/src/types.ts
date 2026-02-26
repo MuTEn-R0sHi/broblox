@@ -2,7 +2,7 @@
  * Combat system type definitions.
  */
 
-import { PlayerId } from "@rbx/shared-types";
+import { PlayerId } from "@broblox/shared-types";
 
 // ============================================================================
 // Cooldown Types
@@ -121,12 +121,12 @@ export interface HitValidationConfig {
  * Position provider function type.
  *
  * Override the default internal cache by supplying a provider that reads
- * from another source such as `@rbx/movement`'s `MovementStateManager`.
+ * from another source such as `@broblox/movement`'s `MovementStateManager`.
  *
  * @example
  * ```ts
- * import { MovementStateManager } from "@rbx/movement";
- * import { setPositionProvider } from "@rbx/combat";
+ * import { MovementStateManager } from "@broblox/movement";
+ * import { setPositionProvider } from "@broblox/combat";
  *
  * const manager = new MovementStateManager();
  * setPositionProvider((playerId) => {
@@ -153,7 +153,7 @@ export type PositionProvider = (playerId: PlayerId) => Vector3Like | undefined;
  * @example
  * ```ts
  * // Roblox runtime implementation
- * import { setRaycastProvider } from "@rbx/combat";
+ * import { setRaycastProvider } from "@broblox/combat";
  * import { Workspace } from "@rbxts/services";
  *
  * const params = new RaycastParams();

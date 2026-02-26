@@ -1,5 +1,5 @@
 /**
- * @rbx/moderation
+ * @broblox/moderation
  *
  * Server-side moderation system for Roblox games.
  * Provides:

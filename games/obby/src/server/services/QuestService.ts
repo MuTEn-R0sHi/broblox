@@ -2,10 +2,10 @@
  * Quest Service — Obby Game
  *
  * Per-player obby-themed quests (complete stages, collect items, speedruns).
- * Uses the @rbx/quests package.
+ * Uses the @broblox/quests package.
  */
 
-import { createQuestService } from "@rbx/quests";
+import { createQuestService } from "@broblox/quests";
 import { Players } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

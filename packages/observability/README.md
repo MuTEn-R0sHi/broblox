@@ -1,4 +1,4 @@
-# @rbx/observability
+# @broblox/observability
 
 Observability utilities for Roblox games — telemetry, metrics, and tracing.
 
@@ -13,15 +13,15 @@ This package provides production observability:
 
 ## Dependencies
 
-- `@rbx/core` — Logging utilities
-- `@rbx/shared-types` — Type definitions
+- `@broblox/core` — Logging utilities
+- `@broblox/shared-types` — Type definitions
 
 ## Features
 
 ### Telemetry Events
 
 ```typescript
-import { Telemetry } from "@rbx/observability";
+import { Telemetry } from "@broblox/observability";
 
 // Emit structured events
 Telemetry.emit({
@@ -40,7 +40,7 @@ Telemetry.emit({
 ### Performance Spans
 
 ```typescript
-import { Span } from "@rbx/observability";
+import { Span } from "@broblox/observability";
 
 // Time operations with context
 const span = Span.start("matchmaking.find_match");
@@ -58,7 +58,7 @@ try {
 ### Correlation Context
 
 ```typescript
-import { CorrelationContext } from "@rbx/observability";
+import { CorrelationContext } from "@broblox/observability";
 
 // Set context that propagates through calls
 CorrelationContext.set("session_id", sessionId);
@@ -70,7 +70,7 @@ CorrelationContext.set("player_id", playerId);
 ### Metrics
 
 ```typescript
-import { Metrics } from "@rbx/observability";
+import { Metrics } from "@broblox/observability";
 
 // Counters
 Metrics.increment("matches_started");

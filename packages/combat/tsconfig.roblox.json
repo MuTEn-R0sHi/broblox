@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "preserveSymlinks": true,
     "downlevelIteration": true,
-    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@rbx"],
+    "typeRoots": ["./node_modules/@rbxts", "./node_modules/@broblox"],
     "types": ["types", "compiler-types"],
     "rootDir": "src",
     "outDir": "out",

@@ -1,5 +1,5 @@
 /**
- * @rbx/marketplace — Type Definitions
+ * @broblox/marketplace — Type Definitions
  *
  * Types for Roblox MarketplaceService integration.
  * Covers developer products, game passes, and purchase receipt processing.

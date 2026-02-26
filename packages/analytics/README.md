@@ -1,4 +1,4 @@
-# @rbx/analytics
+# @broblox/analytics
 
 Player behavior analytics for Roblox games — structured events, funnels, sessions, and retention tracking.
 
@@ -14,7 +14,7 @@ Player behavior analytics for Roblox games — structured events, funnels, sessi
 ## Quick Start
 
 ```ts
-import { EventTracker, FunnelTracker, SessionTracker, RetentionTracker } from "@rbx/analytics";
+import { EventTracker, FunnelTracker, SessionTracker, RetentionTracker } from "@broblox/analytics";
 
 const config = {
   datastoreName: "GameRetention",
@@ -97,7 +97,7 @@ const stats = funnels.getStats("tutorial");
 
 ## Metrics
 
-All trackers emit counters via `@rbx/observability`:
+All trackers emit counters via `@broblox/observability`:
 
 | Metric                            | Description                          |
 | --------------------------------- | ------------------------------------ |
@@ -114,5 +114,5 @@ All trackers emit counters via `@rbx/observability`:
 ## Tests
 
 ```bash
-pnpm --filter @rbx/analytics test
+pnpm --filter @broblox/analytics test
 ```

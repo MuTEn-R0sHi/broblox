@@ -1,4 +1,4 @@
-# @rbx/moderation
+# @broblox/moderation
 
 Server-side moderation system for Roblox games.
 
@@ -18,7 +18,7 @@ Server-side moderation system for Roblox games.
 data per game:
 
 ```typescript
-import { getModeration } from "@rbx/moderation";
+import { getModeration } from "@broblox/moderation";
 
 const moderation = getModeration("StarterModeration");
 ```
@@ -26,7 +26,7 @@ const moderation = getModeration("StarterModeration");
 ### Check Bans on Player Join
 
 ```typescript
-import { getModeration } from "@rbx/moderation";
+import { getModeration } from "@broblox/moderation";
 
 const moderation = getModeration("StarterModeration");
 
@@ -104,7 +104,7 @@ moderation.onMute((record) => {
 ## Architecture
 
 ```
-@rbx/moderation
+@broblox/moderation
 ├── types.ts          – Type definitions + default config
 ├── ban-store.ts      – DataStore CRUD + caching for ban records
 ├── mute-store.ts     – DataStore CRUD + caching for mute records
@@ -177,7 +177,7 @@ services can react immediately.
 ## Testing
 
 ```bash
-pnpm --filter @rbx/moderation test
+pnpm --filter @broblox/moderation test
 ```
 
 Tests cover:

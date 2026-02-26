@@ -2,11 +2,11 @@
 
 ## Types of configuration
 
-- **Build-time constants**: Numeric values compiled into the client/server via `@rbx/constants`
+- **Build-time constants**: Numeric values compiled into the client/server via `@broblox/constants`
 - **Runtime config**: Fetched/replicated config snapshots
-- **Feature flags**: Kill-switches and rollouts via `@rbx/config-featureflags`
+- **Feature flags**: Kill-switches and rollouts via `@broblox/config-featureflags`
 
-## Constants Package (`@rbx/constants`)
+## Constants Package (`@broblox/constants`)
 
 The constants package provides centralized, type-safe constants:
 
@@ -16,7 +16,7 @@ import {
   HANDSHAKE_MAX_RETRIES,
   MAX_PAYLOAD_SIZE_BYTES,
   BUILD_ID,
-} from "@rbx/constants";
+} from "@broblox/constants";
 ```
 
 ### Timeout Constants
@@ -40,12 +40,12 @@ import {
 | `MAX_POSITION_MAGNITUDE` | 10000 | Max position vector |
 | `MAX_VELOCITY_MAGNITUDE` | 1000  | Max velocity vector |
 
-## Feature Flags (`@rbx/config-featureflags`)
+## Feature Flags (`@broblox/config-featureflags`)
 
 Feature flags provide runtime toggles with type safety:
 
 ```typescript
-import { FeatureFlags, validateFeatureFlags } from "@rbx/config-featureflags";
+import { FeatureFlags, validateFeatureFlags } from "@broblox/config-featureflags";
 
 const config: FeatureFlags = {
   newMatchmaking: true,
@@ -88,13 +88,13 @@ Rules:
 
 ### TypeScript path mappings (`tsconfig.roblox.json`)
 
-All `@rbx/*` packages are mapped in `tsconfig.roblox.json` so the roblox-ts compiler can resolve cross-package imports:
+All `@broblox/*` packages are mapped in `tsconfig.roblox.json` so the roblox-ts compiler can resolve cross-package imports:
 
 ```json
 "paths": {
-  "@rbx/shared-types": ["./packages/shared-types/src/index.ts"],
-  "@rbx/constants": ["./packages/constants/src/index.ts"],
-  "@rbx/core": ["./packages/core/src/index.ts"],
+  "@broblox/shared-types": ["./packages/shared-types/src/index.ts"],
+  "@broblox/constants": ["./packages/constants/src/index.ts"],
+  "@broblox/core": ["./packages/core/src/index.ts"],
   ...
 }
 ```
@@ -103,12 +103,12 @@ All `@rbx/*` packages are mapped in `tsconfig.roblox.json` so the roblox-ts comp
 
 ### Vitest aliases (`vitest.config.ts`)
 
-Packages compile to `.luau` in `out/`, which Node.js/Vitest can’t import. The root `vitest.config.ts` maps all `@rbx/*` packages to their TypeScript source:
+Packages compile to `.luau` in `out/`, which Node.js/Vitest can’t import. The root `vitest.config.ts` maps all `@broblox/*` packages to their TypeScript source:
 
 ```typescript
 alias: {
-  "@rbx/shared-types": resolve(__dirname, "packages/shared-types/src/index.ts"),
-  "@rbx/core": resolve(__dirname, "packages/core/src/index.ts"),
+  "@broblox/shared-types": resolve(__dirname, "packages/shared-types/src/index.ts"),
+  "@broblox/core": resolve(__dirname, "packages/core/src/index.ts"),
   ...
 }
 ```

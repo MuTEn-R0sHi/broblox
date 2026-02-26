@@ -4,7 +4,7 @@
  * Cosmetic ownership and equip for obby-themed items.
  */
 
-import { createCosmeticsService } from "@rbx/cosmetics";
+import { createCosmeticsService } from "@broblox/cosmetics";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createCosmeticsService({

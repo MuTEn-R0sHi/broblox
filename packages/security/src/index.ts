@@ -1,5 +1,5 @@
 /**
- * @rbx/security
+ * @broblox/security
  *
  * Security utilities for Roblox games.
  * Provides:

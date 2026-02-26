@@ -118,16 +118,17 @@ Test coverage: 2,400+ tests across 115+ test suites.
 
 ### Phase 4 — Production (operational excellence) ✅
 
-**Status: 🔄 In Progress**
+**Status: COMPLETE**
 
 **Goal:** safe continuous delivery, sustainable operations, and a live public-facing platform.
 
-Shipped:
+Deliverables:
 
 - `packages/codes` v1: redeemable promo codes + dashboard management ✅
 - `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time) ✅
 - `packages/analytics` v1: player behavior events, funnels, retention ✅
 - `packages/notifications` v1: in-game toasts, announcements, news ✅
+- `packages/events` v1: scheduled in-game events with modifiers, flag gates, analytics hooks ✅
 - Game integrations (both starter + obby) ✅
 - Open Cloud publish/promote pipeline + rollback runbooks ✅
 - **`apps/website` v1** — public portal at [broblox-games.com](https://broblox-games.com) ✅
@@ -135,12 +136,13 @@ Shipped:
   - Live player count pills via Roblox public API (60s ISR)
   - Neon cyan/purple brand theme, mobile-responsive nav
   - Deployed to Vercel; domains live
+- Dashboard news CMS — full CRUD with RBAC, audit, and public API ✅
+- Live leaderboard pipeline — OrderedDataStore → dashboard API → website `/rankings` ✅
+- `@broblox/ui` v1: 8 screen templates ✅
 
-Remaining:
+Deferred (nice-to-have):
 
-- Dashboard news management route → feeds `/news` page dynamically
 - Roblox game deep links (both games deployed to Roblox, 6 private experiences; activate when made public)
-- Live leaderboard data pipeline (game server → `@rbx/leaderboards` → dashboard API → website) — **deferred to Phase 6**
 - Dashboard worker jobs: rollouts, ban propagation, scheduled events
 - Performance budgets enforced in CI
 - Roblox Moments integration (auto-detect highlights, viral sharing)
@@ -181,10 +183,11 @@ Test coverage: 2,400+ tests across 115+ test suites.
 - `leaderboards`: cross-game leaderboard infrastructure ✅
 - `analytics`: player behavior events, funnels ✅
 - `notifications`: in-game toasts, announcements ✅
+- `events`: scheduled in-game events with modifiers + flag gates ✅
 - `apps/website`: public portal, games, rankings, news — deployed ✅
 - Dashboard news CMS: full CRUD with public API ✅
 - Live leaderboard pipeline: OrderedDataStore → API → website ✅
-- `@rbx/ui` v1: 8 screen templates ✅
+- `@broblox/ui` v1: 8 screen templates ✅
 
 ### Phase 5a — Foundation (Complete ✅)
 
@@ -200,6 +203,7 @@ Test coverage: 2,400+ tests across 115+ test suites.
 - `gacha`: loot tables, weighted rolls, pity system (20 tests) ✅
 - `cosmetics`: cosmetic registry, per-player ownership & equipping (26 tests) ✅
 - `battle-pass`: seasonal tiers, free/premium tracks, XP progression (29 tests) ✅
+- `marketplace`: MonetizationService wrapper — developer products, game passes, receipt validation (47 tests) ✅
 - Game integrations: starter + obby service files ✅
 - `bro-companion`: LittleBro cross-game mascot (future)
 

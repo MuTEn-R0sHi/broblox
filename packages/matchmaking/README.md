@@ -1,4 +1,4 @@
-# @rbx/matchmaking
+# @broblox/matchmaking
 
 Matchmaking and match lifecycle management for competitive games.
 
@@ -13,9 +13,9 @@ This package provides the infrastructure for competitive matches:
 
 ## Dependencies
 
-- `@rbx/core` — Logging, cleanup utilities
-- `@rbx/shared-types` — Type definitions
-- `@rbx/constants` — Match constants
+- `@broblox/core` — Logging, cleanup utilities
+- `@broblox/shared-types` — Type definitions
+- `@broblox/constants` — Match constants
 
 ## Architecture
 
@@ -46,7 +46,7 @@ Queue.join(player, {
 ### Match Lifecycle
 
 ```typescript
-import { Match, MatchState } from "@rbx/matchmaking";
+import { Match, MatchState } from "@broblox/matchmaking";
 
 // Create match from queue pop
 const match = Match.create({
@@ -64,7 +64,7 @@ match.end(results); // IN_PROGRESS → ENDING → COMPLETED
 ## Usage
 
 ```typescript
-import { MatchmakingService, MatchEvents } from "@rbx/matchmaking";
+import { MatchmakingService, MatchEvents } from "@broblox/matchmaking";
 
 // Listen for match found
 MatchEvents.onMatchFound.Connect((match) => {

@@ -45,7 +45,7 @@ Rationale:
 ```typescript
 // packages/net/src/validation.ts
 import { t } from "@rbxts/t";
-import { ErrorCode, Result } from "@rbx/shared-types";
+import { ErrorCode, Result } from "@broblox/shared-types";
 
 export interface ValidationResult<T> {
   ok: true;

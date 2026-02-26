@@ -5,8 +5,8 @@
  * a news feed of items (patch notes, events, etc.).
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type { AnnouncementDefinition, NewsItem, NotificationsConfig } from "./types";
 import { NotificationStore } from "./notification-store";
 

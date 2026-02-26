@@ -2,13 +2,13 @@
  * Data Service
  * Handles player data persistence.
  *
- * Uses the @rbx/data createDataService factory for the core session/store
+ * Uses the @broblox/data createDataService factory for the core session/store
  * lifecycle (auto-save, retry, session locking, graceful shutdown).
  * Game-specific mutations and timers are layered on top via the factory handle.
  */
 
-import { Service, createLogger } from "@rbx/core";
-import { createDataService } from "@rbx/data";
+import { Service, createLogger } from "@broblox/core";
+import { createDataService } from "@broblox/data";
 import { ObbyPlayerData, StageProgress } from "shared/types";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

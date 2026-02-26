@@ -4,7 +4,7 @@
  * Egg hatching system with weighted loot tables and pity.
  */
 
-import { createGachaService } from "@rbx/gacha";
+import { createGachaService } from "@broblox/gacha";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createGachaService({

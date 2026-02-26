@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mockRobloxGlobals, resetPlayerIdCounter } from "@rbx/testing";
+import { mockRobloxGlobals, resetPlayerIdCounter } from "@broblox/testing";
 
 // ============================================================================
 // Setup

@@ -1,5 +1,5 @@
 /**
- * @rbx/tutorial — Tests
+ * @broblox/tutorial — Tests
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

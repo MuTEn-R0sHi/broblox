@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals } from "@rbx/testing";
+import { mockRobloxGlobals } from "@broblox/testing";
 import {
   validateHit,
   isInLagWindow,
@@ -20,7 +20,7 @@ import {
   resetRaycastProvider,
 } from "./hit-validation";
 import type { HitIntent, Vector3Like, SuspiciousHitEvent, HitValidationResult } from "./types";
-import type { PlayerId } from "@rbx/shared-types";
+import type { PlayerId } from "@broblox/shared-types";
 
 // Mock Roblox globals with controllable time
 let mockTime = 0;

@@ -1,4 +1,4 @@
-import { ErrorCode, Result, err, ok } from "@rbx/shared-types";
+import { ErrorCode, Result, err, ok } from "@broblox/shared-types";
 
 // ============================================================================
 // Types

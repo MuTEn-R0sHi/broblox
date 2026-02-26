@@ -1,11 +1,11 @@
 /**
- * @rbx/world-systems — World Manager
+ * @broblox/world-systems — World Manager
  *
  * Manages day/night cycle, weather transitions, and season progression.
  * Pure logic layer — rendering hooks are triggered via callbacks.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type {
   WorldSystemsConfig,
   WorldState,

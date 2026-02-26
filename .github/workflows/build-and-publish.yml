@@ -59,7 +59,7 @@ jobs:
               echo "universe_id=${{ vars.OBBY_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
               echo "place_id=${{ vars.OBBY_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
             fi
-            echo "build_cmd=pnpm --filter @rbx/game-obby run build" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm --filter @broblox/game-obby run build" >> $GITHUB_OUTPUT
             echo "game_path=games/obby" >> $GITHUB_OUTPUT
           fi
 

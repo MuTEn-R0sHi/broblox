@@ -1,17 +1,17 @@
 # Reference: UI Components
 
-The `@rbx/ui` package provides reusable UI components with theming support for Roblox games.
+The `@broblox/ui` package provides reusable UI components with theming support for Roblox games.
 
 ## Installation
 
 ```bash
-pnpm add @rbx/ui
+pnpm add @broblox/ui
 ```
 
 ## Quick Start
 
 ```typescript
-import { createFrame, createLabel, createButton, setTheme, DarkTheme } from "@rbx/ui";
+import { createFrame, createLabel, createButton, setTheme, DarkTheme } from "@broblox/ui";
 
 // Set the theme
 setTheme(DarkTheme);
@@ -48,7 +48,7 @@ const button = createButton({
 ### Built-in Themes
 
 ```typescript
-import { setTheme, getTheme, DarkTheme, LightTheme } from "@rbx/ui";
+import { setTheme, getTheme, DarkTheme, LightTheme } from "@broblox/ui";
 
 // Use dark theme (default)
 setTheme(DarkTheme);
@@ -86,7 +86,7 @@ const theme = getTheme();
 ### Custom Themes
 
 ```typescript
-import { setTheme, rgb, hex } from "@rbx/ui";
+import { setTheme, rgb, hex } from "@broblox/ui";
 
 const CustomTheme = {
   background: rgb(15, 15, 25),
@@ -112,7 +112,7 @@ setTheme(CustomTheme);
 ### Color Utilities
 
 ```typescript
-import { rgb, hex, toColor3, darken, lighten } from "@rbx/ui";
+import { rgb, hex, toColor3, darken, lighten } from "@broblox/ui";
 
 // Create colors
 const red = rgb(255, 0, 0);
@@ -132,7 +132,7 @@ const lighter = lighten(blue, 0.2); // 20% lighter
 ### Frames
 
 ```typescript
-import { createFrame } from "@rbx/ui";
+import { createFrame } from "@broblox/ui";
 
 const frame = createFrame({
   size: { x: 300, y: 200 }, // Pixels or scale (0-1)
@@ -153,7 +153,7 @@ const frame = createFrame({
 ### Labels
 
 ```typescript
-import { createLabel } from "@rbx/ui";
+import { createLabel } from "@broblox/ui";
 
 const label = createLabel({
   text: "Hello World",
@@ -174,7 +174,7 @@ const label = createLabel({
 ### Buttons
 
 ```typescript
-import { createButton } from "@rbx/ui";
+import { createButton } from "@broblox/ui";
 
 const button = createButton({
   text: "Click Me",
@@ -196,7 +196,7 @@ const button = createButton({
 ### Scroll Frames
 
 ```typescript
-import { createScrollFrame } from "@rbx/ui";
+import { createScrollFrame } from "@broblox/ui";
 
 const scrollFrame = createScrollFrame({
   size: { x: 300, y: 400 },
@@ -214,7 +214,7 @@ const scrollFrame = createScrollFrame({
 ### Corner Radius
 
 ```typescript
-import { addCorner } from "@rbx/ui";
+import { addCorner } from "@broblox/ui";
 
 // Add rounded corners
 addCorner(frame, 8); // 8 pixel radius
@@ -224,7 +224,7 @@ addCorner(frame, { scale: 0.1 }); // 10% of size
 ### Padding
 
 ```typescript
-import { addPadding } from "@rbx/ui";
+import { addPadding } from "@broblox/ui";
 
 // Uniform padding
 addPadding(frame, 16);
@@ -241,7 +241,7 @@ addPadding(frame, {
 ### List Layout
 
 ```typescript
-import { addListLayout } from "@rbx/ui";
+import { addListLayout } from "@broblox/ui";
 
 // Vertical list
 addListLayout(frame, {
@@ -256,7 +256,7 @@ addListLayout(frame, {
 ### Grid Layout
 
 ```typescript
-import { addGridLayout } from "@rbx/ui";
+import { addGridLayout } from "@broblox/ui";
 
 addGridLayout(frame, {
   cellSize: { x: 100, y: 100 },
@@ -271,7 +271,7 @@ addGridLayout(frame, {
 ### Stroke
 
 ```typescript
-import { addStroke } from "@rbx/ui";
+import { addStroke } from "@broblox/ui";
 
 addStroke(frame, {
   color: "border",
@@ -284,7 +284,7 @@ addStroke(frame, {
 ## Size Utilities
 
 ```typescript
-import { px, scale, centerAnchor, centerPosition } from "@rbx/ui";
+import { px, scale, centerAnchor, centerPosition } from "@broblox/ui";
 
 // Pixel sizes
 const size1 = px(300, 200); // UDim2.fromOffset(300, 200)
@@ -307,7 +307,7 @@ frame.Position = centerPosition(); // UDim2(0.5, 0, 0.5, 0)
 Modal dialog with title, content, and buttons.
 
 ```typescript
-import { createDialog } from "@rbx/ui";
+import { createDialog } from "@broblox/ui";
 
 const cleanup = createDialog({
   title: "Confirm Action",
@@ -336,7 +336,7 @@ const cleanup = createDialog({
 Temporary notification message.
 
 ```typescript
-import { showToast } from "@rbx/ui";
+import { showToast } from "@broblox/ui";
 
 // Simple toast
 showToast({
@@ -359,7 +359,7 @@ showToast({
 Scrollable list of items.
 
 ```typescript
-import { createListView } from "@rbx/ui";
+import { createListView } from "@broblox/ui";
 
 const listView = createListView({
   items: [
@@ -389,7 +389,7 @@ listView.setItems(newItems);
 Progress indicator.
 
 ```typescript
-import { createProgressBar } from "@rbx/ui";
+import { createProgressBar } from "@broblox/ui";
 
 const progressBar = createProgressBar({
   progress: 0.5, // 0-1
@@ -410,7 +410,7 @@ progressBar.setProgress(0.75);
 Loading indicator.
 
 ```typescript
-import { createSpinner } from "@rbx/ui";
+import { createSpinner } from "@broblox/ui";
 
 const spinner = createSpinner({
   size: 32, // Diameter in pixels
@@ -500,7 +500,7 @@ import {
   addListLayout,
   setTheme,
   DarkTheme,
-} from "@rbx/ui";
+} from "@broblox/ui";
 
 // Set theme
 setTheme(DarkTheme);

@@ -5,7 +5,7 @@
  * RetentionTracker into a single Service with player lifecycle helpers.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { AnalyticsConfig, EventDefinition, FunnelDefinition } from "./types";
 import { EventTracker } from "./event-tracker";
 import { FunnelTracker } from "./funnel-tracker";

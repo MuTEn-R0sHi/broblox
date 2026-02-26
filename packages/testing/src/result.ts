@@ -1,6 +1,6 @@
 /**
  * Result type utilities for Node.js/Vitest tests.
- * Mirrors the API of @rbx/shared-types/result.ts
+ * Mirrors the API of @broblox/shared-types/result.ts
  *
  * Note: This is a Node.js-compatible version that throws Error
  * instead of calling Roblox's error() function.

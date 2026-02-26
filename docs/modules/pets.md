@@ -1,6 +1,6 @@
 # Modules: Pets
 
-Pet system with hatching, equipping, leveling, evolution, and abilities (`@rbx/pets`). **Status: Implemented** (45 tests).
+Pet system with hatching, equipping, leveling, evolution, and abilities (`@broblox/pets`). **Status: Implemented** (45 tests).
 
 ## Purpose
 

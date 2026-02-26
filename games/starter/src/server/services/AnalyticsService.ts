@@ -2,10 +2,10 @@
  * Analytics Service — Starter Game
  *
  * Sets up event tracking, funnels, sessions, and retention.
- * Uses the @rbx/analytics package.
+ * Uses the @broblox/analytics package.
  */
 
-import { createAnalyticsService } from "@rbx/analytics";
+import { createAnalyticsService } from "@broblox/analytics";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createAnalyticsService({

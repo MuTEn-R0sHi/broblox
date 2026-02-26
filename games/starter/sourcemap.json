@@ -26,7 +26,7 @@
               "className": "Folder",
               "children": [
                 {
-                  "name": "@rbx",
+                  "name": "@broblox",
                   "className": "Folder",
                   "children": [
                     {
@@ -36,7 +36,7 @@
                         {
                           "name": "out",
                           "className": "ModuleScript",
-                          "filePaths": ["node_modules/@rbx/config-featureflags/out/init.luau"]
+                          "filePaths": ["node_modules/@broblox/config-featureflags/out/init.luau"]
                         }
                       ]
                     },
@@ -47,27 +47,27 @@
                         {
                           "name": "out",
                           "className": "ModuleScript",
-                          "filePaths": ["node_modules/@rbx/constants/out/init.luau"],
+                          "filePaths": ["node_modules/@broblox/constants/out/init.luau"],
                           "children": [
                             {
                               "name": "build",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/constants/out/build.luau"]
+                              "filePaths": ["node_modules/@broblox/constants/out/build.luau"]
                             },
                             {
                               "name": "limits",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/constants/out/limits.luau"]
+                              "filePaths": ["node_modules/@broblox/constants/out/limits.luau"]
                             },
                             {
                               "name": "timeouts",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/constants/out/timeouts.luau"]
+                              "filePaths": ["node_modules/@broblox/constants/out/timeouts.luau"]
                             },
                             {
                               "name": "validation",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/constants/out/validation.luau"]
+                              "filePaths": ["node_modules/@broblox/constants/out/validation.luau"]
                             }
                           ]
                         }
@@ -80,12 +80,12 @@
                         {
                           "name": "out",
                           "className": "ModuleScript",
-                          "filePaths": ["node_modules/@rbx/core/out/init.luau"],
+                          "filePaths": ["node_modules/@broblox/core/out/init.luau"],
                           "children": [
                             {
                               "name": "application",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/core/out/application.luau"]
+                              "filePaths": ["node_modules/@broblox/core/out/application.luau"]
                             }
                           ]
                         }
@@ -98,27 +98,27 @@
                         {
                           "name": "out",
                           "className": "ModuleScript",
-                          "filePaths": ["node_modules/@rbx/net/out/init.luau"],
+                          "filePaths": ["node_modules/@broblox/net/out/init.luau"],
                           "children": [
                             {
                               "name": "client",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/net/out/client.luau"]
+                              "filePaths": ["node_modules/@broblox/net/out/client.luau"]
                             },
                             {
                               "name": "ratelimit",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/net/out/ratelimit.luau"]
+                              "filePaths": ["node_modules/@broblox/net/out/ratelimit.luau"]
                             },
                             {
                               "name": "remotes",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/net/out/remotes.luau"]
+                              "filePaths": ["node_modules/@broblox/net/out/remotes.luau"]
                             },
                             {
                               "name": "validation",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/net/out/validation.luau"]
+                              "filePaths": ["node_modules/@broblox/net/out/validation.luau"]
                             }
                           ]
                         }
@@ -131,22 +131,22 @@
                         {
                           "name": "out",
                           "className": "ModuleScript",
-                          "filePaths": ["node_modules/@rbx/shared-types/out/init.luau"],
+                          "filePaths": ["node_modules/@broblox/shared-types/out/init.luau"],
                           "children": [
                             {
                               "name": "do-action",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/shared-types/out/do-action.luau"]
+                              "filePaths": ["node_modules/@broblox/shared-types/out/do-action.luau"]
                             },
                             {
                               "name": "error-codes",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/shared-types/out/error-codes.luau"]
+                              "filePaths": ["node_modules/@broblox/shared-types/out/error-codes.luau"]
                             },
                             {
                               "name": "result",
                               "className": "ModuleScript",
-                              "filePaths": ["node_modules/@rbx/shared-types/out/result.luau"]
+                              "filePaths": ["node_modules/@broblox/shared-types/out/result.luau"]
                             }
                           ]
                         }

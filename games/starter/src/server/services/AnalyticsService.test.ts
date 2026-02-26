@@ -39,7 +39,7 @@ describe("AnalyticsService (starter)", () => {
       cleanupPlayer: vi.fn(),
     };
 
-    vi.doMock("@rbx/analytics", () => ({
+    vi.doMock("@broblox/analytics", () => ({
       createAnalyticsService: vi.fn((config: Record<string, unknown>) => {
         capturedConfig = config;
         // Wire lifecycle callbacks so we can verify them

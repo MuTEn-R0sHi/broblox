@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mockRobloxGlobals } from "@rbx/testing";
+import { mockRobloxGlobals } from "@broblox/testing";
 
 // ============================================================================
 // Vector3 Mock

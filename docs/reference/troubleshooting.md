@@ -41,14 +41,14 @@ out is not a valid member of ModuleScript "ReplicatedStorage.include.node_module
 ```json
 // ❌ Wrong - flat structure
 "shared-types": {
-  "$path": "node_modules/@rbx/shared-types/out"
+  "$path": "node_modules/@broblox/shared-types/out"
 }
 
 // ✅ Correct - nested out folder
 "shared-types": {
   "$className": "Folder",
   "out": {
-    "$path": "node_modules/@rbx/shared-types/out"
+    "$path": "node_modules/@broblox/shared-types/out"
   }
 }
 ```
@@ -56,7 +56,7 @@ out is not a valid member of ModuleScript "ReplicatedStorage.include.node_module
 ### "Could not find Rojo data" during build
 
 ```
-error TS roblox-ts: Could not find Rojo data. There is no $path in your Rojo config that covers node_modules/@rbx/constants/src/init.luau
+error TS roblox-ts: Could not find Rojo data. There is no $path in your Rojo config that covers node_modules/@broblox/constants/src/init.luau
 ```
 
 **Cause**: Package's `package.json` has `"main": "src/index.ts"` instead of `"main": "out"`

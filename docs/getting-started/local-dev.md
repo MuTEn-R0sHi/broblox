@@ -87,7 +87,7 @@ pnpm prisma db push
 ```bash
 pnpm dev
 # or from repo root:
-pnpm --filter @rbx/dashboard dev
+pnpm --filter @broblox/dashboard dev
 ```
 
 Open http://localhost:3000
@@ -126,7 +126,7 @@ The build compiles shared packages first, then the game:
 - Build once: `pnpm game:obby:build`
 - Watch: `pnpm game:obby:dev`
 
-> **Note:** `build:starter` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @rbx/game-starter build` directly.
+> **Note:** `build:starter` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @broblox/game-starter build` directly.
 
 If you prefer using repo-level scripts for consistency, the equivalent is:
 
@@ -194,7 +194,7 @@ NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER=""
 ### Run development server
 
 ```bash
-pnpm --filter @rbx/website dev
+pnpm --filter @broblox/website dev
 # or from apps/website:
 pnpm dev
 ```
@@ -204,5 +204,5 @@ Open http://localhost:3001
 ### Run tests
 
 ```bash
-pnpm --filter @rbx/website test
+pnpm --filter @broblox/website test
 ```

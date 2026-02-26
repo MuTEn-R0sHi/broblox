@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags — Rollout history / audit log
+ * @broblox/config-featureflags — Rollout history / audit log
  */
 
 import type { FlagValue, FlagChangeRecord } from "./types";

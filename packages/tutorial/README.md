@@ -1,4 +1,4 @@
-# @rbx/tutorial
+# @broblox/tutorial
 
 First-time user experience (FTUE) and guided tutorial framework.
 
@@ -14,7 +14,7 @@ This package provides a tutorial system:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
+- `@broblox/core` — Service lifecycle, logging
 
 ## Architecture
 
@@ -36,7 +36,7 @@ This package provides a tutorial system:
 ## Usage
 
 ```typescript
-import { createTutorialService } from "@rbx/tutorial";
+import { createTutorialService } from "@broblox/tutorial";
 
 const tutorial = createTutorialService({
   sequences: [

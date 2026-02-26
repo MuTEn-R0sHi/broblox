@@ -1,11 +1,11 @@
 # Reference: Observability
 
-The `@rbx/observability` package provides telemetry, metrics, span tracing, and correlation context for game instrumentation.
+The `@broblox/observability` package provides telemetry, metrics, span tracing, and correlation context for game instrumentation.
 
 ## Installation
 
 ```bash
-pnpm add @rbx/observability
+pnpm add @broblox/observability
 ```
 
 ## Telemetry
@@ -13,7 +13,7 @@ pnpm add @rbx/observability
 Emit structured events for analytics and debugging.
 
 ```typescript
-import { emit, emitPlayer } from "@rbx/observability";
+import { emit, emitPlayer } from "@broblox/observability";
 
 // Basic event
 emit("game", "player_joined", { region: "us-east" });
@@ -41,7 +41,7 @@ interface TelemetryEvent {
 Track numeric measurements over time using direct class constructors.
 
 ```typescript
-import { Counter, Gauge, Histogram, time } from "@rbx/observability";
+import { Counter, Gauge, Histogram, time } from "@broblox/observability";
 
 const requests = new Counter("requests_total", { endpoint: "handshake" });
 const errors = new Counter("errors_total", { type: "validation" });
@@ -79,7 +79,7 @@ instead.
 Track operation timing and nested calls.
 
 ```typescript
-import { startSpan, withSpan } from "@rbx/observability";
+import { startSpan, withSpan } from "@broblox/observability";
 
 // Manual span management
 const span = startSpan("process_action");
@@ -112,7 +112,7 @@ withSpan("handle_request", {}, () => {
 Propagate request-scoped data across async operations.
 
 ```typescript
-import { initContext, getContext, setContext, getPlayerContext } from "@rbx/observability";
+import { initContext, getContext, setContext, getPlayerContext } from "@broblox/observability";
 
 // Initialize once at startup
 initContext();
@@ -183,7 +183,7 @@ withSpan("handle_remote", { remote: "DoAction" }, () => {
 
 ## Node/Vitest compatibility
 
-`@rbx/observability` is written in a roblox-ts style, where strings/arrays often use Luau idioms like `.size()`. The implementation includes internal fallbacks so it can execute under Node-based unit tests (Vitest) without requiring global prototype polyfills.
+`@broblox/observability` is written in a roblox-ts style, where strings/arrays often use Luau idioms like `.size()`. The implementation includes internal fallbacks so it can execute under Node-based unit tests (Vitest) without requiring global prototype polyfills.
 
 ## Built-in metrics
 
@@ -210,8 +210,8 @@ if (math.random() < 0.01) {
 ## Integration Example
 
 ```typescript
-import { emit, withSpan, setContext } from "@rbx/observability";
-import { Counter, Histogram } from "@rbx/observability";
+import { emit, withSpan, setContext } from "@broblox/observability";
+import { Counter, Histogram } from "@broblox/observability";
 
 const actionsRejected = new Counter("action_rejected");
 const actionsProcessed = new Counter("action_processed");

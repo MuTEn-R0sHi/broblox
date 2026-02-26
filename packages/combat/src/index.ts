@@ -1,5 +1,5 @@
 /**
- * @rbx/combat
+ * @broblox/combat
  * Server-authoritative combat systems for PvP.
  *
  * **Integration status:**

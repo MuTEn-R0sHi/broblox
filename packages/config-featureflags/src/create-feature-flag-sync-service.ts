@@ -5,7 +5,7 @@
  * DataStore and refreshes on MessagingService invalidation.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { initFeatureFlagSync, type FeatureFlagSyncConfig } from "./sync";
 
 export interface FeatureFlagSyncServiceConfig {

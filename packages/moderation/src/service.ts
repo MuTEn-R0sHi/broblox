@@ -5,8 +5,8 @@
  * Combines ban and mute stores with cross-server synchronization.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter, Histogram } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter, Histogram } from "@broblox/observability";
 import { BanStore } from "./ban-store";
 import { MuteStore } from "./mute-store";
 import {

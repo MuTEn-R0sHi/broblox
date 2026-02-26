@@ -23,7 +23,7 @@ Networking is the primary exploit surface. We treat it like a public API.
 
 ## Remote registry
 
-Single source of truth (implemented in `@rbx/net`):
+Single source of truth (implemented in `@broblox/net`):
 
 - A `net` registry defines all remotes in code.
 - Registry generates server/client stubs.
@@ -101,12 +101,12 @@ interface RateLimitConfig {
 
 ## Client utilities
 
-The `@rbx/net` package provides utilities for reliable remote calls:
+The `@broblox/net` package provides utilities for reliable remote calls:
 
 ### Retry with backoff
 
 ```typescript
-import { withRetry } from "@rbx/net";
+import { withRetry } from "@broblox/net";
 
 const result = await withRetry(() => Remotes.fetchInventory(), { maxAttempts: 3, backoffMs: 1000 });
 ```
@@ -114,7 +114,7 @@ const result = await withRetry(() => Remotes.fetchInventory(), { maxAttempts: 3,
 ### Timeout wrapper
 
 ```typescript
-import { withTimeout } from "@rbx/net";
+import { withTimeout } from "@broblox/net";
 
 const result = await withTimeout(() => Remotes.slowOperation(), { timeoutMs: 5000 });
 ```

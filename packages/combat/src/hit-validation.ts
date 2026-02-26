@@ -13,8 +13,8 @@
  * @note Uses roblox-ts compatible patterns for Luau compilation.
  */
 
-import { Result, ok, PlayerId } from "@rbx/shared-types";
-import { arrayRemoveAt } from "@rbx/core";
+import { Result, ok, PlayerId } from "@broblox/shared-types";
+import { arrayRemoveAt } from "@broblox/core";
 import type {
   HitIntent,
   HitValidationResult,
@@ -147,7 +147,7 @@ export function resetHitValidationConfig(): void {
 /**
  * Set a custom position provider for hit validation.
  *
- * When using `@rbx/movement`, wire positions through here to avoid
+ * When using `@broblox/movement`, wire positions through here to avoid
  * duplicate position tracking. See {@link PositionProvider} for an example.
  */
 export function setPositionProvider(provider: PositionProvider): void {

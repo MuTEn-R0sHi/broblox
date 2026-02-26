@@ -2,11 +2,11 @@
  * Rewards Service — Obby Game
  *
  * Daily login rewards and achievement tracking — obby themed.
- * Uses the @rbx/rewards package.
+ * Uses the @broblox/rewards package.
  */
 
-import { createRewardsService } from "@rbx/rewards";
-import type { DailyRewardDay } from "@rbx/rewards";
+import { createRewardsService } from "@broblox/rewards";
+import type { DailyRewardDay } from "@broblox/rewards";
 import { Players } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";

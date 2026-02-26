@@ -5,7 +5,7 @@
  * detector signal bus and trust-score utilities.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { EnforcementConfig } from "./types";
 import { Enforcer, cleanupEnforcementState } from "./enforcer";
 import { cleanupPlayer } from "./detectors";

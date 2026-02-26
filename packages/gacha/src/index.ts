@@ -1,5 +1,5 @@
 /**
- * @rbx/gacha — Public API
+ * @broblox/gacha — Public API
  */
 
 export type {

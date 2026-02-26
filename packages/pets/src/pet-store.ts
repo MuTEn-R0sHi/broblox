@@ -1,11 +1,11 @@
 /**
- * @rbx/pets — Pet Store
+ * @broblox/pets — Pet Store
  *
  * Per-player pet collection management with leveling, evolution, and equipping.
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type {
   PetInstance,
   PetPlayerData,

@@ -33,13 +33,13 @@ BroCade is designed to be a first-class citizen in the monorepo, leveraging shar
 
 - **Domain logic** in `games/brocade/` (no direct Roblox service calls)
 - **Shared packages** for:
-  - `@rbx/shared-types`: Player, Score, GameMode, Achievement, etc. types
-  - `@rbx/data`: Player profiles, high scores, unlocks, achievements
-  - `@rbx/net`: Typed remotes for game actions, leaderboard updates
-  - `@rbx/security`: Anti-cheat for score validation, input checks
-  - `@rbx/observability`: Telemetry for game sessions, scores, abuse signals
-  - `@rbx/ui`: Arcade hub UI, leaderboard screens, minigame HUDs
-  - `@rbx/config-featureflags`: Feature rollouts, tuning (e.g., event games, score multipliers)
+  - `@broblox/shared-types`: Player, Score, GameMode, Achievement, etc. types
+  - `@broblox/data`: Player profiles, high scores, unlocks, achievements
+  - `@broblox/net`: Typed remotes for game actions, leaderboard updates
+  - `@broblox/security`: Anti-cheat for score validation, input checks
+  - `@broblox/observability`: Telemetry for game sessions, scores, abuse signals
+  - `@broblox/ui`: Arcade hub UI, leaderboard screens, minigame HUDs
+  - `@broblox/config-featureflags`: Feature rollouts, tuning (e.g., event games, score multipliers)
 
 **Game folder provides:**
 
@@ -78,13 +78,13 @@ BroCade is designed to be a first-class citizen in the monorepo, leveraging shar
 - **Game data**: Minigame configs, score history, event participation
 - **Leaderboard data**: Global and friends rankings
 
-Use `@rbx/data` for versioned, migratable persistence. Session locking for profile safety. All grants idempotent.
+Use `@broblox/data` for versioned, migratable persistence. Session locking for profile safety. All grants idempotent.
 
 ---
 
 ## 5. Networking & Remotes
 
-- All remotes defined in `@rbx/net` registry
+- All remotes defined in `@broblox/net` registry
 - Typed payloads, runtime schema validation (`@rbxts/t`)
 - Rate limits on score submissions, game actions
 - Error codes for all failure cases

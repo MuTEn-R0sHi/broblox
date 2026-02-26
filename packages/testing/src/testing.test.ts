@@ -23,7 +23,7 @@ import {
   createErrorResult,
 } from "./factories";
 import { t } from "./t-mock";
-import { ErrorCode, isOk, isErr } from "@rbx/shared-types";
+import { ErrorCode, isOk, isErr } from "@broblox/shared-types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

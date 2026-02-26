@@ -1,5 +1,5 @@
 /**
- * @rbx/observability
+ * @broblox/observability
  *
  * Observability utilities for Roblox games.
  * Provides:

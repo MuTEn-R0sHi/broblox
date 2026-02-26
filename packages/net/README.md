@@ -1,4 +1,4 @@
-# @rbx/net
+# @broblox/net
 
 Networking utilities for secure client-server communication.
 
@@ -13,7 +13,7 @@ This package provides:
 
 ## Dependencies
 
-- `@rbx/shared-types` - For Result type and ErrorCode enum
+- `@broblox/shared-types` - For Result type and ErrorCode enum
 - `@rbxts/t` - For runtime type checking
 
 ## Key Features
@@ -23,7 +23,7 @@ This package provides:
 Never trust client input. Validate all incoming payloads using `@rbxts/t` schemas and the `validate` helper:
 
 ```typescript
-import { validate, bounded } from "@rbx/net";
+import { validate, bounded } from "@broblox/net";
 import { t } from "@rbxts/t";
 
 const handshakeSchema = t.strictInterface({
@@ -58,8 +58,8 @@ if (!result.ok) return result; // includes retryAfterMs
 `createServerRegistry` is the server entry point. Pass an optional options object to configure folder name and the security/telemetry hook:
 
 ```typescript
-import { createServerRegistry } from "@rbx/net";
-import { reportViolation } from "@rbx/security";
+import { createServerRegistry } from "@broblox/net";
+import { reportViolation } from "@broblox/security";
 
 const registry = createServerRegistry(MyRemotes, {
   folderName: "MyGameRemotes", // optional, default: "Remotes"
@@ -116,7 +116,7 @@ createServerRegistry<T>(registry: T, options?: {
 }): ServerRemoteRegistry<T>
 ```
 
-`onRateLimited` is the bridge between the network layer and `@rbx/security`. Every rate-limit drop fires this callback, letting you call `reportViolation` to feed the enforcer pipeline:
+`onRateLimited` is the bridge between the network layer and `@broblox/security`. Every rate-limit drop fires this callback, letting you call `reportViolation` to feed the enforcer pipeline:
 
 ```
 Client request → rate limit hit → onRateLimited → reportViolation → Enforcer → kick/ban
@@ -147,6 +147,6 @@ See [docs/security/threat-model.md](../../docs/security/threat-model.md) for ful
 
 ## Architecture Notes
 
-This package sits between `@rbx/core` and game code. It provides the secure networking layer but doesn't handle game-specific logic.
+This package sits between `@broblox/core` and game code. It provides the secure networking layer but doesn't handle game-specific logic.
 
 See [docs/architecture/networking.md](../../docs/architecture/networking.md) for design details.

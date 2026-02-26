@@ -22,7 +22,7 @@ Every log/event should attach:
 
 ## Event taxonomy
 
-Implemented in `@rbx/observability` and `@rbx/analytics`:
+Implemented in `@broblox/observability` and `@broblox/analytics`:
 
 - `security.*` (violations, detectors)
 - `match.*` (start/end, team composition)
@@ -39,10 +39,10 @@ Implemented in `@rbx/observability` and `@rbx/analytics`:
 
 ### Phase 1: Structured console logs
 
-Events are logged to console as structured JSON using `@rbx/observability`:
+Events are logged to console as structured JSON using `@broblox/observability`:
 
 ```typescript
-import { emit } from "@rbx/observability";
+import { emit } from "@broblox/observability";
 
 // Usage
 emit({ category: "security", action: "invalid_payload", remote: "Intent_DoAction", playerId: 123 });

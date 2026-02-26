@@ -1,5 +1,5 @@
 /**
- * @rbx/battle-pass — Battle Pass Store
+ * @broblox/battle-pass — Battle Pass Store
  *
  * Handles XP granting, tier progression, reward claims, and persistence.
  */

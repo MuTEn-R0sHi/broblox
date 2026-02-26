@@ -10,8 +10,8 @@ import {
   defineClientEvent,
   validateHandshakePayload,
   validateDoActionPayload,
-} from "@rbx/net";
-import type { HandshakeResponse } from "@rbx/shared-types";
+} from "@broblox/net";
+import type { HandshakeResponse } from "@broblox/shared-types";
 
 // ============================================================================
 // Payload Types
@@ -26,7 +26,7 @@ export interface HandshakeRequest {
 
 /**
  * Handshake response from server.
- * @see @rbx/shared-types HandshakeResponse
+ * @see @broblox/shared-types HandshakeResponse
  */
 export type { HandshakeResponse };
 

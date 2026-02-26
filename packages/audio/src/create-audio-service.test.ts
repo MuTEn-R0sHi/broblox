@@ -22,7 +22,7 @@ describe("createAudioService", () => {
       startPlaylist: vi.fn(),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./sound-registry", () => ({

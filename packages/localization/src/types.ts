@@ -1,5 +1,5 @@
 /**
- * @rbx/localization — Type Definitions
+ * @broblox/localization — Type Definitions
  *
  * Types for locales, string tables, interpolation, and pluralization.
  */

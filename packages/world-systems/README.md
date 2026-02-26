@@ -1,4 +1,4 @@
-# @rbx/world-systems
+# @broblox/world-systems
 
 Day/night cycle, weather, and world environment management.
 
@@ -13,7 +13,7 @@ This package provides world environment systems:
 
 ## Dependencies
 
-- `@rbx/core` — Service lifecycle, logging
+- `@broblox/core` — Service lifecycle, logging
 
 ## Architecture
 
@@ -36,7 +36,7 @@ This package provides world environment systems:
 ## Usage
 
 ```typescript
-import { createWorldService } from "@rbx/world-systems";
+import { createWorldService } from "@broblox/world-systems";
 
 const world = createWorldService({
   cycleDurationSeconds: 720, // 12-minute day

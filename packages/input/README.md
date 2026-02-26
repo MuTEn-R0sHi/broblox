@@ -1,4 +1,4 @@
-# @rbx/input
+# @broblox/input
 
 Input abstraction for Roblox games — unified keyboard, gamepad, and touch controls.
 
@@ -18,7 +18,7 @@ This package provides a device-agnostic input system:
 Define actions once, bind to multiple inputs:
 
 ```typescript
-import { InputAction, InputManager } from "@rbx/input";
+import { InputAction, InputManager } from "@broblox/input";
 
 // Actions are device-agnostic
 const actions = {
@@ -45,7 +45,7 @@ const bindings = {
 ### Device Detection
 
 ```typescript
-import { DeviceManager } from "@rbx/input";
+import { DeviceManager } from "@broblox/input";
 
 // Get current input device
 const device = DeviceManager.getCurrentDevice();
@@ -60,7 +60,7 @@ DeviceManager.onDeviceChanged.Connect((newDevice) => {
 ### Movement State
 
 ```typescript
-import { InputManager } from "@rbx/input";
+import { InputManager } from "@broblox/input";
 
 // Get normalized movement vector
 const movement = InputManager.getMovementState();

@@ -1,4 +1,4 @@
-# @rbx/testing
+# @broblox/testing
 
 Shared test utilities, mocks, and helpers for the BroBlox monorepo.
 
@@ -13,7 +13,7 @@ This package provides:
 ## Usage
 
 ```typescript
-import { ErrorCode, ok, err, mockRobloxGlobals, createMockRateLimiter } from "@rbx/testing";
+import { ErrorCode, ok, err, mockRobloxGlobals, createMockRateLimiter } from "@broblox/testing";
 
 describe("my test", () => {
   beforeAll(() => {
@@ -29,7 +29,7 @@ describe("my test", () => {
 
 ## Why this exists
 
-The actual `@rbx/shared-types` and other packages use roblox-ts and Roblox globals (`os.clock()`, `typeOf()`, etc.) that don't exist in Node.js. This package provides compatible implementations for testing.
+The actual `@broblox/shared-types` and other packages use roblox-ts and Roblox globals (`os.clock()`, `typeOf()`, etc.) that don't exist in Node.js. This package provides compatible implementations for testing.
 
 ## Guidelines
 

@@ -1,6 +1,6 @@
 # Modules: Quests
 
-Quest system with objectives, scheduling, and progress tracking (`@rbx/quests`). **Status: Implemented** (53 tests).
+Quest system with objectives, scheduling, and progress tracking (`@broblox/quests`). **Status: Implemented** (53 tests).
 
 ## Purpose
 

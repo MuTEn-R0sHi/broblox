@@ -31,6 +31,6 @@ mkdocs build              # Build static docs site
 ## Per-package commands
 
 ```bash
-pnpm --filter @rbx/net test       # Test a single package
-pnpm --filter @rbx/core typecheck # Typecheck a single package
+pnpm --filter @broblox/net test       # Test a single package
+pnpm --filter @broblox/core typecheck # Typecheck a single package
 ```

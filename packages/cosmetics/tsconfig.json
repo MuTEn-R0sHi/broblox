@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@rbx/*": ["../*/src"]
+      "@broblox/*": ["../*/src"]
     }
   },
   "include": ["src/**/*.ts", "../../types/**/*.d.ts"]

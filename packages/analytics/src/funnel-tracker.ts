@@ -5,8 +5,8 @@
  * (e.g., tutorial completion, onboarding, purchase flow).
  */
 
-import { createLogger } from "@rbx/core";
-import { Counter } from "@rbx/observability";
+import { createLogger } from "@broblox/core";
+import { Counter } from "@broblox/observability";
 import type { FunnelDefinition, FunnelProgress, FunnelStats, AnalyticsConfig } from "./types";
 
 const funnelEnters = new Counter("analytics_funnel_enters");

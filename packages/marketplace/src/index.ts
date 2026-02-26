@@ -1,12 +1,12 @@
 /**
- * @rbx/marketplace — Public API
+ * @broblox/marketplace — Public API
  *
  * Roblox MarketplaceService wrapper for developer products, game passes,
  * and idempotent purchase receipt validation.
  *
  * @example
  * ```ts
- * import { createMarketplaceService } from "@rbx/marketplace";
+ * import { createMarketplaceService } from "@broblox/marketplace";
  *
  * const mps = game.GetService("MarketplaceService");
  * const handle = createMarketplaceService({

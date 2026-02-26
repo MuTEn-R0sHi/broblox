@@ -18,7 +18,7 @@
  *   - playerId + config storage
  */
 
-import { createLogger, Logger } from "@rbx/core";
+import { createLogger, Logger } from "@broblox/core";
 
 declare const game: {
   GetService(name: string): unknown;

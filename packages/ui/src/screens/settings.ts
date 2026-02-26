@@ -6,7 +6,7 @@
  *
  * Usage:
  * ```ts
- * import { createSettingsScreen } from "@rbx/ui/screens/settings";
+ * import { createSettingsScreen } from "@broblox/ui/screens/settings";
  *
  * const settings = createSettingsScreen(playerGui, {
  *   getVolumes: () => audio.getChannelVolumes(),
@@ -18,9 +18,9 @@
  * ```
  */
 
-import { createLogger } from "@rbx/core";
-import type { AudioChannel } from "@rbx/audio";
-import type { InputBinding } from "@rbx/input";
+import { createLogger } from "@broblox/core";
+import type { AudioChannel } from "@broblox/audio";
+import type { InputBinding } from "@broblox/input";
 import {
   createFrame,
   createLabel,

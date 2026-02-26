@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/shared-types",
+  "name": "@broblox/shared-types",
   "version": "0.2.0",
   "description": "Shared TypeScript types and interfaces across all packages",
   "private": true,
@@ -23,6 +23,6 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   }
 }

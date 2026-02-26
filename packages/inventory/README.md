@@ -1,4 +1,4 @@
-# @rbx/inventory
+# @broblox/inventory
 
 Base item and slot inventory system for Roblox games.
 
@@ -15,7 +15,7 @@ Base item and slot inventory system for Roblox games.
 ## Usage
 
 ```ts
-import { ItemRegistry, InventoryStore } from "@rbx/inventory";
+import { ItemRegistry, InventoryStore } from "@broblox/inventory";
 
 // 1. Define items
 const registry = new ItemRegistry();

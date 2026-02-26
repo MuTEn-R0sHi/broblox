@@ -16,7 +16,7 @@
  * ```
  */
 
-import { mapSize } from "@rbx/core";
+import { mapSize } from "@broblox/core";
 import { GamePass, PassOwnershipFetcher, PassOwnershipResult } from "./types";
 
 // ============================================================================
@@ -99,11 +99,7 @@ export class GamePassCache {
    *   (default) and a fetcher has been registered.
    * - Returns `{ owned: false, fromCache: false }` if no fetcher is available.
    */
-  userOwnsGamePass(
-    userId: number,
-    passId: number,
-    fetchIfMissing = true
-  ): PassOwnershipResult {
+  userOwnsGamePass(userId: number, passId: number, fetchIfMissing = true): PassOwnershipResult {
     const key = `${userId}:${passId}`;
     const now = os.time();
     const cached = this.cache.get(key);

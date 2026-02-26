@@ -1,5 +1,5 @@
 /**
- * @rbx/pets — Type Definitions
+ * @broblox/pets — Type Definitions
  *
  * Types for pet species, instances, abilities, evolution, and configuration.
  */

@@ -1,5 +1,5 @@
 /**
- * @rbx/rewards — Public API
+ * @broblox/rewards — Public API
  */
 
 export type {

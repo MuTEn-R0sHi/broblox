@@ -25,7 +25,7 @@ describe("createTutorialService", () => {
       save: vi.fn(() => true),
     };
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
     }));
     vi.doMock("./sequence-registry", () => ({

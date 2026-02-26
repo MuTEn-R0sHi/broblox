@@ -5,7 +5,7 @@
  * Uses synchronous patterns compatible with roblox-ts.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { BanRecord, BanCheckResult, CreateBanInput } from "./types";
 
 const logger = createLogger("Moderation.BanStore");

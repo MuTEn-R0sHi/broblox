@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/combat",
+  "name": "@broblox/combat",
   "version": "0.2.0",
   "private": true,
   "status": "integrated",
@@ -19,7 +19,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@rbx/testing": "workspace:*",
+    "@broblox/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/types": "^1.0.908",
     "roblox-ts": "^3.0.0",
@@ -27,7 +27,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@rbx/core": "workspace:*",
-    "@rbx/shared-types": "workspace:*"
+    "@broblox/core": "workspace:*",
+    "@broblox/shared-types": "workspace:*"
   }
 }

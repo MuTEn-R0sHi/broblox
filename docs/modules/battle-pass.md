@@ -1,6 +1,6 @@
 # Modules: Battle pass
 
-A reusable seasonal progression system (`@rbx/battle-pass`). **Status: Implemented** (29 tests).
+A reusable seasonal progression system (`@broblox/battle-pass`). **Status: Implemented** (29 tests).
 
 ## Purpose
 

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { ErrorCode, ok, err, isRetryableError } from "@rbx/shared-types";
+import { ErrorCode, ok, err, isRetryableError } from "@broblox/shared-types";
 
 // Since client.ts uses Roblox APIs, we test the core logic separately
 

@@ -12,8 +12,8 @@
  * @note Uses roblox-ts compatible patterns for Luau compilation.
  */
 
-import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@rbx/shared-types";
-import { arraySize, arrayRemoveAt, setSize } from "@rbx/core";
+import { Result, ok, err, ErrorCode, PlayerId, MatchId } from "@broblox/shared-types";
+import { arraySize, arrayRemoveAt, setSize } from "@broblox/core";
 import type { Match, MatchStatus, GameMode, Team } from "./types";
 
 // ============================================================================

@@ -1,6 +1,6 @@
 # Modules: Cosmetics
 
-A reusable cosmetics/appearance system (`@rbx/cosmetics`). **Status: Implemented** (26 tests).
+A reusable cosmetics/appearance system (`@broblox/cosmetics`). **Status: Implemented** (26 tests).
 
 ## Purpose
 

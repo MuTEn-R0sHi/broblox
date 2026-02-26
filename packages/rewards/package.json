@@ -1,5 +1,5 @@
 {
-  "name": "@rbx/rewards",
+  "name": "@broblox/rewards",
   "version": "0.1.0",
   "description": "Daily login rewards, streaks, and achievement rewards for Roblox games",
   "private": true,
@@ -18,8 +18,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@rbx/core": "workspace:*",
-    "@rbx/observability": "workspace:*"
+    "@broblox/core": "workspace:*",
+    "@broblox/observability": "workspace:*"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "3.0.0-types.0",
@@ -27,6 +27,6 @@
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "@rbx/testing": "workspace:*"
+    "@broblox/testing": "workspace:*"
   }
 }

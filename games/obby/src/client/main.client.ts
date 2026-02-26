@@ -3,7 +3,7 @@
  * Uses Application pattern for cleaner startup.
  */
 
-import { Application, createLogger } from "@rbx/core";
+import { Application, createLogger } from "@broblox/core";
 import { RemoteController } from "./controllers/RemoteController";
 import { UIController } from "./controllers/UIController";
 import { InputController } from "./controllers/InputController";

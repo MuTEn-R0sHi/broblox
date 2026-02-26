@@ -4,7 +4,7 @@
  * Day/night cycle and weather for the obstacle course environment.
  */
 
-import { createWorldService } from "@rbx/world-systems";
+import { createWorldService } from "@broblox/world-systems";
 
 const handle = createWorldService({
   cycleDurationSeconds: 900,

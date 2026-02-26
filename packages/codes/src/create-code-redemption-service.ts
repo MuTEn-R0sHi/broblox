@@ -4,7 +4,7 @@
  * Wraps a single shared CodeStore with per-game code definitions.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { RedeemableCode, CodeReward } from "./types";
 import { CodeStore } from "./code-store";
 

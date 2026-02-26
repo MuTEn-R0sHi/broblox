@@ -1,5 +1,5 @@
 /**
- * @rbx/gacha — Gacha Store
+ * @broblox/gacha — Gacha Store
  *
  * Handles hatching eggs, weighted random selection, and pity system.
  */

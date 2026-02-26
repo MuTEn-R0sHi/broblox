@@ -1,10 +1,10 @@
 /**
- * Unit tests for @rbx/security package.
+ * Unit tests for @broblox/security package.
  * Tests violation detection, trust scoring, and enforcement.
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { mockRobloxGlobals, createMockPlayer, resetPlayerIdCounter } from "@rbx/testing";
+import { mockRobloxGlobals, createMockPlayer, resetPlayerIdCounter } from "@broblox/testing";
 
 // Install Roblox globals
 beforeEach(() => {

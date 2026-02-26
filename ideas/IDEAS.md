@@ -495,7 +495,7 @@ Based on current Roblox trends and top-performing games:
 
 ### Input Options
 
-- Controller support (already in `@rbx/input`)
+- Controller support (already in `@broblox/input`)
 - Touch-friendly UI
 - Keyboard remapping
 - One-handed mode option

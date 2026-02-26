@@ -1,5 +1,5 @@
 /**
- * @rbx/tutorial — Type Definitions
+ * @broblox/tutorial — Type Definitions
  *
  * Types for tutorial steps, sequences, conditions, and FTUE tracking.
  */

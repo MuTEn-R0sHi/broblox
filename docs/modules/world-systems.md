@@ -1,6 +1,6 @@
 # Modules: World Systems
 
-Day/night cycle, weather, and seasons (`@rbx/world-systems`). **Status: Implemented** (29 tests).
+Day/night cycle, weather, and seasons (`@broblox/world-systems`). **Status: Implemented** (29 tests).
 
 ## Purpose
 

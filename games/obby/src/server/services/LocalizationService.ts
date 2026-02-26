@@ -4,7 +4,7 @@
  * Multi-language string management for the obstacle course game.
  */
 
-import { createLocalizationService } from "@rbx/localization";
+import { createLocalizationService } from "@broblox/localization";
 
 const handle = createLocalizationService({
   strings: [

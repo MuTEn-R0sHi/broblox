@@ -2,10 +2,10 @@
  * Battle Pass Service — Starter Game
  *
  * Seasonal progression with free and premium tracks.
- * Uses the createBattlePassService factory from @rbx/battle-pass.
+ * Uses the createBattlePassService factory from @broblox/battle-pass.
  */
 
-import { createBattlePassService } from "@rbx/battle-pass";
+import { createBattlePassService } from "@broblox/battle-pass";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createBattlePassService({

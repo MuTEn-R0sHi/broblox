@@ -4,7 +4,7 @@
  * Encapsulates cosmetic registry + per-player cosmetic store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { CosmeticDefinition, CosmeticsConfig } from "./types";
 import { CosmeticRegistry } from "./cosmetic-registry";
 import { CosmeticStore } from "./cosmetic-store";

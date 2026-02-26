@@ -2,7 +2,7 @@
  * Obby Game Server Entry Point
  */
 
-import { Application, createLogger } from "@rbx/core";
+import { Application, createLogger } from "@broblox/core";
 import { Lighting } from "@rbxts/services";
 import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
 import { SecurityService } from "./services/SecurityService";

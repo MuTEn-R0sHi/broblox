@@ -1,5 +1,5 @@
 /**
- * @rbx/notifications
+ * @broblox/notifications
  *
  * In-game notification system for Roblox games.
  * Provides:

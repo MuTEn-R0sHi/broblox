@@ -3,10 +3,10 @@
  * Handles checkpoint touches and player respawning.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { CollectionService, Players, Workspace } from "@rbxts/services";
 import { CheckpointData, CheckpointReachedEvent, OBBY_CONSTANTS } from "shared/types";
-import { mapSize, arraySize } from "@rbx/core";
+import { mapSize, arraySize } from "@broblox/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { movementStateManager } from "./MovementValidationService";

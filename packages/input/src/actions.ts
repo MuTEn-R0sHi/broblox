@@ -4,7 +4,7 @@
  * Action registration and state management.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import { InputAction, ActionState, ActionCallback } from "./types";
 
 const _logger = createLogger("InputActions");

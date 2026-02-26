@@ -2,9 +2,9 @@
  * Error codes for Node.js/Vitest tests.
  * Re-exports from shared-types for consistency.
  *
- * Note: We maintain a separate copy here because @rbx/shared-types
+ * Note: We maintain a separate copy here because @broblox/shared-types
  * uses roblox-ts compilation which may not be directly importable in Node.
- * These MUST stay in sync with @rbx/shared-types/src/error-codes.ts
+ * These MUST stay in sync with @broblox/shared-types/src/error-codes.ts
  */
 
 /**
@@ -57,7 +57,7 @@ export enum ErrorCode {
 }
 
 /**
- * Protocol version - must match @rbx/shared-types
+ * Protocol version - must match @broblox/shared-types
  */
 export const PROTOCOL_VERSION = 1;
 

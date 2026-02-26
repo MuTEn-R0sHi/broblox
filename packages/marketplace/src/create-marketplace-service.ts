@@ -38,7 +38,7 @@
  * ```
  */
 
-import { Service, createLogger, arraySize } from "@rbx/core";
+import { Service, createLogger, arraySize } from "@broblox/core";
 import {
   DeveloperProduct,
   GamePass,

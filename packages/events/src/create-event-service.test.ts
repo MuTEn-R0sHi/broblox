@@ -20,12 +20,12 @@ describe("createEventService", () => {
 
     mockIsFlagEnabled = vi.fn(() => true);
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
       arraySize: (arr: unknown[]) => arr.length,
     }));
 
-    vi.doMock("@rbx/config-featureflags", () => ({
+    vi.doMock("@broblox/config-featureflags", () => ({
       isFlagEnabled: mockIsFlagEnabled,
     }));
 

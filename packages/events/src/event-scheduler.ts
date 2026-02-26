@@ -1,5 +1,5 @@
 /**
- * @rbx/events — EventScheduler
+ * @broblox/events — EventScheduler
  *
  * Pure-logic scheduler: compares event time windows against the current
  * server time and maintains which events are currently active.  Has no
@@ -76,7 +76,7 @@ export class EventScheduler {
    *
    * @param now - Current Unix time in seconds.
    * @param isFlagEnabled - Predicate for feature-flag gate (pass
-   *   `isFlagEnabled` from `@rbx/config-featureflags`).
+   *   `isFlagEnabled` from `@broblox/config-featureflags`).
    * @returns Lists of events that started or ended this tick.
    */
   tick(now: number, isFlagEnabled: (name: string) => boolean): EventTickResult {

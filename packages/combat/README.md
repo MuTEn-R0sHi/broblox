@@ -1,4 +1,4 @@
-# @rbx/combat
+# @broblox/combat
 
 Server-authoritative combat systems for PvP games.
 
@@ -13,9 +13,9 @@ This package provides the core combat infrastructure for competitive PvP:
 
 ## Dependencies
 
-- `@rbx/core` — Logging, cleanup utilities
-- `@rbx/shared-types` — Type definitions
-- `@rbx/constants` — Game constants
+- `@broblox/core` — Logging, cleanup utilities
+- `@broblox/shared-types` — Type definitions
+- `@broblox/constants` — Game constants
 
 ## Architecture
 
@@ -42,7 +42,7 @@ All combat outcomes are determined server-side:
 ## Usage
 
 ```typescript
-import { WeaponService, HitValidator } from "@rbx/combat";
+import { WeaponService, HitValidator } from "@broblox/combat";
 
 // Register weapons
 WeaponService.registerWeapon({

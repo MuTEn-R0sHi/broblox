@@ -15,174 +15,174 @@
           "@rbxts": {
             "$path": "node_modules/@rbxts"
           },
-          "@rbx": {
+          "@broblox": {
             "$className": "Folder",
             "shared-types": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/shared-types/out"
+                "$path": "node_modules/@broblox/shared-types/out"
               }
             },
             "constants": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/constants/out"
+                "$path": "node_modules/@broblox/constants/out"
               }
             },
             "core": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/core/out"
+                "$path": "node_modules/@broblox/core/out"
               }
             },
             "config-featureflags": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/config-featureflags/out"
+                "$path": "node_modules/@broblox/config-featureflags/out"
               }
             },
             "net": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/net/out"
+                "$path": "node_modules/@broblox/net/out"
               }
             },
             "data": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/data/out"
+                "$path": "node_modules/@broblox/data/out"
               }
             },
             "input": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/input/out"
+                "$path": "node_modules/@broblox/input/out"
               }
             },
             "observability": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/observability/out"
+                "$path": "node_modules/@broblox/observability/out"
               }
             },
             "moderation": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/moderation/out"
+                "$path": "node_modules/@broblox/moderation/out"
               }
             },
             "movement": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/movement/out"
+                "$path": "node_modules/@broblox/movement/out"
               }
             },
             "codes": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/codes/out"
+                "$path": "node_modules/@broblox/codes/out"
               }
             },
             "leaderboards": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/leaderboards/out"
+                "$path": "node_modules/@broblox/leaderboards/out"
               }
             },
             "analytics": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/analytics/out"
+                "$path": "node_modules/@broblox/analytics/out"
               }
             },
             "notifications": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/notifications/out"
+                "$path": "node_modules/@broblox/notifications/out"
               }
             },
             "inventory": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/inventory/out"
+                "$path": "node_modules/@broblox/inventory/out"
               }
             },
             "progression": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/progression/out"
+                "$path": "node_modules/@broblox/progression/out"
               }
             },
             "quests": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/quests/out"
+                "$path": "node_modules/@broblox/quests/out"
               }
             },
             "rewards": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/rewards/out"
+                "$path": "node_modules/@broblox/rewards/out"
               }
             },
             "pets": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/pets/out"
+                "$path": "node_modules/@broblox/pets/out"
               }
             },
             "gacha": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/gacha/out"
+                "$path": "node_modules/@broblox/gacha/out"
               }
             },
             "cosmetics": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/cosmetics/out"
+                "$path": "node_modules/@broblox/cosmetics/out"
               }
             },
             "battle-pass": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/battle-pass/out"
+                "$path": "node_modules/@broblox/battle-pass/out"
               }
             },
             "localization": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/localization/out"
+                "$path": "node_modules/@broblox/localization/out"
               }
             },
             "audio": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/audio/out"
+                "$path": "node_modules/@broblox/audio/out"
               }
             },
             "tutorial": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/tutorial/out"
+                "$path": "node_modules/@broblox/tutorial/out"
               }
             },
             "world-systems": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/world-systems/out"
+                "$path": "node_modules/@broblox/world-systems/out"
               }
             },
             "security": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/security/out"
+                "$path": "node_modules/@broblox/security/out"
               }
             },
             "events": {
               "$className": "Folder",
               "out": {
-                "$path": "node_modules/@rbx/events/out"
+                "$path": "node_modules/@broblox/events/out"
               }
             }
           }

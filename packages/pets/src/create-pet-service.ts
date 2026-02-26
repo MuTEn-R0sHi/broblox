@@ -4,7 +4,7 @@
  * Encapsulates pet registry + per-player store lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { PetSpecies, PetConfig } from "./types";
 import { PetRegistry } from "./pet-registry";
 import { PetStore } from "./pet-store";

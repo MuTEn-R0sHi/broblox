@@ -1,5 +1,5 @@
 /**
- * @rbx/world-systems — Tests
+ * @broblox/world-systems — Tests
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

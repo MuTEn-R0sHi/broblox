@@ -1,4 +1,4 @@
-# @rbx/codes
+# @broblox/codes
 
 Redeemable promo-code system for Roblox games built on `roblox-ts`.
 
@@ -19,14 +19,14 @@ Already included as a workspace package:
 ```jsonc
 // package.json
 "dependencies": {
-  "@rbx/codes": "workspace:*"
+  "@broblox/codes": "workspace:*"
 }
 ```
 
 ## Quick Start
 
 ```ts
-import { CodeStore } from "@rbx/codes";
+import { CodeStore } from "@broblox/codes";
 
 // Create the store
 const codes = new CodeStore({

@@ -4,7 +4,7 @@
  * Wraps PlayerDataStore with session management and player lifecycle.
  */
 
-import { Service, createLogger } from "@rbx/core";
+import { Service, createLogger } from "@broblox/core";
 import { VersionedData, StoreConfig } from "./types";
 import { PlayerDataStore } from "./player-data-store";
 import { SessionManager } from "./session";

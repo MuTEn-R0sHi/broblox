@@ -1,6 +1,6 @@
 # Modules: Events
 
-Scheduled in-game events with time-window management, feature-flag gates, gameplay modifiers, and start/end callbacks (`@rbx/events`). **Status: Implemented**.
+Scheduled in-game events with time-window management, feature-flag gates, gameplay modifiers, and start/end callbacks (`@broblox/events`). **Status: Implemented**.
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Scheduled in-game events with time-window management, feature-flag gates, gamepl
 **In scope**
 
 - Time-window scheduling using `os.time()` (server Unix time).
-- Per-event feature-flag kill-switch via `@rbx/config-featureflags`.
+- Per-event feature-flag kill-switch via `@broblox/config-featureflags`.
 - Optional gameplay modifiers (`xpMultiplier`, `dropRateMultiplier`, `coinMultiplier`, arbitrary keys).
 - Player-join notification when events are in progress.
 - Pure-logic `EventScheduler` class (no Roblox API dependencies — fully unit-testable in Vitest).
@@ -124,7 +124,7 @@ Events are stateless at rest — they carry no DataStore footprint. The `activeI
 ## Trust & security
 
 - Event activation is entirely server-side. Clients receive a remote notification but cannot trigger or suppress events.
-- Feature flags are evaluated server-side via `@rbx/config-featureflags`. A client cannot forge a flag state.
+- Feature flags are evaluated server-side via `@broblox/config-featureflags`. A client cannot forge a flag state.
 - Guard downstream modifier effects (extra XP, drop rates) server-side — the client `onEventStart` notification is for UI only.
 
 ## Configuration
@@ -146,9 +146,9 @@ Events are stateless at rest — they carry no DataStore footprint. The `activeI
 
 ## Dependencies
 
-- `@rbx/core` (service lifecycle, logger, `arraySize`).
-- `@rbx/config-featureflags` (feature-flag gate).
+- `@broblox/core` (service lifecycle, logger, `arraySize`).
+- `@broblox/config-featureflags` (feature-flag gate).
 
 ## Testing
 
-`EventScheduler` is exercised with pure Vitest unit tests (no Roblox API mocking needed). `createEventService` is tested via `create-event-service.test.ts` with a mocked `@rbx/core` and `@rbx/config-featureflags`. Each game has a corresponding `EventService.test.ts` that verifies `onEventStart`/`onEventEnd` callbacks fire with the correct remote names.
+`EventScheduler` is exercised with pure Vitest unit tests (no Roblox API mocking needed). `createEventService` is tested via `create-event-service.test.ts` with a mocked `@broblox/core` and `@broblox/config-featureflags`. Each game has a corresponding `EventService.test.ts` that verifies `onEventStart`/`onEventEnd` callbacks fire with the correct remote names.

@@ -1,10 +1,10 @@
 /**
- * @rbx/tutorial — Sequence Registry
+ * @broblox/tutorial — Sequence Registry
  *
  * Registers and retrieves tutorial sequences.
  */
 
-import { createLogger } from "@rbx/core";
+import { createLogger } from "@broblox/core";
 import type { TutorialSequence } from "./types";
 
 export class SequenceRegistry {

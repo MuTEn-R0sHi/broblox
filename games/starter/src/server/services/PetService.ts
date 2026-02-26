@@ -4,7 +4,7 @@
  * Per-player pet management with registry, leveling, and evolution.
  */
 
-import { createPetService } from "@rbx/pets";
+import { createPetService } from "@broblox/pets";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createPetService({

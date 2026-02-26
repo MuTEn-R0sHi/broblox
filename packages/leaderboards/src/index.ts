@@ -1,5 +1,5 @@
 /**
- * @rbx/leaderboards
+ * @broblox/leaderboards
  *
  * Cross-game leaderboard system for Roblox games.
  * Provides:

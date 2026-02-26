@@ -1,5 +1,5 @@
 /**
- * @rbx/audio — Type Definitions
+ * @broblox/audio — Type Definitions
  *
  * Types for sounds, music, channels, and spatial audio.
  */

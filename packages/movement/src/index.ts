@@ -1,12 +1,12 @@
 /**
- * @rbx/movement
+ * @broblox/movement
  *
  * Server-authoritative movement system for Roblox games.
  * Provides:
  * - Server-side movement validation
  * - Client-side prediction and reconciliation
  * - Anomaly detection (speed hacks, teleports, flying)
- * - Integration with @rbx/security
+ * - Integration with @broblox/security
  */
 
 // Types

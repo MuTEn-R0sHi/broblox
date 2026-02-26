@@ -1,5 +1,5 @@
 /**
- * @rbx/config-featureflags
+ * @broblox/config-featureflags
  * Feature flags and kill-switch support.
  * Compatible with roblox-ts.
  *

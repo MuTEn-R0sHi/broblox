@@ -5,7 +5,7 @@
  * Both server and client import from here.
  */
 
-import { defineServerEvent, defineClientEvent } from "@rbx/net";
+import { defineServerEvent, defineClientEvent } from "@broblox/net";
 import type {
   CheckpointReachedEvent,
   StageCompletedEvent,

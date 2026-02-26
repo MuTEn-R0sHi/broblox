@@ -63,7 +63,7 @@ describe("ModerationService sync handling", () => {
     const banInvalidateCache = vi.fn();
     const muteInvalidateCache = vi.fn();
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => logger,
     }));
 
@@ -160,7 +160,7 @@ describe("ModerationService sync handling", () => {
     const banInvalidateCache = vi.fn();
     const muteInvalidateCache = vi.fn();
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => logger,
     }));
 
@@ -258,7 +258,7 @@ describe("ModerationService sync handling", () => {
     const banInvalidateCache = vi.fn();
     const muteInvalidateCache = vi.fn();
 
-    vi.doMock("@rbx/core", () => ({
+    vi.doMock("@broblox/core", () => ({
       createLogger: () => logger,
     }));
 

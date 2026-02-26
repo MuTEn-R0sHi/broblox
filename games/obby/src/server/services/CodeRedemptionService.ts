@@ -2,11 +2,11 @@
  * Code Redemption Service — Obby Game
  *
  * Registers promo codes and handles player redemption requests.
- * Uses the @rbx/codes package.
+ * Uses the @broblox/codes package.
  */
 
-import { createCodeRedemptionService } from "@rbx/codes";
-import { createLogger } from "@rbx/core";
+import { createCodeRedemptionService } from "@broblox/codes";
+import { createLogger } from "@broblox/core";
 
 const logger = createLogger("CodeRedemptionService");
 
