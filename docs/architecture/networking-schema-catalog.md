@@ -298,3 +298,5 @@ Notation:
   - budget
   - abuse handling
   - observability event(s)
+
+> **Note:** Phase 4+ packages (analytics, notifications, leaderboards, codes, marketplace, etc.) define their own remotes following the same golden-path pattern above. Refer to each package's source for its specific remote definitions.

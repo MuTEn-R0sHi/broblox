@@ -1,5 +1,5 @@
 {
-  "name": "rbx-game-platform",
+  "name": "broblox",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@9.15.4",
@@ -24,6 +24,8 @@
     "website:dev": "pnpm --filter @broblox/website run dev",
     "website:build": "pnpm --filter @broblox/website run build",
     "rojo:kill": "pkill -f 'rojo serve' || true",
+    "format": "prettier --write .",
+    "clean": "pnpm -r exec rm -rf out dist .next .turbo && rm -rf coverage site",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {

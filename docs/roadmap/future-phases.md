@@ -1,4 +1,4 @@
-# Future Phases (4–7)
+# Future Phases (3–7)
 
 This document outlines planned phases beyond the completed roadmap, with feature candidates drawn from platform research and industry trends.
 
@@ -70,10 +70,6 @@ This document outlines planned phases beyond the completed roadmap, with feature
 ## Phase 5 — Gameplay Modules (Progression)
 
 > **Goal:** Reusable gameplay systems for any game.
-
-**Status:** ✅ Complete
-
-Prerequisites for all collection/reward features.
 
 **Status:** ✅ Complete
 

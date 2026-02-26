@@ -63,6 +63,11 @@ export function createWorldService(config: WorldServiceConfig): WorldServiceHand
         worldManager.start();
         logger.info("WorldService started — day/night and weather active.");
       },
+
+      onDestroy() {
+        worldManager.stop();
+        logger.info("WorldService stopped.");
+      },
     },
 
     getWorldManager() {

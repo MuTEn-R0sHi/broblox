@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap");
+
 /* BroBlox Documentation — neon dark theme (matching website) */
 
 :root,
@@ -164,9 +166,7 @@
   color: #00e5ff !important;
 }
 
-/* Font — Inter to match website + dashboard */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap");
-
+/* Font — Inter (loaded at top of file) */
 body,
 .md-typeset {
   font-family:

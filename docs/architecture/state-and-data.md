@@ -91,6 +91,12 @@ Implemented across `@broblox/data`, `@broblox/progression`, `@broblox/inventory`
 - `inventory` (owned items, equipped loadouts) — `@broblox/inventory`
 - `moderation` (ban state, mutes, trust score) — `@broblox/moderation`
 - `receipts` / `grants` (idempotency keys) — `@broblox/rewards`
+- `quests` (active quests, objective progress) — `@broblox/quests`
+- `pets` (owned pets, equipped slots, XP) — `@broblox/pets`
+- `cosmetics` (owned cosmetics, equipped slots) — `@broblox/cosmetics`
+- `battlePass` (season, tier, XP, claims) — `@broblox/battle-pass`
+- `codes` (redeemed code IDs) — `@broblox/codes`
+- `marketplace` (receipt dedup keys, pass ownership cache) — `@broblox/marketplace`
 
 ## Idempotency (non-negotiable)
 
