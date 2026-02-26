@@ -58,20 +58,20 @@ import {
 const dialog = createDialog(parent, { title: "Confirm", message: "Are you sure?" });
 
 // Toast notification — auto-dismisses after duration
-const cleanup = showToast(parent, { message: "Saved!", duration: 3 });
+const toastCleanup = showToast(parent, { message: "Saved!", duration: 3 });
 
 // Progress bar with 0–1 fill
-const { bar, setProgress, cleanup } = createProgressBar(parent);
-setProgress(0.75);
+const { frame: progressFrame, setValue } = createProgressBar(parent, { value: 0 });
+setValue(0.75);
 
 // Scrollable list view
-const { frame, cleanup } = createListView(parent, {
+const { frame: listFrame, cleanup: listCleanup } = createListView(parent, {
   items: [{ id: "a", text: "First" }],
   itemHeight: 50,
 });
 
 // Loading spinner (animated rotation)
-const { frame, cleanup } = createSpinner(parent, 32);
+const { frame: spinnerFrame, cleanup: spinnerCleanup } = createSpinner(parent, 32);
 ```
 
 ## Dependencies
