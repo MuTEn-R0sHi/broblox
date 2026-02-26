@@ -1,228 +1,256 @@
-# Roadmap: Overview
+# Roadmap
 
-This roadmap turns the architecture plan into staged deliverables.
+> **Last updated:** 2026-02-26
+> **Status:** Phases 0–5c complete · Both games private · 0 public players
 
-## Environments
+This is the single source of truth for BroBlox project planning. Raw brainstorming lives in [Ideas](ideas.md).
 
-We will run three isolated environments:
+---
 
-- **dev**: continuous publishing from `main`
-- **stage**: QA/canary + manual promotion
-- **prod**: tagged releases only
+## Where we are today
 
-## Phases
+The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (2,400+ tests), and deployed.
 
-### Phase 0 — Docs + conventions (now)
+**But nobody has played the games yet.**
 
-**Goal:** the plan is written down and enforceable.
+Both games are deployed to Roblox across 3 environments (dev/staging/live) — all 6 experiences are **private**. The website is live at [broblox-games.com](https://broblox-games.com) but game links are inactive. There are zero public players, zero feedback, and zero revenue.
 
-Deliverables:
+| Asset            | Status                                                |
+| ---------------- | ----------------------------------------------------- |
+| `games/starter`  | Deployed to Roblox (3 envs) — **private**             |
+| `games/obby`     | Deployed to Roblox (3 envs) — **private**             |
+| `apps/dashboard` | Live on Vercel (internal)                             |
+| `apps/website`   | Live at broblox-games.com                             |
+| CI/CD pipeline   | Green — build, test, lint, publish, promote, rollback |
+| Test coverage    | 2,400+ tests across 115+ suites                       |
 
-- MkDocs site published automatically
-- Architecture pages cover trust boundaries, networking, data, runtime
-- ADR process exists (every big decision becomes an ADR)
+### What's built (do not re-build)
 
-Definition of done:
+- **33 `@broblox/*` packages** — core, net, combat, matchmaking, moderation, movement, data, config, analytics, notifications, leaderboards, codes, events, inventory, progression, quests, rewards, pets, gacha, cosmetics, battle-pass, marketplace, localization, audio, tutorial, world-systems, ui, input, security, observability, shared-types, constants, testing
+- **2 games** (starter + obby) — fully integrated with all packages
+- **Dashboard v2** — RBAC, audit, bans, flags, match history, news CMS, moderation
+- **Website v1** — homepage, games listing, per-game detail + wiki, rankings, news
+- **Open Cloud CI** — publish/promote/rollback wired, branch protection enforced
 
-- Docs build and deploy from CI
-- Navigation is stable
+---
 
-### Phase 0.5 — Skeleton verification spike (recommended before Phase 1)
+## Priority: What to do next
 
-**Goal:** validate tooling and architecture with minimal code.
+The platform is heavily over-engineered relative to zero players. Before building more systems, we need real players giving real feedback.
 
-This is a **2-day spike** to verify the build pipeline works end-to-end before investing in Phase 1 implementation.
+### Priority 1 — Go public (10 minutes)
 
-Deliverables:
+**Effort: trivial · Impact: unlocks everything**
 
-- roblox-ts compiles the package structure correctly
-- Rojo syncs the compiled output to Roblox Studio
-- A single remote works end-to-end (client → server → response)
-- Rate limiting and validation middleware are wired up (even if minimal)
+1. Flip both games to **public** on Roblox (Creator Hub → each experience → Settings → set Public)
+2. Set `NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER` and `NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY` env vars in Vercel
+3. Verify deep links work on broblox-games.com
 
-Definition of done:
+This is a prerequisite for everything else. Nothing below matters without real players.
 
-- `pnpm game:starter:build` succeeds
-- Rojo sync shows client/server/shared in correct locations
-- One test remote can be called from client and receives validated response
-- Any tooling issues are documented and resolved
+### Priority 2 — Playtest and polish
 
-Why this matters:
+**Effort: 1–2 weeks · Impact: retention baseline**
 
-- Catches roblox-ts/Rojo configuration issues early
-- Validates that the package structure compiles correctly
-- Confirms the networking middleware pattern works in practice
-- Reduces risk of discovering fundamental issues deep into Phase 1
+Play both games yourself and with a small group. Focus on:
 
-### Phase 1 — Platform MVP (single game proves the platform) ✅
+- Does the starter game loop feel fun for 5 minutes? 30 minutes?
+- Does the obby have enough stages / variety?
+- Are the UI screens (daily rewards, quests, inventory, etc.) intuitive?
+- Does matchmaking work with real concurrent players?
+- Are there any server errors or exploits?
 
-**Status: COMPLETE**
+**Actions:**
 
-**Goal:** one playable experience built from the platform skeleton.
+- Fix bugs surfaced by playtesting
+- Tune progression curves (XP, quest rewards, daily login) based on feel
+- Improve first-time user experience (tutorial flow)
+- Check analytics events are firing correctly
 
-Scope is locked in: `docs/roadmap/phase-1-platform-mvp.md`.
+### Priority 3 — Pick ONE new game
 
-Deliverables:
+**Effort: 2–4 weeks · Impact: validates the platform's multi-game promise**
 
-- `packages/core`: lifecycle + DI + logging + cleanup ✅
-- `packages/shared-types`: ids + error codes + DTOs ✅
-- `packages/net`: remote registry + validation + rate limits + protocol handshake ✅
-- `packages/config-featureflags`: local defaults + replicated snapshot ✅
-- Minimal "starter game" consuming those packages ✅
+The strongest proof that the platform works is a third game built quickly from the shared packages. Pick one based on:
 
-Security baseline:
+- What sounds fun to build
+- What uses existing packages well
+- What genre is trending on Roblox right now
 
-- All inbound remotes are schema validated ✅
-- All inbound remotes are rate limited ✅
-- Server decides outcomes for any state mutation ✅
+See [game candidates](#game-candidates) below for options.
 
-Test coverage: 2,400+ tests across 115+ test suites.
+### Priority 4 — Evaluate, then expand
 
-### Phase 2 — PvP Alpha (competitive loop + ops visibility) ✅
+**Only after Priorities 1–3 are done and you have real player data:**
 
-**Status: COMPLETE**
+- Are players returning? → If not, fix the game loop before adding features
+- Are players spending? → If not, the economy design is premature
+- Are players asking for social features? → If not, guilds/trading can wait
 
-**Goal:** competitive-capable match flow and anti-abuse instrumentation.
+---
 
-Scope documented in: `docs/roadmap/phase-2-pvp-alpha.md`.
+## Completed phases
 
-Deliverables:
+All phases below are done.
 
-- `packages/combat`: weapon system + hit validation + damage calculation ✅
-- `packages/matchmaking`: match lifecycle + state + events ✅
-- `packages/matchmaking`: server allocation + health monitoring ✅
-- Dashboard match history: list + detail + filtering ✅
+### Phase 0 — Docs + conventions ✅
 
-PvP requirements:
+MkDocs site, architecture docs, ADR process.
 
-- Server authoritative hit validation (raycast verification) ✅
-- Deterministic cooldown/ammo logic server-side ✅
-- Match state transitions server-controlled ✅
+### Phase 0.5 — Skeleton verification ✅
 
-### Phase 3 — Beta (multi-game reuse + moderation) ✅
+Build pipeline validated end-to-end: roblox-ts → Rojo → Roblox Studio.
 
-**Status: COMPLETE**
+### Phase 1 — Platform MVP ✅
 
-**Goal:** second game adopts platform with minimal extra glue.
+Core platform skeleton: `core`, `shared-types`, `net`, `config-featureflags`. Starter game proving server authority, schema validation, rate limiting.
 
-Deliverables:
+> Detail: [Phase 1 scope](phase-1-platform-mvp.md)
 
-- Second game template created from the platform ✅ (obby game)
-- `packages/moderation` v1: bans/mutes + evidence model + dashboard bridge ✅
-- `packages/movement` v1: server-authoritative movement + observability + feature flag kill-switch ✅
-- Dashboard v2 (control plane): RBAC + audit logs + ban workflow ✅
-- Feature flags v2: segments, scheduling, rollout history, kill-switch ✅
-- Both games (starter + obby) integrated with moderation + movement ✅
+### Phase 2 — PvP Alpha ✅
 
-Test coverage: 2,400+ tests across 115+ test suites.
+Server-authoritative combat, matchmaking lifecycle, dashboard match history.
 
-### Phase 4 — Production (operational excellence) ✅
+> Detail: [Phase 2 scope](phase-2-pvp-alpha.md)
 
-**Status: COMPLETE**
+### Phase 3 — Beta / Multi-game ✅
 
-**Goal:** safe continuous delivery, sustainable operations, and a live public-facing platform.
+Second game (obby), moderation system, movement package, Dashboard v2 (RBAC + audit), feature flags v2.
 
-Deliverables:
+### Phase 4 — Production ✅
 
-- `packages/codes` v1: redeemable promo codes + dashboard management ✅
-- `packages/leaderboards` v1: cross-game leaderboards (daily/weekly/seasonal/all-time) ✅
-- `packages/analytics` v1: player behavior events, funnels, retention ✅
-- `packages/notifications` v1: in-game toasts, announcements, news ✅
-- `packages/events` v1: scheduled in-game events with modifiers, flag gates, analytics hooks ✅
-- Game integrations (both starter + obby) ✅
-- Open Cloud publish/promote pipeline + rollback runbooks ✅
-- **`apps/website` v1** — public portal at [broblox-games.com](https://broblox-games.com) ✅
-  - Homepage, games listing, per-game detail + wiki, rankings, news
-  - Live player count pills via Roblox public API (60s ISR)
-  - Neon cyan/purple brand theme, mobile-responsive nav
-  - Deployed to Vercel; domains live
-- Dashboard news CMS — full CRUD with RBAC, audit, and public API ✅
-- Live leaderboard pipeline — OrderedDataStore → dashboard API → website `/rankings` ✅
-- `@broblox/ui` v1: 8 screen templates ✅
+Analytics, notifications, leaderboards, promo codes, events, Open Cloud CI pipeline, website v1 (broblox-games.com), dashboard news CMS, live leaderboard pipeline, UI screen templates.
 
-Deferred (nice-to-have):
+**Deferred nice-to-haves** (do when relevant):
 
-- Roblox game deep links (both games deployed to Roblox, 6 private experiences; activate when made public)
-- Dashboard worker jobs: rollouts, ban propagation, scheduled events
-- Performance budgets enforced in CI
-- Roblox Moments integration (auto-detect highlights, viral sharing)
-- Regular ADR + security review cadence
+- Dashboard worker jobs (rollouts, ban propagation, scheduled events)
+- Performance budgets in CI
+- Roblox Moments integration
 
-Test coverage: 2,400+ tests across 115+ test suites.
+### Phase 5a — Progression ✅
 
-### Phase 5a — Foundation ✅
+Inventory, XP/levels/prestige, quests, daily rewards + achievements.
 
-**Status: COMPLETE**
+### Phase 5b — Collection & Monetization ✅
 
-**Goal:** core progression & engagement systems that underpin collections, economy, and retention.
+Pets (hatching, leveling, evolution), gacha (loot tables, pity), cosmetics, battle pass, marketplace (developer products, game passes, receipt validation).
 
-Deliverables:
+### Phase 5c — Support Systems ✅
 
-- `packages/inventory` v1: item registry, per-player inventory, stacking, transfers, slot management, metadata, sorting, DataStore persistence ✅
-- `packages/progression` v1: XP curves (linear/quadratic/exponential/custom), auto level-up, prestige/rebirth, XP bonus multipliers, DataStore persistence ✅
-- `packages/quests` v1: quest registry with schedule/tier/tag/level filtering, objective tracking, auto-completion, prerequisites, DataStore persistence ✅
-- `packages/rewards` v1: daily login rewards with streaks/grace periods/cycles, achievement store with progress tracking, DataStore persistence ✅
-- Game integrations: both starter and obby games with themed items, quests, achievements ✅
+Localization, audio, tutorial/FTUE, world systems (day/night, weather, seasons).
 
-Test coverage: 2,400+ tests across 115+ test suites.
+---
 
-## Milestone mapping (packages)
+## Milestone mapping
 
-### Phase 1–3 (Complete ✅)
+### Packages by phase
 
-- `core`, `shared-types`, `net`, `security`, `config-featureflags`
-- `input`, `ui`, `data`, `observability`
-- `combat`, `matchmaking`
-- `moderation`, `movement`
-- Games: `starter`, `obby`
-- Dashboard: RBAC, audit, ban workflow, flag propagation
+| Phase | Packages                                                                                                 |
+| ----- | -------------------------------------------------------------------------------------------------------- |
+| 1     | `core`, `shared-types`, `net`, `security`, `config-featureflags`, `input`, `ui`, `data`, `observability` |
+| 2     | `combat`, `matchmaking`                                                                                  |
+| 3     | `moderation`, `movement`                                                                                 |
+| 4     | `codes`, `leaderboards`, `analytics`, `notifications`, `events` + website + dashboard CMS                |
+| 5a    | `inventory`, `progression`, `quests`, `rewards`                                                          |
+| 5b    | `pets`, `gacha`, `cosmetics`, `battle-pass`, `marketplace`                                               |
+| 5c    | `localization`, `audio`, `tutorial`, `world-systems`                                                     |
 
-### Phase 4 (✅ Complete)
+### Games + apps
 
-- `codes`: redeemable promo codes ✅
-- `leaderboards`: cross-game leaderboard infrastructure ✅
-- `analytics`: player behavior events, funnels ✅
-- `notifications`: in-game toasts, announcements ✅
-- `events`: scheduled in-game events with modifiers + flag gates ✅
-- `apps/website`: public portal, games, rankings, news — deployed ✅
-- Dashboard news CMS: full CRUD with public API ✅
-- Live leaderboard pipeline: OrderedDataStore → API → website ✅
-- `@broblox/ui` v1: 8 screen templates ✅
+| Asset            | Phase | Status                |
+| ---------------- | ----- | --------------------- |
+| `games/starter`  | 1     | ✅ Deployed (private) |
+| `games/obby`     | 3     | ✅ Deployed (private) |
+| `apps/dashboard` | 3     | ✅ Live               |
+| `apps/website`   | 4     | ✅ Live               |
 
-### Phase 5a — Foundation (Complete ✅)
+---
 
-- `inventory`: item registry + per-player inventory with stacking, transfers, slots ✅
-- `progression`: XP curves, auto level-up, prestige/rebirth ✅
-- `quests`: quest registry, objective tracking, daily/weekly schedules ✅
-- `rewards`: daily login rewards, achievements with progress tracking ✅
-- Game integrations: starter (combat-themed) + obby (stage-themed) ✅
+## Future vision (build only when justified by player data)
 
-### Phase 5b — Collection (Complete ✅)
-
-- `pets`: pet registry, hatching, equipping, leveling (34 tests) ✅
-- `gacha`: loot tables, weighted rolls, pity system (20 tests) ✅
-- `cosmetics`: cosmetic registry, per-player ownership & equipping (26 tests) ✅
-- `battle-pass`: seasonal tiers, free/premium tracks, XP progression (29 tests) ✅
-- `marketplace`: MonetizationService wrapper — developer products, game passes, receipt validation (47 tests) ✅
-- Game integrations: starter + obby service files ✅
-- `bro-companion`: LittleBro cross-game mascot (future)
-
-### Phase 5c — Support (Complete ✅)
-
-- `localization`: multi-locale string tables, namespaces, interpolation, pluralization (27 tests) ✅
-- `audio`: sound registry, channel volumes, playback, playlists (31 tests) ✅
-- `tutorial`: sequence registry, per-player FTUE manager, prerequisites (32 tests) ✅
-- `world-systems`: day/night cycle, weather transitions, seasons (20 tests) ✅
-- Game integrations: starter + obby service files ✅
+Everything below is **deferred** until the games are public and there's evidence players want these features. The packages and architecture to support them are designed but not yet implemented.
 
 ### Phase 6 — Economy & Social
 
-- `trading`, `guilds`, `economy`, `social`
-- Website: BroCoins shop page, guild finder, social profile pages
+> **Prerequisites:** Public games with active players, Roblox OAuth for website.
 
-### Phase 7+ — Games & Hub
+| Feature                  | Effort | Notes                                  |
+| ------------------------ | ------ | -------------------------------------- |
+| Player-to-player trading | High   | Secure trade window, audit log         |
+| Guild/clan system        | High   | Social stickiness, shared progress     |
+| Global BroCoins currency | High   | Cross-game currency with sinks/faucets |
+| Friend invite rewards    | Low    | Social hooks                           |
+| Auction house            | High   | Optional, exploit-prone — defer        |
 
-- Genre templates: PvP Arena, BroStars, BroBall, BroCade, Race Mania, ...
-- BroBlox Hub: central hub game with gravity worlds, game portals, LittleBro home
+**Website additions (require Roblox OAuth):**
 
-> **Full roadmap:** See [Future Phases (4–7)](future-phases.md) for detailed planning.
+| Page                  | Integration                    |
+| --------------------- | ------------------------------ |
+| `/profile/[player]`   | Cross-game stats, achievements |
+| `/guilds`             | Guild finder, member counts    |
+| Nav: BroCoins balance | Authenticated economy display  |
+
+**Proposed packages:** `trading`, `guilds`, `economy`, `social`
+
+**Why defer:** None of this matters without players. BroCoins with 0 users is a ledger nobody reads. Guilds with 0 members are empty rooms. Build economy/social when retention data proves players want to stay.
+
+### Phase 7 — Genre Templates & Games
+
+> **Goal:** Prove the platform by shipping more games quickly.
+
+Priority 3 above ("pick ONE new game") is the practical start of Phase 7. Full template library is aspirational.
+
+### BroBlox Hub (post-Phase 6)
+
+> **Concept:** Solar-system world where each planet is a block with custom gravity. Game portals, LittleBro companion home, cross-game profile, BroCoins shop.
+
+**Depends on:** Phase 5b (companion), Phase 6 (BroCoins, social). Don't build this until Phase 6 is actually needed.
+
+---
+
+## Game candidates
+
+These are options for Priority 3 ("pick ONE new game") or later Phase 7 expansion. Sorted by how well they leverage existing packages.
+
+| Game                       | Effort | Packages it exercises                 | Why it's interesting                                         |
+| -------------------------- | ------ | ------------------------------------- | ------------------------------------------------------------ |
+| **PvP Arena**              | Low    | combat, matchmaking, leaderboards     | Phase 2 combat is already built — this is mostly game design |
+| **BroCade** (arcade hub)   | Medium | leaderboards, rewards, UI             | Minigame collection — easy to iterate                        |
+| **Race Mania**             | Medium | movement, pets, gacha, leaderboards   | Trending genre, uses pet system                              |
+| **Fishing Simulator**      | High   | inventory, progression, world-systems | Fisch-style — hugely popular genre                           |
+| **BroStars** (pet band)    | High   | pets, audio, progression              | Unique concept, tests audio + pets                           |
+| **BroBall** (pet football) | High   | pets, matchmaking, combat             | Team-based, tests multiple systems                           |
+| **Tower Defense**          | High   | combat, inventory, progression        | Wave-based co-op                                             |
+| **Horror Escape**          | High   | world-systems, movement               | Doors/Piggy style                                            |
+| **Tycoon**                 | High   | inventory, progression, economy       | Business sim                                                 |
+
+**Recommendation:** Start with **PvP Arena** (lowest effort, most packages already proven) or **BroCade** (minigame hub lets you experiment without committing to one genre).
+
+---
+
+## Open items
+
+Small improvements that can be done anytime, independent of the priorities above.
+
+| Item                                   | Effort | Notes                                                              |
+| -------------------------------------- | ------ | ------------------------------------------------------------------ |
+| Wire `@broblox/marketplace` into games | Medium | Product handlers exist but aren't called from game services yet    |
+| Bro Companion ADR                      | Low    | Design doc for cross-game mascot — write when Hub becomes relevant |
+| Roblox OAuth design                    | Medium | Needed before any authenticated website features                   |
+| Dashboard worker jobs                  | Medium | Rollout automation, ban propagation                                |
+| Performance budgets in CI              | Medium | Bundle size / memory limits                                        |
+| Roblox Moments integration             | Low    | Auto-detect highlights for sharing                                 |
+
+---
+
+## Environments
+
+| Environment | Purpose                | Publishing       |
+| ----------- | ---------------------- | ---------------- |
+| **dev**     | Continuous from `main` | Automatic        |
+| **staging** | QA / canary            | Manual promote   |
+| **prod**    | Tagged releases        | Release workflow |
+
+---
+
+_Raw brainstorming and feature research: [Ideas](ideas.md) · Phase detail pages: [Phase 1](phase-1-platform-mvp.md) · [Phase 2](phase-2-pvp-alpha.md)_
