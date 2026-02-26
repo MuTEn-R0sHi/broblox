@@ -54,7 +54,8 @@ broblox/
 │   ├── starter/              # Starter game template
 │   └── obby/                 # Obby game with stages, coins, leaderboards
 ├── apps/                     # Web applications
-│   └── dashboard/            # Next.js admin dashboard (deployed on Vercel)
+│   ├── dashboard/            # Next.js admin dashboard (deployed on Vercel)
+│   └── website/              # Next.js public website (deployed on Vercel)
 ├── docs/                     # MkDocs documentation site
 └── tools/                    # Build and development tools
 ```

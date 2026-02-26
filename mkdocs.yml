@@ -77,6 +77,7 @@ nav:
           - ADR-0005: architecture/decisions/0005-schema-validation-library.md
           - ADR-0006: architecture/decisions/0006-framework-choice-custom-vs-flamework.md
           - ADR-0007: architecture/decisions/0007-multi-game-dashboard-design.md
+          - ADR-0008: architecture/decisions/0008-marketplace-monetization-service.md
   - Dashboard:
       - Games: dashboard/games.md
       - News CMS: dashboard/news.md
@@ -90,15 +91,19 @@ nav:
       - Battle pass: modules/battle-pass.md
       - Codes: modules/codes.md
       - Combat: modules/combat.md
+      - Config & feature flags: modules/config-featureflags.md
+      - Constants: modules/constants.md
       - Core: modules/core.md
       - Cosmetics: modules/cosmetics.md
-      - Daily rewards: modules/daily-rewards.md
+      # daily-rewards.md is a redirect stub — entry removed from nav
       - Data: modules/data.md
       - Events: modules/events.md
       - Gacha: modules/gacha.md
+      - Input: modules/input.md
       - Inventory: modules/inventory.md
       - Leaderboards: modules/leaderboards.md
       - Localization: modules/localization.md
+      - Marketplace: modules/marketplace.md
       - Matchmaking: modules/matchmaking.md
       - Moderation: modules/moderation.md
       - Movement: modules/movement.md
@@ -111,8 +116,10 @@ nav:
       - Rewards: modules/rewards.md
       - Security: modules/security.md
       - Shared types: modules/shared-types.md
+      - Testing: modules/testing.md
       - Trading: modules/trading.md
       - Tutorial: modules/tutorial.md
+      - UI: modules/ui.md
       - World systems: modules/world-systems.md
   - Runbooks:
       - Incident response: runbooks/incident-response.md

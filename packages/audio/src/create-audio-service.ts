@@ -47,6 +47,11 @@ export function createAudioService(config: AudioServiceConfig): AudioServiceHand
         }
         logger.info("AudioService started.");
       },
+
+      onDestroy() {
+        audioManager.stopEverything();
+        logger.info("AudioService stopped.");
+      },
     },
 
     getSoundRegistry() {

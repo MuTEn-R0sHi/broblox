@@ -189,8 +189,8 @@ hitValidation: {
 
 ## Definition of done
 
-- [ ] Server validates all combat hits (no client-trusted damage)
-- [ ] Rewind window is bounded and configurable
-- [ ] Origin and direction validation implemented
-- [ ] Abuse signals are logged with structured events
-- [ ] Hit validation config is externalized
+- [x] Server validates all combat hits (no client-trusted damage)
+- [x] Rewind window is bounded and configurable
+- [x] Origin and direction validation implemented
+- [x] Abuse signals are logged with structured events
+- [x] Hit validation config is externalized

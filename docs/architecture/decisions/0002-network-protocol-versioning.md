@@ -93,4 +93,4 @@ Key functions:
 - [x] N-1 compatibility with \`allowLegacy\` option
 - [x] Error response includes \`minVersion\` context
 - [x] Log legacy version usage for monitoring
-- [ ] Add "compatible client required" gate for ranked matchmaking (Phase 2)
+- [x] Add "compatible client required" gate for ranked matchmaking (Phase 2)

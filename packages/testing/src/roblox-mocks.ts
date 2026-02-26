@@ -319,14 +319,382 @@ export function mockRobloxGlobals(): void {
     },
   };
 
-  // Mock Roblox `game` global
+  // Mock Roblox `game` global — with TweenService support
   g.game = {
     GetService: (name: string) => {
-      // Return a stub; tests that need real services should vi.doMock
+      if (name === "TweenService") {
+        return {
+          _service: name,
+          Create: (instance: any, _tweenInfo: any, properties: Record<string, unknown>) => {
+            const tween = {
+              Play: () => {
+                // Apply properties immediately in tests
+                for (const [k, v] of Object.entries(properties)) {
+                  instance[k] = v;
+                }
+              },
+              Cancel: () => {},
+              Pause: () => {},
+              Completed: {
+                Connect: (cb: () => void) => {
+                  cb();
+                  return { Disconnect: () => {} };
+                },
+                Wait: () => {},
+              },
+            };
+            return tween;
+          },
+        };
+      }
       return { _service: name };
     },
     JobId: "test-job-id",
     PlaceId: 0,
+  };
+
+  // ── Roblox Value Types ────────────────────────────────────────────────
+
+  // UDim
+  g.UDim = class UDim {
+    Scale: number;
+    Offset: number;
+    constructor(scale: number, offset: number) {
+      this.Scale = scale;
+      this.Offset = offset;
+    }
+  };
+
+  // UDim2
+  g.UDim2 = class UDim2 {
+    X: any;
+    Y: any;
+    constructor(xScale: number, xOffset: number, yScale: number, yOffset: number) {
+      this.X = new g.UDim(xScale, xOffset);
+      this.Y = new g.UDim(yScale, yOffset);
+    }
+    Lerp(goal: any, alpha: number) {
+      return new g.UDim2(
+        this.X.Scale + (goal.X.Scale - this.X.Scale) * alpha,
+        this.X.Offset + (goal.X.Offset - this.X.Offset) * alpha,
+        this.Y.Scale + (goal.Y.Scale - this.Y.Scale) * alpha,
+        this.Y.Offset + (goal.Y.Offset - this.Y.Offset) * alpha
+      );
+    }
+  };
+
+  // Vector2
+  g.Vector2 = class Vector2 {
+    X: number;
+    Y: number;
+    constructor(x: number, y: number) {
+      this.X = x;
+      this.Y = y;
+    }
+    get Magnitude() {
+      return Math.sqrt(this.X * this.X + this.Y * this.Y);
+    }
+  };
+
+  // Color3
+  g.Color3 = class Color3 {
+    R: number;
+    G: number;
+    B: number;
+    constructor() {
+      this.R = 0;
+      this.G = 0;
+      this.B = 0;
+    }
+    static fromRGB(r: number, g: number, b: number) {
+      const c = new Color3();
+      c.R = r / 255;
+      c.G = g / 255;
+      c.B = b / 255;
+      return c;
+    }
+    static fromHSV(_h: number, _s: number, _v: number) {
+      return new Color3();
+    }
+    Lerp(goal: any, alpha: number) {
+      const c = new Color3();
+      c.R = this.R + (goal.R - this.R) * alpha;
+      c.G = this.G + (goal.G - this.G) * alpha;
+      c.B = this.B + (goal.B - this.B) * alpha;
+      return c;
+    }
+  };
+
+  // TweenInfo
+  g.TweenInfo = class TweenInfo {
+    Time: number;
+    EasingStyle: any;
+    EasingDirection: any;
+    RepeatCount: number;
+    Reverses: boolean;
+    DelayTime: number;
+    constructor(
+      time = 1,
+      easingStyle?: any,
+      easingDirection?: any,
+      repeatCount = 0,
+      reverses = false,
+      delayTime = 0
+    ) {
+      this.Time = time;
+      this.EasingStyle = easingStyle;
+      this.EasingDirection = easingDirection;
+      this.RepeatCount = repeatCount;
+      this.Reverses = reverses;
+      this.DelayTime = delayTime;
+    }
+  };
+
+  // ── Roblox Enum Namespace ─────────────────────────────────────────────
+
+  const enumItem = (name: string, value: number) => ({ Name: name, Value: value });
+
+  g.Enum = {
+    Font: {
+      GothamBold: enumItem("GothamBold", 0),
+      GothamMedium: enumItem("GothamMedium", 1),
+      Gotham: enumItem("Gotham", 2),
+      SourceSans: enumItem("SourceSans", 3),
+      SourceSansBold: enumItem("SourceSansBold", 4),
+    },
+    TextXAlignment: {
+      Left: enumItem("Left", 0),
+      Center: enumItem("Center", 1),
+      Right: enumItem("Right", 2),
+    },
+    TextYAlignment: {
+      Top: enumItem("Top", 0),
+      Center: enumItem("Center", 1),
+      Bottom: enumItem("Bottom", 2),
+    },
+    HorizontalAlignment: {
+      Left: enumItem("Left", 0),
+      Center: enumItem("Center", 1),
+      Right: enumItem("Right", 2),
+    },
+    VerticalAlignment: {
+      Top: enumItem("Top", 0),
+      Center: enumItem("Center", 1),
+      Bottom: enumItem("Bottom", 2),
+    },
+    SortOrder: {
+      LayoutOrder: enumItem("LayoutOrder", 0),
+      Name: enumItem("Name", 1),
+    },
+    FillDirection: {
+      Horizontal: enumItem("Horizontal", 0),
+      Vertical: enumItem("Vertical", 1),
+    },
+    AutomaticSize: {
+      None: enumItem("None", 0),
+      X: enumItem("X", 1),
+      Y: enumItem("Y", 2),
+      XY: enumItem("XY", 3),
+    },
+    ScaleType: {
+      Stretch: enumItem("Stretch", 0),
+      Slice: enumItem("Slice", 1),
+      Tile: enumItem("Tile", 2),
+      Fit: enumItem("Fit", 3),
+      Crop: enumItem("Crop", 4),
+    },
+    ScrollingDirection: {
+      X: enumItem("X", 0),
+      Y: enumItem("Y", 1),
+      XY: enumItem("XY", 2),
+    },
+    EasingStyle: {
+      Linear: enumItem("Linear", 0),
+      Quad: enumItem("Quad", 1),
+      Cubic: enumItem("Cubic", 2),
+      Back: enumItem("Back", 3),
+      Bounce: enumItem("Bounce", 4),
+      Elastic: enumItem("Elastic", 5),
+    },
+    EasingDirection: {
+      In: enumItem("In", 0),
+      Out: enumItem("Out", 1),
+      InOut: enumItem("InOut", 2),
+    },
+    ApplyStrokeMode: {
+      Contextual: enumItem("Contextual", 0),
+      Border: enumItem("Border", 1),
+    },
+  };
+
+  // ── Roblox Instance Mock ──────────────────────────────────────────────
+
+  /**
+   * Mock Instance constructor. Creates objects that behave like Roblox
+   * Instances: Parent tracking, GetChildren(), Destroy(), etc.
+   */
+  const createMockSignal = () => {
+    const callbacks: Array<(...args: unknown[]) => void> = [];
+    return {
+      Connect: (cb: (...args: unknown[]) => void) => {
+        callbacks.push(cb);
+        return {
+          Disconnect: () => {
+            /* no-op */
+          },
+        };
+      },
+      Wait: () => {},
+      _fire: (...args: unknown[]) => callbacks.forEach((cb) => cb(...args)),
+    };
+  };
+
+  g.Instance = function MockInstance(className: string) {
+    const children: any[] = [];
+    const attributes: Record<string, unknown> = {};
+
+    const instance: any = {
+      ClassName: className,
+      Name: className,
+      Rotation: 0,
+      Destroy: () => {
+        // Remove from parent's children
+        if (_parent && _parent.__children) {
+          const idx = _parent.__children.indexOf(instance);
+          if (idx >= 0) _parent.__children.splice(idx, 1);
+        }
+        _parent = undefined;
+      },
+      Clone: () => {
+        const clone = new g.Instance(className);
+        clone.Name = instance.Name;
+        return clone;
+      },
+      FindFirstChild: (name: string, recursive = false): any => {
+        for (const child of children) {
+          if (child.Name === name) return child;
+          if (recursive) {
+            const found = child.FindFirstChild(name, true);
+            if (found) return found;
+          }
+        }
+        return undefined;
+      },
+      FindFirstChildOfClass: (cn: string): any => {
+        return children.find((c: any) => c.ClassName === cn);
+      },
+      GetChildren: () => [...children],
+      IsA: (cn: string) => className === cn,
+      SetAttribute: (name: string, value: unknown) => {
+        attributes[name] = value;
+      },
+      GetAttribute: (name: string) => attributes[name],
+      WaitForChild: (name: string) => instance.FindFirstChild(name),
+
+      // GuiObject defaults
+      Size: new g.UDim2(0, 100, 0, 100),
+      Position: new g.UDim2(0, 0, 0, 0),
+      AnchorPoint: new g.Vector2(0, 0),
+      BackgroundColor3: new g.Color3(),
+      BackgroundTransparency: 0,
+      BorderSizePixel: 0,
+      Visible: true,
+      ZIndex: 1,
+      LayoutOrder: 0,
+      ClipsDescendants: false,
+      Active: false,
+
+      // TextLabel / TextButton
+      Text: "",
+      TextColor3: new g.Color3(),
+      TextSize: 14,
+      Font: g.Enum.Font.Gotham,
+      TextWrapped: false,
+      TextTruncate: enumItem("None", 0),
+      TextXAlignment: g.Enum.TextXAlignment.Left,
+      TextYAlignment: g.Enum.TextYAlignment.Top,
+      TextTransparency: 0,
+      RichText: false,
+      AutoButtonColor: false,
+
+      // ScrollingFrame
+      CanvasSize: new g.UDim2(0, 0, 0, 0),
+      ScrollBarThickness: 12,
+      ScrollBarImageTransparency: 0,
+      ScrollingDirection: g.Enum.ScrollingDirection.XY,
+      AutomaticCanvasSize: g.Enum.AutomaticSize.None,
+
+      // ImageLabel / ImageButton
+      Image: "",
+      ImageColor3: new g.Color3(),
+      ImageTransparency: 0,
+      ScaleType: g.Enum.ScaleType.Stretch,
+      AutomaticSize: g.Enum.AutomaticSize.None,
+
+      // UICorner
+      CornerRadius: new g.UDim(0, 0),
+
+      // UIPadding
+      PaddingTop: new g.UDim(0, 0),
+      PaddingBottom: new g.UDim(0, 0),
+      PaddingLeft: new g.UDim(0, 0),
+      PaddingRight: new g.UDim(0, 0),
+
+      // UIStroke
+      Thickness: 0,
+      Color: new g.Color3(),
+      Transparency: 0,
+      ApplyStrokeMode: g.Enum.ApplyStrokeMode.Contextual,
+
+      // UIListLayout
+      SortOrder: g.Enum.SortOrder.LayoutOrder,
+      FillDirection: g.Enum.FillDirection.Vertical,
+      HorizontalAlignment: g.Enum.HorizontalAlignment.Left,
+      VerticalAlignment: g.Enum.VerticalAlignment.Top,
+      Padding: new g.UDim(0, 0),
+
+      // UIGridLayout
+      CellSize: new g.UDim2(0, 100, 0, 100),
+      CellPadding: new g.UDim2(0, 5, 0, 5),
+      FillDirectionMaxCells: 0,
+      StartCorner: enumItem("TopLeft", 0),
+
+      // ScreenGui
+      ResetOnSpawn: true,
+      IgnoreGuiInset: false,
+      DisplayOrder: 0,
+      Enabled: true,
+
+      // Signals
+      MouseButton1Click: createMockSignal(),
+      MouseEnter: createMockSignal(),
+      MouseLeave: createMockSignal(),
+
+      // Internal child tracking
+      __children: children,
+    };
+
+    // Intercept Parent assignment to maintain child lists
+    let _parent: any = undefined;
+    Object.defineProperty(instance, "Parent", {
+      get: () => _parent,
+      set: (newParent: any) => {
+        // Remove from old parent
+        if (_parent && _parent.__children) {
+          const idx = _parent.__children.indexOf(instance);
+          if (idx >= 0) _parent.__children.splice(idx, 1);
+        }
+        _parent = newParent;
+        // Add to new parent
+        if (newParent && newParent.__children) {
+          newParent.__children.push(instance);
+        }
+      },
+      enumerable: true,
+      configurable: true,
+    });
+
+    return instance;
   };
 }
 
@@ -350,4 +718,11 @@ export function unmockRobloxGlobals(): void {
   delete g.pairs;
   delete g.task;
   delete g.game;
+  delete g.UDim;
+  delete g.UDim2;
+  delete g.Vector2;
+  delete g.Color3;
+  delete g.TweenInfo;
+  delete g.Enum;
+  delete g.Instance;
 }
