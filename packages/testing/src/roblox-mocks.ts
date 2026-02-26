@@ -401,10 +401,10 @@ export function mockRobloxGlobals(): void {
     R: number;
     G: number;
     B: number;
-    constructor() {
-      this.R = 0;
-      this.G = 0;
-      this.B = 0;
+    constructor(r: number = 0, g: number = 0, b: number = 0) {
+      this.R = r;
+      this.G = g;
+      this.B = b;
     }
     static fromRGB(r: number, g: number, b: number) {
       const c = new Color3();

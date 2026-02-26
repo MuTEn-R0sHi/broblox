@@ -6,7 +6,7 @@ UI component library for Roblox games — primitives, components, theming, and f
 
 - Provide reusable UI primitives (`createFrame`, `createLabel`, `createButton`, `createScrollFrame`) that abstract Roblox Instance creation.
 - Theming system with `DarkTheme` / `LightTheme` and runtime theme switching.
-- Higher-level components: `createDialog`, `createToast`, `createProgressBar`.
+- Higher-level components: `createDialog`, `showToast`, `createProgressBar`, `createListView`, `createSpinner`.
 - 8 full-screen UI modules for common game features.
 - Helper utilities: `px()`, `scale()`, `fullSize()`, `centerAnchor()`, `addCorner()`, `addPadding()`, `addListLayout()`, `addStroke()`.
 
@@ -46,7 +46,32 @@ addCorner(frame, 8);
 ### Components
 
 ```typescript
-import { createDialog, createToast, createProgressBar } from "@broblox/ui";
+import {
+  createDialog,
+  showToast,
+  createProgressBar,
+  createListView,
+  createSpinner,
+} from "@broblox/ui";
+
+// Modal dialog with confirm/cancel buttons
+const dialog = createDialog(parent, { title: "Confirm", message: "Are you sure?" });
+
+// Toast notification — auto-dismisses after duration
+const toastCleanup = showToast(parent, { message: "Saved!", duration: 3 });
+
+// Progress bar with 0–1 fill
+const { frame: progressFrame, setValue } = createProgressBar(parent, { value: 0 });
+setValue(0.75);
+
+// Scrollable list view
+const { frame: listFrame, cleanup: listCleanup } = createListView(parent, {
+  items: [{ id: "a", text: "First" }],
+  itemHeight: 50,
+});
+
+// Loading spinner (animated rotation)
+const { frame: spinnerFrame, cleanup: spinnerCleanup } = createSpinner(parent, 32);
 ```
 
 ## Dependencies
