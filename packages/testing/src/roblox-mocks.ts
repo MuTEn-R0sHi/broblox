@@ -214,7 +214,7 @@ export const luaString = {
   format: (fmt: string, ...args: unknown[]): string => {
     // Very simplified sprintf — handles %d, %f, %s, %x, and %.Nf
     let i = 0;
-    return fmt.replace(/%([+-]?\d*\.?\d*[dfsxXeEgGqo%])/g, (match) => {
+    return fmt.replace(/%([+-]?\d*(?:\.\d+)?[dfsxXeEgGqo%])/g, (match) => {
       if (match === "%%") return "%";
       const arg = args[i++];
       const spec = match.slice(-1);

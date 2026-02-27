@@ -18,6 +18,9 @@ concurrency:
   group: publish-dev-${{ inputs.game || 'starter' }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
