@@ -34,6 +34,7 @@
     "@broblox/testing": "workspace:*"
   },
   "dependencies": {
+    "@broblox/constants": "workspace:*",
     "@broblox/core": "workspace:*",
     "@broblox/observability": "workspace:*",
     "@broblox/shared-types": "workspace:*"

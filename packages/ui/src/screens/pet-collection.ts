@@ -42,6 +42,7 @@ import type { Cleanup, ColorSpec } from "../types";
 
 const logger = createLogger("PetCollection");
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare const game: {
   GetService(name: "TweenService"): {
     Create(instance: Instance, tweenInfo: TweenInfo, properties: Record<string, unknown>): Tween;

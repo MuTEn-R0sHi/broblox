@@ -11,8 +11,11 @@ describe("QuestService (starter)", () => {
   let capturedOnQuestCompleted:
     | ((event: { playerId: number; questId: string; rewards: unknown[] }) => void)
     | undefined;
+  let capturedOnPlayerRemoving: ((cb: unknown) => void) | undefined;
+  let capturedOnPlayerAdded: ((cb: unknown) => void) | undefined;
 
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
+  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
   let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayers: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayer: { UserId: number; Name: string };
@@ -21,6 +24,8 @@ describe("QuestService (starter)", () => {
     vi.resetModules();
 
     capturedOnQuestCompleted = undefined;
+    capturedOnPlayerRemoving = undefined;
+    capturedOnPlayerAdded = undefined;
     mockPlayer = { UserId: 7, Name: "StarterPlayer" };
     mockRegistry = { fireClient: vi.fn() };
 
@@ -39,14 +44,17 @@ describe("QuestService (starter)", () => {
     vi.doMock("@broblox/quests", () => ({
       createQuestService: vi.fn((config: Record<string, unknown>) => {
         capturedOnQuestCompleted = config["onQuestCompleted"] as typeof capturedOnQuestCompleted;
+        capturedOnPlayerRemoving = config["onPlayerRemoving"] as typeof capturedOnPlayerRemoving;
+        capturedOnPlayerAdded = config["onPlayerAdded"] as typeof capturedOnPlayerAdded;
         return mockHandle;
       }),
     }));
 
     vi.doMock("@rbxts/services", () => ({ Players: mockPlayers }));
 
+    mockPlayerLifecycle = { onPlayerAdded: vi.fn(), onPlayerRemoving: vi.fn() };
     vi.doMock("./PlayerLifecycleService", () => ({
-      PlayerLifecycleService: { onPlayerAdded: vi.fn(), onPlayerRemoving: vi.fn() },
+      PlayerLifecycleService: mockPlayerLifecycle,
     }));
 
     vi.doMock("./RemoteService", () => ({
@@ -115,6 +123,42 @@ describe("QuestService (starter)", () => {
           data: expect.objectContaining({ rewards: eventWithItem.rewards }),
         })
       );
+    });
+  });
+
+  describe("getter delegation", () => {
+    it("getQuestRegistry delegates to handle", async () => {
+      const mod = await loadService();
+      mod.getQuestRegistry();
+      expect(mockHandle.getQuestRegistry).toHaveBeenCalled();
+    });
+
+    it("getQuests delegates to handle.getQuestStore", async () => {
+      const mod = await loadService();
+      mod.getQuests(42);
+      expect(mockHandle.getQuestStore).toHaveBeenCalledWith(42);
+    });
+
+    it("cleanupPlayerQuests delegates to handle.cleanupPlayer", async () => {
+      const mod = await loadService();
+      mod.cleanupPlayerQuests(42);
+      expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+    });
+  });
+
+  describe("lifecycle config callbacks", () => {
+    it("onPlayerRemoving delegates to PlayerLifecycleService", async () => {
+      await loadService();
+      const dummyCb = vi.fn();
+      capturedOnPlayerRemoving!(dummyCb);
+      expect(mockPlayerLifecycle.onPlayerRemoving).toHaveBeenCalledWith(dummyCb);
+    });
+
+    it("onPlayerAdded delegates to PlayerLifecycleService", async () => {
+      await loadService();
+      const dummyCb = vi.fn();
+      capturedOnPlayerAdded!(dummyCb);
+      expect(mockPlayerLifecycle.onPlayerAdded).toHaveBeenCalledWith(dummyCb);
     });
   });
 });

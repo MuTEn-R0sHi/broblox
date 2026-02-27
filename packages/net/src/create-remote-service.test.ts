@@ -82,4 +82,31 @@ describe("createRemoteService", () => {
     const h2 = mod.createRemoteService(makeConfig());
     expect(h1.Service).not.toBe(h2.Service);
   });
+
+  it("calls registry.cleanupPlayer on player leave when onPlayerRemoving is provided", async () => {
+    mockRegistry.cleanupPlayer = vi.fn();
+
+    let registeredCallback: ((player: unknown) => void) | undefined;
+    const onPlayerRemoving = vi.fn((cb: (player: unknown) => void) => {
+      registeredCallback = cb;
+    });
+
+    const handle = await createService({ ...makeConfig(), onPlayerRemoving } as never);
+    handle.Service.onInit!();
+
+    expect(onPlayerRemoving).toHaveBeenCalled();
+    expect(registeredCallback).toBeDefined();
+
+    const fakePlayer = { UserId: 42, Name: "TestPlayer" };
+    registeredCallback!(fakePlayer);
+
+    expect(mockRegistry.cleanupPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("skips cleanup registration when onPlayerRemoving not provided", async () => {
+    mockRegistry.cleanupPlayer = vi.fn();
+    const handle = await createService();
+    handle.Service.onInit!();
+    expect(mockRegistry.cleanupPlayer).not.toHaveBeenCalled();
+  });
 });

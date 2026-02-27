@@ -9,7 +9,7 @@ This is the single source of truth for BroBlox project planning. Raw brainstormi
 
 ## Where we are today
 
-The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (2,400+ tests), and deployed.
+The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (2,900+ tests), and deployed.
 
 **But nobody has played the games yet.**
 
@@ -22,7 +22,7 @@ Both games are deployed to Roblox across 3 environments (dev/staging/prod) — a
 | `apps/dashboard` | Live on Vercel (internal)                             |
 | `apps/website`   | Live at broblox-games.com                             |
 | CI/CD pipeline   | Green — build, test, lint, publish, promote, rollback |
-| Test coverage    | 2,400+ tests across 115+ suites                       |
+| Test coverage    | 2,900+ tests across 125+ test files                   |
 
 ### What's built (do not re-build)
 
@@ -240,6 +240,25 @@ Small improvements that can be done anytime, independent of the priorities above
 | Dashboard worker jobs                  | Medium | Rollout automation, ban propagation                                |
 | Performance budgets in CI              | Medium | Bundle size / memory limits                                        |
 | Roblox Moments integration             | Low    | Auto-detect highlights for sharing                                 |
+
+### Code quality (completed)
+
+Improvements from the [improvement plan](../improvement-plan.md), completed 2026-02-27:
+
+| Session | Area                                                   | Status  |
+| ------- | ------------------------------------------------------ | ------- |
+| S1      | Memory leaks — RateLimiter & security state Maps       | ✅ Done |
+| S2      | Constants — magic numbers to `@broblox/constants`      | ✅ Done |
+| S3      | Security — configurable thresholds + aerial speed      | ✅ Done |
+| S4      | Logger — fix `child()` prefix extraction               | ✅ Done |
+| S5      | Net — `cleanup(playerId)` + player lifecycle           | ✅ Done |
+| S6      | Testing — DataStore mock + richer Player mock          | ✅ Done |
+| S7      | Data — `BasePlayerStore` versioning infrastructure     | ✅ Done |
+| S8      | Moderation — dedup, cleanup lifecycle, callback safety | ✅ Done |
+| S9      | Net validation — array guard                           | ✅ Done |
+| S10     | Protocol — NaN/Infinity guard                          | ✅ Done |
+| S11     | Core — duplicate-name → hard error                     | ✅ Done |
+| S12     | Docs — ADR-0009, ADR-0010, roadmap update              | ✅ Done |
 
 ---
 

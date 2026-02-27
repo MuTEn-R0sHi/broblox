@@ -214,6 +214,16 @@ export class ServerRemoteRegistry<TRegistry extends RemoteRegistry> {
     remote.FireAllClients(data);
   }
 
+  /**
+   * Clean up rate limiter state for a player (call on player leave).
+   * Prevents unbounded Map growth when players join and leave.
+   */
+  cleanupPlayer(playerId: number): void {
+    this.rateLimiters.forEach((limiter) => {
+      limiter.cleanup(playerId);
+    });
+  }
+
   // ============================================================================
   // Private Methods
   // ============================================================================

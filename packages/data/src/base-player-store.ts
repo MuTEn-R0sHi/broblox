@@ -78,6 +78,24 @@ export abstract class BasePlayerStore<TData, TConfig extends BaseStoreConfig = B
   protected abstract keyPrefix(): string;
 
   /**
+   * Current schema version. Override in subclasses that use data versioning.
+   * Increment when the data shape changes and implement migrate().
+   * Default: 0 (no versioning).
+   */
+  protected schemaVersion(): number {
+    return 0;
+  }
+
+  /**
+   * Optionally override to migrate data from an older version.
+   * Called during load() if stored version < schemaVersion().
+   * Default: returns data unchanged.
+   */
+  protected migrate(data: TData, _fromVersion: number): TData {
+    return data;
+  }
+
+  /**
    * Deserialize raw DataStore value into `this.data`.
    * Called after a successful GetAsync.
    * Default implementation assigns the raw value directly.
@@ -114,6 +132,17 @@ export abstract class BasePlayerStore<TData, TConfig extends BaseStoreConfig = B
     if (!ok) return false;
     if (raw !== undefined) {
       this.deserialize(raw);
+      // Check version and migrate if needed (only when store opts in to versioning)
+      const currentVersion = this.schemaVersion();
+      if (currentVersion > 0) {
+        const storedVersion = ((this.data as Record<string, unknown>).__version as number) ?? 0;
+        if (storedVersion < currentVersion) {
+          this.data = this.migrate(this.data, storedVersion);
+          (this.data as Record<string, unknown>).__version = currentVersion;
+          this.markDirty(); // force save after migration
+          return true;
+        }
+      }
     }
     this.dirty = false;
     return true;

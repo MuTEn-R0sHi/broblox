@@ -318,7 +318,8 @@ describe("mockRobloxGlobals / unmockRobloxGlobals", () => {
   it("installs game.GetService stub", () => {
     const g = globalThis as any;
     const svc = g.game.GetService("Players");
-    expect(svc).toEqual({ _service: "Players" });
+    expect(svc._service).toBe("Players");
+    expect(typeof svc.GetPlayerByUserId).toBe("function");
   });
 
   it("installs game.JobId and PlaceId", () => {

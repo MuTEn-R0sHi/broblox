@@ -243,4 +243,76 @@ describe("createRewardsService", () => {
       expect(mockDailyStore.onClaimed).not.toHaveBeenCalled();
     });
   });
+
+  describe("onStart lifecycle", () => {
+    it("logs and wires onPlayerAdded callback to initPlayer", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({
+        ...makeConfig(),
+        onPlayerAdded: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      });
+
+      handle.Service.onStart!();
+
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("started"));
+      expect(capturedCb).toBeDefined();
+
+      capturedCb!({ UserId: 42 });
+      expect(mockDailyStore.init).toHaveBeenCalled();
+      expect(mockDailyStore.load).toHaveBeenCalled();
+      expect(mockAchievementStore.init).toHaveBeenCalled();
+      expect(mockAchievementStore.load).toHaveBeenCalled();
+    });
+  });
+
+  describe("onInit player-removing callback", () => {
+    it("saves dirty stores on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({
+        ...makeConfig(),
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      });
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockDailyStore.isDirty.mockReturnValue(true);
+      mockAchievementStore.isDirty.mockReturnValue(true);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockDailyStore.save).toHaveBeenCalled();
+      expect(mockAchievementStore.save).toHaveBeenCalled();
+      expect(handle.getDailyRewardStore(42)).toBeUndefined();
+      expect(handle.getAchievementStore(42)).toBeUndefined();
+    });
+
+    it("skips save for clean stores on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-rewards-service");
+      const handle = mod.createRewardsService({
+        ...makeConfig(),
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      });
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockDailyStore.isDirty.mockReturnValue(false);
+      mockAchievementStore.isDirty.mockReturnValue(false);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockDailyStore.save).not.toHaveBeenCalled();
+      expect(mockAchievementStore.save).not.toHaveBeenCalled();
+      expect(handle.getDailyRewardStore(42)).toBeUndefined();
+      expect(handle.getAchievementStore(42)).toBeUndefined();
+    });
+  });
 });

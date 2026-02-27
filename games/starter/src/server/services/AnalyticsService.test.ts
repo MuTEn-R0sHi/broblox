@@ -125,4 +125,30 @@ describe("AnalyticsService (starter)", () => {
       expect(mockOnPlayerRemoving).toHaveBeenCalled();
     });
   });
+
+  describe("getter delegation", () => {
+    it("getEventTracker delegates to handle", async () => {
+      const mod = await loadModule();
+      mod.getEventTracker();
+      expect(mockHandle.getEventTracker).toHaveBeenCalled();
+    });
+
+    it("getFunnelTracker delegates to handle", async () => {
+      const mod = await loadModule();
+      mod.getFunnelTracker();
+      expect(mockHandle.getFunnelTracker).toHaveBeenCalled();
+    });
+
+    it("getSessionTracker delegates to handle", async () => {
+      const mod = await loadModule();
+      mod.getSessionTracker();
+      expect(mockHandle.getSessionTracker).toHaveBeenCalled();
+    });
+
+    it("getRetentionTracker delegates to handle", async () => {
+      const mod = await loadModule();
+      mod.getRetentionTracker();
+      expect(mockHandle.getRetentionTracker).toHaveBeenCalled();
+    });
+  });
 });

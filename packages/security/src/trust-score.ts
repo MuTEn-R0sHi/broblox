@@ -6,6 +6,7 @@
  */
 
 import { TrustFactors, TrustScore } from "./types";
+import { TRUST_SCORE_CACHE_TTL_SEC } from "@broblox/constants";
 
 // ============================================================================
 // Score Weights
@@ -90,9 +91,6 @@ export function calculateTrustScore(factors: TrustFactors): TrustScore {
 
 const trustCache = new Map<number, { score: TrustScore; timestamp: number }>();
 
-/** Cache TTL in seconds */
-const CACHE_TTL = 60;
-
 /**
  * Get cached trust score for player.
  * Returns undefined if not cached or expired.
@@ -103,7 +101,7 @@ export function getCachedTrustScore(player: Player): TrustScore | undefined {
     return undefined;
   }
 
-  if (os.time() - cached.timestamp > CACHE_TTL) {
+  if (os.time() - cached.timestamp > TRUST_SCORE_CACHE_TTL_SEC) {
     trustCache.delete(player.UserId);
     return undefined;
   }

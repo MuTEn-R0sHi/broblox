@@ -911,6 +911,9 @@ importers:
 
   packages/moderation:
     dependencies:
+      "@broblox/constants":
+        specifier: workspace:*
+        version: link:../constants
       "@broblox/core":
         specifier: workspace:*
         version: link:../core
@@ -1187,6 +1190,9 @@ importers:
 
   packages/security:
     dependencies:
+      "@broblox/constants":
+        specifier: workspace:*
+        version: link:../constants
       "@broblox/core":
         specifier: workspace:*
         version: link:../core

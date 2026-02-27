@@ -240,4 +240,123 @@ describe("createEventService", () => {
     // @ts-expect-error stubbed global
     expect(task.delay).toHaveBeenCalledWith(30, expect.any(Function));
   });
+
+  // ---------------------------------------------------------------------------
+  // Event end transitions
+  // ---------------------------------------------------------------------------
+
+  it("fires onEventEnd when an active event expires on the next tick", async () => {
+    const time = { current: NOW };
+    vi.stubGlobal("os", { time: () => time.current });
+
+    const onEventEnd = vi.fn();
+    const onEventStart = vi.fn();
+    const handle = await createService({
+      events: [makeActiveEvent("expiring")],
+      onEventStart,
+      onEventEnd,
+    });
+    handle.Service.onStart!(); // first tick — event starts
+
+    expect(onEventStart).toHaveBeenCalledWith(expect.objectContaining({ id: "expiring" }));
+
+    // Advance time past endTime so the event is no longer active
+    time.current = NOW + 200;
+
+    // Capture and invoke the task.delay callback (the poll loop)
+    // @ts-expect-error stubbed global
+    const delayCallback = task.delay.mock.calls[0][1] as () => void;
+    delayCallback(); // triggers runTick() + schedulePoll()
+
+    expect(onEventEnd).toHaveBeenCalledWith(expect.objectContaining({ id: "expiring" }));
+  });
+
+  it("does not fire onEventEnd when event is still active", async () => {
+    const onEventEnd = vi.fn();
+    const handle = await createService({
+      events: [makeActiveEvent("still-active")],
+      onEventEnd,
+    });
+    handle.Service.onStart!();
+
+    // Invoke task.delay callback without advancing time — event still active
+    // @ts-expect-error stubbed global
+    const delayCallback = task.delay.mock.calls[0][1] as () => void;
+    delayCallback();
+
+    expect(onEventEnd).not.toHaveBeenCalled();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Inner callback invocations
+  // ---------------------------------------------------------------------------
+
+  it("onPlayerRemoving callback logs player removal", async () => {
+    let innerCallback: ((player: { UserId: number }) => void) | undefined;
+    const handle = await createService({
+      events: [],
+      onPlayerRemoving: (cb) => {
+        innerCallback = cb;
+      },
+    });
+    handle.Service.onInit!();
+
+    expect(innerCallback).toBeDefined();
+    innerCallback!({ UserId: 42 });
+    expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining("42"));
+    expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining("removed"));
+  });
+
+  it("onPlayerAdded callback logs when events are active", async () => {
+    let innerCallback: ((player: { UserId: number }) => void) | undefined;
+    const handle = await createService({
+      events: [makeActiveEvent("live")],
+      onPlayerAdded: (cb) => {
+        innerCallback = cb;
+      },
+    });
+    handle.Service.onStart!(); // tick activates the event
+
+    expect(innerCallback).toBeDefined();
+    innerCallback!({ UserId: 7 });
+    expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining("7"));
+    expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining("active"));
+  });
+
+  it("onPlayerAdded callback does nothing when no events active", async () => {
+    let innerCallback: ((player: { UserId: number }) => void) | undefined;
+    const handle = await createService({
+      events: [makeFutureEvent("later")],
+      onPlayerAdded: (cb) => {
+        innerCallback = cb;
+      },
+    });
+    handle.Service.onStart!();
+
+    mockLogger.debug.mockClear();
+    innerCallback!({ UserId: 99 });
+    // No debug log about active events when none are active
+    const activeCalls = mockLogger.debug.mock.calls.filter(
+      (c) => typeof c[0] === "string" && c[0].includes("active")
+    );
+    expect(activeCalls).toHaveLength(0);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Recursive poll
+  // ---------------------------------------------------------------------------
+
+  it("poll loop calls task.delay again (recursive scheduling)", async () => {
+    const handle = await createService({ events: [] });
+    handle.Service.onStart!();
+
+    // @ts-expect-error stubbed global
+    const firstCallCount = task.delay.mock.calls.length;
+    // @ts-expect-error stubbed global
+    const delayCallback = task.delay.mock.calls[0][1] as () => void;
+    delayCallback(); // triggers schedulePoll() which calls task.delay again
+
+    // @ts-expect-error stubbed global
+    expect(task.delay.mock.calls.length).toBeGreaterThan(firstCallCount);
+  });
 });

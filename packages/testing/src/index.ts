@@ -13,3 +13,4 @@ export * from "./error-codes";
 export * from "./result";
 export * from "./roblox-mocks";
 export * from "./factories";
+export * from "./datastore-mock";

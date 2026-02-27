@@ -9,6 +9,7 @@ import { Service, createLogger } from "@broblox/core";
 import { EnforcementConfig } from "./types";
 import { Enforcer, cleanupEnforcementState } from "./enforcer";
 import { cleanupPlayer } from "./detectors";
+import { cleanupTrustCache } from "./trust-score";
 
 export interface SecurityServiceConfig {
   /** Override default enforcement thresholds. */
@@ -36,10 +37,11 @@ export function createSecurityService(config: SecurityServiceConfig = {}): Secur
       name: "SecurityService",
 
       onInit() {
-        // Clean up per-player detector + enforcement state when players leave.
+        // Clean up per-player detector + enforcement + trust state when players leave.
         config.onPlayerRemoving?.((player) => {
           cleanupEnforcementState(player);
           cleanupPlayer(player);
+          cleanupTrustCache(player);
         });
         logger.info("SecurityService initialized.");
       },

@@ -136,4 +136,24 @@ describe("EventService (obby)", () => {
       });
     });
   });
+
+  describe("getter delegation", () => {
+    it("getActiveEvents delegates to handle", async () => {
+      const mod = await loadModule();
+      mod.getActiveEvents();
+      expect(mockHandle.getActiveEvents).toHaveBeenCalled();
+    });
+
+    it("isEventActive delegates to handle", async () => {
+      const mod = await loadModule();
+      mod.isEventActive("test-event");
+      expect(mockHandle.isEventActive).toHaveBeenCalledWith("test-event");
+    });
+
+    it("getEventScheduler delegates to handle.getScheduler", async () => {
+      const mod = await loadModule();
+      mod.getEventScheduler();
+      expect(mockHandle.getScheduler).toHaveBeenCalled();
+    });
+  });
 });

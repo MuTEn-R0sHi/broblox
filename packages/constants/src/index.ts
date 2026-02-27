@@ -14,3 +14,5 @@ export * from "./build";
 // Safe to import everywhere — functions are compiled to Luau for Roblox
 // and also work in Node.js tests with @broblox/testing mocks.
 export * from "./validation";
+export * from "./anticheat";
+export * from "./moderation";

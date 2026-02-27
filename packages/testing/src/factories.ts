@@ -144,6 +144,21 @@ export class MockRateLimiter {
   clear(): void {
     this.buckets.clear();
   }
+
+  /**
+   * Remove the token bucket for a player (call on player leave).
+   * Mirrors RateLimiter.cleanup() in the real implementation.
+   */
+  cleanup(playerId: string | number): void {
+    this.buckets.delete(String(playerId));
+  }
+
+  /**
+   * Return the number of active buckets (for test assertions).
+   */
+  getBucketCount(): number {
+    return this.buckets.size;
+  }
 }
 
 // ============================================================================
@@ -210,6 +225,16 @@ export interface MockPlayer {
   UserId: number;
   Name: string;
   DisplayName: string;
+  /** Mock Kick — records the message in `_kickedWith`. */
+  Kick: (message?: string) => void;
+  /** Inspect what message was passed to Kick(). */
+  _kickedWith?: string;
+  /** Mock SetAttribute — stores attributes in `_attributes`. */
+  SetAttribute: (name: string, value: unknown) => void;
+  /** Mock GetAttribute — reads from `_attributes`. */
+  GetAttribute: (name: string) => unknown;
+  /** Internal attribute storage for test inspection. */
+  _attributes: Map<string, unknown>;
 }
 
 let playerIdCounter = 1;
@@ -218,13 +243,26 @@ let playerIdCounter = 1;
  * Create a mock Player object for testing.
  */
 export function createMockPlayer(overrides?: Partial<MockPlayer>): MockPlayer {
-  const id = playerIdCounter++;
-  return {
+  const id = overrides?.UserId ?? playerIdCounter++;
+  const attrs = new Map<string, unknown>();
+  const player: MockPlayer = {
     UserId: id,
     Name: `Player${id}`,
     DisplayName: `Player ${id}`,
+    _kickedWith: undefined,
+    _attributes: attrs,
+    Kick(message?: string) {
+      player._kickedWith = message;
+    },
+    SetAttribute(name: string, value: unknown) {
+      attrs.set(name, value);
+    },
+    GetAttribute(name: string) {
+      return attrs.get(name);
+    },
     ...overrides,
   };
+  return player;
 }
 
 /**

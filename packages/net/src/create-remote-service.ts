@@ -16,6 +16,11 @@ export interface RemoteServiceConfig<TRegistry extends RemoteRegistry> {
   folderName?: string;
   /** Called whenever a player is rate-limited. Wire to security/telemetry. */
   onRateLimited?: (player: Player, endpoint: string, retryAfterMs: number) => void;
+  /**
+   * Wires player-leave cleanup for rate limiter state.
+   * Typically: `onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
 }
 
 export interface RemoteServiceHandle<TRegistry extends RemoteRegistry> {
@@ -40,6 +45,10 @@ export function createRemoteService<TRegistry extends RemoteRegistry>(
 
       onInit() {
         registry.initialize();
+        // Wire player-leave cleanup for rate limiter state
+        config.onPlayerRemoving?.((player) => {
+          registry.cleanupPlayer(player.UserId);
+        });
         logger.info("RemoteService initialized — remotes created.");
       },
 

@@ -114,6 +114,17 @@ Every mutation that can be retried must have a unique id:
   - migrate to current
   - write back only when safe
 
+### Schema versioning (BasePlayerStore)
+
+All player stores that extend `BasePlayerStore` must use `TData extends VersionedData`. This enforces:
+
+1. Default data **must** include `__version: 1`.
+2. When any stored field is added, renamed, or removed, **increment** `schemaVersion()` and implement `migrate(data, fromVersion)`.
+3. On `load()`, if the stored version is older than `schemaVersion()`, the store calls `migrate()`, stamps the new version, and marks dirty to trigger a save.
+4. Data saved with no `__version` field is treated as version 0.
+
+See [ADR-0010](decisions/0010-versioned-data-and-migrations.md) for the full rationale.
+
 ## Competitive integrity
 
 - Match results are computed server-side.

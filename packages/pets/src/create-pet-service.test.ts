@@ -130,4 +130,71 @@ describe("createPetService", () => {
     const h2 = mod.createPetService({ pets: [], datastoreName: "B" });
     expect(h1.Service).not.toBe(h2.Service);
   });
+
+  describe("onStart lifecycle", () => {
+    it("logs and wires onPlayerAdded callback to initPlayer", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-pet-service");
+      const handle = mod.createPetService({
+        pets: [] as never[],
+        datastoreName: "TestPets",
+        onPlayerAdded: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onStart!();
+
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("started"));
+      expect(capturedCb).toBeDefined();
+
+      capturedCb!({ UserId: 42 });
+      expect(mockStore.init).toHaveBeenCalled();
+      expect(mockStore.load).toHaveBeenCalled();
+    });
+  });
+
+  describe("onInit player-removing callback", () => {
+    it("saves dirty store on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-pet-service");
+      const handle = mod.createPetService({
+        pets: [] as never[],
+        datastoreName: "TestPets",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockStore.isDirty.mockReturnValue(true);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockStore.save).toHaveBeenCalled();
+      expect(handle.getPetStore(42)).toBeUndefined();
+    });
+
+    it("skips save for clean store on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-pet-service");
+      const handle = mod.createPetService({
+        pets: [] as never[],
+        datastoreName: "TestPets",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockStore.isDirty.mockReturnValue(false);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockStore.save).not.toHaveBeenCalled();
+      expect(handle.getPetStore(42)).toBeUndefined();
+    });
+  });
 });
