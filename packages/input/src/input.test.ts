@@ -14,7 +14,7 @@ import {
   CommonActions,
   registerCommonActions,
 } from "./actions";
-import type { InputAction, ActionState } from "./types";
+import type { InputAction, ActionState, GamepadButton } from "./types";
 import {
   key,
   mouse,
@@ -23,10 +23,13 @@ import {
   touch,
   bind,
   addDefaultBinding,
+  addDefaultBindings,
   setCustomBinding,
   removeCustomBinding,
+  clearCustomBindings,
   getBindingsForAction,
   getBindingDisplayName,
+  initDefaultBindings,
   KeyboardDefaults,
   GamepadDefaults,
 } from "./bindings";
@@ -346,6 +349,84 @@ describe("bindings", () => {
     it("GamepadDefaults has entries", () => {
       expect(GamepadDefaults.length).toBeGreaterThan(0);
       expect(GamepadDefaults.some((b) => b.action === "jump")).toBe(true);
+    });
+  });
+
+  describe("addDefaultBindings", () => {
+    it("registers multiple bindings at once", () => {
+      addDefaultBindings([bind("bulk_a", key("Z")), bind("bulk_b", key("X"))]);
+      expect(getBindingsForAction("bulk_a")).toHaveLength(1);
+      expect(getBindingsForAction("bulk_b")).toHaveLength(1);
+    });
+  });
+
+  describe("clearCustomBindings", () => {
+    it("removes all custom overrides and reverts to defaults", () => {
+      addDefaultBinding(bind("clear_test", key("Q")));
+      setCustomBinding(bind("clear_test", key("E")));
+      clearCustomBindings();
+      const bindings = getBindingsForAction("clear_test");
+      expect(bindings).toHaveLength(1);
+      expect(bindings[0].primary).toEqual({ type: "key", key: "Q" });
+    });
+  });
+
+  describe("initDefaultBindings", () => {
+    it("populates both keyboard and gamepad bindings", () => {
+      initDefaultBindings();
+      const jump = getBindingsForAction("jump");
+      // At least one keyboard + one gamepad binding for jump
+      expect(jump.length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  describe("setCustomBinding replaces existing custom", () => {
+    it("replaces prior custom binding for same action", () => {
+      addDefaultBinding(bind("replace_custom", key("Q")));
+      setCustomBinding(bind("replace_custom", key("E")));
+      setCustomBinding(bind("replace_custom", key("R")));
+      const bindings = getBindingsForAction("replace_custom");
+      expect(bindings).toHaveLength(1);
+      expect(bindings[0].primary).toEqual({ type: "key", key: "R" });
+    });
+  });
+
+  describe("getBindingDisplayName — all gamepad buttons", () => {
+    const cases: Array<[string, string]> = [
+      ["ButtonA", "A"],
+      ["ButtonB", "B"],
+      ["ButtonX", "X"],
+      ["ButtonY", "Y"],
+      ["ButtonL1", "LB"],
+      ["ButtonR1", "RB"],
+      ["ButtonL2", "LT"],
+      ["ButtonR2", "RT"],
+      ["ButtonL3", "LS"],
+      ["ButtonR3", "RS"],
+      ["DPadUp", "D-Up"],
+      ["DPadDown", "D-Down"],
+      ["DPadLeft", "D-Left"],
+      ["DPadRight", "D-Right"],
+      ["ButtonStart", "Start"],
+      ["ButtonSelect", "Select"],
+    ];
+
+    for (const [btn, expected] of cases) {
+      it(`formats ${btn} as "${expected}"`, () => {
+        expect(getBindingDisplayName(bind("gp", button(btn as GamepadButton)))).toBe(expected);
+      });
+    }
+  });
+
+  describe("priority sorting", () => {
+    it("registers multiple priorities for the same action", () => {
+      addDefaultBinding({ action: "prio_test", primary: key("A"), priority: 1 });
+      addDefaultBinding({ action: "prio_test", primary: key("B"), priority: 10 });
+      const bindings = getBindingsForAction("prio_test");
+      expect(bindings).toHaveLength(2);
+      const keys = bindings.map((b) => (b.primary as { key: string }).key);
+      expect(keys).toContain("A");
+      expect(keys).toContain("B");
     });
   });
 });

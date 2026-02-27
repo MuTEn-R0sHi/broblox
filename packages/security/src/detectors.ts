@@ -5,6 +5,11 @@
  */
 
 import { createLogger } from "@broblox/core";
+import {
+  ANTICHEAT_MAX_SPEED_STUDS_PER_SEC,
+  ANTICHEAT_SPEED_CHECK_INTERVAL_SEC,
+  ANTICHEAT_MAX_TELEPORT_DISTANCE_STUDS,
+} from "@broblox/constants";
 import { Violation, ViolationCategory, ViolationSeverity, ViolationHandler } from "./types";
 
 const logger = createLogger("Security.Detectors");
@@ -70,31 +75,31 @@ interface SpeedCheckState {
   lastPosition?: Vector3;
   lastCheck: number;
   violations: number;
+  isAerial: boolean;
 }
 
 const speedStates = new Map<number, SpeedCheckState>();
 
-/** Maximum speed in studs/second before triggering */
-const MAX_SPEED_STUDS_PER_SEC = 100;
-
-/** Minimum time between checks (seconds) */
-const SPEED_CHECK_INTERVAL = 0.5;
+/** Aerial speed multiplier — players in the air are allowed more speed. */
+const AERIAL_SPEED_MULTIPLIER = 1.5;
 
 /**
  * Check if player is moving too fast.
  * Call this periodically (e.g., Heartbeat).
+ * @param isAerial - Set to true if the player's Humanoid.FloorMaterial is Air/nil.
  */
-export function checkSpeed(player: Player, currentPosition: Vector3): void {
+export function checkSpeed(player: Player, currentPosition: Vector3, isAerial = false): void {
   let state = speedStates.get(player.UserId);
   const now = os.clock();
 
   if (!state) {
-    state = { lastCheck: now, violations: 0 };
+    state = { lastCheck: now, violations: 0, isAerial };
     speedStates.set(player.UserId, state);
   }
+  state.isAerial = isAerial;
 
   const elapsed = now - state.lastCheck;
-  if (elapsed < SPEED_CHECK_INTERVAL) {
+  if (elapsed < ANTICHEAT_SPEED_CHECK_INTERVAL_SEC) {
     return;
   }
 
@@ -102,7 +107,11 @@ export function checkSpeed(player: Player, currentPosition: Vector3): void {
     const distance = currentPosition.sub(state.lastPosition).Magnitude;
     const speed = distance / elapsed;
 
-    if (speed > MAX_SPEED_STUDS_PER_SEC) {
+    const maxSpeed = state.isAerial
+      ? ANTICHEAT_MAX_SPEED_STUDS_PER_SEC * AERIAL_SPEED_MULTIPLIER
+      : ANTICHEAT_MAX_SPEED_STUDS_PER_SEC;
+
+    if (speed > maxSpeed) {
       state.violations += 1;
       const severity: ViolationSeverity = state.violations >= 3 ? "high" : "medium";
 
@@ -130,26 +139,31 @@ export function resetSpeedCheck(player: Player): void {
 // Teleport Detector
 // ============================================================================
 
-/** Maximum allowed position delta in a single frame */
-const MAX_TELEPORT_DISTANCE = 200;
+/** Per-player teleport suppression — playerId → expiry timestamp (os.clock()). */
+const teleportSuppressions = new Map<number, number>();
+
+/**
+ * Suppress teleport detection for a player for a given duration.
+ * Call before any server-initiated teleport (respawn, zipline, etc.).
+ */
+export function suppressTeleportCheck(player: Player, durationSeconds = 1): void {
+  teleportSuppressions.set(player.UserId, os.clock() + durationSeconds);
+}
 
 /**
  * Check for unexpected teleportation.
  * Returns true if teleport was suspicious.
  */
-export function checkTeleport(
-  player: Player,
-  oldPosition: Vector3,
-  newPosition: Vector3,
-  allowedTeleport = false
-): boolean {
-  if (allowedTeleport) {
+export function checkTeleport(player: Player, oldPosition: Vector3, newPosition: Vector3): boolean {
+  // Honor suppression window
+  const suppressUntil = teleportSuppressions.get(player.UserId);
+  if (suppressUntil !== undefined && os.clock() < suppressUntil) {
     return false;
   }
 
   const distance = newPosition.sub(oldPosition).Magnitude;
 
-  if (distance > MAX_TELEPORT_DISTANCE) {
+  if (distance > ANTICHEAT_MAX_TELEPORT_DISTANCE_STUDS) {
     reportViolation(
       player,
       "teleport",
@@ -243,6 +257,7 @@ export function checkRateAbuse(player: Player, actionKey: string, maxPerMinute: 
  */
 export function cleanupPlayer(player: Player): void {
   speedStates.delete(player.UserId);
+  teleportSuppressions.delete(player.UserId);
 
   // Clean up rate states
   rateStates.forEach((actionStates) => {

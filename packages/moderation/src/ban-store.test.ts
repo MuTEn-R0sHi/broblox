@@ -519,6 +519,26 @@ describe("BanStore", () => {
       expect(bans[0].status).toBe("REVOKED");
       expect(bans[0].revokeReason).toBe("Overturned");
     });
+
+    it("skips duplicate ban sync with same ID", async () => {
+      const banStore = await getBanStore();
+      const externalBan: BanRecord = {
+        id: "dup-ban-1",
+        playerId: 100,
+        type: "PERMANENT",
+        status: "ACTIVE",
+        reason: "Exploiting",
+        moderatorId: "mod",
+        createdAt: 900,
+      };
+
+      banStore.syncBan(externalBan);
+      const updateCallsBefore = store.UpdateAsync.mock.calls.length;
+
+      // Second call with same ID should be skipped
+      banStore.syncBan(externalBan);
+      expect(store.UpdateAsync.mock.calls.length).toBe(updateCallsBefore);
+    });
   });
 
   // ====================================================================

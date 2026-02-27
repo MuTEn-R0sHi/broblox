@@ -143,4 +143,70 @@ describe("createTutorialService", () => {
     const h2 = mod.createTutorialService({ sequences: [], datastoreName: "B" });
     expect(h1.Service).not.toBe(h2.Service);
   });
+
+  describe("onStart lifecycle", () => {
+    it("wires onPlayerAdded callback to initPlayer", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-tutorial-service");
+      const handle = mod.createTutorialService({
+        sequences: [] as never[],
+        datastoreName: "TestTutorial",
+        onPlayerAdded: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onStart!();
+
+      expect(capturedCb).toBeDefined();
+
+      capturedCb!({ UserId: 42 });
+      expect(mockManager.init).toHaveBeenCalled();
+      expect(mockManager.load).toHaveBeenCalled();
+    });
+  });
+
+  describe("onInit player-removing callback", () => {
+    it("saves dirty manager on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-tutorial-service");
+      const handle = mod.createTutorialService({
+        sequences: [] as never[],
+        datastoreName: "TestTutorial",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockManager.isDirty.mockReturnValue(true);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockManager.save).toHaveBeenCalled();
+      expect(handle.getTutorialManager(42)).toBeUndefined();
+    });
+
+    it("skips save for clean manager on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-tutorial-service");
+      const handle = mod.createTutorialService({
+        sequences: [] as never[],
+        datastoreName: "TestTutorial",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockManager.isDirty.mockReturnValue(false);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockManager.save).not.toHaveBeenCalled();
+      expect(handle.getTutorialManager(42)).toBeUndefined();
+    });
+  });
 });

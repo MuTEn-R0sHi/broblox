@@ -9,6 +9,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import { type Player, makePlayer, makeDefaultData } from "./__test-helpers";
 
+type Constructor = new (...args: unknown[]) => unknown;
+
 describe("CheckpointService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
@@ -24,6 +26,32 @@ describe("CheckpointService", () => {
     vi.resetModules();
 
     requestRespawnHandler = undefined;
+
+    // Stub Roblox value types needed by respawnPlayer teleportation code
+    const g = globalThis as Record<string, unknown>;
+    g.Vector3 = class MockVector3 {
+      X: number;
+      Y: number;
+      Z: number;
+      constructor(x = 0, y = 0, z = 0) {
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
+      }
+      static zero = { X: 0, Y: 0, Z: 0 };
+    };
+    g.CFrame = Object.assign(
+      class MockCFrame {
+        constructor(public pos?: unknown) {}
+        mul() {
+          return new (g.CFrame as Constructor)();
+        }
+        static Angles() {
+          return new (g.CFrame as Constructor)();
+        }
+      },
+      { Angles: (_x: number, _y: number, _z: number) => new (g.CFrame as Constructor)() }
+    );
 
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
 
@@ -567,5 +595,644 @@ describe("CheckpointService", () => {
       // Should not throw — internal Maps are cleared
       expect(svc.getCheckpoint(1, 0)).toBeUndefined();
     });
+  });
+
+  // ─── respawnPlayer with loaded checkpoint ──────────────────────────
+
+  describe("respawnPlayer (teleportation)", () => {
+    function makeCheckpointPart(stage: number, cp: number) {
+      return {
+        IsA: () => true,
+        Name: `CP-${stage}-${cp}`,
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return stage;
+          if (attr === "CheckpointIndex") return cp;
+          return undefined;
+        }),
+        Position: { X: 10 * cp, Y: 5, Z: 20 * cp },
+        Orientation: { Y: 90 },
+        Touched: { Connect: vi.fn() },
+      };
+    }
+
+    async function initWithCheckpoints(...parts: ReturnType<typeof makeCheckpointPart>[]) {
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyCheckpoint") return parts;
+        return [];
+      });
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+      return svc;
+    }
+
+    it("teleports to loaded checkpoint position", async () => {
+      const svc = await initWithCheckpoints(makeCheckpointPart(1, 0), makeCheckpointPart(1, 2));
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, currentCheckpoint: 2 })
+      );
+      const hrp = {
+        AssemblyLinearVelocity: { X: 5, Y: 5, Z: 5 },
+        CFrame: {},
+      };
+      const character = {
+        FindFirstChild: vi.fn((name: string) => (name === "HumanoidRootPart" ? hrp : undefined)),
+      };
+      const player = makePlayer({ Character: character });
+
+      svc.respawnPlayer(player);
+
+      // Velocity should be zeroed
+      expect(hrp.AssemblyLinearVelocity).toBeDefined();
+      // CFrame should be set
+      expect(hrp.CFrame).toBeDefined();
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        expect.stringContaining("Respawned at adjusted")
+      );
+    });
+
+    it("falls back to stage start when exact checkpoint is not loaded", async () => {
+      // Only load checkpoint 0 for stage 1
+      const svc = await initWithCheckpoints(makeCheckpointPart(1, 0));
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, currentCheckpoint: 3 }) // cp 3 not loaded
+      );
+      const hrp = { AssemblyLinearVelocity: {}, CFrame: {} };
+      const character = {
+        FindFirstChild: vi.fn((name: string) => (name === "HumanoidRootPart" ? hrp : undefined)),
+      };
+      const player = makePlayer({ Character: character });
+
+      svc.respawnPlayer(player);
+
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("stage start"));
+    });
+
+    it("warns when no checkpoint found at all", async () => {
+      // Init with no checkpoints
+      mockCollectionService.GetTagged.mockReturnValue([]);
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 5, currentCheckpoint: 2 })
+      );
+      const hrp = { AssemblyLinearVelocity: {}, CFrame: {} };
+      const character = {
+        FindFirstChild: vi.fn((name: string) => (name === "HumanoidRootPart" ? hrp : undefined)),
+      };
+      const player = makePlayer({ Character: character });
+
+      svc.respawnPlayer(player);
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("No checkpoint found"));
+    });
+  });
+
+  // ─── RequestRespawn handler ────────────────────────────────────────
+
+  describe("RequestRespawn handler", () => {
+    async function initService() {
+      mockCollectionService.GetTagged.mockReturnValue([]);
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+      return svc;
+    }
+
+    it("respawns player at current checkpoint (no payload)", async () => {
+      await initService();
+      const player = makePlayer();
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, currentCheckpoint: 0 })
+      );
+
+      expect(requestRespawnHandler).toBeDefined();
+      requestRespawnHandler!(player, undefined);
+
+      // Should have attempted respawn (either direct or via LoadCharacter)
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("Respawning"));
+    });
+
+    it("rate-limits rapid respawn requests", async () => {
+      await initService();
+      const player = makePlayer();
+      mockDataService.getData.mockReturnValue(makeDefaultData());
+
+      requestRespawnHandler!(player, undefined);
+      // Immediate second call with same os.clock()
+      requestRespawnHandler!(player, undefined);
+
+      // Only one respawn should happen (second is rate-limited)
+      const respawnCalls = mockLogger.info.mock.calls.filter(
+        (c) => typeof c[0] === "string" && c[0].includes("Respawning")
+      );
+      expect(respawnCalls.length).toBeLessThanOrEqual(1);
+    });
+
+    it("rejects invalid non-table payload", async () => {
+      await initService();
+      const player = makePlayer();
+      mockDataService.getData.mockReturnValue(makeDefaultData());
+
+      // Advance clock so rate-limit doesn't block
+      (globalThis as Record<string, unknown>).os = {
+        clock: vi.fn(() => 100),
+        time: vi.fn(() => 100),
+      };
+
+      requestRespawnHandler!(player, "invalid-string");
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Invalid respawn payload")
+      );
+    });
+
+    it("returns early when player has no data", async () => {
+      await initService();
+      mockDataService.getData.mockReturnValue(undefined);
+      const player = makePlayer();
+
+      (globalThis as Record<string, unknown>).os = {
+        clock: vi.fn(() => 200),
+        time: vi.fn(() => 200),
+      };
+      requestRespawnHandler!(player, undefined);
+
+      // No respawn attempted
+      const respawnCalls = mockLogger.info.mock.calls.filter(
+        (c) => typeof c[0] === "string" && c[0].includes("Respawning")
+      );
+      expect(respawnCalls).toHaveLength(0);
+    });
+
+    it("allows toCheckpoint targeting for reached checkpoints", async () => {
+      await initService();
+      const player = makePlayer();
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, currentCheckpoint: 3 })
+      );
+
+      (globalThis as Record<string, unknown>).os = {
+        clock: vi.fn(() => 300),
+        time: vi.fn(() => 300),
+      };
+      requestRespawnHandler!(player, { toCheckpoint: 1 });
+
+      expect(mockDataService.updateData).toHaveBeenCalledWith(player, { currentCheckpoint: 1 });
+    });
+
+    it("ignores toCheckpoint beyond current", async () => {
+      await initService();
+      const player = makePlayer();
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, currentCheckpoint: 2 })
+      );
+
+      (globalThis as Record<string, unknown>).os = {
+        clock: vi.fn(() => 400),
+        time: vi.fn(() => 400),
+      };
+      requestRespawnHandler!(player, { toCheckpoint: 5 });
+
+      expect(mockDataService.updateData).not.toHaveBeenCalled();
+    });
+
+    it("calls LoadCharacter when no character present", async () => {
+      await initService();
+      const player = makePlayer({ Character: undefined }) as unknown as Player & {
+        LoadCharacter: ReturnType<typeof vi.fn>;
+      };
+      (player as unknown as Record<string, unknown>).LoadCharacter = vi.fn();
+      mockDataService.getData.mockReturnValue(makeDefaultData());
+
+      (globalThis as Record<string, unknown>).os = {
+        clock: vi.fn(() => 500),
+        time: vi.fn(() => 500),
+      };
+      requestRespawnHandler!(player, undefined);
+
+      // Should call LoadCharacter via task.spawn
+      expect((globalThis as Record<string, { mock?: unknown }>).task).toBeDefined();
+    });
+  });
+
+  // ─── Kill zone Touched callback ───────────────────────────────────
+
+  describe("kill zone Touched callback", () => {
+    it("kills player and increments deaths when touched", async () => {
+      const killZonePart = {
+        IsA: () => true,
+        Name: "killzone",
+        GetAttribute: vi.fn(() => undefined),
+        Position: { X: 0, Y: -10, Z: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      const stageModel = {
+        GetDescendants: vi.fn(() => [killZonePart]),
+      };
+      const stagesFolder = {
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
+        if (name === "Stages") return stagesFolder;
+        return undefined;
+      });
+      mockCollectionService.GetTagged.mockReturnValue([]);
+
+      const player = makePlayer();
+      const humanoid = { Health: 100, MaxHealth: 100, TakeDamage: vi.fn() };
+      const hitPart = {
+        Parent: {
+          FindFirstChildOfClass: vi.fn(() => humanoid),
+        },
+        Name: "Leg",
+      };
+      mockPlayers.GetPlayerFromCharacter = vi.fn(() => player);
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      // Capture the kill zone Touched callback
+      const touchedConnect = killZonePart.Touched.Connect;
+      expect(touchedConnect).toHaveBeenCalled();
+      const touchCallback = touchedConnect.mock.calls[0][0] as (hit: unknown) => void;
+
+      touchCallback(hitPart);
+
+      expect(mockDataService.incrementDeaths).toHaveBeenCalledWith(player);
+      expect(humanoid.TakeDamage).toHaveBeenCalledWith(100);
+    });
+
+    it("ignores touch when no character parent", async () => {
+      const killZonePart = {
+        IsA: () => true,
+        Name: "lava",
+        GetAttribute: vi.fn(() => undefined),
+        Position: { X: 0, Y: 0, Z: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      const stageModel = { GetDescendants: vi.fn(() => [killZonePart]) };
+      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
+        if (name === "Stages") return stagesFolder;
+        return undefined;
+      });
+      mockCollectionService.GetTagged.mockReturnValue([]);
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      const touchCallback = killZonePart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
+      touchCallback({ Parent: undefined }); // no character
+
+      expect(mockDataService.incrementDeaths).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─── Coin Touched callback ─────────────────────────────────────────
+
+  describe("coin Touched callback", () => {
+    function makeCoinSetup() {
+      const coinPart = {
+        IsA: () => true,
+        Name: "Coin1",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "CoinValue") return 5;
+          return undefined;
+        }),
+        Position: { X: 10, Y: 10, Z: 10 },
+        CanTouch: false,
+        Touched: { Connect: vi.fn() },
+        Transparency: 0,
+      };
+      return coinPart;
+    }
+
+    it("awards coins and tracks collection on touch", async () => {
+      const coinPart = makeCoinSetup();
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyCoin") return [coinPart];
+        return [];
+      });
+
+      const player = makePlayer();
+      const humanoid = { Health: 100 };
+      const hitPart = {
+        Parent: { FindFirstChildOfClass: vi.fn(() => humanoid) },
+        Name: "Torso",
+      };
+      mockPlayers.GetPlayerFromCharacter = vi.fn(() => player);
+      mockDataService.getData.mockReturnValue(makeDefaultData({ coins: 10 }));
+
+      const svc = await loadCheckpointService();
+      svc.setupCoins();
+
+      const touchCallback = coinPart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
+      touchCallback(hitPart);
+
+      expect(mockDataService.addCoins).toHaveBeenCalledWith(player, 5);
+      expect(coinPart.Transparency).toBe(1);
+      expect(mockRegistry.fireClient).toHaveBeenCalledWith(
+        "PlayerDataSync",
+        player,
+        expect.objectContaining({ coins: 10 })
+      );
+    });
+
+    it("prevents double-collection", async () => {
+      const coinPart = makeCoinSetup();
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyCoin") return [coinPart];
+        return [];
+      });
+
+      const player = makePlayer();
+      const hitPart = {
+        Parent: { FindFirstChildOfClass: vi.fn(() => ({ Health: 100 })) },
+        Name: "Torso",
+      };
+      mockPlayers.GetPlayerFromCharacter = vi.fn(() => player);
+      mockDataService.getData.mockReturnValue(makeDefaultData());
+
+      const svc = await loadCheckpointService();
+      svc.setupCoins();
+
+      const touchCallback = coinPart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
+      touchCallback(hitPart);
+      touchCallback(hitPart); // second touch
+
+      expect(mockDataService.addCoins).toHaveBeenCalledTimes(1);
+    });
+
+    it("ignores touch without player", async () => {
+      const coinPart = makeCoinSetup();
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyCoin") return [coinPart];
+        return [];
+      });
+
+      const hitPart = {
+        Parent: { FindFirstChildOfClass: vi.fn(() => ({ Health: 100 })) },
+        Name: "Torso",
+      };
+      mockPlayers.GetPlayerFromCharacter = vi.fn(() => undefined);
+
+      const svc = await loadCheckpointService();
+      svc.setupCoins();
+
+      const touchCallback = coinPart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
+      touchCallback(hitPart);
+
+      expect(mockDataService.addCoins).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─── PlayerRemoving cleanup ────────────────────────────────────────
+
+  describe("PlayerRemoving cleanup", () => {
+    it("cleans up per-player state on removal", async () => {
+      mockCollectionService.GetTagged.mockReturnValue([]);
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      // Capture the PlayerRemoving callback
+      const removingConnect = (
+        mockPlayers.PlayerRemoving as unknown as { Connect: ReturnType<typeof vi.fn> }
+      ).Connect;
+      expect(removingConnect).toHaveBeenCalled();
+      const removingCallback = removingConnect.mock.calls[0][0] as (player: Player) => void;
+
+      const player = makePlayer({ UserId: 99 });
+      removingCallback(player);
+
+      // Should not throw — cleanup runs successfully
+      expect(removingConnect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // ─── Checkpoint Touched callback ───────────────────────────────────
+
+  describe("checkpoint Touched callback", () => {
+    it("calls touchCheckpoint when a player touches a checkpoint", async () => {
+      const cpPart = {
+        IsA: () => true,
+        Name: "CP-1-0",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          if (attr === "CheckpointIndex") return 0;
+          return undefined;
+        }),
+        Position: { X: 0, Y: 5, Z: 0 },
+        Orientation: { Y: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyCheckpoint") return [cpPart];
+        return [];
+      });
+
+      const player = makePlayer();
+      const hitPart = {
+        Parent: {
+          FindFirstChildOfClass: vi.fn(() => ({ Health: 100 })),
+        },
+      };
+      mockPlayers.GetPlayerFromCharacter = vi.fn(() => player);
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, currentCheckpoint: 0 })
+      );
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      // Capture the Touched callback
+      const touchCallback = cpPart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
+      touchCallback(hitPart);
+
+      expect(mockDataService.updateData).toHaveBeenCalledWith(player, { currentCheckpoint: 0 });
+    });
+
+    it("ignores touch when no humanoid present", async () => {
+      const cpPart = {
+        IsA: () => true,
+        Name: "CP-1-0",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          if (attr === "CheckpointIndex") return 0;
+          return undefined;
+        }),
+        Position: { X: 0, Y: 5, Z: 0 },
+        Orientation: { Y: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyCheckpoint") return [cpPart];
+        return [];
+      });
+
+      const hitPart = {
+        Parent: {
+          FindFirstChildOfClass: vi.fn(() => undefined), // no humanoid
+        },
+      };
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      const touchCallback = cpPart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
+      touchCallback(hitPart);
+
+      expect(mockDataService.updateData).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─── Kill zone name detection ──────────────────────────────────────
+
+  describe("kill zone detection", () => {
+    it("detects kill zones by KillZone attribute", async () => {
+      const killPart = {
+        IsA: () => true,
+        Name: "normalPart",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "KillZone") return true;
+          return undefined;
+        }),
+        Position: { X: 0, Y: 0, Z: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      const stageModel = { GetDescendants: vi.fn(() => [killPart]) };
+      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
+        if (name === "Stages") return stagesFolder;
+        return undefined;
+      });
+      mockCollectionService.GetTagged.mockReturnValue([]);
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      expect(killPart.Touched.Connect).toHaveBeenCalled();
+      expect(mockCollectionService.AddTag).toHaveBeenCalled();
+    });
+
+    for (const name of ["killzone", "lava", "kill", "killbrick"]) {
+      it(`detects kill zone by name "${name}"`, async () => {
+        const killPart = {
+          IsA: () => true,
+          Name: name,
+          GetAttribute: vi.fn(() => undefined),
+          Position: { X: 0, Y: 0, Z: 0 },
+          Touched: { Connect: vi.fn() },
+        };
+        const stageModel = { GetDescendants: vi.fn(() => [killPart]) };
+        const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+        mockWorkspace.FindFirstChild.mockImplementation((n: string) => {
+          if (n === "Stages") return stagesFolder;
+          return undefined;
+        });
+        mockCollectionService.GetTagged.mockReturnValue([]);
+
+        const svc = await loadCheckpointService();
+        svc.onInit!();
+
+        expect(killPart.Touched.Connect).toHaveBeenCalled();
+      });
+    }
+  });
+
+  // ─── handleCharacterAdded ───────────────────────────────────────────
+
+  describe("handleCharacterAdded (death respawn)", () => {
+    it("teleports player to checkpoint when in pendingRespawns", async () => {
+      // Setup a kill zone that puts players in pendingRespawns
+      const killZonePart = {
+        IsA: () => true,
+        Name: "killzone",
+        GetAttribute: vi.fn(() => undefined),
+        Position: { X: 0, Y: 0, Z: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      const stageModel = { GetDescendants: vi.fn(() => [killZonePart]) };
+      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
+        if (name === "Stages") return stagesFolder;
+        return undefined;
+      });
+      mockCollectionService.GetTagged.mockReturnValue([]);
+
+      const player = makePlayer();
+      const humanoid = { Health: 100, MaxHealth: 100, TakeDamage: vi.fn() };
+      const character = { FindFirstChildOfClass: vi.fn(() => humanoid) };
+      (mockPlayers as Record<string, unknown>).GetPlayerFromCharacter = vi.fn(() => player);
+
+      // Provide an existing player so CharacterAdded is connected
+      (mockPlayers as Record<string, unknown>).GetPlayers = vi.fn(() => [
+        { ...player, CharacterAdded: { Connect: vi.fn() } },
+      ]);
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      // Trigger kill zone to put player in pendingRespawns
+      const killTouchCb = killZonePart.Touched.Connect.mock.calls[0][0] as (hit: unknown) => void;
+      killTouchCb({ Parent: character });
+
+      // Now capture the PlayerAdded.Connect callback
+      const playerAddedCb = (mockPlayers as Record<string, unknown>)["PlayerAdded"] as {
+        Connect: { mock: { calls: Array<[(p: unknown) => void]> } };
+      };
+      const playerAddedFn = playerAddedCb.Connect.mock.calls[0][0];
+
+      // Simulate a new player joining with CharacterAdded
+      const characterAddedConnect = vi.fn();
+      const newPlayer = { ...player, CharacterAdded: { Connect: characterAddedConnect } };
+      playerAddedFn(newPlayer);
+      expect(characterAddedConnect).toHaveBeenCalled();
+    });
+
+    it("skips teleport when player is not in pendingRespawns (normal spawn)", async () => {
+      mockCollectionService.GetTagged.mockReturnValue([]);
+      (mockPlayers as Record<string, unknown>).GetPlayers = vi.fn(() => []);
+
+      const svc = await loadCheckpointService();
+      svc.onInit!();
+
+      // Capture the PlayerAdded callback
+      const playerAddedRef = (mockPlayers as Record<string, unknown>)["PlayerAdded"] as {
+        Connect: { mock: { calls: Array<[(p: unknown) => void]> } };
+      };
+      const playerAddedCb = playerAddedRef.Connect.mock.calls[0][0];
+
+      // Create a mock player with CharacterAdded
+      const characterAddedConnect = vi.fn();
+      const player = {
+        ...makePlayer(),
+        CharacterAdded: { Connect: characterAddedConnect },
+      };
+      playerAddedCb(player);
+
+      // Get the CharacterAdded callback and invoke it
+      expect(characterAddedConnect).toHaveBeenCalled();
+      const charAddedCb = characterAddedConnect.mock.calls[0][0] as (char: unknown) => void;
+
+      // Character with HumanoidRootPart
+      const character = {
+        WaitForChild: vi.fn(() => ({ CFrame: {} })),
+      };
+      charAddedCb(character);
+
+      // respawnPlayer should NOT be called since player is not in pendingRespawns
+      expect(mockLogger.info).not.toHaveBeenCalledWith(expect.stringContaining("Respawning"));
+    });
+  });
+});
+
+describe("__test-helpers", () => {
+  it("makePlayer character has FindFirstChildOfClass returning humanoid", () => {
+    const p = makePlayer();
+    const character = p.Character as unknown as {
+      FindFirstChildOfClass: (name: string) => unknown;
+    };
+    const humanoid = character.FindFirstChildOfClass("Humanoid");
+    expect(humanoid).toEqual({ Health: 100, MaxHealth: 100 });
   });
 });

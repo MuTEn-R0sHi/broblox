@@ -132,4 +132,71 @@ describe("createInventoryService", () => {
     const h2 = mod.createInventoryService({ items: [], datastoreName: "B" });
     expect(h1.Service).not.toBe(h2.Service);
   });
+
+  describe("onStart lifecycle", () => {
+    it("logs and wires onPlayerAdded callback to initPlayer", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-inventory-service");
+      const handle = mod.createInventoryService({
+        items: [] as never[],
+        datastoreName: "TestInventory",
+        onPlayerAdded: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onStart!();
+
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("started"));
+      expect(capturedCb).toBeDefined();
+
+      capturedCb!({ UserId: 42 });
+      expect(mockStore.init).toHaveBeenCalled();
+      expect(mockStore.load).toHaveBeenCalled();
+    });
+  });
+
+  describe("onInit player-removing callback", () => {
+    it("saves dirty store on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-inventory-service");
+      const handle = mod.createInventoryService({
+        items: [] as never[],
+        datastoreName: "TestInventory",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockStore.isDirty.mockReturnValue(true);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockStore.save).toHaveBeenCalled();
+      expect(handle.getInventoryStore(42)).toBeUndefined();
+    });
+
+    it("skips save for clean store on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-inventory-service");
+      const handle = mod.createInventoryService({
+        items: [] as never[],
+        datastoreName: "TestInventory",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockStore.isDirty.mockReturnValue(false);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockStore.save).not.toHaveBeenCalled();
+      expect(handle.getInventoryStore(42)).toBeUndefined();
+    });
+  });
 });

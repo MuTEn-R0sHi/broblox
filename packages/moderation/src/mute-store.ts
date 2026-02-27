@@ -6,6 +6,7 @@
  */
 
 import { createLogger } from "@broblox/core";
+import { MODERATION_CACHE_TTL_SEC } from "@broblox/constants";
 import { MuteRecord, MuteCheckResult, CreateMuteInput } from "./types";
 
 const logger = createLogger("Moderation.MuteStore");
@@ -38,7 +39,7 @@ export class MuteStore {
   private store: DataStore;
   private http: HttpService;
   private cache = new Map<number, MuteRecord[]>();
-  private cacheTTL = 60;
+  private cacheTTL = MODERATION_CACHE_TTL_SEC;
   private cacheTimestamps = new Map<number, number>();
 
   constructor(datastoreName: string) {
@@ -180,6 +181,15 @@ export class MuteStore {
    * Clear cache for a player.
    */
   invalidateCache(playerId: number): void {
+    this.cache.delete(playerId);
+    this.cacheTimestamps.delete(playerId);
+  }
+
+  /**
+   * Evict all cached state for a player (call on player leave).
+   * Prevents unbounded cache growth.
+   */
+  evictPlayer(playerId: number): void {
     this.cache.delete(playerId);
     this.cacheTimestamps.delete(playerId);
   }

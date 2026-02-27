@@ -151,4 +151,51 @@ describe("createMarketplaceService", () => {
     const h2 = mod.createMarketplaceService({});
     expect(h1.Service).not.toBe(h2.Service);
   });
+
+  it("registerProduct delegates to registry", async () => {
+    const handle = await makeService();
+    const handler = vi.fn();
+    handle.registerProduct({ productId: 999, name: "Test" } as never, handler);
+    expect(mockRegistry.register).toHaveBeenCalledWith(
+      expect.objectContaining({ productId: 999 }),
+      handler
+    );
+  });
+
+  it("registerPass delegates to pass cache", async () => {
+    const handle = await makeService();
+    handle.registerPass({ passId: 500, name: "Premium" } as never);
+    expect(mockPassCache.registerPass).toHaveBeenCalledWith(
+      expect.objectContaining({ passId: 500 })
+    );
+  });
+
+  it("processReceipt logs warning for NotProcessedYet", async () => {
+    mockValidator.process.mockReturnValue("NotProcessedYet");
+    const handle = await makeService();
+    const receipt = {
+      PlayerId: 1,
+      ProductId: 100,
+      PurchaseId: "p-002",
+      PlaceIdWherePurchased: 0,
+      CurrencySpent: 99,
+    };
+    const decision = handle.processReceipt(receipt);
+    expect(decision).toBe("NotProcessedYet");
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("not processed"));
+  });
+
+  it("onStart wires onPlayerAdded callback", async () => {
+    let capturedCb: ((player: { UserId: number }) => void) | undefined;
+    const handle = await makeService({
+      onPlayerAdded: (cb: (player: { UserId: number }) => void) => {
+        capturedCb = cb;
+      },
+    });
+    handle.Service.onStart!();
+
+    expect(capturedCb).toBeDefined();
+    capturedCb!({ UserId: 77 });
+    expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining("77"));
+  });
 });

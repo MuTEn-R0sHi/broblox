@@ -70,12 +70,12 @@ describe("Application (source)", () => {
       expect(app.getItemName(service)).toBe("MyService");
     });
 
-    it("handles name collisions with unique suffix", () => {
+    it("throws on name collisions", () => {
       const s1: Service = { name: "SameName" };
       const s2: Service = { name: "SameName" };
-      app.register(s1).register(s2);
-      expect(app.getItemName(s1)).toBe("SameName");
-      expect(app.getItemName(s2)).toBe("SameName_1");
+      app.register(s1);
+      expect(() => app.register(s2)).toThrow('Service name "SameName" is already registered');
+      expect(app.getSize()).toBe(1);
     });
 
     it("prevents registration after boot", () => {

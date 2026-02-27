@@ -87,6 +87,45 @@ class ValidatingStore extends BasePlayerStore<TestData> {
   }
 }
 
+/**
+ * Versioned subclass that exercises schema migration.
+ */
+class VersionedStore extends BasePlayerStore<TestData> {
+  private readonly version: number;
+  public migrateSpy = vi.fn((data: TestData, _from: number) => data);
+
+  constructor(
+    playerId: number,
+    config: { datastoreName: string; enableLogging?: boolean },
+    defaultData: TestData,
+    version: number
+  ) {
+    super(playerId, config, defaultData);
+    this.version = version;
+  }
+
+  protected keyPrefix(): string {
+    return "ver_";
+  }
+
+  protected storeName(): string {
+    return "VersionedStore";
+  }
+
+  protected schemaVersion(): number {
+    return this.version;
+  }
+
+  protected migrate(data: TestData, fromVersion: number): TestData {
+    return this.migrateSpy(data, fromVersion);
+  }
+
+  // expose for assertions
+  public getStore() {
+    return this.store;
+  }
+}
+
 // ============================================================================
 // Mock DataStore
 // ============================================================================
@@ -392,6 +431,68 @@ describe("BasePlayerStore", () => {
       reload2.init();
       reload2.load();
       expect(reload2.getData().coins).toBe(200);
+    });
+  });
+
+  describe("schema versioning & migration", () => {
+    it("migrates data when stored version < schemaVersion", () => {
+      const savedData = { coins: 10, level: 1, items: [], __version: 1 };
+      const mockDS = createMockDataStore({ ver_1: savedData });
+      installDataStoreMock(mockDS);
+
+      const store = new VersionedStore(1, { datastoreName: "DS" }, { ...DEFAULT_DATA }, 2);
+      store.migrateSpy.mockImplementation((data: TestData) => ({
+        ...data,
+        level: data.level + 1,
+      }));
+      store.init();
+      const result = store.load();
+
+      expect(result).toBe(true);
+      expect(store.migrateSpy).toHaveBeenCalledWith(expect.objectContaining({ coins: 10 }), 1);
+      expect(store.getData().level).toBe(2);
+      expect((store.getData() as Record<string, unknown>).__version).toBe(2);
+      expect(store.isDirty()).toBe(false); // load() resets dirty at end, but markDirty was called
+    });
+
+    it("skips migration when stored version == schemaVersion", () => {
+      const savedData = { coins: 50, level: 3, items: ["hat"], __version: 2 };
+      const mockDS = createMockDataStore({ ver_1: savedData });
+      installDataStoreMock(mockDS);
+
+      const store = new VersionedStore(1, { datastoreName: "DS" }, { ...DEFAULT_DATA }, 2);
+      store.init();
+      store.load();
+
+      expect(store.migrateSpy).not.toHaveBeenCalled();
+      expect(store.getData().coins).toBe(50);
+    });
+
+    it("defaults __version to 0 when stored data has no version field", () => {
+      const savedData = { coins: 5, level: 1, items: [] }; // no __version
+      const mockDS = createMockDataStore({ ver_1: savedData });
+      installDataStoreMock(mockDS);
+
+      const store = new VersionedStore(1, { datastoreName: "DS" }, { ...DEFAULT_DATA }, 1);
+      store.init();
+      store.load();
+
+      expect(store.migrateSpy).toHaveBeenCalledWith(expect.objectContaining({ coins: 5 }), 0);
+      expect((store.getData() as Record<string, unknown>).__version).toBe(1);
+    });
+
+    it("does not migrate when schemaVersion is 0 (default)", () => {
+      // TestStore uses default schemaVersion() = 0
+      const savedData = { coins: 10, level: 1, items: [] };
+      const mockDS = createMockDataStore({ test_1: savedData });
+      installDataStoreMock(mockDS);
+
+      const store = new TestStore(1, { datastoreName: "DS" }, { ...DEFAULT_DATA });
+      store.init();
+      store.load();
+
+      // No __version stamped
+      expect((store.getData() as Record<string, unknown>).__version).toBeUndefined();
     });
   });
 });

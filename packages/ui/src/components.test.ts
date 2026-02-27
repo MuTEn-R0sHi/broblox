@@ -9,6 +9,12 @@ import {
 } from "./components";
 import { createFrame } from "./create";
 
+/** Mock instance with a fireable MouseButton1Click signal. */
+interface MockClickable {
+  MouseButton1Click: { _fire: () => void };
+  FindFirstChild: (name: string) => MockClickable | undefined;
+}
+
 // ============================================================================
 // createDialog
 // ============================================================================
@@ -40,19 +46,30 @@ describe("createDialog", () => {
     expect(frame).toBeDefined();
   });
 
-  it("calls onConfirm when confirm button is triggered", () => {
+  it("calls onConfirm when confirm button is clicked", () => {
     const parent = createFrame({ name: "Root" });
     const onConfirm = vi.fn();
-    createDialog(parent, { title: "Test", onConfirm });
-    // Dialog creates correctly — callback wiring is tested by existence
-    expect(onConfirm).not.toHaveBeenCalled();
+    const { frame } = createDialog(parent, { title: "Test", onConfirm });
+    const dialog = frame.FindFirstChild("Dialog")!;
+    const buttons = dialog.FindFirstChild("Buttons")!;
+    const confirmBtn = buttons.FindFirstChild("ConfirmButton") as unknown as MockClickable;
+    confirmBtn.MouseButton1Click._fire();
+    expect(onConfirm).toHaveBeenCalled();
   });
 
-  it("calls onCancel when cancel button is triggered", () => {
+  it("calls onCancel when cancel button is clicked", () => {
     const parent = createFrame({ name: "Root" });
     const onCancel = vi.fn();
-    createDialog(parent, { title: "Test", cancelText: "Cancel", onCancel });
-    expect(onCancel).not.toHaveBeenCalled();
+    const { frame } = createDialog(parent, {
+      title: "Test",
+      cancelText: "Cancel",
+      onCancel,
+    });
+    const dialog = frame.FindFirstChild("Dialog")!;
+    const buttons = dialog.FindFirstChild("Buttons")!;
+    const cancelBtn = buttons.FindFirstChild("CancelButton") as unknown as MockClickable;
+    cancelBtn.MouseButton1Click._fire();
+    expect(onCancel).toHaveBeenCalled();
   });
 
   it("cleanup destroys the backdrop", () => {
@@ -112,6 +129,26 @@ describe("showToast", () => {
     const parent = createFrame({ name: "Root" });
     const cleanup = showToast(parent, { message: "Quick", duration: 1 });
     expect(typeof cleanup).toBe("function");
+  });
+
+  it("auto-dismiss callback fires slideOut and destroys toast", () => {
+    // Capture the task.delay callback
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g = globalThis as any;
+    const originalDelay = g.task.delay;
+    let delayCb: (() => void) | undefined;
+    g.task.delay = (_dur: number, cb: () => void) => {
+      delayCb = cb;
+    };
+    try {
+      const parent = createFrame({ name: "Root" });
+      showToast(parent, { message: "Dismiss me", duration: 1 });
+      expect(delayCb).toBeDefined();
+      // Fire the auto-dismiss callback
+      delayCb!();
+    } finally {
+      g.task.delay = originalDelay;
+    }
   });
 });
 
@@ -173,6 +210,20 @@ describe("createListView", () => {
     });
     expect(frame).toBeDefined();
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("fires onSelect when an item is clicked", () => {
+    const parent = createFrame({ name: "Root" });
+    const onSelect = vi.fn();
+    const item = { id: "x", text: "Clickable" };
+    const { frame } = createListView(parent, {
+      items: [item],
+      onSelect,
+    });
+    const itemFrame = frame.FindFirstChild("Item_x") as unknown as MockClickable;
+    const clickBtn = itemFrame.FindFirstChild("ClickArea") as unknown as MockClickable;
+    clickBtn.MouseButton1Click._fire();
+    expect(onSelect).toHaveBeenCalledWith(item);
   });
 
   it("cleanup destroys the scroll frame", () => {
@@ -243,6 +294,30 @@ describe("createProgressBar", () => {
     const parent = createFrame({ name: "Root" });
     const { frame } = createProgressBar(parent, { value: 0.5, height: 20 });
     expect(frame).toBeDefined();
+  });
+
+  it("uses larger font when height > 16 with showLabel", () => {
+    const parent = createFrame({ name: "Root" });
+    const { frame } = createProgressBar(parent, {
+      value: 0.5,
+      height: 20,
+      showLabel: true,
+    });
+    const label = frame.FindFirstChild("Label") as TextLabel | undefined;
+    expect(label).toBeDefined();
+    expect(label!.TextSize).toBe(12);
+  });
+
+  it("uses smaller font when height <= 16 with showLabel", () => {
+    const parent = createFrame({ name: "Root" });
+    const { frame } = createProgressBar(parent, {
+      value: 0.5,
+      height: 10,
+      showLabel: true,
+    });
+    const label = frame.FindFirstChild("Label") as TextLabel | undefined;
+    expect(label).toBeDefined();
+    expect(label!.TextSize).toBe(10);
   });
 
   it("setValue updates fill and label", () => {

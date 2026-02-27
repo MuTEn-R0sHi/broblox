@@ -10,8 +10,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 describe("ProgressionService (starter)", () => {
   let capturedOnLevelUp: ((playerId: number, level: number) => void) | undefined;
   let capturedOnPrestige: ((playerId: number, prestige: number) => void) | undefined;
+  let capturedOnPlayerRemoving: ((cb: unknown) => void) | undefined;
+  let capturedOnPlayerAdded: ((cb: unknown) => void) | undefined;
 
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
+  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
   let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayers: Record<string, ReturnType<typeof vi.fn>>;
   let mockGetAchievements: ReturnType<typeof vi.fn>;
@@ -24,6 +27,8 @@ describe("ProgressionService (starter)", () => {
 
     capturedOnLevelUp = undefined;
     capturedOnPrestige = undefined;
+    capturedOnPlayerRemoving = undefined;
+    capturedOnPlayerAdded = undefined;
     mockPlayer = { UserId: 7, Name: "StarterPlayer" };
     mockRegistry = { fireClient: vi.fn() };
     mockSetProgress = vi.fn();
@@ -49,14 +54,17 @@ describe("ProgressionService (starter)", () => {
       createProgressionService: vi.fn((config: Record<string, unknown>) => {
         capturedOnLevelUp = config["onLevelUp"] as typeof capturedOnLevelUp;
         capturedOnPrestige = config["onPrestige"] as typeof capturedOnPrestige;
+        capturedOnPlayerRemoving = config["onPlayerRemoving"] as typeof capturedOnPlayerRemoving;
+        capturedOnPlayerAdded = config["onPlayerAdded"] as typeof capturedOnPlayerAdded;
         return mockHandle;
       }),
     }));
 
     vi.doMock("@rbxts/services", () => ({ Players: mockPlayers }));
 
+    mockPlayerLifecycle = { onPlayerAdded: vi.fn(), onPlayerRemoving: vi.fn() };
     vi.doMock("./PlayerLifecycleService", () => ({
-      PlayerLifecycleService: { onPlayerAdded: vi.fn(), onPlayerRemoving: vi.fn() },
+      PlayerLifecycleService: mockPlayerLifecycle,
     }));
 
     vi.doMock("./RemoteService", () => ({
@@ -165,6 +173,36 @@ describe("ProgressionService (starter)", () => {
       capturedOnPrestige!(99, 2);
 
       expect(mockRegistry.fireClient).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("getter delegation", () => {
+    it("getProgression delegates to handle.getProgressionStore", async () => {
+      const mod = await loadService();
+      mod.getProgression(42);
+      expect(mockHandle.getProgressionStore).toHaveBeenCalledWith(42);
+    });
+
+    it("cleanupPlayerProgression delegates to handle.cleanupPlayer", async () => {
+      const mod = await loadService();
+      mod.cleanupPlayerProgression(42);
+      expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+    });
+  });
+
+  describe("lifecycle config callbacks", () => {
+    it("onPlayerRemoving delegates to PlayerLifecycleService", async () => {
+      await loadService();
+      const dummyCb = vi.fn();
+      capturedOnPlayerRemoving!(dummyCb);
+      expect(mockPlayerLifecycle.onPlayerRemoving).toHaveBeenCalledWith(dummyCb);
+    });
+
+    it("onPlayerAdded delegates to PlayerLifecycleService", async () => {
+      await loadService();
+      const dummyCb = vi.fn();
+      capturedOnPlayerAdded!(dummyCb);
+      expect(mockPlayerLifecycle.onPlayerAdded).toHaveBeenCalledWith(dummyCb);
     });
   });
 });

@@ -1,6 +1,6 @@
 ## Summary
 
-- 
+-
 
 ## Type
 
@@ -28,7 +28,7 @@ Docs to check (as applicable):
 ## ADR requirement
 
 - [ ] ADR not required
-- [ ] ADR added/updated in `docs/architecture/decisions/` and linked here: 
+- [ ] ADR added/updated in `docs/architecture/decisions/` and linked here:
 
 ## Security checklist (required for gameplay/network changes)
 

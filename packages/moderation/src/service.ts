@@ -120,6 +120,21 @@ export class ModerationService {
   }
 
   /**
+   * Create a fresh instance for testing (bypasses singleton).
+   * Call resetInstance() after test to avoid leaking state.
+   */
+  static createForTesting(datastoreName = "TestModeration"): ModerationService {
+    return new ModerationService(datastoreName);
+  }
+
+  /**
+   * Reset the singleton (call in test teardown).
+   */
+  static resetInstance(): void {
+    ModerationService.instance = undefined;
+  }
+
+  /**
    * Subscribe to cross-server sync messages.
    */
   private subscribeToSync(): void {
@@ -154,7 +169,12 @@ export class ModerationService {
 
         for (const callback of this.onBanCallbacks) {
           moderationSyncMetrics.ban.callbacks.inc();
-          task.spawn(() => callback(ban));
+          task.spawn(() => {
+            const [cbOk, cbErr] = pcall(() => callback(ban));
+            if (!cbOk) {
+              logger.warn(`onBan callback error: ${tostring(cbErr)}`);
+            }
+          });
         }
       }
     });
@@ -190,7 +210,12 @@ export class ModerationService {
 
         for (const callback of this.onMuteCallbacks) {
           moderationSyncMetrics.mute.callbacks.inc();
-          task.spawn(() => callback(mute));
+          task.spawn(() => {
+            const [cbOk, cbErr] = pcall(() => callback(mute));
+            if (!cbOk) {
+              logger.warn(`onMute callback error: ${tostring(cbErr)}`);
+            }
+          });
         }
       }
     });
@@ -322,6 +347,19 @@ export class ModerationService {
     }
 
     return result;
+  }
+
+  // ============================================================================
+  // Cleanup
+  // ============================================================================
+
+  /**
+   * Evict cached state for a player (call on player leave).
+   * Delegates to both BanStore and MuteStore.
+   */
+  evictPlayer(playerId: number): void {
+    this.banStore.evictPlayer(playerId);
+    this.muteStore.evictPlayer(playerId);
   }
 }
 

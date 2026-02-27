@@ -86,7 +86,14 @@ export function validateProtocolVersion(
   };
 
   // Check if version is a valid number
-  if (typeOf(clientVersion) !== "number" || !isInteger(clientVersion) || clientVersion < 0) {
+  if (
+    typeOf(clientVersion) !== "number" ||
+    clientVersion !== clientVersion || // NaN check
+    clientVersion === math.huge ||
+    clientVersion === -math.huge ||
+    !isInteger(clientVersion) ||
+    clientVersion < 0
+  ) {
     result.reason = "Invalid protocol version format";
     return result;
   }

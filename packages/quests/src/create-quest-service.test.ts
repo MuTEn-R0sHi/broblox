@@ -178,4 +178,71 @@ describe("createQuestService", () => {
       expect(mockStore.onQuestCompleted).not.toHaveBeenCalled();
     });
   });
+
+  describe("onStart lifecycle", () => {
+    it("logs and wires onPlayerAdded callback to initPlayer", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-quest-service");
+      const handle = mod.createQuestService({
+        quests: [] as never[],
+        datastoreName: "TestQuests",
+        onPlayerAdded: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onStart!();
+
+      expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("started"));
+      expect(capturedCb).toBeDefined();
+
+      capturedCb!({ UserId: 42 });
+      expect(mockStore.init).toHaveBeenCalled();
+      expect(mockStore.load).toHaveBeenCalled();
+    });
+  });
+
+  describe("onInit player-removing callback", () => {
+    it("saves dirty store on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-quest-service");
+      const handle = mod.createQuestService({
+        quests: [] as never[],
+        datastoreName: "TestQuests",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockStore.isDirty.mockReturnValue(true);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockStore.save).toHaveBeenCalled();
+      expect(handle.getQuestStore(42)).toBeUndefined();
+    });
+
+    it("skips save for clean store on player removing", async () => {
+      let capturedCb: ((player: { UserId: number }) => void) | undefined;
+      const mod = await import("./create-quest-service");
+      const handle = mod.createQuestService({
+        quests: [] as never[],
+        datastoreName: "TestQuests",
+        onPlayerRemoving: (cb: (player: { UserId: number }) => void) => {
+          capturedCb = cb;
+        },
+      } as never);
+
+      handle.Service.onInit!();
+      handle.initPlayer(42);
+      mockStore.isDirty.mockReturnValue(false);
+
+      capturedCb!({ UserId: 42 });
+
+      expect(mockStore.save).not.toHaveBeenCalled();
+      expect(handle.getQuestStore(42)).toBeUndefined();
+    });
+  });
 });

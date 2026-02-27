@@ -24,6 +24,13 @@ export interface ModerationEnforcementConfig {
    * Typically wired to `PlayerLifecycleService.onPlayerAdded`.
    */
   onPlayerAdded: (callback: (player: Player) => void) => void;
+
+  /**
+   * Register a callback for when a player leaves.
+   * Wires cache eviction so ban/mute maps don't grow unboundedly.
+   * Typically: `onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb)`
+   */
+  onPlayerRemoving?: (callback: (player: Player) => void) => void;
 }
 
 export interface ModerationEnforcementHandle {
@@ -101,6 +108,11 @@ export function createModerationEnforcementService(
       moderation.onMute((record: MuteRecord) => {
         const player = Players.GetPlayerByUserId(record.playerId);
         if (player) applyMuteState(player);
+      });
+
+      // Evict ban/mute cache on player leave to prevent unbounded Map growth.
+      config.onPlayerRemoving?.((player) => {
+        moderation.evictPlayer(player.UserId);
       });
 
       logger.info("Moderation enforcement enabled (bans + mute attributes)");

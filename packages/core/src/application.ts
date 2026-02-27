@@ -121,16 +121,17 @@ export class Application implements ServiceContainer {
     // Generate or use provided name
     const name = item.name ?? `Service_${this.items.size() + 1}`;
 
-    // Check for name collision
+    // Check for name collision — treat as hard error to prevent unreachable services
     if (this.nameToItem.has(name)) {
-      warn(`[Application] Name "${name}" already registered, using ${name}_${this.items.size()}`);
-      const uniqueName = `${name}_${this.items.size()}`;
-      this.nameToItem.set(uniqueName, item);
-      this.itemNames.set(item, uniqueName);
-    } else {
-      this.nameToItem.set(name, item);
-      this.itemNames.set(item, name);
+      error(
+        `[Application] Service name "${name}" is already registered. ` +
+          `Each service must have a unique name. ` +
+          `Set a unique 'name' property on your service.`
+      );
     }
+
+    this.nameToItem.set(name, item);
+    this.itemNames.set(item, name);
 
     this.items.push(item);
     return this;

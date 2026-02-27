@@ -5,6 +5,104 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { createMockDataStoreService, MockDataStoreService } from "./datastore-mock";
+
+// ── Singleton mock services (created lazily, reset on unmock) ────────
+
+let _dssInstance: MockDataStoreService | undefined;
+
+function _mockDataStoreService(): MockDataStoreService {
+  if (!_dssInstance) {
+    _dssInstance = createMockDataStoreService();
+  }
+  return _dssInstance;
+}
+
+let _guidCounter = 0;
+function _mockHttpService() {
+  return {
+    _service: "HttpService",
+    GenerateGUID(wrapInCurlyBraces = true) {
+      _guidCounter++;
+      const id = `00000000-0000-0000-0000-${String(_guidCounter).padStart(12, "0")}`;
+      return wrapInCurlyBraces ? `{${id}}` : id;
+    },
+    JSONEncode(value: unknown) {
+      return JSON.stringify(value);
+    },
+    JSONDecode(input: string) {
+      return JSON.parse(input);
+    },
+  };
+}
+
+const _messagingSubscriptions = new Map<
+  string,
+  Array<(msg: { Data: unknown; Sent: number }) => void>
+>();
+
+function _mockMessagingService() {
+  return {
+    _service: "MessagingService",
+    PublishAsync(topic: string, message: unknown) {
+      const subs = _messagingSubscriptions.get(topic);
+      if (subs) {
+        for (const cb of subs) {
+          cb({ Data: message, Sent: Math.floor(Date.now() / 1000) });
+        }
+      }
+    },
+    SubscribeAsync(topic: string, callback: (message: { Data: unknown; Sent: number }) => void) {
+      if (!_messagingSubscriptions.has(topic)) {
+        _messagingSubscriptions.set(topic, []);
+      }
+      _messagingSubscriptions.get(topic)!.push(callback);
+      return { Disconnect: () => {} };
+    },
+  };
+}
+
+const _mockPlayers = new Map<number, any>();
+
+function _mockPlayersService() {
+  return {
+    _service: "Players",
+    GetPlayerByUserId(userId: number) {
+      return _mockPlayers.get(userId);
+    },
+    /** Test helper: register a mock player so GetPlayerByUserId can find them. */
+    _addPlayer(player: any) {
+      _mockPlayers.set(player.UserId, player);
+    },
+    _removePlayer(userId: number) {
+      _mockPlayers.delete(userId);
+    },
+    _reset() {
+      _mockPlayers.clear();
+    },
+  };
+}
+
+/**
+ * Get the mock DataStoreService instance (for direct test inspection).
+ * Only available after mockRobloxGlobals() has been called.
+ */
+export function getMockDataStoreService(): MockDataStoreService {
+  return _mockDataStoreService();
+}
+
+/**
+ * Reset all mock service state (DataStoreService, MessagingService, Players, etc.).
+ * Call in `beforeEach` for clean tests.
+ */
+export function resetMockServices(): void {
+  _dssInstance?._reset();
+  _dssInstance = undefined;
+  _guidCounter = 0;
+  _messagingSubscriptions.clear();
+  _mockPlayers.clear();
+}
+
 /**
  * Mock for Roblox's os.clock() - returns seconds since script start.
  * Starts at 60s offset to simulate a server that has been running for a while,
@@ -101,6 +199,8 @@ export const math = {
   pow: Math.pow,
   sin: Math.sin,
   cos: Math.cos,
+  rad: (deg: number): number => (deg * Math.PI) / 180,
+  deg: (rad: number): number => (rad * 180) / Math.PI,
   clamp: (value: number, min: number, max: number): number => {
     return Math.min(Math.max(value, min), max);
   },
@@ -346,6 +446,18 @@ export function mockRobloxGlobals(): void {
             return tween;
           },
         };
+      }
+      if (name === "DataStoreService") {
+        return _mockDataStoreService();
+      }
+      if (name === "HttpService") {
+        return _mockHttpService();
+      }
+      if (name === "MessagingService") {
+        return _mockMessagingService();
+      }
+      if (name === "Players") {
+        return _mockPlayersService();
       }
       return { _service: name };
     },

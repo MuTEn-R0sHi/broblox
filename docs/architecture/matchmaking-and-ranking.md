@@ -65,7 +65,7 @@ Start simple:
 
 Season model:
 
-- Season resets *rank* visuals.
+- Season resets _rank_ visuals.
 - MMR may be soft-reset (e.g. pull toward mean) to reduce long-term drift.
 
 ## Rank tiers (player-facing)

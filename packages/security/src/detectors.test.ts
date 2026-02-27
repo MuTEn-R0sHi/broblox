@@ -236,6 +236,45 @@ describe("checkSpeed", () => {
 
     expect(handler).not.toHaveBeenCalled();
   });
+
+  it("does not flag aerial speed within 1.5× threshold", async () => {
+    const { checkSpeed, onViolation } = await import("./detectors");
+    const handler = vi.fn();
+    onViolation(handler);
+
+    const player = createMockPlayer(50);
+    clockTime = 0;
+    checkSpeed(player, createVector3(0, 0, 0), true);
+
+    clockTime = 1;
+    checkSpeed(player, createVector3(0, 0, 0), true);
+
+    // 140 studs/s — above ground limit (100) but below aerial limit (150)
+    clockTime = 2;
+    checkSpeed(player, createVector3(140, 0, 0), true);
+
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("flags aerial speed above 1.5× threshold", async () => {
+    const { checkSpeed, onViolation } = await import("./detectors");
+    const handler = vi.fn();
+    onViolation(handler);
+
+    const player = createMockPlayer(51);
+    clockTime = 0;
+    checkSpeed(player, createVector3(0, 0, 0), true);
+
+    clockTime = 1;
+    checkSpeed(player, createVector3(0, 0, 0), true);
+
+    // 160 studs/s — above aerial limit (150)
+    clockTime = 2;
+    checkSpeed(player, createVector3(160, 0, 0), true);
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(handler.mock.calls[0][0].category).toBe("speed");
+  });
 });
 
 describe("resetSpeedCheck", () => {
@@ -295,17 +334,15 @@ describe("checkTeleport", () => {
     expect(handler.mock.calls[0][0].severity).toBe("high");
   });
 
-  it("returns false when allowedTeleport is true", async () => {
-    const { checkTeleport, onViolation } = await import("./detectors");
+  it("returns false when teleport is suppressed", async () => {
+    const { checkTeleport, suppressTeleportCheck, onViolation } = await import("./detectors");
     const handler = vi.fn();
     onViolation(handler);
 
-    const result = checkTeleport(
-      createMockPlayer(22),
-      createVector3(0, 0, 0),
-      createVector3(1000, 0, 0),
-      true
-    );
+    const player = createMockPlayer(22);
+    suppressTeleportCheck(player, 5); // suppress for 5 seconds
+
+    const result = checkTeleport(player, createVector3(0, 0, 0), createVector3(1000, 0, 0));
     expect(result).toBe(false);
     expect(handler).not.toHaveBeenCalled();
   });

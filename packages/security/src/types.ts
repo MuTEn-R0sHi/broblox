@@ -2,6 +2,8 @@
  * Security types
  */
 
+import { DEFAULT_TEMP_BAN_DURATION_HOURS } from "@broblox/constants";
+
 // ============================================================================
 // Detection Types
 // ============================================================================
@@ -83,7 +85,7 @@ export const DEFAULT_ENFORCEMENT_CONFIG: EnforcementConfig = {
   escalationThreshold: 3,
   windowSeconds: 60,
   kickMessage: "Suspicious activity detected",
-  tempBanDurationHours: 24,
+  tempBanDurationHours: DEFAULT_TEMP_BAN_DURATION_HOURS,
 };
 
 // ============================================================================

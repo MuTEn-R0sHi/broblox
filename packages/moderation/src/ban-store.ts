@@ -6,6 +6,7 @@
  */
 
 import { createLogger } from "@broblox/core";
+import { MODERATION_CACHE_TTL_SEC } from "@broblox/constants";
 import { BanRecord, BanCheckResult, CreateBanInput } from "./types";
 
 const logger = createLogger("Moderation.BanStore");
@@ -38,8 +39,10 @@ export class BanStore {
   private store: DataStore;
   private http: HttpService;
   private cache = new Map<number, BanRecord[]>();
-  private cacheTTL = 60; // seconds
+  private cacheTTL = MODERATION_CACHE_TTL_SEC;
   private cacheTimestamps = new Map<number, number>();
+  private processedBanIds = new Set<string>();
+  private processedBanIdCount = 0;
 
   constructor(datastoreName: string) {
     const DataStoreService = game.GetService("DataStoreService");
@@ -210,8 +213,27 @@ export class BanStore {
 
   /**
    * Sync ban from external source.
+   * Deduplicates by ban ID to avoid re-processing network retries.
    */
   syncBan(ban: BanRecord): void {
+    if (this.processedBanIds.has(ban.id)) {
+      logger.debug(`Skipping duplicate ban sync: ${ban.id}`);
+      return;
+    }
+    this.processedBanIds.add(ban.id);
+    this.processedBanIdCount += 1;
+    // Prune oldest entries when set exceeds 1000
+    if (this.processedBanIdCount > 1000) {
+      let first: string | undefined;
+      this.processedBanIds.forEach((v) => {
+        if (first === undefined) first = v;
+      });
+      if (first !== undefined) {
+        this.processedBanIds.delete(first);
+        this.processedBanIdCount -= 1;
+      }
+    }
+
     const key = this.getKey(ban.playerId);
 
     this.store.UpdateAsync(key, (old) => {
@@ -243,6 +265,15 @@ export class BanStore {
    * Clear cache for a player.
    */
   invalidateCache(playerId: number): void {
+    this.cache.delete(playerId);
+    this.cacheTimestamps.delete(playerId);
+  }
+
+  /**
+   * Evict all cached state for a player (call on player leave).
+   * Prevents unbounded cache growth.
+   */
+  evictPlayer(playerId: number): void {
     this.cache.delete(playerId);
     this.cacheTimestamps.delete(playerId);
   }

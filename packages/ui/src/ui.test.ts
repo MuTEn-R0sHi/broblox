@@ -232,6 +232,30 @@ describe("hex edge cases", () => {
   });
 });
 
+describe("hex invalid input", () => {
+  it("defaults to 0 for invalid hex characters", () => {
+    const c = hex("#GGHHII");
+    expect(c.r).toBe(0);
+    expect(c.g).toBe(0);
+    expect(c.b).toBe(0);
+  });
+
+  it("handles partial invalid hex", () => {
+    const c = hex("#FF00ZZ");
+    expect(c.r).toBeCloseTo(1);
+    expect(c.g).toBe(0);
+    expect(c.b).toBe(0);
+  });
+
+  it("handles short hex string", () => {
+    const c = hex("#FF");
+    expect(c.r).toBeCloseTo(1);
+    // g and b parse empty/partial strings → tonumber returns undefined → 0
+    expect(c.g).toBe(0);
+    expect(c.b).toBe(0);
+  });
+});
+
 describe("lighten/darken boundary cases", () => {
   it("lighten from black by full amount gives that amount", () => {
     const c = lighten({ r: 0, g: 0, b: 0 }, 0.5);

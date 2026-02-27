@@ -89,4 +89,22 @@ describe("createCodeRedemptionService", () => {
     const h2 = mod.createCodeRedemptionService({ codes: [], datastoreName: "B" });
     expect(h1.Service).not.toBe(h2.Service);
   });
+
+  it("noop onRedeem fallback can be invoked without error", async () => {
+    let capturedOnRedeem: ((...args: unknown[]) => void) | undefined;
+    vi.doMock("./code-store", () => ({
+      CodeStore: function (cfg: { onRedeem?: (...args: unknown[]) => void }) {
+        capturedOnRedeem = cfg.onRedeem;
+        return mockCodeStore;
+      },
+    }));
+    const mod = await import("./create-code-redemption-service");
+    mod.createCodeRedemptionService({
+      codes: [] as never[],
+      datastoreName: "TestCodes",
+    });
+
+    expect(capturedOnRedeem).toBeTypeOf("function");
+    expect(() => capturedOnRedeem!(1, "CODE", [])).not.toThrow();
+  });
 });

@@ -74,4 +74,12 @@ export class RateLimiter {
   reset(playerId: number): void {
     this.buckets.delete(tostring(playerId));
   }
+
+  /**
+   * Remove the token bucket for a player (call on player leave).
+   * Prevents unbounded Map growth.
+   */
+  cleanup(playerId: number): void {
+    this.buckets.delete(tostring(playerId));
+  }
 }

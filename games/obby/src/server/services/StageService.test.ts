@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { makePlayer, makeDefaultData } from "./__test-helpers";
+import { type Player, makePlayer, makeDefaultData } from "./__test-helpers";
 
 describe("StageService", () => {
   let mockLogger: Record<string, ReturnType<typeof vi.fn>>;
@@ -372,6 +372,35 @@ describe("StageService", () => {
       );
     });
 
+    it("task.delay respawns player after full obby completion", async () => {
+      const stagePart = makeStagePartMock(1);
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyStage") return [stagePart];
+        return [];
+      });
+      mockDataService.getData.mockReturnValue(
+        makeDefaultData({ currentStage: 1, totalCompletions: 0 })
+      );
+
+      // Capture task.delay callback
+      const g = globalThis as unknown as { task: { delay: (dur: number, cb: () => void) => void } };
+      const origDelay = g.task.delay;
+      let delayCb: (() => void) | undefined;
+      g.task.delay = (_dur: number, cb: () => void) => {
+        delayCb = cb;
+      };
+
+      const svc = await loadStageService();
+      svc.onInit!();
+      svc.completeStage(makePlayer(), 1);
+
+      expect(delayCb).toBeDefined();
+      delayCb!();
+      expect(mockCheckpointService.respawnPlayer).toHaveBeenCalled();
+
+      g.task.delay = origDelay;
+    });
+
     it("applies anti-spam cooldown", async () => {
       mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
       setupTwoStages();
@@ -484,6 +513,184 @@ describe("StageService", () => {
       svc.onInit!();
 
       expect(endZone.Touched.Connect).toHaveBeenCalled();
+    });
+
+    it("end zone Touched callback triggers completeStage for valid player", async () => {
+      const endZone = {
+        IsA: () => true,
+        Name: "EndZone",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          return undefined;
+        }),
+        Touched: { Connect: vi.fn() },
+      };
+      // Setup two stages so stage 1 completion advances (doesn't trigger full-run)
+      const s1 = makeStagePartMock(1);
+      const s2 = makeStagePartMock(2);
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyEndZone") return [endZone];
+        if (tag === "ObbyStage") return [s1, s2];
+        return [];
+      });
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+
+      // Mock game.GetService("Players")
+      const player = makePlayer();
+      const g = globalThis as unknown as {
+        game: { GetService: (name: string) => { GetPlayerFromCharacter: () => Player } };
+      };
+      const origGame = g.game;
+      g.game = {
+        GetService: () => ({
+          GetPlayerFromCharacter: () => player,
+        }),
+      };
+
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      // Capture and invoke the Touched callback
+      const touchedCb = endZone.Touched.Connect.mock.calls[0]![0] as (hit: unknown) => void;
+      const character = {
+        FindFirstChildOfClass: vi.fn(() => ({ Health: 100 })),
+      };
+      touchedCb({ Parent: character });
+
+      expect(mockDataService.addCoins).toHaveBeenCalled();
+
+      g.game = origGame;
+    });
+
+    it("end zone Touched callback ignores hit with no character", async () => {
+      const endZone = {
+        IsA: () => true,
+        Name: "EndZone",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          return undefined;
+        }),
+        Touched: { Connect: vi.fn() },
+      };
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyEndZone") return [endZone];
+        if (tag === "ObbyStage") return [makeStagePartMock(1)];
+        return [];
+      });
+
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      const touchedCb = endZone.Touched.Connect.mock.calls[0]![0] as (hit: unknown) => void;
+      // Hit with no Parent
+      touchedCb({ Parent: undefined });
+      expect(mockDataService.addCoins).not.toHaveBeenCalled();
+    });
+
+    it("end zone Touched callback ignores hit with no humanoid", async () => {
+      const endZone = {
+        IsA: () => true,
+        Name: "EndZone",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          return undefined;
+        }),
+        Touched: { Connect: vi.fn() },
+      };
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyEndZone") return [endZone];
+        if (tag === "ObbyStage") return [makeStagePartMock(1)];
+        return [];
+      });
+
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      const touchedCb = endZone.Touched.Connect.mock.calls[0]![0] as (hit: unknown) => void;
+      // Character with no humanoid
+      touchedCb({ Parent: { FindFirstChildOfClass: () => undefined } });
+      expect(mockDataService.addCoins).not.toHaveBeenCalled();
+    });
+
+    it("onPlayerRemoving cleans up per-player cooldown entries", async () => {
+      const stagePart = makeStagePartMock(1);
+      mockCollectionService.GetTagged.mockImplementation((tag: string) => {
+        if (tag === "ObbyStage") return [stagePart];
+        return [];
+      });
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      // Complete a stage to set a cooldown entry
+      svc.completeStage(makePlayer({ UserId: 99 }), 1);
+
+      // Capture and invoke the onPlayerRemoving callback
+      const removingCb = mockPlayerLifecycle.onPlayerRemoving.mock.calls[0]![0] as (
+        p: unknown
+      ) => void;
+      removingCb({ UserId: 99 });
+
+      // The cooldown should be cleared — a new completion should work immediately
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      svc.completeStage(makePlayer({ UserId: 99 }), 1);
+      expect(mockDataService.addCoins).toHaveBeenCalledTimes(2);
+    });
+
+    it("sets up end zones from Stages folder by name pattern", async () => {
+      mockCollectionService.GetTagged.mockReturnValue([]);
+
+      const endPlatform = {
+        IsA: () => true,
+        Name: "EndPlatform",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          return undefined;
+        }),
+        Position: { X: 0, Y: 0, Z: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      const stageModel = { GetDescendants: vi.fn(() => [endPlatform]) };
+      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
+        if (name === "Stages") return stagesFolder;
+        return undefined;
+      });
+
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      expect(mockCollectionService.AddTag).toHaveBeenCalled();
+      expect(endPlatform.Touched.Connect).toHaveBeenCalled();
+    });
+
+    it("skips end zone setup when part already has end zone tag", async () => {
+      mockCollectionService.GetTagged.mockReturnValue([]);
+      mockCollectionService.HasTag.mockReturnValue(true); // already tagged
+
+      const endZone = {
+        IsA: () => true,
+        Name: "EndZone",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          return undefined;
+        }),
+        Position: { X: 0, Y: 0, Z: 0 },
+        Touched: { Connect: vi.fn() },
+      };
+      const stageModel = { GetDescendants: vi.fn(() => [endZone]) };
+      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
+        if (name === "Stages") return stagesFolder;
+        return undefined;
+      });
+
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      // Touch connect should NOT be called since part already has tag
+      expect(endZone.Touched.Connect).not.toHaveBeenCalled();
     });
   });
 

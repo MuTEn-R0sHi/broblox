@@ -27,9 +27,11 @@ export interface Logger {
 
 class LoggerImpl implements Logger {
   private prefix: string;
+  private name: string;
   private level: LogLevel = LogLevel.Info;
 
   constructor(name: string) {
+    this.name = name;
     this.prefix = `[${name}]`;
   }
 
@@ -37,9 +39,9 @@ class LoggerImpl implements Logger {
     this.level = level;
   }
 
-  child(name: string): Logger {
-    // Create a new logger with combined prefix
-    const childLogger = new LoggerImpl(`${this.prefix.sub(2, this.prefix.size() - 1)}/${name}`);
+  child(childName: string): Logger {
+    // Use cached `name` instead of stripping brackets from `prefix`
+    const childLogger = new LoggerImpl(`${this.name}/${childName}`);
     childLogger.setLevel(this.level);
     return childLogger;
   }

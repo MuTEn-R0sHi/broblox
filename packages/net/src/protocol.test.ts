@@ -55,6 +55,18 @@ describe("Protocol Versioning", () => {
         expect(result.compatible).toBe(false);
         expect(result.reason).toContain("Invalid");
       });
+
+      it("rejects Infinity", () => {
+        const result = validateProtocolVersion(Infinity);
+        expect(result.compatible).toBe(false);
+        expect(result.reason).toContain("Invalid");
+      });
+
+      it("rejects -Infinity", () => {
+        const result = validateProtocolVersion(-Infinity);
+        expect(result.compatible).toBe(false);
+        expect(result.reason).toContain("Invalid");
+      });
     });
 
     describe("with custom config", () => {

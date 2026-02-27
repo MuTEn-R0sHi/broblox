@@ -15,8 +15,11 @@ describe("RewardsService (obby)", () => {
   let capturedOnDailyRewardClaimed:
     | ((event: { playerId: number; day: number; streak: number; rewards: unknown[] }) => void)
     | undefined;
+  let capturedOnPlayerRemoving: ((cb: unknown) => void) | undefined;
+  let capturedOnPlayerAdded: ((cb: unknown) => void) | undefined;
 
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
+  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
   let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayers: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayer: { UserId: number; Name: string };
@@ -26,6 +29,8 @@ describe("RewardsService (obby)", () => {
 
     capturedOnAchievementCompleted = undefined;
     capturedOnDailyRewardClaimed = undefined;
+    capturedOnPlayerRemoving = undefined;
+    capturedOnPlayerAdded = undefined;
     mockPlayer = { UserId: 42, Name: "TestPlayer" };
     mockRegistry = { fireClient: vi.fn() };
 
@@ -49,14 +54,17 @@ describe("RewardsService (obby)", () => {
         capturedOnDailyRewardClaimed = config[
           "onDailyRewardClaimed"
         ] as typeof capturedOnDailyRewardClaimed;
+        capturedOnPlayerRemoving = config["onPlayerRemoving"] as typeof capturedOnPlayerRemoving;
+        capturedOnPlayerAdded = config["onPlayerAdded"] as typeof capturedOnPlayerAdded;
         return mockHandle;
       }),
     }));
 
     vi.doMock("@rbxts/services", () => ({ Players: mockPlayers }));
 
+    mockPlayerLifecycle = { onPlayerAdded: vi.fn(), onPlayerRemoving: vi.fn() };
     vi.doMock("./PlayerLifecycleService", () => ({
-      PlayerLifecycleService: { onPlayerAdded: vi.fn(), onPlayerRemoving: vi.fn() },
+      PlayerLifecycleService: mockPlayerLifecycle,
     }));
 
     vi.doMock("./RemoteService", () => ({
@@ -149,6 +157,42 @@ describe("RewardsService (obby)", () => {
         mockPlayer,
         expect.objectContaining({ day: 7, streak: 7 })
       );
+    });
+  });
+
+  describe("getter delegation", () => {
+    it("getDailyRewards delegates to handle.getDailyRewardStore", async () => {
+      const mod = await loadService();
+      mod.getDailyRewards(42);
+      expect(mockHandle.getDailyRewardStore).toHaveBeenCalledWith(42);
+    });
+
+    it("getAchievements delegates to handle.getAchievementStore", async () => {
+      const mod = await loadService();
+      mod.getAchievements(42);
+      expect(mockHandle.getAchievementStore).toHaveBeenCalledWith(42);
+    });
+
+    it("cleanupPlayerRewards delegates to handle.cleanupPlayer", async () => {
+      const mod = await loadService();
+      mod.cleanupPlayerRewards(42);
+      expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+    });
+  });
+
+  describe("lifecycle config callbacks", () => {
+    it("onPlayerRemoving delegates to PlayerLifecycleService", async () => {
+      await loadService();
+      const dummyCb = vi.fn();
+      capturedOnPlayerRemoving!(dummyCb);
+      expect(mockPlayerLifecycle.onPlayerRemoving).toHaveBeenCalledWith(dummyCb);
+    });
+
+    it("onPlayerAdded delegates to PlayerLifecycleService", async () => {
+      await loadService();
+      const dummyCb = vi.fn();
+      capturedOnPlayerAdded!(dummyCb);
+      expect(mockPlayerLifecycle.onPlayerAdded).toHaveBeenCalledWith(dummyCb);
     });
   });
 });

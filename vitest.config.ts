@@ -73,6 +73,14 @@ export default defineConfig({
         "**/.vscode/**",
         "**/site/**",
         "**/.next/**",
+        // Barrel re-export files (no executable logic)
+        "**/src/index.ts",
+        // Type-only files
+        "packages/observability/src/types.ts",
+        "packages/shared-types/src/do-action.ts",
+        "packages/moderation/src/types.ts",
+        // Testing infrastructure (tested indirectly, not production code)
+        "packages/testing/src/**",
       ],
       thresholds: {
         lines: 80,

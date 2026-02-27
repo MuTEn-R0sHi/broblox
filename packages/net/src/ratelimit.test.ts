@@ -188,6 +188,43 @@ describe("RateLimiter", () => {
       }
     });
   });
+
+  describe("cleanup", () => {
+    it("removes bucket for a specific player", () => {
+      limiter.check("player1");
+      limiter.check("player2");
+      expect(limiter.getBucketCount()).toBe(2);
+
+      limiter.cleanup("player1");
+      expect(limiter.getBucketCount()).toBe(1);
+
+      // player1 gets a fresh bucket on next check
+      const result = limiter.check("player1");
+      expect(isOk(result)).toBe(true);
+      if (isOk(result)) {
+        expect(result.value.remaining).toBe(4);
+      }
+    });
+
+    it("does not affect other players", () => {
+      limiter.check("player1");
+      limiter.check("player2");
+      limiter.check("player2");
+
+      limiter.cleanup("player1");
+
+      // player2 should still have reduced tokens
+      const result = limiter.check("player2");
+      expect(isOk(result)).toBe(true);
+      if (isOk(result)) {
+        expect(result.value.remaining).toBe(2);
+      }
+    });
+
+    it("is idempotent (no error on missing player)", () => {
+      expect(() => limiter.cleanup("nonexistent")).not.toThrow();
+    });
+  });
 });
 
 describe("RateLimiterManager", () => {

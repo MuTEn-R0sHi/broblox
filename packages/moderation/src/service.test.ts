@@ -297,8 +297,185 @@ describe("ModerationService", () => {
     expect(messaging.SubscribeAsync).toHaveBeenCalledWith("ModMuteSync", expect.any(Function));
   });
 
+  // --------------------------------------------------------------------------
+  // Sync subscription handlers
+  // --------------------------------------------------------------------------
+
+  async function getSubscribeCallbacks() {
+    await getService();
+    const banCb = messaging.SubscribeAsync.mock.calls.find(
+      (c: unknown[]) => c[0] === "ModBanSync"
+    )?.[1] as (msg: { Data: unknown; Sent: number }) => void;
+    const muteCb = messaging.SubscribeAsync.mock.calls.find(
+      (c: unknown[]) => c[0] === "ModMuteSync"
+    )?.[1] as (msg: { Data: unknown; Sent: number }) => void;
+    return { banCb, muteCb };
+  }
+
+  it("ban sync handles string payload via JSONDecode", async () => {
+    const { banCb } = await getSubscribeCallbacks();
+    const ban = { id: "b1", playerId: 42, status: "ACTIVE" };
+    http.JSONDecode.mockReturnValue(ban);
+
+    banCb({ Data: JSON.stringify(ban), Sent: 100 });
+
+    expect(http.JSONDecode).toHaveBeenCalled();
+    expect(mockBanStore.invalidateCache).toHaveBeenCalledWith(42);
+  });
+
+  it("ban sync handles table payload directly", async () => {
+    const { banCb } = await getSubscribeCallbacks();
+    const ban = { id: "b2", playerId: 99, status: "ACTIVE" };
+
+    banCb({ Data: ban, Sent: 100 });
+
+    expect(mockBanStore.invalidateCache).toHaveBeenCalledWith(99);
+  });
+
+  it("ban sync ignores non-string non-table payload", async () => {
+    const { banCb } = await getSubscribeCallbacks();
+    mockBanStore.invalidateCache.mockClear();
+
+    banCb({ Data: 12345, Sent: 100 });
+
+    expect(mockBanStore.invalidateCache).not.toHaveBeenCalled();
+  });
+
+  it("ban sync handles JSONDecode error gracefully", async () => {
+    const { banCb } = await getSubscribeCallbacks();
+    http.JSONDecode.mockImplementation(() => {
+      throw new Error("bad json");
+    });
+
+    banCb({ Data: "invalid", Sent: 100 });
+
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("Failed to decode ban"));
+    expect(mockBanStore.invalidateCache).not.toHaveBeenCalled();
+  });
+
+  it("ban sync fires onBan callbacks and handles callback error", async () => {
+    const svc = await getService();
+    const { banCb } = await getSubscribeCallbacks();
+    const badCb = vi.fn(() => {
+      throw new Error("callback boom");
+    });
+    svc.onBan(badCb);
+
+    banCb({ Data: { id: "b3", playerId: 10, status: "ACTIVE" }, Sent: 100 });
+
+    expect(badCb).toHaveBeenCalled();
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("onBan callback error"));
+  });
+
+  it("mute sync handles string payload via JSONDecode", async () => {
+    const { muteCb } = await getSubscribeCallbacks();
+    const mute = { id: "m1", playerId: 55, isActive: true };
+    http.JSONDecode.mockReturnValue(mute);
+
+    muteCb({ Data: JSON.stringify(mute), Sent: 100 });
+
+    expect(mockMuteStore.invalidateCache).toHaveBeenCalledWith(55);
+  });
+
+  it("mute sync handles table payload directly", async () => {
+    const { muteCb } = await getSubscribeCallbacks();
+    const mute = { id: "m2", playerId: 77, isActive: true };
+
+    muteCb({ Data: mute, Sent: 100 });
+
+    expect(mockMuteStore.invalidateCache).toHaveBeenCalledWith(77);
+  });
+
+  it("mute sync ignores non-string non-table payload", async () => {
+    const { muteCb } = await getSubscribeCallbacks();
+    mockMuteStore.invalidateCache.mockClear();
+
+    muteCb({ Data: false, Sent: 100 });
+
+    expect(mockMuteStore.invalidateCache).not.toHaveBeenCalled();
+  });
+
+  it("mute sync handles JSONDecode error gracefully", async () => {
+    const { muteCb } = await getSubscribeCallbacks();
+    http.JSONDecode.mockImplementation(() => {
+      throw new Error("bad json");
+    });
+
+    muteCb({ Data: "invalid", Sent: 100 });
+
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("Failed to decode mute"));
+  });
+
+  it("mute sync fires onMute callbacks and handles callback error", async () => {
+    const svc = await getService();
+    const { muteCb } = await getSubscribeCallbacks();
+    const badCb = vi.fn(() => {
+      throw new Error("callback boom");
+    });
+    svc.onMute(badCb);
+
+    muteCb({ Data: { id: "m3", playerId: 10, isActive: true }, Sent: 100 });
+
+    expect(badCb).toHaveBeenCalled();
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("onMute callback error"));
+  });
+
+  it("sync skips ban without playerId", async () => {
+    const { banCb } = await getSubscribeCallbacks();
+    mockBanStore.invalidateCache.mockClear();
+
+    banCb({ Data: { id: "b_no_player" }, Sent: 100 });
+
+    expect(mockBanStore.invalidateCache).not.toHaveBeenCalled();
+  });
+
+  it("recordMessageAgeMs skips negative age", async () => {
+    // Create service with os.time in the past so Sent > os.time
+    const g = globalThis as unknown as Record<string, unknown>;
+    (g.os as Record<string, unknown>).time = vi.fn(() => 50);
+
+    const { banCb } = await getSubscribeCallbacks();
+    // Sent: 200 > os.time: 50 → age is negative, should not error
+    banCb({ Data: { id: "b_neg", playerId: 1 }, Sent: 200 });
+
+    expect(mockBanStore.invalidateCache).toHaveBeenCalledWith(1);
+  });
+
   it("logs initialization on creation", async () => {
     await getService();
     expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining("initialized"));
+  });
+
+  // --------------------------------------------------------------------------
+  // createForTesting / resetInstance
+  // --------------------------------------------------------------------------
+
+  it("createForTesting bypasses singleton", async () => {
+    const mod = await import("./service");
+    const svc1 = mod.ModerationService.createForTesting("Test1");
+    const svc2 = mod.ModerationService.createForTesting("Test2");
+    expect(svc1).not.toBe(svc2);
+  });
+
+  it("resetInstance clears the singleton", async () => {
+    const mod = await import("./service");
+    const svc1 = mod.getModeration("TestMod");
+    mod.ModerationService.resetInstance();
+    const svc2 = mod.getModeration("TestMod");
+    expect(svc1).not.toBe(svc2);
+  });
+
+  // --------------------------------------------------------------------------
+  // evictPlayer
+  // --------------------------------------------------------------------------
+
+  it("evictPlayer delegates to both stores", async () => {
+    mockBanStore.evictPlayer = vi.fn();
+    mockMuteStore.evictPlayer = vi.fn();
+    const svc = await getService();
+
+    svc.evictPlayer(42);
+    expect(mockBanStore.evictPlayer).toHaveBeenCalledWith(42);
+    expect(mockMuteStore.evictPlayer).toHaveBeenCalledWith(42);
   });
 });

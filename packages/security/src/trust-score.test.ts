@@ -169,3 +169,65 @@ describe("isTrusted / isSuspicious", () => {
     expect(isSuspicious({ score: 25, riskLevel: "suspicious", factors: {} })).toBe(false);
   });
 });
+
+// ============================================================================
+// Cache functions
+// ============================================================================
+
+describe("trust cache", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.stubGlobal("os", { time: vi.fn(() => 1000), clock: vi.fn(() => 0) });
+  });
+
+  function makePlayer(id: number): Player {
+    return { UserId: id } as unknown as Player;
+  }
+
+  it("cacheTrustScore + getCachedTrustScore round-trip", async () => {
+    const { cacheTrustScore, getCachedTrustScore } = await import("./trust-score");
+    const player = makePlayer(1);
+    const score = { score: 80, riskLevel: "trusted" as const, factors: {} };
+
+    cacheTrustScore(player, score);
+    expect(getCachedTrustScore(player)).toEqual(score);
+  });
+
+  it("getCachedTrustScore returns undefined on cache miss", async () => {
+    const { getCachedTrustScore } = await import("./trust-score");
+    expect(getCachedTrustScore(makePlayer(999))).toBeUndefined();
+  });
+
+  it("getCachedTrustScore returns undefined when TTL expired", async () => {
+    const mockTime = vi.fn(() => 1000);
+    vi.stubGlobal("os", { time: mockTime, clock: vi.fn(() => 0) });
+
+    const { cacheTrustScore, getCachedTrustScore } = await import("./trust-score");
+    const player = makePlayer(2);
+    cacheTrustScore(player, { score: 50, riskLevel: "normal", factors: {} });
+
+    // Advance past TTL (60s)
+    mockTime.mockReturnValue(1000 + 61);
+    expect(getCachedTrustScore(player)).toBeUndefined();
+  });
+
+  it("invalidateTrustScore removes entry", async () => {
+    const { cacheTrustScore, getCachedTrustScore, invalidateTrustScore } =
+      await import("./trust-score");
+    const player = makePlayer(3);
+    cacheTrustScore(player, { score: 70, riskLevel: "normal", factors: {} });
+
+    invalidateTrustScore(player);
+    expect(getCachedTrustScore(player)).toBeUndefined();
+  });
+
+  it("cleanupTrustCache removes entry", async () => {
+    const { cacheTrustScore, getCachedTrustScore, cleanupTrustCache } =
+      await import("./trust-score");
+    const player = makePlayer(4);
+    cacheTrustScore(player, { score: 60, riskLevel: "normal", factors: {} });
+
+    cleanupTrustCache(player);
+    expect(getCachedTrustScore(player)).toBeUndefined();
+  });
+});

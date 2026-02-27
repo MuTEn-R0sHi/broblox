@@ -9,6 +9,7 @@ describe("createSecurityService", () => {
   let mockEnforcer: Record<string, ReturnType<typeof vi.fn>>;
   let mockCleanupEnforcementState: ReturnType<typeof vi.fn>;
   let mockCleanupPlayer: ReturnType<typeof vi.fn>;
+  let mockCleanupTrustCache: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -23,6 +24,7 @@ describe("createSecurityService", () => {
 
     mockCleanupEnforcementState = vi.fn();
     mockCleanupPlayer = vi.fn();
+    mockCleanupTrustCache = vi.fn();
 
     vi.doMock("@broblox/core", () => ({
       createLogger: () => mockLogger,
@@ -35,6 +37,9 @@ describe("createSecurityService", () => {
     }));
     vi.doMock("./detectors", () => ({
       cleanupPlayer: mockCleanupPlayer,
+    }));
+    vi.doMock("./trust-score", () => ({
+      cleanupTrustCache: mockCleanupTrustCache,
     }));
   });
 
@@ -101,6 +106,7 @@ describe("createSecurityService", () => {
 
     expect(mockCleanupEnforcementState).toHaveBeenCalledWith(fakePlayer);
     expect(mockCleanupPlayer).toHaveBeenCalledWith(fakePlayer);
+    expect(mockCleanupTrustCache).toHaveBeenCalledWith(fakePlayer);
   });
 
   it("skips cleanup registration when onPlayerRemoving not provided", async () => {
