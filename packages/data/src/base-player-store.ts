@@ -140,6 +140,7 @@ export abstract class BasePlayerStore<TData, TConfig extends BaseStoreConfig = B
           this.data = this.migrate(this.data, storedVersion);
           (this.data as Record<string, unknown>).__version = currentVersion;
           this.markDirty(); // force save after migration
+          return true;
         }
       }
     }

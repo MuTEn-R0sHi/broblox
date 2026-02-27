@@ -24,7 +24,7 @@ export function createMockDataStore(): MockDataStore {
   return {
     store,
     GetAsync(key: string) {
-      return store.get(key);
+      return [store.get(key), undefined] as unknown;
     },
     SetAsync(key: string, value: unknown) {
       store.set(key, value);
@@ -66,7 +66,10 @@ export function createMockDataStoreService(): MockDataStoreService {
       return stores.get(name)!;
     },
     _getStore(name: string) {
-      return stores.get(name) ?? createMockDataStore();
+      if (!stores.has(name)) {
+        stores.set(name, createMockDataStore());
+      }
+      return stores.get(name)!;
     },
     _reset() {
       stores.forEach((s) => s._reset());

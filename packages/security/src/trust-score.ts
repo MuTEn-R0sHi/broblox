@@ -6,6 +6,7 @@
  */
 
 import { TrustFactors, TrustScore } from "./types";
+import { TRUST_SCORE_CACHE_TTL_SEC } from "@broblox/constants";
 
 // ============================================================================
 // Score Weights
@@ -89,8 +90,6 @@ export function calculateTrustScore(factors: TrustFactors): TrustScore {
 // ============================================================================
 
 const trustCache = new Map<number, { score: TrustScore; timestamp: number }>();
-
-import { TRUST_SCORE_CACHE_TTL_SEC } from "@broblox/constants";
 
 /**
  * Get cached trust score for player.

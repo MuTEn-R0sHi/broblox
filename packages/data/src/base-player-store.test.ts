@@ -452,7 +452,7 @@ describe("BasePlayerStore", () => {
       expect(store.migrateSpy).toHaveBeenCalledWith(expect.objectContaining({ coins: 10 }), 1);
       expect(store.getData().level).toBe(2);
       expect((store.getData() as Record<string, unknown>).__version).toBe(2);
-      expect(store.isDirty()).toBe(false); // load() resets dirty at end, but markDirty was called
+      expect(store.isDirty()).toBe(true); // migration sets dirty so data is saved on next save cycle
     });
 
     it("skips migration when stored version == schemaVersion", () => {
