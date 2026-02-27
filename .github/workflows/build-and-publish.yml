@@ -23,6 +23,9 @@ on:
       ROBLOX_OPEN_CLOUD_API_KEY:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
