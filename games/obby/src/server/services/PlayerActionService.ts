@@ -64,8 +64,8 @@ function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined 
   const seasonRegistry = getSeasonRegistry();
   const _allSeasons = seasonRegistry.getAll();
 
-  // Build the reward cycle from the service config
-  const rewardCycle = dailyStore ? REWARD_CYCLE : [];
+  // Always send the reward cycle so the UI can render the schedule
+  const rewardCycle = REWARD_CYCLE;
 
   return {
     coins: coreData.coins,

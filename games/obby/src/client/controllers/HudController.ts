@@ -159,10 +159,8 @@ export const HudController: Controller = {
       {
         name: "Quests",
         emoji: "📋",
-        tooltip: "Quests",
-        action: () => {
-          // Quest tracker is always visible; toggle the full quest log
-        },
+        tooltip: "Quest Log",
+        action: () => ScreenController.toggleQuestLog(),
         order: 1,
       },
       {

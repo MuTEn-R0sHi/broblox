@@ -256,7 +256,7 @@ function initDefinitions(): void {
     name: "Sky Egg",
     description: "Contains cloud and air pets",
     cost: 50,
-    currency: "stars",
+    currency: "coins",
     lootTable: [
       { itemId: "cloud_bunny", rarity: "common", weight: 70 },
       { itemId: "spring_frog", rarity: "uncommon", weight: 25 },
@@ -409,6 +409,7 @@ function showModal(name: keyof Omit<ScreenHandles, "questTracker" | "dailyReward
 // ============================================================================
 
 export const ScreenController: Controller & {
+  toggleQuestLog(): void;
   toggleInventory(): void;
   togglePets(): void;
   toggleCosmetics(): void;
@@ -424,18 +425,6 @@ export const ScreenController: Controller & {
 
     const playerGui = player.WaitForChild("PlayerGui") as PlayerGui;
 
-    // ── Load data from server ───────────────────────────────────────
-    task.spawn(() => {
-      // Wait a beat for data to be ready on the server
-      task.wait(1);
-      refreshData();
-
-      // Show daily rewards popup if claimable
-      if (cachedData?.dailyCanClaim && screens.dailyRewards) {
-        screens.dailyRewards.show();
-      }
-    });
-
     // ── Create Quest Tracker (HUD overlay) ──────────────────────────
     screens.questTracker = createQuestTracker(playerGui, {
       getActiveQuests: () => cachedData?.activeQuests ?? [],
@@ -444,19 +433,39 @@ export const ScreenController: Controller & {
     });
     screens.questTracker.setVisible(true);
 
-    // ── Create Daily Rewards Popup ──────────────────────────────────
-    screens.dailyRewards = createDailyRewardsPopup(playerGui, {
-      rewardCycle: cachedData?.dailyRewardCycle ?? [],
-      currentDay: cachedData?.dailyCurrentDay ?? 1,
-      streak: cachedData?.dailyStreak ?? 0,
-      canClaim: cachedData?.dailyCanClaim ?? false,
-      timeUntilNextClaim: cachedData?.dailyTimeUntilNext ?? 0,
-      onClaim: () => {
-        return RemoteController.claimDailyReward();
-      },
-      onDismiss: () => {
-        screens.dailyRewards?.hide();
-      },
+    // ── Helper: (re)create daily rewards popup with current data ────
+    const createDailyPopup = () => {
+      // Clean up any existing popup before recreating
+      if (screens.dailyRewards) {
+        screens.dailyRewards.cleanup();
+        screens.dailyRewards = undefined;
+      }
+      screens.dailyRewards = createDailyRewardsPopup(playerGui, {
+        rewardCycle: cachedData?.dailyRewardCycle ?? [],
+        currentDay: cachedData?.dailyCurrentDay ?? 1,
+        streak: cachedData?.dailyStreak ?? 0,
+        canClaim: cachedData?.dailyCanClaim ?? false,
+        timeUntilNextClaim: cachedData?.dailyTimeUntilNext ?? 0,
+        onClaim: () => {
+          return RemoteController.claimDailyReward();
+        },
+        onDismiss: () => {
+          screens.dailyRewards?.hide();
+        },
+      });
+    };
+
+    // ── Load data from server ───────────────────────────────────────
+    task.spawn(() => {
+      // Wait a beat for data to be ready on the server
+      task.wait(1);
+      refreshData();
+
+      // Now that cachedData is populated, create the daily popup
+      createDailyPopup();
+      if (cachedData?.dailyCanClaim && screens.dailyRewards) {
+        screens.dailyRewards.show();
+      }
     });
 
     // ── Create Inventory Screen ─────────────────────────────────────
@@ -517,7 +526,7 @@ export const ScreenController: Controller & {
     // ── Create Gacha Screen ─────────────────────────────────────────
     screens.gacha = createGachaScreen(playerGui, {
       getEggs: () => EGG_DEFINITIONS,
-      getBalance: () => cachedData?.coins ?? 0,
+      getBalance: (_currency: string) => cachedData?.coins ?? 0,
       getPity: () => 0, // Pity counter not synced client-side for simplicity
       onPull: (eggId, count) => {
         const results = RemoteController.hatchEgg(eggId, count);
@@ -553,36 +562,51 @@ export const ScreenController: Controller & {
       onClose: () => hideActiveModal(),
     });
 
+    // ── Coalesced refresh to respect GetFullPlayerData rate limits ──
+    // At most one in-flight refresh, plus a single trailing refresh
+    // if multiple events fire while a refresh is running.
+    let refreshInFlight = false;
+    let refreshPending = false;
+
+    const requestRefresh = () => {
+      if (refreshInFlight) {
+        refreshPending = true;
+        return;
+      }
+
+      refreshInFlight = true;
+      task.spawn(() => {
+        refreshData();
+        refreshInFlight = false;
+
+        if (refreshPending) {
+          refreshPending = false;
+          requestRefresh();
+        }
+      });
+    };
+
     // ── Subscribe to server events for refresh ──────────────────────
 
-    RemoteController.onQuestCompleted(() => {
-      task.spawn(() => refreshData());
-    });
-
-    RemoteController.onAchievementCompleted(() => {
-      task.spawn(() => refreshData());
-    });
-
-    RemoteController.onLevelUp(() => {
-      task.spawn(() => refreshData());
-    });
-
-    RemoteController.onPrestige(() => {
-      task.spawn(() => refreshData());
-    });
-
+    RemoteController.onQuestCompleted(() => requestRefresh());
+    RemoteController.onAchievementCompleted(() => requestRefresh());
+    RemoteController.onLevelUp(() => requestRefresh());
+    RemoteController.onPrestige(() => requestRefresh());
     RemoteController.onDailyRewardClaimed(() => {
-      task.spawn(() => refreshData());
+      requestRefresh();
+      // Recreate the daily popup with updated state
+      task.spawn(() => createDailyPopup());
     });
-
-    RemoteController.onStage(() => {
-      task.spawn(() => refreshData());
-    });
+    RemoteController.onStage(() => requestRefresh());
 
     logger.info("ScreenController started — all screens created.");
   },
 
   // ── Public toggle methods ──────────────────────────────────────────
+
+  toggleQuestLog(): void {
+    screens.questTracker?.toggleLog();
+  },
 
   toggleInventory(): void {
     showModal("inventory");

@@ -238,7 +238,9 @@ export const RemoteController: Controller & {
     if (isOk(result)) {
       return result.value;
     }
-    logger.warn(`GetFullPlayerData failed: ${tostring(result)}`);
+    logger.warn(
+      `GetFullPlayerData failed: code=${result.code} message=${result.message ?? "none"}`
+    );
     return undefined;
   },
 
@@ -247,7 +249,7 @@ export const RemoteController: Controller & {
     if (isOk(result)) {
       return result.value;
     }
-    logger.warn(`ClaimDailyReward failed: ${tostring(result)}`);
+    logger.warn(`ClaimDailyReward failed: code=${result.code} message=${result.message ?? "none"}`);
     return undefined;
   },
 
@@ -256,7 +258,7 @@ export const RemoteController: Controller & {
     if (isOk(result)) {
       return result.value;
     }
-    logger.warn(`RedeemCode failed: ${tostring(result)}`);
+    logger.warn(`RedeemCode failed: code=${result.code} message=${result.message ?? "none"}`);
     return undefined;
   },
 
@@ -265,7 +267,7 @@ export const RemoteController: Controller & {
     if (isOk(result)) {
       return result.value;
     }
-    logger.warn(`HatchEgg failed: ${tostring(result)}`);
+    logger.warn(`HatchEgg failed: code=${result.code} message=${result.message ?? "none"}`);
     return [];
   },
 
