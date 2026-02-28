@@ -17,7 +17,6 @@
 import { Service, createLogger } from "@broblox/core";
 import { ok, err, ErrorCode } from "@broblox/net";
 import type { FullPlayerDataPayload } from "shared/types";
-import type { DailyRewardDay } from "@broblox/rewards";
 import type { EquipSlot } from "@broblox/cosmetics";
 import type { HatchResult } from "@broblox/gacha";
 
@@ -30,8 +29,7 @@ import { getPetStore } from "./PetService";
 import { getGachaStore, getEggRegistry } from "./GachaService";
 import { getCosmeticStore } from "./CosmeticsService";
 import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
-import { getDailyRewards } from "./RewardsService";
-import { registerRewardFulfiller } from "./RewardsService";
+import { getDailyRewards, REWARD_CYCLE, registerRewardFulfiller } from "./RewardsService";
 import { getCodeStore } from "./CodeRedemptionService";
 import { fulfillRewards } from "./RewardFulfillment";
 
@@ -108,26 +106,7 @@ function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined 
   };
 }
 
-// Mirror the reward cycle from RewardsService — keep in sync
-const REWARD_CYCLE: DailyRewardDay[] = [
-  { day: 1, rewards: [{ type: "currency", amount: 50, label: "50 Coins" }] },
-  { day: 2, rewards: [{ type: "currency", amount: 75, label: "75 Coins" }] },
-  {
-    day: 3,
-    rewards: [{ type: "item", amount: 1, itemId: "checkpoint_token", label: "Checkpoint Token" }],
-  },
-  { day: 4, rewards: [{ type: "currency", amount: 100, label: "100 Coins" }] },
-  { day: 5, rewards: [{ type: "xp", amount: 500, label: "500 XP" }] },
-  { day: 6, rewards: [{ type: "item", amount: 1, itemId: "skip_stage", label: "Stage Skip" }] },
-  {
-    day: 7,
-    rewards: [
-      { type: "currency", amount: 500, label: "500 Coins" },
-      { type: "item", amount: 1, itemId: "speed_coil", label: "Speed Coil" },
-    ],
-    isBonus: true,
-  },
-];
+// REWARD_CYCLE is imported from RewardsService — single source of truth.
 
 // ============================================================================
 // Service
@@ -197,6 +176,18 @@ export const PlayerActionService: Service = {
         return err(ErrorCode.NotFound, { message: "Player data not loaded" });
       }
 
+      // Validate egg currency — only coins are supported
+      const eggDef = getEggRegistry().get(request.eggId);
+      if (!eggDef) {
+        return err(ErrorCode.NotFound, { message: "Unknown egg" });
+      }
+      if (eggDef.currency !== "coins") {
+        logger.warn(
+          `Player ${player.UserId} tried to hatch egg "${request.eggId}" with unsupported currency "${eggDef.currency}"`
+        );
+        return err(ErrorCode.InvalidPayload, { message: "Unsupported currency" });
+      }
+
       const results: HatchResult[] = [];
       const hatchCount = math.clamp(request.count, 1, 10);
 
@@ -205,11 +196,8 @@ export const PlayerActionService: Service = {
         results.push(result);
 
         if (result.ok) {
-          // Deduct cost from player coins
-          const eggDef = getEggRegistry().get(request.eggId);
-          if (eggDef) {
-            coreData.coins = math.max(0, coreData.coins - eggDef.cost);
-          }
+          // Deduct cost from player coins (addCoins mutates session data by reference)
+          DataService.addCoins(player, -eggDef.cost);
 
           // If hatched a pet species, add to pet store
           if (result.itemId) {

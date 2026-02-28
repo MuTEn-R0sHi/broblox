@@ -4,11 +4,15 @@
  */
 
 export { PlayerLifecycleService } from "./PlayerLifecycleService";
+export { SecurityService } from "./SecurityService";
 export { RemoteService } from "./RemoteService";
 export { DataService } from "./DataService";
 export { StageService } from "./StageService";
 export { CheckpointService } from "./CheckpointService";
 export { LeaderboardService } from "./LeaderboardService";
+export { AnalyticsService } from "./AnalyticsService";
+export { NotificationService } from "./NotificationService";
+export { EventService } from "./EventService";
 export { ModerationEnforcementService } from "./ModerationEnforcementService";
 export { MovementValidationService } from "./MovementValidationService";
 export { FeatureFlagSyncService } from "./FeatureFlagSyncService";

@@ -51,6 +51,14 @@ describe("fulfillRewards", () => {
     vi.doMock("./ProgressionService", () => ({ getProgression: mockGetProgression }));
     vi.doMock("./InventoryService", () => ({ getInventory: mockGetInventory }));
     vi.doMock("./CosmeticsService", () => ({ getCosmeticStore: mockGetCosmeticStore }));
+    vi.doMock("./GachaService", () => ({
+      getGachaStore: vi.fn(() => ({
+        hatch: vi.fn(() => ({ ok: true, itemId: "pet_1", rarity: "common" })),
+      })),
+    }));
+    vi.doMock("./PetService", () => ({
+      getPetStore: vi.fn(() => ({ addPet: vi.fn() })),
+    }));
   });
 
   async function loadFulfillRewards() {
@@ -186,22 +194,69 @@ describe("fulfillRewards", () => {
 
   // ── Boost / Custom ──────────────────────────────────────────────────
 
-  it("warns for boost reward type", async () => {
+  it("grants XP for boost reward type", async () => {
     const fn = await loadFulfillRewards();
     const player = makePlayer();
 
-    fn(player as unknown as Player, [{ type: "boost", amount: 1 }]);
+    fn(player as unknown as Player, [{ type: "boost", amount: 2 }]);
 
-    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("not yet implemented"));
+    expect(mockAddXp).toHaveBeenCalledWith(200);
   });
 
-  it("warns for custom reward type", async () => {
+  it("warns for unhandled custom reward type", async () => {
     const fn = await loadFulfillRewards();
     const player = makePlayer();
 
     fn(player as unknown as Player, [{ type: "custom", amount: 1 }]);
 
-    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("not yet implemented"));
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      expect.stringContaining("Unhandled custom reward")
+    );
+  });
+
+  it("hatches eggs equal to reward.amount for custom egg rewards", async () => {
+    const mockHatch = vi.fn(() => ({ ok: true, itemId: "pet_sky", rarity: "rare" }));
+    const mockAddPet = vi.fn();
+    vi.doMock("./GachaService", () => ({
+      getGachaStore: vi.fn(() => ({ hatch: mockHatch })),
+    }));
+    vi.doMock("./PetService", () => ({
+      getPetStore: vi.fn(() => ({ addPet: mockAddPet })),
+    }));
+
+    const fn = await loadFulfillRewards();
+    const player = makePlayer();
+
+    fn(player as unknown as Player, [
+      { type: "custom", amount: 3, itemId: "sky_egg", label: "egg" },
+    ]);
+
+    expect(mockHatch).toHaveBeenCalledTimes(3);
+    expect(mockAddPet).toHaveBeenCalledTimes(3);
+  });
+
+  it("stops hatching on first failure for custom egg rewards", async () => {
+    const mockHatch = vi
+      .fn()
+      .mockReturnValueOnce({ ok: true, itemId: "pet_sky", rarity: "rare" })
+      .mockReturnValueOnce({ ok: false });
+    const mockAddPet = vi.fn();
+    vi.doMock("./GachaService", () => ({
+      getGachaStore: vi.fn(() => ({ hatch: mockHatch })),
+    }));
+    vi.doMock("./PetService", () => ({
+      getPetStore: vi.fn(() => ({ addPet: mockAddPet })),
+    }));
+
+    const fn = await loadFulfillRewards();
+    const player = makePlayer();
+
+    fn(player as unknown as Player, [
+      { type: "custom", amount: 3, itemId: "sky_egg", label: "egg" },
+    ]);
+
+    expect(mockHatch).toHaveBeenCalledTimes(2);
+    expect(mockAddPet).toHaveBeenCalledTimes(1);
   });
 
   // ── Unknown type ────────────────────────────────────────────────────

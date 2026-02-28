@@ -27,6 +27,8 @@ describe("StageService", () => {
   let mockIncrementObjective: ReturnType<typeof vi.fn>;
   let mockIncrementProgress: ReturnType<typeof vi.fn>;
   let mockTrackEvent: ReturnType<typeof vi.fn>;
+  let mockAdvanceStep: ReturnType<typeof vi.fn>;
+  let mockGetActiveEvents: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -103,15 +105,24 @@ describe("StageService", () => {
     mockIncrementProgress = vi.fn();
     mockTrackEvent = vi.fn();
     mockGetProgression = vi.fn(() => ({ addXp: mockAddXp }));
-    mockGetQuests = vi.fn(() => ({ incrementObjective: mockIncrementObjective }));
+    mockGetQuests = vi.fn(() => ({
+      incrementObjective: mockIncrementObjective,
+      setObjectiveProgress: vi.fn(),
+    }));
     mockGetAchievements = vi.fn(() => ({ incrementProgress: mockIncrementProgress }));
     mockGetEventTracker = vi.fn(() => ({ track: mockTrackEvent }));
     mockGetBattlePassStore = vi.fn(() => ({ addXp: mockBpAddXp }));
+    mockAdvanceStep = vi.fn();
+    mockGetActiveEvents = vi.fn(() => []);
 
     vi.doMock("./ProgressionService", () => ({ getProgression: mockGetProgression }));
     vi.doMock("./QuestService", () => ({ getQuests: mockGetQuests }));
     vi.doMock("./RewardsService", () => ({ getAchievements: mockGetAchievements }));
-    vi.doMock("./AnalyticsService", () => ({ getEventTracker: mockGetEventTracker }));
+    vi.doMock("./AnalyticsService", () => ({
+      getEventTracker: mockGetEventTracker,
+      getFunnelTracker: vi.fn(() => ({ advanceStep: mockAdvanceStep })),
+    }));
+    vi.doMock("./EventService", () => ({ getActiveEvents: mockGetActiveEvents }));
     vi.doMock("./BattlePassService", () => ({ getBattlePassStore: mockGetBattlePassStore }));
   });
 
@@ -852,6 +863,56 @@ describe("StageService", () => {
 
       expect(() => svc.completeStage(makePlayer(), 1)).not.toThrow();
       expect(mockBpAddXp).not.toHaveBeenCalled();
+    });
+
+    it("calls funnel advanceStep for stage 1 completion", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockAdvanceStep).toHaveBeenCalledWith("progression", 42, "stage_1_complete");
+    });
+
+    it("does not call funnel advanceStep for non-milestone stages", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 2 }));
+      // Use 3+ stages so stage 2 is not last and not a milestone
+      const parts = [makeStagePartMock(1), makeStagePartMock(2), makeStagePartMock(3)];
+      mockCollectionService.GetTagged.mockReturnValue(parts);
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 2);
+
+      expect(mockAdvanceStep).not.toHaveBeenCalled();
+    });
+
+    it("applies event coin multiplier to stage rewards", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockGetActiveEvents.mockReturnValue([{ modifiers: { coinMultiplier: 2, xpMultiplier: 1 } }]);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      // Stage 1 has CoinReward=10, with 2x multiplier → 20
+      expect(mockDataService.addCoins).toHaveBeenCalledWith(expect.anything(), 20);
+    });
+
+    it("applies event xp multiplier to stage rewards", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockGetActiveEvents.mockReturnValue([{ modifiers: { coinMultiplier: 1, xpMultiplier: 3 } }]);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      // Base XP is 100, with 3x multiplier → 300
+      expect(mockAddXp).toHaveBeenCalledWith(300);
     });
   });
 });

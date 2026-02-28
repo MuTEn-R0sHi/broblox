@@ -27,7 +27,7 @@ export function registerRewardFulfiller(fn: FulfillFn): void {
   _fulfillRewards = fn;
 }
 
-const REWARD_CYCLE: DailyRewardDay[] = [
+export const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 50, label: "50 Coins" }] },
   { day: 2, rewards: [{ type: "currency", amount: 75, label: "75 Coins" }] },
   {
@@ -125,6 +125,12 @@ const handle = createRewardsService({
         streak: event.streak,
         rewards: event.rewards,
       });
+
+      // Advance the 7-day login streak achievement
+      const achievementStore = handle.getAchievementStore(event.playerId);
+      if (achievementStore !== undefined) {
+        achievementStore.setProgress("ach_streak_7", event.streak);
+      }
     }
   },
 });
