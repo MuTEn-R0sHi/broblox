@@ -184,6 +184,12 @@
               "out": {
                 "$path": "node_modules/@broblox/events/out"
               }
+            },
+            "ui": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@broblox/ui/out"
+              }
             }
           }
         }
