@@ -90,12 +90,34 @@ jobs:
           echo "Publishing ${{ steps.game.outputs.name }} to Dev environment..."
           echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
-          rbxcloud experience publish \
-            --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
-            --universe-id "$UNIVERSE_ID" \
-            --place-id "$PLACE_ID" \
-            --version-type published \
-            --filename ${{ steps.game.outputs.game_path }}/build.rbxl
+          MAX_RETRIES=5
+          DELAY=30
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i/$MAX_RETRIES..."
+            OUTPUT=$(rbxcloud experience publish \
+              --api-key "$ROBLOX_OPEN_CLOUD_API_KEY" \
+              --universe-id "$UNIVERSE_ID" \
+              --place-id "$PLACE_ID" \
+              --version-type published \
+              --filename ${{ steps.game.outputs.game_path }}/build.rbxl 2>&1) && {
+              echo "$OUTPUT"
+              echo "✅ Publish succeeded on attempt $i"
+              exit 0
+            }
+            echo "$OUTPUT"
+            # Only retry on 409 (server busy) — fail fast on other errors
+            if ! echo "$OUTPUT" | grep -qi "409\|server is busy"; then
+              echo "❌ Non-retryable error, failing immediately"
+              exit 1
+            fi
+            if [ "$i" -lt "$MAX_RETRIES" ]; then
+              echo "⏳ Server busy (409), retrying in ${DELAY}s..."
+              sleep $DELAY
+              DELAY=$((DELAY * 2))
+            fi
+          done
+          echo "❌ Publish failed after $MAX_RETRIES attempts (server busy)"
+          exit 1
 
       - name: Post publish notification
         if: success()
