@@ -1,0 +1,271 @@
+/**
+ * Player Action Service — Obby Game
+ *
+ * Handles all client-initiated actions via remotes:
+ * - GetFullPlayerData (server function → returns full player snapshot)
+ * - ClaimDailyReward (server function → claims and returns result)
+ * - RedeemCode (server function → redeems a promo code)
+ * - HatchEgg (server function → hatches eggs from gacha)
+ * - EquipPet / UnequipPet (server events)
+ * - EquipCosmetic / UnequipCosmetic (server events)
+ * - ClaimBattlePassReward (server event)
+ *
+ * This service bridges the typed remote layer with the per-player stores
+ * exposed by each package service.
+ */
+
+import { Service, createLogger } from "@broblox/core";
+import { ok, err, ErrorCode } from "@broblox/net";
+import type { FullPlayerDataPayload } from "shared/types";
+import type { DailyRewardDay } from "@broblox/rewards";
+import type { EquipSlot } from "@broblox/cosmetics";
+import type { HatchResult } from "@broblox/gacha";
+
+import { RemoteService } from "./RemoteService";
+import { DataService } from "./DataService";
+import { getProgression } from "./ProgressionService";
+import { getInventory, getItemRegistry } from "./InventoryService";
+import { getQuests, getQuestRegistry } from "./QuestService";
+import { getPetStore, getPetRegistry } from "./PetService";
+import { getGachaStore, getEggRegistry } from "./GachaService";
+import { getCosmeticStore, getCosmeticRegistry } from "./CosmeticsService";
+import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
+import { getDailyRewards } from "./RewardsService";
+import { getCodeStore } from "./CodeRedemptionService";
+
+const logger = createLogger("PlayerActionService");
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined {
+  const playerId = player.UserId;
+  const coreData = DataService.getData(player);
+  if (!coreData) return undefined;
+
+  const progression = getProgression(playerId);
+  const inventory = getInventory(playerId);
+  const quests = getQuests(playerId);
+  const petStore = getPetStore(playerId);
+  const cosmeticStore = getCosmeticStore(playerId);
+  const bpStore = getBattlePassStore(playerId);
+  const dailyStore = getDailyRewards(playerId);
+
+  // Build equipped cosmetics as a plain Record
+  const equippedCosmetics: Record<string, string> = {};
+  if (cosmeticStore) {
+    for (const [slot, id] of cosmeticStore.getAllEquipped()) {
+      equippedCosmetics[slot] = id;
+    }
+  }
+
+  // Find active season
+  const seasonRegistry = getSeasonRegistry();
+  const allSeasons = seasonRegistry.getAll();
+  const activeSeason = allSeasons.find((s) => s.active);
+
+  // Build the reward cycle from the service config
+  const rewardCycle = dailyStore ? REWARD_CYCLE : [];
+
+  return {
+    coins: coreData.coins,
+    currentStage: coreData.currentStage,
+    currentCheckpoint: coreData.currentCheckpoint,
+
+    level: progression?.getLevel() ?? 1,
+    xp: progression?.getCurrentXp() ?? 0,
+    xpForNext: progression?.getXpForNextLevel() ?? 50,
+    prestige: progression?.getPrestige() ?? 0,
+
+    items: inventory?.getAllItems() ?? [],
+    maxSlots: inventory?.getMaxSlots() ?? 50,
+
+    activeQuests: quests?.getActiveQuests() ?? [],
+    completedQuestIds: quests?.getCompletedQuestIds() ?? [],
+
+    pets: petStore?.getAllPets() ?? [],
+
+    ownedCosmetics: cosmeticStore?.getOwned() ?? [],
+    equippedCosmetics,
+
+    battlePass: bpStore
+      ? {
+          seasonId: bpStore.getSeasonId(),
+          xp: bpStore.getXp(),
+          tier: bpStore.getTier(),
+          premiumUnlocked: bpStore.isPremium(),
+          claimedRewards: bpStore.getClaimedRewards(),
+        }
+      : undefined,
+
+    dailyCanClaim: dailyStore?.canClaim() ?? false,
+    dailyCurrentDay: dailyStore?.getCycleDay() ?? 1,
+    dailyStreak: dailyStore?.getStreak() ?? 0,
+    dailyTimeUntilNext: dailyStore?.getTimeUntilNextClaim() ?? 0,
+    dailyRewardCycle: rewardCycle,
+  };
+}
+
+// Mirror the reward cycle from RewardsService — keep in sync
+const REWARD_CYCLE: DailyRewardDay[] = [
+  { day: 1, rewards: [{ type: "currency", amount: 50, label: "50 Coins" }] },
+  { day: 2, rewards: [{ type: "currency", amount: 75, label: "75 Coins" }] },
+  {
+    day: 3,
+    rewards: [{ type: "item", amount: 1, itemId: "checkpoint_token", label: "Checkpoint Token" }],
+  },
+  { day: 4, rewards: [{ type: "currency", amount: 100, label: "100 Coins" }] },
+  { day: 5, rewards: [{ type: "xp", amount: 500, label: "500 XP" }] },
+  { day: 6, rewards: [{ type: "item", amount: 1, itemId: "skip_stage", label: "Stage Skip" }] },
+  {
+    day: 7,
+    rewards: [
+      { type: "currency", amount: 500, label: "500 Coins" },
+      { type: "item", amount: 1, itemId: "speed_coil", label: "Speed Coil" },
+    ],
+    isBonus: true,
+  },
+];
+
+// ============================================================================
+// Service
+// ============================================================================
+
+export const PlayerActionService: Service = {
+  onStart() {
+    const registry = RemoteService.getRegistry();
+
+    // ── GetFullPlayerData ─────────────────────────────────────────────
+    registry.onFunction("GetFullPlayerData", (player) => {
+      const data = buildFullPlayerData(player);
+      if (!data) {
+        return err(ErrorCode.NotFound, { message: "Player data not loaded yet" });
+      }
+      return ok(data);
+    });
+
+    // ── ClaimDailyReward ──────────────────────────────────────────────
+    registry.onFunction("ClaimDailyReward", (player) => {
+      const dailyStore = getDailyRewards(player.UserId);
+      if (!dailyStore) {
+        return err(ErrorCode.NotFound, { message: "Rewards not loaded" });
+      }
+
+      if (!dailyStore.canClaim()) {
+        return ok(undefined);
+      }
+
+      const reward = dailyStore.claim();
+      logger.info(`Player ${player.UserId} claimed daily reward day ${dailyStore.getCycleDay()}`);
+      return ok(reward);
+    });
+
+    // ── RedeemCode ────────────────────────────────────────────────────
+    registry.onFunction("RedeemCode", (player, request) => {
+      const codeStore = getCodeStore();
+      const result = codeStore.redeemCode(player.UserId, request.code);
+
+      if (result.ok) {
+        logger.info(`Player ${player.UserId} redeemed code "${request.code}"`);
+        return ok({ success: true });
+      }
+
+      logger.debug(`Player ${player.UserId} failed to redeem "${request.code}": ${result.status}`);
+      return ok({ success: false, message: result.status });
+    });
+
+    // ── HatchEgg ──────────────────────────────────────────────────────
+    registry.onFunction("HatchEgg", (player, request) => {
+      const gachaStore = getGachaStore(player.UserId);
+      if (!gachaStore) {
+        return err(ErrorCode.NotFound, { message: "Gacha not loaded" });
+      }
+
+      const coreData = DataService.getData(player);
+      if (!coreData) {
+        return err(ErrorCode.NotFound, { message: "Player data not loaded" });
+      }
+
+      const results: HatchResult[] = [];
+      const hatchCount = math.clamp(request.count, 1, 10);
+
+      for (let i = 0; i < hatchCount; i++) {
+        const result = gachaStore.hatch(request.eggId, coreData.coins);
+        results.push(result);
+
+        if (result.ok) {
+          // Deduct cost from player coins
+          const eggDef = getEggRegistry().get(request.eggId);
+          if (eggDef) {
+            coreData.coins = math.max(0, coreData.coins - eggDef.cost);
+          }
+
+          // If hatched a pet species, add to pet store
+          if (result.itemId) {
+            const petStore = getPetStore(player.UserId);
+            petStore?.addPet(result.itemId);
+          }
+        } else {
+          break; // Stop on first failure (insufficient funds, etc.)
+        }
+      }
+
+      return ok(results);
+    });
+
+    // ── EquipPet ──────────────────────────────────────────────────────
+    registry.onEvent("EquipPet", (player, request) => {
+      const petStore = getPetStore(player.UserId);
+      if (!petStore) return;
+      const result = petStore.equipPet(request.instanceId);
+      if (result.ok) {
+        logger.debug(`Player ${player.UserId} equipped pet ${request.instanceId}`);
+      }
+    });
+
+    // ── UnequipPet ────────────────────────────────────────────────────
+    registry.onEvent("UnequipPet", (player, request) => {
+      const petStore = getPetStore(player.UserId);
+      if (!petStore) return;
+      const result = petStore.unequipPet(request.instanceId);
+      if (result.ok) {
+        logger.debug(`Player ${player.UserId} unequipped pet ${request.instanceId}`);
+      }
+    });
+
+    // ── EquipCosmetic ─────────────────────────────────────────────────
+    registry.onEvent("EquipCosmetic", (player, request) => {
+      const cosmeticStore = getCosmeticStore(player.UserId);
+      if (!cosmeticStore) return;
+      const result = cosmeticStore.equip(request.cosmeticId, request.slot as EquipSlot);
+      if (result.ok) {
+        logger.debug(
+          `Player ${player.UserId} equipped cosmetic ${request.cosmeticId} in slot ${request.slot}`
+        );
+      }
+    });
+
+    // ── UnequipCosmetic ───────────────────────────────────────────────
+    registry.onEvent("UnequipCosmetic", (player, request) => {
+      const cosmeticStore = getCosmeticStore(player.UserId);
+      if (!cosmeticStore) return;
+      const result = cosmeticStore.unequip(request.slot as EquipSlot);
+      if (result.ok) {
+        logger.debug(`Player ${player.UserId} unequipped cosmetic slot ${request.slot}`);
+      }
+    });
+
+    // ── ClaimBattlePassReward ─────────────────────────────────────────
+    registry.onEvent("ClaimBattlePassReward", (player, request) => {
+      const bpStore = getBattlePassStore(player.UserId);
+      if (!bpStore) return;
+      const result = bpStore.claimReward(request.rewardId);
+      if (result.ok) {
+        logger.info(`Player ${player.UserId} claimed battle pass reward ${request.rewardId}`);
+      }
+    });
+
+    logger.info("PlayerActionService started — all remote handlers registered.");
+  },
+};

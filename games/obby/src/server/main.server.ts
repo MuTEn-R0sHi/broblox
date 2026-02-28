@@ -30,6 +30,7 @@ import { WorldService } from "./services/WorldService";
 import { AnalyticsService } from "./services/AnalyticsService";
 import { NotificationService } from "./services/NotificationService";
 import { EventService } from "./services/EventService";
+import { PlayerActionService } from "./services/PlayerActionService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -67,7 +68,8 @@ app
   .register(AudioService)
   .register(TutorialService)
   .register(WorldService)
-  .register(EventService);
+  .register(EventService)
+  .register(PlayerActionService);
 
 app.boot();
 logger.info("Obby server booted.");

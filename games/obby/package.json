@@ -41,6 +41,7 @@
     "@broblox/audio": "workspace:*",
     "@broblox/tutorial": "workspace:*",
     "@broblox/world-systems": "workspace:*",
+    "@broblox/ui": "workspace:*",
     "@rbxts/t": "^3.2.1"
   },
   "devDependencies": {
