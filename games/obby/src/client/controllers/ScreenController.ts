@@ -503,13 +503,11 @@ export const ScreenController: Controller & {
         return all;
       },
       getEquipped: () => {
-        const map = new Map<string, string>();
         if (cachedData?.equippedCosmetics) {
-          for (const key in cachedData.equippedCosmetics) {
-            map.set(key, cachedData.equippedCosmetics[key]);
-          }
+          // Record<string,string> and Map<string,string> are both Lua tables
+          return cachedData.equippedCosmetics as unknown as Map<string, string>;
         }
-        return map;
+        return new Map<string, string>();
       },
       getCosmeticDef: (id) => COSMETIC_DEFINITIONS.get(id),
       onEquip: (cosmeticId, slot) => {
