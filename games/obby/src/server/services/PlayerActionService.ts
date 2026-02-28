@@ -24,11 +24,11 @@ import type { HatchResult } from "@broblox/gacha";
 import { RemoteService } from "./RemoteService";
 import { DataService } from "./DataService";
 import { getProgression } from "./ProgressionService";
-import { getInventory, getItemRegistry } from "./InventoryService";
-import { getQuests, getQuestRegistry } from "./QuestService";
-import { getPetStore, getPetRegistry } from "./PetService";
+import { getInventory } from "./InventoryService";
+import { getQuests } from "./QuestService";
+import { getPetStore } from "./PetService";
 import { getGachaStore, getEggRegistry } from "./GachaService";
-import { getCosmeticStore, getCosmeticRegistry } from "./CosmeticsService";
+import { getCosmeticStore } from "./CosmeticsService";
 import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
 import { getDailyRewards } from "./RewardsService";
 import { getCodeStore } from "./CodeRedemptionService";
@@ -55,15 +55,14 @@ function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined 
   // Build equipped cosmetics as a plain Record
   const equippedCosmetics: Record<string, string> = {};
   if (cosmeticStore) {
-    for (const [slot, id] of cosmeticStore.getAllEquipped()) {
+    cosmeticStore.getAllEquipped().forEach((id, slot) => {
       equippedCosmetics[slot] = id;
-    }
+    });
   }
 
-  // Find active season
+  // Find active season (used for future season-gating)
   const seasonRegistry = getSeasonRegistry();
-  const allSeasons = seasonRegistry.getAll();
-  const activeSeason = allSeasons.find((s) => s.active);
+  const _allSeasons = seasonRegistry.getAll();
 
   // Build the reward cycle from the service config
   const rewardCycle = dailyStore ? REWARD_CYCLE : [];
@@ -166,7 +165,7 @@ export const PlayerActionService: Service = {
       const codeStore = getCodeStore();
       const result = codeStore.redeemCode(player.UserId, request.code);
 
-      if (result.ok) {
+      if (result.success) {
         logger.info(`Player ${player.UserId} redeemed code "${request.code}"`);
         return ok({ success: true });
       }

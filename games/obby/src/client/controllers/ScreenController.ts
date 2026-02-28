@@ -26,15 +26,13 @@ import {
 } from "@broblox/ui";
 
 // Types from packages (used by screen options)
-import type { QuestTrackerHandle } from "@broblox/ui";
 import type { QuestDefinition } from "@broblox/quests";
 import type { ItemDefinition } from "@broblox/inventory";
 import type { PetSpecies } from "@broblox/pets";
-import type { CosmeticDefinition, EquipSlot } from "@broblox/cosmetics";
-import type { EggDefinition, HatchResult } from "@broblox/gacha";
-import type { SeasonDefinition, BattlePassPlayerData } from "@broblox/battle-pass";
+import type { CosmeticDefinition } from "@broblox/cosmetics";
+import type { EggDefinition } from "@broblox/gacha";
+import type { SeasonDefinition } from "@broblox/battle-pass";
 import type { AudioChannel } from "@broblox/audio";
-import type { DailyRewardDay } from "@broblox/rewards";
 import type { FullPlayerDataPayload } from "shared/types";
 
 import { RemoteController } from "./RemoteController";
@@ -490,16 +488,16 @@ export const ScreenController: Controller & {
       getOwned: () => cachedData?.ownedCosmetics ?? [],
       getAllCosmetics: () => {
         const all: CosmeticDefinition[] = [];
-        for (const [, def] of COSMETIC_DEFINITIONS) {
+        COSMETIC_DEFINITIONS.forEach((def) => {
           all.push(def);
-        }
+        });
         return all;
       },
       getEquipped: () => {
         const map = new Map<string, string>();
         if (cachedData?.equippedCosmetics) {
-          for (const [slot, id] of pairs(cachedData.equippedCosmetics)) {
-            map.set(slot as string, id);
+          for (const key in cachedData.equippedCosmetics) {
+            map.set(key, cachedData.equippedCosmetics[key]);
           }
         }
         return map;
