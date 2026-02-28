@@ -25,3 +25,4 @@ export { PetService } from "./PetService";
 export { ProgressionService } from "./ProgressionService";
 export { QuestService } from "./QuestService";
 export { RewardsService } from "./RewardsService";
+export { PlayerActionService } from "./PlayerActionService";

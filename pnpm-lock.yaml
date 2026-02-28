@@ -275,6 +275,9 @@ importers:
       "@broblox/tutorial":
         specifier: workspace:*
         version: link:../../packages/tutorial
+      "@broblox/ui":
+        specifier: workspace:*
+        version: link:../../packages/ui
       "@broblox/world-systems":
         specifier: workspace:*
         version: link:../../packages/world-systems

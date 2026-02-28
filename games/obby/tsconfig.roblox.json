@@ -18,7 +18,8 @@
 
     "baseUrl": "src",
     "paths": {
-      "shared/*": ["shared/*"]
+      "shared/*": ["shared/*"],
+      "@broblox/*": ["../node_modules/@broblox/*"]
     }
   },
   "rbxts": {

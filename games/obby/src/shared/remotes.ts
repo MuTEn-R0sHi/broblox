@@ -5,14 +5,25 @@
  * Both server and client import from here.
  */
 
-import { defineServerEvent, defineClientEvent } from "@broblox/net";
+import { defineServerEvent, defineClientEvent, defineServerFunction } from "@broblox/net";
 import type {
   CheckpointReachedEvent,
   StageCompletedEvent,
   LeaderboardUpdatePayload,
   LeaderboardRefreshStatusPayload,
   RespawnRequestPayload,
+  RedeemCodeRequest,
+  HatchEggRequest,
+  EquipPetRequest,
+  UnequipPetRequest,
+  EquipCosmeticRequest,
+  UnequipCosmeticRequest,
+  ClaimBattlePassRewardRequest,
+  FullPlayerDataPayload,
+  CodeRedeemResultPayload,
 } from "./types";
+import type { DailyRewardDay } from "@broblox/rewards";
+import type { HatchResult } from "@broblox/gacha";
 
 // ============================================================================
 // Payload types for data sync (not in types.ts but used inline)
@@ -178,6 +189,121 @@ export const ObbyRemotes = {
    */
   EventEnded: defineClientEvent<EventActivePayload>("Obby_EventEnded", {
     description: "Server broadcasts that a scheduled event has become inactive",
+  }),
+
+  // ========================================================================
+  // Server Functions (Client → Server, returns Result<T>)
+  // ========================================================================
+
+  /**
+   * Client → Server: Request full player data snapshot for UI screens.
+   */
+  GetFullPlayerData: defineServerFunction<void, FullPlayerDataPayload>("GetFullPlayerData", {
+    rateLimit: { windowMs: 2000, maxRequests: 2 },
+    description: "Client requests full player data for UI population",
+  }),
+
+  /**
+   * Client → Server: Claim daily login reward.
+   */
+  ClaimDailyReward: defineServerFunction<void, DailyRewardDay | undefined>("ClaimDailyReward", {
+    rateLimit: { windowMs: 2000, maxRequests: 1 },
+    description: "Client claims the daily login reward",
+  }),
+
+  /**
+   * Client → Server: Redeem a promo code.
+   */
+  RedeemCode: defineServerFunction<RedeemCodeRequest, CodeRedeemResultPayload>("RedeemCode", {
+    rateLimit: { windowMs: 3000, maxRequests: 1 },
+    description: "Client redeems a promotional code",
+    validate: (v): v is RedeemCodeRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["code"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Hatch eggs from the gacha system.
+   */
+  HatchEgg: defineServerFunction<HatchEggRequest, HatchResult[]>("HatchEgg", {
+    rateLimit: { windowMs: 1000, maxRequests: 3 },
+    description: "Client hatches an egg",
+    validate: (v): v is HatchEggRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["eggId"]) === "string" && typeOf(p["count"]) === "number";
+    },
+  }),
+
+  // ========================================================================
+  // Server Events (Client → Server, fire-and-forget)
+  // ========================================================================
+
+  /**
+   * Client → Server: Equip a pet.
+   */
+  EquipPet: defineServerEvent<EquipPetRequest>("EquipPet", {
+    rateLimit: { windowMs: 500, maxRequests: 3 },
+    description: "Client requests to equip a pet",
+    validate: (v): v is EquipPetRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["instanceId"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Unequip a pet.
+   */
+  UnequipPet: defineServerEvent<UnequipPetRequest>("UnequipPet", {
+    rateLimit: { windowMs: 500, maxRequests: 3 },
+    description: "Client requests to unequip a pet",
+    validate: (v): v is UnequipPetRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["instanceId"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Equip a cosmetic.
+   */
+  EquipCosmetic: defineServerEvent<EquipCosmeticRequest>("EquipCosmetic", {
+    rateLimit: { windowMs: 500, maxRequests: 3 },
+    description: "Client requests to equip a cosmetic",
+    validate: (v): v is EquipCosmeticRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["cosmeticId"]) === "string" && typeOf(p["slot"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Unequip a cosmetic.
+   */
+  UnequipCosmetic: defineServerEvent<UnequipCosmeticRequest>("UnequipCosmetic", {
+    rateLimit: { windowMs: 500, maxRequests: 3 },
+    description: "Client requests to unequip a cosmetic",
+    validate: (v): v is UnequipCosmeticRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["slot"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Claim a battle pass tier reward.
+   */
+  ClaimBattlePassReward: defineServerEvent<ClaimBattlePassRewardRequest>("ClaimBattlePassReward", {
+    rateLimit: { windowMs: 1000, maxRequests: 3 },
+    description: "Client claims a battle pass reward",
+    validate: (v): v is ClaimBattlePassRewardRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["rewardId"]) === "string";
+    },
   }),
 } as const;
 
