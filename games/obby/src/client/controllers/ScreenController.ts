@@ -425,8 +425,19 @@ export const ScreenController: Controller & {
 
     const playerGui = player.WaitForChild("PlayerGui") as PlayerGui;
 
+    // ── ScreenGui container for all screens ─────────────────────────
+    // Frames cannot render directly under PlayerGui — they must be
+    // inside a ScreenGui.  We create one shared ScreenGui for all
+    // screens produced by the @broblox/ui factories.
+    const screenGui = new Instance("ScreenGui");
+    screenGui.Name = "Screens";
+    screenGui.ResetOnSpawn = false;
+    screenGui.DisplayOrder = 10;
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+    screenGui.Parent = playerGui;
+
     // ── Create Quest Tracker (HUD overlay) ──────────────────────────
-    screens.questTracker = createQuestTracker(playerGui, {
+    screens.questTracker = createQuestTracker(screenGui, {
       getActiveQuests: () => cachedData?.activeQuests ?? [],
       getQuestDef: (questId) => QUEST_DEFINITIONS.get(questId),
       maxHudQuests: 3,
@@ -440,7 +451,7 @@ export const ScreenController: Controller & {
         screens.dailyRewards.cleanup();
         screens.dailyRewards = undefined;
       }
-      screens.dailyRewards = createDailyRewardsPopup(playerGui, {
+      screens.dailyRewards = createDailyRewardsPopup(screenGui, {
         rewardCycle: cachedData?.dailyRewardCycle ?? [],
         currentDay: cachedData?.dailyCurrentDay ?? 1,
         streak: cachedData?.dailyStreak ?? 0,
@@ -469,7 +480,7 @@ export const ScreenController: Controller & {
     });
 
     // ── Create Inventory Screen ─────────────────────────────────────
-    screens.inventory = createInventoryScreen(playerGui, {
+    screens.inventory = createInventoryScreen(screenGui, {
       getItems: () => cachedData?.items ?? [],
       getItemDef: (itemId) => ITEM_DEFINITIONS.get(itemId),
       maxSlots: cachedData?.maxSlots ?? 50,
@@ -477,7 +488,7 @@ export const ScreenController: Controller & {
     });
 
     // ── Create Pet Collection Screen ────────────────────────────────
-    screens.petCollection = createPetCollection(playerGui, {
+    screens.petCollection = createPetCollection(screenGui, {
       getPets: () => cachedData?.pets ?? [],
       getSpecies: (speciesId) => PET_SPECIES.get(speciesId),
       maxEquipped: 1,
@@ -493,7 +504,7 @@ export const ScreenController: Controller & {
     });
 
     // ── Create Cosmetics Screen ─────────────────────────────────────
-    screens.cosmetics = createCosmeticsScreen(playerGui, {
+    screens.cosmetics = createCosmeticsScreen(screenGui, {
       getOwned: () => cachedData?.ownedCosmetics ?? [],
       getAllCosmetics: () => {
         const all: CosmeticDefinition[] = [];
@@ -522,7 +533,7 @@ export const ScreenController: Controller & {
     });
 
     // ── Create Gacha Screen ─────────────────────────────────────────
-    screens.gacha = createGachaScreen(playerGui, {
+    screens.gacha = createGachaScreen(screenGui, {
       getEggs: () => EGG_DEFINITIONS,
       getBalance: (_currency: string) => cachedData?.coins ?? 0,
       getPity: () => 0, // Pity counter not synced client-side for simplicity
@@ -535,7 +546,7 @@ export const ScreenController: Controller & {
     });
 
     // ── Create Battle Pass Screen ───────────────────────────────────
-    screens.battlePass = createBattlePassScreen(playerGui, {
+    screens.battlePass = createBattlePassScreen(screenGui, {
       getSeason: () => SEASON_DEFINITIONS.get("obby_s1"),
       getPlayerData: () => cachedData?.battlePass,
       onClaim: (rewardId) => {
@@ -546,7 +557,7 @@ export const ScreenController: Controller & {
     });
 
     // ── Create Settings Screen ──────────────────────────────────────
-    screens.settings = createSettingsScreen(playerGui, {
+    screens.settings = createSettingsScreen(screenGui, {
       getVolumes: () => audioVolumes,
       getMasterVolume: () => masterVolume,
       onVolumeChange: (channel, value) => {
