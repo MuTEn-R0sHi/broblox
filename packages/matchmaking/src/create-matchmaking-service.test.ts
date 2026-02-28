@@ -201,6 +201,8 @@ describe("createMatchmakingService", () => {
     let addedCb: ((player: { UserId: number }) => void) | undefined;
     handle = createMatchmakingService({
       queues: [defaultQueue],
+      timeoutIntervalSeconds: 0,
+      matchFormationIntervalSeconds: 0,
       onPlayerAdded: (cb) => {
         addedCb = cb;
       },
@@ -262,5 +264,79 @@ describe("createMatchmakingService", () => {
     });
     handle.Service.onInit!();
     // No throw means configured successfully
+  });
+
+  // ── Auto-processing loops ──────────────────────────────────────────────
+
+  it("spawns auto-processing loops on start (default intervals)", () => {
+    const spawned: Array<() => void> = [];
+    const origSpawn = globalThis.task.spawn;
+    globalThis.task.spawn = (fn: () => void) => {
+      spawned.push(fn);
+    };
+
+    try {
+      handle = createMatchmakingService({ queues: [defaultQueue] });
+      handle.Service.onInit!();
+      handle.Service.onStart!();
+
+      // Two loops: timeout processing + match formation
+      expect(spawned).toHaveLength(2);
+    } finally {
+      globalThis.task.spawn = origSpawn;
+    }
+  });
+
+  it("does not spawn loops when intervals are 0", () => {
+    const spawned: Array<() => void> = [];
+    const origSpawn = globalThis.task.spawn;
+    globalThis.task.spawn = (fn: () => void) => {
+      spawned.push(fn);
+    };
+
+    try {
+      handle = createMatchmakingService({
+        queues: [defaultQueue],
+        timeoutIntervalSeconds: 0,
+        matchFormationIntervalSeconds: 0,
+      });
+      handle.Service.onInit!();
+      handle.Service.onStart!();
+
+      expect(spawned).toHaveLength(0);
+    } finally {
+      globalThis.task.spawn = origSpawn;
+    }
+  });
+
+  it("onDestroy sets running false to stop loops", () => {
+    const spawned: Array<() => void> = [];
+    const origSpawn = globalThis.task.spawn;
+    globalThis.task.spawn = (fn: () => void) => {
+      spawned.push(fn);
+    };
+
+    try {
+      handle = createMatchmakingService({ queues: [defaultQueue] });
+      handle.Service.onInit!();
+      handle.Service.onStart!();
+
+      expect(spawned).toHaveLength(2);
+
+      handle.Service.onDestroy!();
+
+      // After destroy, calling a spawned loop should exit immediately
+      // because running === false — the while(running) guard prevents entry.
+      const origWait = globalThis.task.wait;
+      let waitCalls = 0;
+      globalThis.task.wait = () => {
+        waitCalls++;
+      };
+      spawned[0](); // timeout loop — should not enter the while body
+      expect(waitCalls).toBe(0);
+      globalThis.task.wait = origWait;
+    } finally {
+      globalThis.task.spawn = origSpawn;
+    }
   });
 });

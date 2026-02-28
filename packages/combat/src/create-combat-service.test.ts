@@ -1,7 +1,14 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createCombatService, type CombatServiceHandle } from "./create-combat-service";
 import { resetCooldowns, isOnCooldown, useAbility } from "./cooldown";
-import { resetHitValidation, getPlayerPosition, updatePlayerPosition } from "./hit-validation";
+import {
+  resetHitValidation,
+  getPlayerPosition,
+  updatePlayerPosition,
+  setInvulnerable,
+  isInvulnerable,
+  getSuspiciousHitCount,
+} from "./hit-validation";
 import type { PlayerId } from "@broblox/shared-types";
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -192,5 +199,43 @@ describe("createCombatService", () => {
     handle.Service.onInit!();
     // The listener is registered — we just verify no crash
     handle.Service.onDestroy!();
+  });
+
+  // ── Per-player state cleanup ───────────────────────────────────────────
+
+  it("cleanupPlayer clears position, invulnerability and suspicious hit state", () => {
+    handle = createCombatService({});
+    handle.Service.onInit!();
+
+    handle.initPlayer(pid(10));
+    updatePlayerPosition(pid(10), { x: 5, y: 5, z: 5 });
+    setInvulnerable(pid(10), true);
+
+    handle.cleanupPlayer(pid(10));
+
+    expect(getPlayerPosition(pid(10))).toBeUndefined();
+    expect(isInvulnerable(pid(10))).toBe(false);
+    expect(getSuspiciousHitCount(pid(10))).toBe(0);
+  });
+
+  it("onDestroy clears all players' extended combat state", () => {
+    handle = createCombatService({
+      abilities: [{ abilityId: "slash" as never, cooldownSeconds: 1, maxCharges: 1 }],
+    });
+    handle.Service.onInit!();
+
+    handle.initPlayer(pid(20));
+    handle.initPlayer(pid(21));
+    updatePlayerPosition(pid(20), { x: 1, y: 0, z: 0 });
+    updatePlayerPosition(pid(21), { x: 2, y: 0, z: 0 });
+    setInvulnerable(pid(20), true);
+    setInvulnerable(pid(21), true);
+
+    handle.Service.onDestroy!();
+
+    expect(isInvulnerable(pid(20))).toBe(false);
+    expect(isInvulnerable(pid(21))).toBe(false);
+    expect(getPlayerPosition(pid(20))).toBeUndefined();
+    expect(getPlayerPosition(pid(21))).toBeUndefined();
   });
 });

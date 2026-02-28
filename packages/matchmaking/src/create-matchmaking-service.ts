@@ -18,6 +18,7 @@ import {
   tryFormMatch,
   processTimeouts,
   resetQueues,
+  getRegisteredGameModes,
 } from "./queue";
 import { isInMatch, removePlayerFromMatch, resetMatches } from "./match";
 import {
@@ -106,6 +107,9 @@ export function createMatchmakingService(
   /** Tracks which players have been initialised so cleanup is thorough. */
   const activePlayers = new Set<number>();
 
+  /** Whether the auto-processing loops should keep running. */
+  let running = false;
+
   const handle: MatchmakingServiceHandle = {
     Service: {
       name: "MatchmakingService",
@@ -139,10 +143,42 @@ export function createMatchmakingService(
         config.onPlayerAdded?.((player) => {
           handle.initPlayer(player.UserId as PlayerId);
         });
+
+        running = true;
+
+        // Auto-process queue timeouts
+        const timeoutInterval = config.timeoutIntervalSeconds ?? 1;
+        if (timeoutInterval > 0) {
+          task.spawn(() => {
+            while (running) {
+              task.wait(timeoutInterval);
+              if (!running) break;
+              processTimeouts();
+            }
+          });
+        }
+
+        // Auto-attempt match formation
+        const matchInterval = config.matchFormationIntervalSeconds ?? 2;
+        if (matchInterval > 0) {
+          task.spawn(() => {
+            while (running) {
+              task.wait(matchInterval);
+              if (!running) break;
+              for (const mode of getRegisteredGameModes()) {
+                tryFormMatch(mode);
+              }
+            }
+          });
+        }
+
         logger.info("MatchmakingService started");
       },
 
       onDestroy() {
+        // Stop auto-processing loops
+        running = false;
+
         // Remove all tracked players from queues/matches
         activePlayers.forEach((id) => {
           const playerId = id as PlayerId;

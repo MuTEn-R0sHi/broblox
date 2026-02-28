@@ -20,7 +20,7 @@ import {
   configureHitValidation,
   setPositionProvider,
   setRaycastProvider,
-  clearPlayerPosition,
+  clearPlayerState,
   resetHitValidation,
   validateHit,
   onSuspiciousHit,
@@ -158,7 +158,7 @@ export function createCombatService(config: CombatServiceConfig): CombatServiceH
         // Clean up all tracked players
         activePlayers.forEach((id) => {
           clearPlayerCooldowns(id as PlayerId);
-          clearPlayerPosition(id as PlayerId);
+          clearPlayerState(id as PlayerId);
         });
         activePlayers.clear();
 
@@ -184,7 +184,7 @@ export function createCombatService(config: CombatServiceConfig): CombatServiceH
     cleanupPlayer(playerId: PlayerId) {
       if (!activePlayers.has(playerId as number)) return;
       clearPlayerCooldowns(playerId);
-      clearPlayerPosition(playerId);
+      clearPlayerState(playerId);
       activePlayers.delete(playerId as number);
       logger.debug(`Player ${playerId} combat state cleaned up`);
     },
