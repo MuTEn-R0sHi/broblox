@@ -545,14 +545,11 @@ export const ScreenController: Controller & {
         return all;
       },
       getEquipped: () => {
-        const map = new Map<string, string>();
-        const equipped = cachedData?.equippedCosmetics;
-        if (equipped) {
-          for (const [slot, cosmeticId] of Object.entries(equipped)) {
-            map.set(slot, cosmeticId as string);
-          }
+        if (cachedData?.equippedCosmetics) {
+          // Record<string,string> and Map<string,string> are both Lua tables in roblox-ts
+          return cachedData.equippedCosmetics as unknown as Map<string, string>;
         }
-        return map;
+        return new Map<string, string>();
       },
       getCosmeticDef: (id) => COSMETIC_DEFINITIONS.get(id),
       onEquip: (cosmeticId, slot) => {
