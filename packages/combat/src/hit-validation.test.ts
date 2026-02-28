@@ -9,6 +9,7 @@ import {
   updatePlayerPosition,
   getPlayerPosition,
   clearPlayerPosition,
+  clearPlayerState,
   setInvulnerable,
   isInvulnerable,
   getSuspiciousHitCount,
@@ -830,6 +831,94 @@ describe("hit-validation", () => {
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.value.valid).toBe(true);
+      }
+    });
+  });
+
+  describe("clearPlayerState", () => {
+    it("should clear position, invulnerability and suspicious hit count for a player", () => {
+      const attacker = 100 as PlayerId;
+      const target = 200 as PlayerId;
+
+      // Set up positions (uppercase keys)
+      updatePlayerPosition(attacker, { X: 0, Y: 0, Z: 0 });
+      updatePlayerPosition(target, { X: 99999, Y: 0, Z: 0 });
+      setInvulnerable(attacker, true);
+
+      // Trigger an out-of-range hit to bump suspicious hit count
+      configureHitValidation({ maxRange: 10 });
+      mockTime = 1;
+      validateHit(attacker, {
+        origin: { X: 0, Y: 0, Z: 0 },
+        direction: { X: 1, Y: 0, Z: 0 },
+        clientTimestamp: mockTime,
+        targetId: target,
+      });
+
+      // Verify state is set
+      expect(getPlayerPosition(attacker)).toBeDefined();
+      expect(isInvulnerable(attacker)).toBe(true);
+      expect(getSuspiciousHitCount(attacker)).toBeGreaterThan(0);
+
+      // Clear
+      clearPlayerState(attacker);
+
+      // Verify all gone
+      expect(getPlayerPosition(attacker)).toBeUndefined();
+      expect(isInvulnerable(attacker)).toBe(false);
+      expect(getSuspiciousHitCount(attacker)).toBe(0);
+    });
+
+    it("should not affect other players' state", () => {
+      const pid1 = 300 as PlayerId;
+      const pid2 = 400 as PlayerId;
+
+      updatePlayerPosition(pid1, { X: 1, Y: 2, Z: 3 });
+      updatePlayerPosition(pid2, { X: 4, Y: 5, Z: 6 });
+      setInvulnerable(pid1, true);
+      setInvulnerable(pid2, true);
+
+      clearPlayerState(pid1);
+
+      expect(getPlayerPosition(pid1)).toBeUndefined();
+      expect(isInvulnerable(pid1)).toBe(false);
+      expect(getPlayerPosition(pid2)).toEqual({ X: 4, Y: 5, Z: 6 });
+      expect(isInvulnerable(pid2)).toBe(true);
+    });
+  });
+
+  describe("missing raycast provider warning", () => {
+    it("should warn once when checkObstruction is true but no raycast provider set", () => {
+      const warned: string[] = [];
+      const origWarn = globalThis.warn;
+      globalThis.warn = (...args: unknown[]) => warned.push(String(args[0]));
+
+      try {
+        const shooter = 1 as PlayerId;
+        const target = 2 as PlayerId;
+        updatePlayerPosition(shooter, { X: 0, Y: 0, Z: 0 });
+        updatePlayerPosition(target, { X: 5, Y: 0, Z: 0 });
+        configureHitValidation({ checkObstruction: true, maxRange: 50 });
+        mockTime = 1;
+
+        const intent = {
+          origin: { X: 0, Y: 0, Z: 0 },
+          direction: { X: 1, Y: 0, Z: 0 },
+          clientTimestamp: mockTime,
+          targetId: target,
+        };
+
+        // First call should emit warning
+        validateHit(shooter, intent);
+        expect(warned).toHaveLength(1);
+        expect(warned[0]).toContain("checkObstruction");
+
+        // Second call should NOT emit warning again
+        mockTime = 2;
+        validateHit(shooter, { ...intent, clientTimestamp: mockTime });
+        expect(warned).toHaveLength(1);
+      } finally {
+        globalThis.warn = origWarn;
       }
     });
   });

@@ -53,6 +53,9 @@ let positionProvider: PositionProvider = (playerId) => internalPositions.get(pla
  */
 let raycastProvider: RaycastProvider | undefined = undefined;
 
+/** Whether we already warned about a missing raycast provider. */
+let warnedMissingRaycast = false;
+
 /** Player invulnerability state */
 const invulnerablePlayers = new Set<number>();
 
@@ -214,6 +217,17 @@ export function clearPlayerPosition(playerId: PlayerId): void {
   internalPositions.delete(playerId as number);
 }
 
+/**
+ * Clear all per-player combat state (position, invulnerability,
+ * suspicious hit counter, last hit timestamp). Call on player leave.
+ */
+export function clearPlayerState(playerId: PlayerId): void {
+  internalPositions.delete(playerId as number);
+  invulnerablePlayers.delete(playerId as number);
+  suspiciousHitCounts.delete(playerId as number);
+  lastHitTimes.delete(playerId as number);
+}
+
 // ============================================================================
 // Invulnerability Management
 // ============================================================================
@@ -311,6 +325,13 @@ export function validateHit(shooterId: PlayerId, intent: HitIntent): Result<HitV
   // Obstruction check — requires an injected raycast provider.
   // If no provider is set the check is skipped (fail-open) so the validator
   // works outside the Roblox runtime (tests, CI, etc.).
+  if (currentConfig.checkObstruction && raycastProvider === undefined && !warnedMissingRaycast) {
+    warnedMissingRaycast = true;
+    warn(
+      "[HitValidation] checkObstruction is enabled but no raycastProvider was set — obstruction checks will be skipped"
+    );
+  }
+
   if (currentConfig.checkObstruction && raycastProvider !== undefined) {
     const toTarget = subtract(targetPosition, intent.origin);
     const dirNorm = normalize(toTarget);
@@ -444,6 +465,7 @@ export function resetHitValidation(): void {
   internalPositions.clear();
   positionProvider = (playerId) => internalPositions.get(playerId as number);
   raycastProvider = undefined;
+  warnedMissingRaycast = false;
   invulnerablePlayers.clear();
   suspiciousHitCounts.clear();
   lastHitTimes.clear();

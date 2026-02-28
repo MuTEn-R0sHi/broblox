@@ -79,6 +79,9 @@ export function invokeWithTimeout<TPayload, TResponse>(
 
   if (!completed) {
     completed = true;
+    // Cancel the dangling coroutine to free resources. In Luau, a yielded
+    // coroutine inside InvokeServer stays alive until resumed or cancelled.
+    task.cancel(invokeThread);
     return err(ErrorCode.Timeout, {
       message: `Remote invoke timed out after ${timeoutMs}ms`,
       retryAfterMs: 1000,
