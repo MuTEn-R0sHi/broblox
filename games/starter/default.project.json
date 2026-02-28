@@ -184,6 +184,84 @@
               "out": {
                 "$path": "node_modules/@broblox/events/out"
               }
+            },
+            "ui": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@broblox/ui/out"
+              },
+              "node_modules": {
+                "$className": "Folder",
+                "@broblox": {
+                  "$className": "Folder",
+                  "audio": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/audio/out"
+                    }
+                  },
+                  "battle-pass": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/battle-pass/out"
+                    }
+                  },
+                  "core": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/core/out"
+                    }
+                  },
+                  "cosmetics": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/cosmetics/out"
+                    }
+                  },
+                  "gacha": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/gacha/out"
+                    }
+                  },
+                  "input": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/input/out"
+                    }
+                  },
+                  "inventory": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/inventory/out"
+                    }
+                  },
+                  "pets": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/pets/out"
+                    }
+                  },
+                  "quests": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/quests/out"
+                    }
+                  },
+                  "rewards": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/rewards/out"
+                    }
+                  },
+                  "shared-types": {
+                    "$className": "Folder",
+                    "out": {
+                      "$path": "node_modules/@broblox/ui/node_modules/@broblox/shared-types/out"
+                    }
+                  }
+                }
+              }
             }
           }
         }

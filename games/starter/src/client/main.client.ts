@@ -9,6 +9,8 @@ import { UiController } from "./controllers/UiController";
 import { HandshakeController } from "./controllers/HandshakeController";
 import { ActionController } from "./controllers/ActionController";
 import { ChatModerationController } from "./controllers/ChatModerationController";
+import { ScreenController } from "./controllers/ScreenController";
+import { HudController } from "./controllers/HudController";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -21,7 +23,9 @@ app
   .register(UiController)
   .register(HandshakeController)
   .register(ActionController)
-  .register(ChatModerationController);
+  .register(ChatModerationController)
+  .register(ScreenController)
+  .register(HudController);
 
 app.boot();
 logger.info("Client booted.");

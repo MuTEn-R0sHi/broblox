@@ -39,6 +39,7 @@
     "@broblox/localization": "workspace:*",
     "@broblox/audio": "workspace:*",
     "@broblox/tutorial": "workspace:*",
+    "@broblox/ui": "workspace:*",
     "@broblox/world-systems": "workspace:*",
     "@broblox/shared-types": "workspace:*",
     "@rbxts/t": "^3.2.1"

@@ -16,6 +16,7 @@ import { CodeRedemptionService } from "./services/CodeRedemptionService";
 import { LeaderboardService } from "./services/LeaderboardService";
 import { AnalyticsService } from "./services/AnalyticsService";
 import { NotificationService } from "./services/NotificationService";
+import { DataService } from "./services/DataService";
 import { InventoryService } from "./services/InventoryService";
 import { ProgressionService } from "./services/ProgressionService";
 import { QuestService } from "./services/QuestService";
@@ -29,6 +30,7 @@ import { AudioService } from "./services/AudioService";
 import { TutorialService } from "./services/TutorialService";
 import { WorldService } from "./services/WorldService";
 import { EventService } from "./services/EventService";
+import { PlayerActionService } from "./services/PlayerActionService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -44,6 +46,7 @@ app
   .register(MovementValidationService)
   .register(ModerationEnforcementService)
   .register(RemoteService)
+  .register(DataService)
   .register(HandshakeService)
   .register(ActionService)
   .register(CodeRedemptionService)
@@ -62,7 +65,8 @@ app
   .register(AudioService)
   .register(TutorialService)
   .register(WorldService)
-  .register(EventService);
+  .register(EventService)
+  .register(PlayerActionService);
 
 app.boot();
 logger.info("Server booted.");

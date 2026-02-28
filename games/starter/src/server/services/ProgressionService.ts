@@ -26,6 +26,7 @@ const handle = createProgressionService({
   onLevelUp: (playerId: number, level: number) => {
     const player = Players.GetPlayerByUserId(playerId);
     if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("LevelUp", player, { newLevel: level });
       RemoteService.getRegistry().fireClient("Notification", player, {
         type: "level_up",
         message: `You reached level ${level}!`,
@@ -39,6 +40,9 @@ const handle = createProgressionService({
   onPrestige: (playerId: number, prestige: number) => {
     const player = Players.GetPlayerByUserId(playerId);
     if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("PrestigeUnlocked", player, {
+        newPrestige: prestige,
+      });
       RemoteService.getRegistry().fireClient("Notification", player, {
         type: "prestige",
         message: `You achieved prestige ${prestige}!`,
