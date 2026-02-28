@@ -273,6 +273,7 @@ describe("createMatchmakingService", () => {
     const origSpawn = globalThis.task.spawn;
     globalThis.task.spawn = (fn: () => void) => {
       spawned.push(fn);
+      return {} as thread;
     };
 
     try {
@@ -292,6 +293,7 @@ describe("createMatchmakingService", () => {
     const origSpawn = globalThis.task.spawn;
     globalThis.task.spawn = (fn: () => void) => {
       spawned.push(fn);
+      return {} as thread;
     };
 
     try {
@@ -314,6 +316,7 @@ describe("createMatchmakingService", () => {
     const origSpawn = globalThis.task.spawn;
     globalThis.task.spawn = (fn: () => void) => {
       spawned.push(fn);
+      return {} as thread;
     };
 
     try {
@@ -329,12 +332,16 @@ describe("createMatchmakingService", () => {
       // because running === false — the while(running) guard prevents entry.
       const origWait = globalThis.task.wait;
       let waitCalls = 0;
-      globalThis.task.wait = () => {
-        waitCalls++;
-      };
-      spawned[0](); // timeout loop — should not enter the while body
-      expect(waitCalls).toBe(0);
-      globalThis.task.wait = origWait;
+      try {
+        globalThis.task.wait = (..._args: Parameters<typeof globalThis.task.wait>) => {
+          waitCalls++;
+          return 0;
+        };
+        spawned[0](); // timeout loop — should not enter the while body
+        expect(waitCalls).toBe(0);
+      } finally {
+        globalThis.task.wait = origWait;
+      }
     } finally {
       globalThis.task.spawn = origSpawn;
     }

@@ -110,6 +110,9 @@ export function createMatchmakingService(
   /** Whether the auto-processing loops should keep running. */
   let running = false;
 
+  /** Thread handles for the auto-processing loops (for cancellation). */
+  const loopThreads: thread[] = [];
+
   const handle: MatchmakingServiceHandle = {
     Service: {
       name: "MatchmakingService",
@@ -149,27 +152,31 @@ export function createMatchmakingService(
         // Auto-process queue timeouts
         const timeoutInterval = config.timeoutIntervalSeconds ?? 1;
         if (timeoutInterval > 0) {
-          task.spawn(() => {
-            while (running) {
-              task.wait(timeoutInterval);
-              if (!running) break;
-              processTimeouts();
-            }
-          });
+          loopThreads.push(
+            task.spawn(() => {
+              while (running) {
+                task.wait(timeoutInterval);
+                if (!running) break;
+                processTimeouts();
+              }
+            })
+          );
         }
 
         // Auto-attempt match formation
         const matchInterval = config.matchFormationIntervalSeconds ?? 2;
         if (matchInterval > 0) {
-          task.spawn(() => {
-            while (running) {
-              task.wait(matchInterval);
-              if (!running) break;
-              for (const mode of getRegisteredGameModes()) {
-                tryFormMatch(mode);
+          loopThreads.push(
+            task.spawn(() => {
+              while (running) {
+                task.wait(matchInterval);
+                if (!running) break;
+                for (const mode of getRegisteredGameModes()) {
+                  tryFormMatch(mode);
+                }
               }
-            }
-          });
+            })
+          );
         }
 
         logger.info("MatchmakingService started");
@@ -178,6 +185,10 @@ export function createMatchmakingService(
       onDestroy() {
         // Stop auto-processing loops
         running = false;
+        for (const t of loopThreads) {
+          task.cancel(t);
+        }
+        loopThreads.clear();
 
         // Remove all tracked players from queues/matches
         activePlayers.forEach((id) => {

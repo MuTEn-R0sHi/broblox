@@ -208,7 +208,7 @@ describe("createCombatService", () => {
     handle.Service.onInit!();
 
     handle.initPlayer(pid(10));
-    updatePlayerPosition(pid(10), { x: 5, y: 5, z: 5 });
+    updatePlayerPosition(pid(10), { X: 5, Y: 5, Z: 5 });
     setInvulnerable(pid(10), true);
 
     handle.cleanupPlayer(pid(10));
@@ -226,8 +226,8 @@ describe("createCombatService", () => {
 
     handle.initPlayer(pid(20));
     handle.initPlayer(pid(21));
-    updatePlayerPosition(pid(20), { x: 1, y: 0, z: 0 });
-    updatePlayerPosition(pid(21), { x: 2, y: 0, z: 0 });
+    updatePlayerPosition(pid(20), { X: 1, Y: 0, Z: 0 });
+    updatePlayerPosition(pid(21), { X: 2, Y: 0, Z: 0 });
     setInvulnerable(pid(20), true);
     setInvulnerable(pid(21), true);
 
