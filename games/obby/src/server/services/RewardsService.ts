@@ -6,14 +6,26 @@
  */
 
 import { createRewardsService } from "@broblox/rewards";
-import type { DailyRewardDay } from "@broblox/rewards";
+import type { DailyRewardDay, RewardEntry } from "@broblox/rewards";
 import { Players } from "@rbxts/services";
 import { createLogger } from "@broblox/core";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
-import { fulfillRewards } from "./RewardFulfillment";
 
 const logger = createLogger("RewardsService");
+
+// ── Deferred fulfillment ──────────────────────────────────────────────────
+// fulfillRewards lives in RewardFulfillment.ts, which imports
+// ProgressionService, which imports this module → circular.
+// We break the cycle by having PlayerActionService register the function
+// at onStart() time, well after all modules are initialised.
+type FulfillFn = (player: Player, rewards: ReadonlyArray<RewardEntry>) => void;
+let _fulfillRewards: FulfillFn | undefined;
+
+/** Called by PlayerActionService.onStart() to inject the fulfillment function */
+export function registerRewardFulfiller(fn: FulfillFn): void {
+  _fulfillRewards = fn;
+}
 
 const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 50, label: "50 Coins" }] },
@@ -89,7 +101,13 @@ const handle = createRewardsService({
   onAchievementCompleted: (event) => {
     const player = Players.GetPlayerByUserId(event.playerId);
     if (player !== undefined) {
-      fulfillRewards(player, event.rewards);
+      if (_fulfillRewards !== undefined) {
+        _fulfillRewards(player, event.rewards);
+      } else {
+        logger.warn(
+          `Reward fulfiller not registered — achievement "${event.achievementId}" rewards not granted`
+        );
+      }
       logger.info(
         `Player ${event.playerId} completed achievement ${event.achievementId} — rewards fulfilled`
       );

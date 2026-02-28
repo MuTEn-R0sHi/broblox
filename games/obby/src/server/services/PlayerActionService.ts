@@ -31,6 +31,7 @@ import { getGachaStore, getEggRegistry } from "./GachaService";
 import { getCosmeticStore } from "./CosmeticsService";
 import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
 import { getDailyRewards } from "./RewardsService";
+import { registerRewardFulfiller } from "./RewardsService";
 import { getCodeStore } from "./CodeRedemptionService";
 import { fulfillRewards } from "./RewardFulfillment";
 
@@ -134,6 +135,10 @@ const REWARD_CYCLE: DailyRewardDay[] = [
 
 export const PlayerActionService: Service = {
   onStart() {
+    // Register the fulfillment function so RewardsService can grant
+    // achievement rewards without a circular static import.
+    registerRewardFulfiller(fulfillRewards);
+
     const registry = RemoteService.getRegistry();
 
     // ── GetFullPlayerData ─────────────────────────────────────────────

@@ -23,6 +23,7 @@ describe("RewardsService (obby)", () => {
   let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayers: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayer: { UserId: number; Name: string };
+  let mockFulfillRewards: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -33,6 +34,7 @@ describe("RewardsService (obby)", () => {
     capturedOnPlayerAdded = undefined;
     mockPlayer = { UserId: 42, Name: "TestPlayer" };
     mockRegistry = { fireClient: vi.fn() };
+    mockFulfillRewards = vi.fn();
 
     mockHandle = {
       Service: { name: "RewardsService", onInit: vi.fn(), onStart: vi.fn(), onDestroy: vi.fn() },
@@ -70,6 +72,15 @@ describe("RewardsService (obby)", () => {
     vi.doMock("./RemoteService", () => ({
       RemoteService: { getRegistry: () => mockRegistry },
     }));
+
+    vi.doMock("@broblox/core", () => ({
+      createLogger: () => ({
+        info: vi.fn(),
+        warn: vi.fn(),
+        debug: vi.fn(),
+        error: vi.fn(),
+      }),
+    }));
   });
 
   async function loadService() {
@@ -92,10 +103,12 @@ describe("RewardsService (obby)", () => {
     };
 
     it("fires AchievementCompleted remote with achievementId and rewards", async () => {
-      await loadService();
+      const mod = await loadService();
+      mod.registerRewardFulfiller(mockFulfillRewards);
       capturedOnAchievementCompleted!(fakeEvent);
 
       expect(mockPlayers.GetPlayerByUserId).toHaveBeenCalledWith(42);
+      expect(mockFulfillRewards).toHaveBeenCalledWith(mockPlayer, fakeEvent.rewards);
       expect(mockRegistry.fireClient).toHaveBeenCalledWith("AchievementCompleted", mockPlayer, {
         achievementId: "ach_first_stage",
         rewards: fakeEvent.rewards,
@@ -104,10 +117,12 @@ describe("RewardsService (obby)", () => {
 
     it("does nothing when player is not found", async () => {
       mockPlayers.GetPlayerByUserId.mockReturnValue(undefined);
-      await loadService();
+      const mod = await loadService();
+      mod.registerRewardFulfiller(mockFulfillRewards);
       capturedOnAchievementCompleted!(fakeEvent);
 
       expect(mockRegistry.fireClient).not.toHaveBeenCalled();
+      expect(mockFulfillRewards).not.toHaveBeenCalled();
     });
   });
 
