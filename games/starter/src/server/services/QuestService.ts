@@ -71,6 +71,10 @@ const handle = createQuestService({
   onQuestCompleted: (event) => {
     const player = Players.GetPlayerByUserId(event.playerId);
     if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("QuestCompleted", player, {
+        questId: event.questId,
+        rewards: event.rewards,
+      });
       RemoteService.getRegistry().fireClient("Notification", player, {
         type: "quest_completed",
         message: "Quest completed!",

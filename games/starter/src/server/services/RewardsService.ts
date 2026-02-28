@@ -5,10 +5,26 @@
  */
 
 import { createRewardsService } from "@broblox/rewards";
-import type { DailyRewardDay } from "@broblox/rewards";
+import type { DailyRewardDay, RewardEntry } from "@broblox/rewards";
 import { Players } from "@rbxts/services";
+import { createLogger } from "@broblox/core";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
+
+const logger = createLogger("RewardsService");
+
+// ── Deferred fulfillment ──────────────────────────────────────────────────
+// fulfillRewards lives in RewardFulfillment.ts, which imports
+// ProgressionService, which imports this module → circular.
+// We break the cycle by having PlayerActionService register the function
+// at onStart() time, well after all modules are initialised.
+type FulfillFn = (player: Player, rewards: ReadonlyArray<RewardEntry>) => void;
+let _fulfillRewards: FulfillFn | undefined;
+
+/** Called by PlayerActionService.onStart() to inject the fulfillment function */
+export function registerRewardFulfiller(fn: FulfillFn): void {
+  _fulfillRewards = fn;
+}
 
 const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 100, label: "100 Coins" }] },
@@ -84,6 +100,20 @@ const handle = createRewardsService({
   onAchievementCompleted: (event) => {
     const player = Players.GetPlayerByUserId(event.playerId);
     if (player !== undefined) {
+      if (_fulfillRewards !== undefined) {
+        _fulfillRewards(player, event.rewards);
+      } else {
+        logger.warn(
+          `Reward fulfiller not registered — achievement "${event.achievementId}" rewards not granted`
+        );
+      }
+      logger.info(
+        `Player ${event.playerId} completed achievement ${event.achievementId} — rewards fulfilled`
+      );
+      RemoteService.getRegistry().fireClient("AchievementCompleted", player, {
+        achievementId: event.achievementId,
+        rewards: event.rewards,
+      });
       RemoteService.getRegistry().fireClient("Notification", player, {
         type: "achievement_completed",
         message: "Achievement unlocked!",
@@ -94,6 +124,11 @@ const handle = createRewardsService({
   onDailyRewardClaimed: (event) => {
     const player = Players.GetPlayerByUserId(event.playerId);
     if (player !== undefined) {
+      RemoteService.getRegistry().fireClient("DailyRewardClaimed", player, {
+        day: event.day,
+        streak: event.streak,
+        rewards: event.rewards,
+      });
       RemoteService.getRegistry().fireClient("Notification", player, {
         type: "daily_reward",
         message: `Day ${event.day} login reward claimed!`,
