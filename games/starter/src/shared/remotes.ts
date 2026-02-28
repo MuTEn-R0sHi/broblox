@@ -65,9 +65,11 @@ export interface PlayerDataSyncPayload {
   kills: number;
 }
 
+import type { RewardType } from "@broblox/rewards";
+
 /** A single reward entry used across notification payloads. */
 export interface RemoteRewardEntry {
-  type: string;
+  type: RewardType;
   amount: number;
   itemId?: string;
   label?: string;

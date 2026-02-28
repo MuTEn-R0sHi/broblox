@@ -545,10 +545,14 @@ export const ScreenController: Controller & {
         return all;
       },
       getEquipped: () => {
-        if (cachedData?.equippedCosmetics) {
-          return cachedData.equippedCosmetics as unknown as Map<string, string>;
+        const map = new Map<string, string>();
+        const equipped = cachedData?.equippedCosmetics;
+        if (equipped) {
+          for (const [slot, cosmeticId] of Object.entries(equipped)) {
+            map.set(slot, cosmeticId as string);
+          }
         }
-        return new Map<string, string>();
+        return map;
       },
       getCosmeticDef: (id) => COSMETIC_DEFINITIONS.get(id),
       onEquip: (cosmeticId, slot) => {
@@ -565,7 +569,12 @@ export const ScreenController: Controller & {
     // Gacha Screen
     screens.gacha = createGachaScreen(screenGui, {
       getEggs: () => EGG_DEFINITIONS,
-      getBalance: (_currency: string) => cachedData?.coins ?? 0,
+      getBalance: (currency: string) => {
+        if (currency === "coins") {
+          return cachedData?.coins ?? 0;
+        }
+        return 0;
+      },
       getPity: () => 0,
       onPull: (eggId, count) => {
         const results = RemoteController.hatchEgg(eggId, count);

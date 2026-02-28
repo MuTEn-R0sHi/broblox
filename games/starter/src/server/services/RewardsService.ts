@@ -26,7 +26,7 @@ export function registerRewardFulfiller(fn: FulfillFn): void {
   _fulfillRewards = fn;
 }
 
-const REWARD_CYCLE: DailyRewardDay[] = [
+export const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 100, label: "100 Coins" }] },
   { day: 2, rewards: [{ type: "currency", amount: 150, label: "150 Coins" }] },
   { day: 3, rewards: [{ type: "xp", amount: 500, label: "500 XP" }] },
@@ -102,14 +102,14 @@ const handle = createRewardsService({
     if (player !== undefined) {
       if (_fulfillRewards !== undefined) {
         _fulfillRewards(player, event.rewards);
+        logger.info(
+          `Player ${event.playerId} completed achievement ${event.achievementId} — rewards fulfilled`
+        );
       } else {
         logger.warn(
           `Reward fulfiller not registered — achievement "${event.achievementId}" rewards not granted`
         );
       }
-      logger.info(
-        `Player ${event.playerId} completed achievement ${event.achievementId} — rewards fulfilled`
-      );
       RemoteService.getRegistry().fireClient("AchievementCompleted", player, {
         achievementId: event.achievementId,
         rewards: event.rewards,
