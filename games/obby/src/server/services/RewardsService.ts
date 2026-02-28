@@ -8,8 +8,12 @@
 import { createRewardsService } from "@broblox/rewards";
 import type { DailyRewardDay } from "@broblox/rewards";
 import { Players } from "@rbxts/services";
+import { createLogger } from "@broblox/core";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { RemoteService } from "./RemoteService";
+import { fulfillRewards } from "./RewardFulfillment";
+
+const logger = createLogger("RewardsService");
 
 const REWARD_CYCLE: DailyRewardDay[] = [
   { day: 1, rewards: [{ type: "currency", amount: 50, label: "50 Coins" }] },
@@ -85,6 +89,10 @@ const handle = createRewardsService({
   onAchievementCompleted: (event) => {
     const player = Players.GetPlayerByUserId(event.playerId);
     if (player !== undefined) {
+      fulfillRewards(player, event.rewards);
+      logger.info(
+        `Player ${event.playerId} completed achievement ${event.achievementId} — rewards fulfilled`
+      );
       RemoteService.getRegistry().fireClient("AchievementCompleted", player, {
         achievementId: event.achievementId,
         rewards: event.rewards,
