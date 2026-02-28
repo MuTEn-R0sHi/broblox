@@ -14,7 +14,7 @@ const handle = createGachaService({
       name: "Sky Egg",
       description: "Contains cloud and air pets",
       cost: 50,
-      currency: "stars",
+      currency: "coins",
       lootTable: [
         { itemId: "cloud_bunny", rarity: "common", weight: 70 },
         { itemId: "spring_frog", rarity: "uncommon", weight: 25 },

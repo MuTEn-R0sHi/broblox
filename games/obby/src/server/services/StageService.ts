@@ -15,13 +15,15 @@ import { getProgression } from "./ProgressionService";
 import { getQuests } from "./QuestService";
 import { getAchievements } from "./RewardsService";
 import { getBattlePassStore } from "./BattlePassService";
-import { getEventTracker } from "./AnalyticsService";
+import { getEventTracker, getFunnelTracker } from "./AnalyticsService";
+import { getActiveEvents } from "./EventService";
 
 const logger = createLogger("StageService");
 
 // Module-level state
 const stages = new Map<number, StageConfig>();
 const lastStageCompletion = new Map<string, number>(); // "playerId-stageNumber" -> timestamp
+const deathlessStreaks = new Map<number, number>(); // playerId -> consecutive deathless stages
 
 // Cooldown between stage completions (seconds)
 const STAGE_COMPLETION_COOLDOWN = 2;
@@ -46,6 +48,11 @@ function getStageNumber(part: BasePart): number | undefined {
     return stageAttr;
   }
   return undefined;
+}
+
+/** Reset the deathless streak for a player (called by CheckpointService on death). */
+export function resetDeathlessStreak(playerId: number): void {
+  deathlessStreaks.set(playerId, 0);
 }
 
 export const StageService: Service & {
@@ -113,13 +120,25 @@ export const StageService: Service & {
       bestTime: isNewBest ? completionTime : undefined,
     });
 
-    // Award coins
-    DataService.addCoins(player, stage.coinReward);
+    // Award coins (apply event multiplier if active)
+    let coinMultiplier = 1;
+    let xpMultiplier = 1;
+    for (const ev of getActiveEvents()) {
+      const mods = ev.modifiers as Record<string, unknown> | undefined;
+      if (mods) {
+        if (typeIs(mods["coinMultiplier"], "number"))
+          coinMultiplier = mods["coinMultiplier"] as number;
+        if (typeIs(mods["xpMultiplier"], "number")) xpMultiplier = mods["xpMultiplier"] as number;
+      }
+    }
+    const adjustedCoins = math.floor(stage.coinReward * coinMultiplier);
+    DataService.addCoins(player, adjustedCoins);
 
-    // Award XP via the progression system
+    // Award XP via the progression system (apply event multiplier)
+    const adjustedXp = math.floor(STAGE_XP_REWARD * xpMultiplier);
     const progressionStore = getProgression(player.UserId);
     if (progressionStore !== undefined) {
-      progressionStore.addXp(STAGE_XP_REWARD);
+      progressionStore.addXp(adjustedXp);
     }
 
     // Award battle pass XP
@@ -132,6 +151,13 @@ export const StageService: Service & {
     const questStore = getQuests(player.UserId);
     if (questStore !== undefined) {
       questStore.incrementObjective("stage_complete", 1);
+    }
+
+    // Advance deathless-stages quest objective (absolute progress = current streak)
+    const streak = (deathlessStreaks.get(player.UserId) ?? 0) + 1;
+    deathlessStreaks.set(player.UserId, streak);
+    if (questStore !== undefined) {
+      questStore.setObjectiveProgress("weekly_no_deaths", "obj_deathless", streak);
     }
 
     // Advance achievement progress for stage-count achievements
@@ -148,13 +174,19 @@ export const StageService: Service & {
       durationSec: completionTime,
     });
 
+    // Advance analytics progression funnel
+    const funnel = getFunnelTracker();
+    if (stageNumber === 1) funnel.advanceStep("progression", player.UserId, "stage_1_complete");
+    if (stageNumber === 5) funnel.advanceStep("progression", player.UserId, "stage_5_complete");
+    if (stageNumber === 10) funnel.advanceStep("progression", player.UserId, "stage_10_complete");
+
     // Build event payload
     const completedEvent: StageCompletedEvent = {
       playerId: player.UserId,
       stageNumber,
       completionTime,
       isNewBest,
-      coinsEarned: stage.coinReward,
+      coinsEarned: adjustedCoins,
     };
 
     // Advance to next stage
@@ -205,6 +237,9 @@ export const StageService: Service & {
 
       RemoteService.getRegistry().fireClient("StageCompleted", player, completedEvent);
       logger.info(`Player ${player.Name} completed the entire obby!`);
+
+      // Advance analytics funnel — full obby completion
+      funnel.advanceStep("progression", player.UserId, "obby_complete");
 
       const updated = DataService.getData(player);
       if (updated) {
@@ -286,6 +321,7 @@ export const StageService: Service & {
       stages.forEach((_, stageNumber) => {
         lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
       });
+      deathlessStreaks.delete(player.UserId);
     });
 
     // Helper to setup end zone touch detection
@@ -344,5 +380,6 @@ export const StageService: Service & {
   onDestroy() {
     stages.clear();
     lastStageCompletion.clear();
+    deathlessStreaks.clear();
   },
 };

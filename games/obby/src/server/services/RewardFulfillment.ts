@@ -13,6 +13,8 @@ import { RemoteService } from "./RemoteService";
 import { getProgression } from "./ProgressionService";
 import { getInventory } from "./InventoryService";
 import { getCosmeticStore } from "./CosmeticsService";
+import { getGachaStore } from "./GachaService";
+import { getPetStore } from "./PetService";
 
 const logger = createLogger("RewardFulfillment");
 
@@ -82,11 +84,54 @@ export function fulfillRewards(player: Player, rewards: ReadonlyArray<RewardEntr
         }
         break;
       }
-      case "boost":
+      case "boost": {
+        // Boost rewards grant bonus XP (amount × 100)
+        const boostProgression = getProgression(playerId);
+        if (boostProgression !== undefined) {
+          const boostXp = reward.amount * 100;
+          boostProgression.addXp(boostXp);
+          logger.debug(`Granted boost (${boostXp} XP) to player ${playerId}`);
+        } else {
+          logger.warn(`Cannot grant boost to player ${playerId} — progression store not loaded`);
+        }
+        break;
+      }
       case "custom": {
-        logger.warn(
-          `Unfulfilled reward type "${reward.type}" for player ${playerId} — not yet implemented`
-        );
+        // Custom rewards — dispatch by label/itemId
+        if (reward.label === "egg" && reward.itemId) {
+          const amount = reward.amount ?? 1;
+          if (amount <= 0) {
+            logger.warn(
+              `Custom egg reward for player ${playerId} has non-positive amount (${amount}) — skipping`
+            );
+            break;
+          }
+          // Grant free egg hatches (bypass currency check)
+          const gachaStore = getGachaStore(playerId);
+          if (gachaStore !== undefined) {
+            const petStore = getPetStore(playerId);
+            for (let i = 0; i < amount; i++) {
+              const result = gachaStore.hatch(reward.itemId, math.huge);
+              if (result.ok && result.itemId) {
+                petStore?.addPet(result.itemId);
+                logger.debug(
+                  `Custom egg grant (${i + 1}/${amount}): player ${playerId} hatched ${result.itemId} from ${reward.itemId}`
+                );
+              } else {
+                logger.warn(
+                  `Custom egg hatch failed for player ${playerId} on attempt ${i + 1}/${amount}`
+                );
+                break;
+              }
+            }
+          } else {
+            logger.warn(`Cannot grant custom egg to player ${playerId} — gacha store not loaded`);
+          }
+        } else {
+          logger.warn(
+            `Unhandled custom reward for player ${playerId}: label=${reward.label ?? "none"}, itemId=${reward.itemId ?? "none"}`
+          );
+        }
         break;
       }
       default: {

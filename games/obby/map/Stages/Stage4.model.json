@@ -1,0 +1,245 @@
+{
+  "className": "Model",
+  "attributes": {
+    "StageNumber": 4,
+    "DisplayName": "Sky Pillars",
+    "Difficulty": "medium",
+    "CoinReward": 25
+  },
+  "children": [
+    {
+      "name": "StartPlatform",
+      "className": "Part",
+      "attributes": {
+        "StageNumber": 4
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [20, 2, 20],
+        "Position": [0, 53, 480],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar1",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [5, 2, 5],
+        "Position": [8, 57, 498],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar2",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 2, 4],
+        "Position": [-6, 61, 514],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar3",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 2, 4],
+        "Position": [10, 65, 530],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "RestPlatform",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [10, 2, 10],
+        "Position": [0, 68, 548],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar4",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 2, 4],
+        "Position": [-10, 72, 565],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar5",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 2, 4],
+        "Position": [6, 76, 580],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar6",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [3, 2, 3],
+        "Position": [-8, 80, 596],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pillar7",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [3, 2, 3],
+        "Position": [4, 84, 612],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "EndPlatform",
+      "className": "Part",
+      "attributes": {
+        "StageNumber": 4
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [20, 2, 20],
+        "Position": [0, 87, 635],
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "KillZone",
+      "className": "Part",
+      "attributes": {
+        "KillZone": true
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Size": [200, 1, 250],
+        "Position": [0, 25, 555],
+        "Material": "Neon",
+        "Transparency": 0.3
+      }
+    },
+    {
+      "name": "Coin1",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 10
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [8, 60, 498],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin2",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 10
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [-6, 64, 514],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin3",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 15
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [-10, 75, 565],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin4",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 15
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [2, 2, 2],
+        "Position": [6, 79, 580],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin5",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 20
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [3, 3, 3],
+        "Position": [4, 87, 612],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    },
+    {
+      "name": "Coin6",
+      "className": "Part",
+      "attributes": {
+        "CoinValue": 25
+      },
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "CanTouch": true,
+        "Shape": "Ball",
+        "Size": [3, 3, 3],
+        "Position": [0, 90, 635],
+        "Material": "Neon",
+        "Transparency": 0.2
+      }
+    }
+  ]
+}

@@ -119,6 +119,14 @@ describe("CheckpointService", () => {
         notifyTeleport: vi.fn(),
       },
     }));
+
+    vi.doMock("./QuestService", () => ({
+      getQuests: vi.fn(() => ({
+        incrementObjective: vi.fn(),
+        setObjectiveProgress: vi.fn(),
+      })),
+    }));
+    vi.doMock("./StageService", () => ({ resetDeathlessStreak: vi.fn() }));
   });
 
   async function loadCheckpointService() {

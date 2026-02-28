@@ -10,6 +10,8 @@ import { mapSize, arraySize } from "@broblox/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { movementStateManager } from "./MovementValidationService";
+import { getQuests } from "./QuestService";
+import { resetDeathlessStreak } from "./StageService";
 
 const logger = createLogger("CheckpointService");
 
@@ -371,6 +373,13 @@ export const CheckpointService: Service & {
           pendingRespawns.add(player.UserId);
           // Increment death counter
           DataService.incrementDeaths(player);
+          // Reset deathless streak for quest tracking
+          resetDeathlessStreak(player.UserId);
+          // Also reset quest objective progress for deathless stages
+          const questStore = getQuests(player.UserId);
+          if (questStore !== undefined) {
+            questStore.setObjectiveProgress("weekly_no_deaths", "obj_deathless", 0);
+          }
           // Kill the player - Roblox will respawn them, then we teleport
           humanoid.TakeDamage(humanoid.MaxHealth);
         }
@@ -466,6 +475,12 @@ export const CheckpointService: Service & {
         // Award coins
         DataService.addCoins(player, value);
         logger.info(`Player ${player.Name} collected ${value} coins from ${coin.Name}`);
+
+        // Advance "collect" quest objective
+        const questStore = getQuests(player.UserId);
+        if (questStore !== undefined) {
+          questStore.incrementObjective("collect", 1);
+        }
 
         // Visual feedback - hide coin permanently for this collection session
         // (In a real game, you'd hide per-player using LocalTransparencyModifier)

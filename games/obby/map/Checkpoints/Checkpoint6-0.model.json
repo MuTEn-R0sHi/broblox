@@ -1,0 +1,16 @@
+{
+  "className": "Part",
+  "attributes": {
+    "StageNumber": 6,
+    "CheckpointIndex": 0
+  },
+  "properties": {
+    "Anchored": true,
+    "CanCollide": false,
+    "CanTouch": true,
+    "Size": [4, 8, 1],
+    "Position": [0, 123, 850],
+    "Material": "Neon",
+    "Transparency": 0.5
+  }
+}
