@@ -21,7 +21,9 @@ describe("StageService", () => {
   let mockGetQuests: ReturnType<typeof vi.fn>;
   let mockGetAchievements: ReturnType<typeof vi.fn>;
   let mockGetEventTracker: ReturnType<typeof vi.fn>;
+  let mockGetBattlePassStore: ReturnType<typeof vi.fn>;
   let mockAddXp: ReturnType<typeof vi.fn>;
+  let mockBpAddXp: ReturnType<typeof vi.fn>;
   let mockIncrementObjective: ReturnType<typeof vi.fn>;
   let mockIncrementProgress: ReturnType<typeof vi.fn>;
   let mockTrackEvent: ReturnType<typeof vi.fn>;
@@ -96,6 +98,7 @@ describe("StageService", () => {
     }));
 
     mockAddXp = vi.fn();
+    mockBpAddXp = vi.fn();
     mockIncrementObjective = vi.fn();
     mockIncrementProgress = vi.fn();
     mockTrackEvent = vi.fn();
@@ -103,11 +106,13 @@ describe("StageService", () => {
     mockGetQuests = vi.fn(() => ({ incrementObjective: mockIncrementObjective }));
     mockGetAchievements = vi.fn(() => ({ incrementProgress: mockIncrementProgress }));
     mockGetEventTracker = vi.fn(() => ({ track: mockTrackEvent }));
+    mockGetBattlePassStore = vi.fn(() => ({ addXp: mockBpAddXp }));
 
     vi.doMock("./ProgressionService", () => ({ getProgression: mockGetProgression }));
     vi.doMock("./QuestService", () => ({ getQuests: mockGetQuests }));
     vi.doMock("./RewardsService", () => ({ getAchievements: mockGetAchievements }));
     vi.doMock("./AnalyticsService", () => ({ getEventTracker: mockGetEventTracker }));
+    vi.doMock("./BattlePassService", () => ({ getBattlePassStore: mockGetBattlePassStore }));
   });
 
   async function loadStageService() {
@@ -824,6 +829,29 @@ describe("StageService", () => {
 
       expect(() => svc.completeStage(makePlayer(), 1)).not.toThrow();
       expect(mockIncrementProgress).not.toHaveBeenCalled();
+    });
+
+    it("awards battle pass XP on stage completion", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      svc.completeStage(makePlayer(), 1);
+
+      expect(mockGetBattlePassStore).toHaveBeenCalledWith(42);
+      expect(mockBpAddXp).toHaveBeenCalledWith(25);
+    });
+
+    it("skips battle pass XP when battle pass store is unavailable", async () => {
+      mockDataService.getData.mockReturnValue(makeDefaultData({ currentStage: 1 }));
+      mockGetBattlePassStore.mockReturnValue(undefined);
+      setupWithTwoStages();
+      const svc = await loadStageService();
+      svc.onInit!();
+
+      expect(() => svc.completeStage(makePlayer(), 1)).not.toThrow();
+      expect(mockBpAddXp).not.toHaveBeenCalled();
     });
   });
 });

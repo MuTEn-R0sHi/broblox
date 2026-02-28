@@ -31,7 +31,9 @@ import { getGachaStore, getEggRegistry } from "./GachaService";
 import { getCosmeticStore } from "./CosmeticsService";
 import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
 import { getDailyRewards } from "./RewardsService";
+import { registerRewardFulfiller } from "./RewardsService";
 import { getCodeStore } from "./CodeRedemptionService";
+import { fulfillRewards } from "./RewardFulfillment";
 
 const logger = createLogger("PlayerActionService");
 
@@ -133,6 +135,10 @@ const REWARD_CYCLE: DailyRewardDay[] = [
 
 export const PlayerActionService: Service = {
   onStart() {
+    // Register the fulfillment function so RewardsService can grant
+    // achievement rewards without a circular static import.
+    registerRewardFulfiller(fulfillRewards);
+
     const registry = RemoteService.getRegistry();
 
     // ── GetFullPlayerData ─────────────────────────────────────────────
@@ -156,7 +162,12 @@ export const PlayerActionService: Service = {
       }
 
       const reward = dailyStore.claim();
-      logger.info(`Player ${player.UserId} claimed daily reward day ${dailyStore.getCycleDay()}`);
+
+      if (reward !== undefined) {
+        fulfillRewards(player, reward.rewards);
+        logger.info(`Player ${player.UserId} claimed daily reward day ${reward.day}`);
+      }
+
       return ok(reward);
     });
 
@@ -260,7 +271,8 @@ export const PlayerActionService: Service = {
       const bpStore = getBattlePassStore(player.UserId);
       if (!bpStore) return;
       const result = bpStore.claimReward(request.rewardId);
-      if (result.ok) {
+      if (result.ok && result.reward !== undefined) {
+        fulfillRewards(player, [result.reward.reward]);
         logger.info(`Player ${player.UserId} claimed battle pass reward ${request.rewardId}`);
       }
     });

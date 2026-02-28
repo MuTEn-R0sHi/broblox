@@ -14,6 +14,7 @@ import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { getProgression } from "./ProgressionService";
 import { getQuests } from "./QuestService";
 import { getAchievements } from "./RewardsService";
+import { getBattlePassStore } from "./BattlePassService";
 import { getEventTracker } from "./AnalyticsService";
 
 const logger = createLogger("StageService");
@@ -28,6 +29,8 @@ const STAGE_COMPLETION_COOLDOWN = 2;
 const OBBY_COMPLETION_COOLDOWN = 10;
 // XP awarded per stage completion
 const STAGE_XP_REWARD = 100;
+// Battle pass XP awarded per stage completion
+const STAGE_BP_XP_REWARD = 25;
 // Achievement IDs that track cumulative stage completions
 const STAGE_ACHIEVEMENT_IDS = ["ach_first_stage", "ach_stages_25", "ach_stages_100"];
 
@@ -117,6 +120,12 @@ export const StageService: Service & {
     const progressionStore = getProgression(player.UserId);
     if (progressionStore !== undefined) {
       progressionStore.addXp(STAGE_XP_REWARD);
+    }
+
+    // Award battle pass XP
+    const bpStore = getBattlePassStore(player.UserId);
+    if (bpStore !== undefined) {
+      bpStore.addXp(STAGE_BP_XP_REWARD);
     }
 
     // Advance stage-completion quest objectives
