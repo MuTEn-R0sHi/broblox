@@ -11,8 +11,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("SecurityService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockEnforcer: Record<string, ReturnType<typeof vi.fn>>;
-  let mockModeration: Record<string, ReturnType<typeof vi.fn>>;
+  let mockEnforcer: Record<string, unknown>;
+  let mockModeration: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -63,7 +63,7 @@ describe("SecurityService (starter)", () => {
 
 describe("RemoteService (starter)", () => {
   let capturedOptions: Record<string, unknown> | undefined;
-  let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
+  let mockRegistry: Record<string, unknown>;
   let mockReportViolation: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -118,7 +118,7 @@ describe("RemoteService (starter)", () => {
 
 describe("AudioService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -155,7 +155,7 @@ describe("AudioService (starter)", () => {
 
 describe("BattlePassService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -195,7 +195,7 @@ describe("BattlePassService (starter)", () => {
 
 describe("GachaService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -237,7 +237,7 @@ describe("GachaService (starter)", () => {
 
 describe("InventoryService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -277,7 +277,7 @@ describe("InventoryService (starter)", () => {
 // ─── PetService ───────────────────────────────────────────────────────────
 
 describe("PetService (starter)", () => {
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -307,7 +307,7 @@ describe("PetService (starter)", () => {
 // ─── CosmeticsService ────────────────────────────────────────────────────
 
 describe("CosmeticsService (starter)", () => {
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -338,7 +338,7 @@ describe("CosmeticsService (starter)", () => {
 
 describe("NotificationService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -375,7 +375,7 @@ describe("NotificationService (starter)", () => {
 
 describe("CodeRedemptionService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -410,7 +410,7 @@ describe("CodeRedemptionService (starter)", () => {
 // ─── LeaderboardService ──────────────────────────────────────────────────
 
 describe("LeaderboardService (starter)", () => {
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -435,7 +435,7 @@ describe("LeaderboardService (starter)", () => {
 // ─── LocalizationService ─────────────────────────────────────────────────
 
 describe("LocalizationService (starter)", () => {
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -458,7 +458,7 @@ describe("LocalizationService (starter)", () => {
 // ─── TutorialService ─────────────────────────────────────────────────────
 
 describe("TutorialService (starter)", () => {
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -487,7 +487,7 @@ describe("TutorialService (starter)", () => {
 // ─── WorldService ─────────────────────────────────────────────────────────
 
 describe("WorldService (starter)", () => {
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown>;
 
   beforeEach(() => {
     vi.resetModules();

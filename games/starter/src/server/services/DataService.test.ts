@@ -7,13 +7,15 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+type Player = { UserId: number; Name: string };
+
 describe("DataService (starter)", () => {
   let mockSession: { data: Record<string, unknown>; markDirty: ReturnType<typeof vi.fn> };
-  let mockSessionManager: Record<string, ReturnType<typeof vi.fn>>;
-  let mockStore: Record<string, ReturnType<typeof vi.fn>>;
+  let mockSessionManager: { getSession: ReturnType<typeof vi.fn>; [k: string]: unknown };
+  let mockStore: Record<string, unknown>;
   let mockDataHandle: Record<string, unknown>;
-  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
-  let mockRemoteRegistry: Record<string, ReturnType<typeof vi.fn>>;
+  let mockPlayerLifecycle: Record<string, unknown>;
+  let mockRemoteRegistry: Record<string, unknown>;
   let mockPlayer: { UserId: number; Name: string };
 
   beforeEach(() => {
@@ -159,9 +161,7 @@ describe("DataService (starter)", () => {
     it("delegates onStart to dataHandle.Service", async () => {
       const { DataService } = await loadService();
       DataService.onStart!();
-      expect(
-        (mockDataHandle.Service as Record<string, ReturnType<typeof vi.fn>>).onStart
-      ).toHaveBeenCalled();
+      expect((mockDataHandle.Service as Record<string, unknown>).onStart).toHaveBeenCalled();
     });
   });
 });

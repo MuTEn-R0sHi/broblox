@@ -7,12 +7,14 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+type Player = { UserId: number; Name: string };
+
 describe("RewardFulfillment (starter)", () => {
-  let mockDataService: Record<string, ReturnType<typeof vi.fn>>;
-  let mockRemoteRegistry: Record<string, ReturnType<typeof vi.fn>>;
-  let mockProgression: Record<string, ReturnType<typeof vi.fn>>;
-  let mockInventory: Record<string, ReturnType<typeof vi.fn>>;
-  let mockCosmeticStore: Record<string, ReturnType<typeof vi.fn>>;
+  let mockDataService: Record<string, unknown>;
+  let mockRemoteRegistry: Record<string, unknown>;
+  let mockProgression: Record<string, unknown>;
+  let mockInventory: Record<string, unknown>;
+  let mockCosmeticStore: Record<string, unknown>;
   let mockPlayer: { UserId: number; Name: string };
 
   beforeEach(() => {
