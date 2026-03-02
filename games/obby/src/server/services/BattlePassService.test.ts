@@ -8,8 +8,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("BattlePassService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
-  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getSeasonRegistry: ReturnType<typeof vi.fn>;
+    getBattlePassStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
+  let mockPlayerLifecycle: Record<string, unknown> & {
+    onPlayerRemoving: ReturnType<typeof vi.fn>;
+    onPlayerAdded: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();

@@ -7,14 +7,29 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+type Player = { UserId: number; Name: string };
+
 describe("DataService (starter)", () => {
   let mockSession: { data: Record<string, unknown>; markDirty: ReturnType<typeof vi.fn> };
-  let mockSessionManager: Record<string, ReturnType<typeof vi.fn>>;
-  let mockStore: Record<string, ReturnType<typeof vi.fn>>;
-  let mockDataHandle: Record<string, unknown>;
-  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
-  let mockRemoteRegistry: Record<string, ReturnType<typeof vi.fn>>;
-  let mockPlayer: { UserId: number; Name: string };
+  let mockSessionManager: { getSession: ReturnType<typeof vi.fn>; [k: string]: unknown };
+  let mockStore: Record<string, unknown> & { markDirty: ReturnType<typeof vi.fn> };
+  let mockDataHandle: Record<string, unknown> & {
+    Service: {
+      onInit: ReturnType<typeof vi.fn>;
+      onStart: ReturnType<typeof vi.fn>;
+      onDestroy: ReturnType<typeof vi.fn>;
+    };
+    getSessionManager: ReturnType<typeof vi.fn>;
+    getStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
+  let mockPlayerLifecycle: Record<string, unknown> & {
+    onPlayerAdded: ReturnType<typeof vi.fn>;
+    onPlayerRemoving: ReturnType<typeof vi.fn>;
+  };
+  let mockRemoteRegistry: Record<string, unknown> & { fireClient: ReturnType<typeof vi.fn> };
+  let mockPlayer: Player;
 
   beforeEach(() => {
     vi.resetModules();
@@ -91,21 +106,21 @@ describe("DataService (starter)", () => {
   describe("getData", () => {
     it("returns session data for existing player", async () => {
       const { DataService } = await loadService();
-      const data = DataService.getData(mockPlayer as unknown as Player);
+      const data = DataService.getData(mockPlayer);
       expect(data).toBe(mockSession.data);
     });
 
     it("returns undefined when no session", async () => {
       mockSessionManager.getSession.mockReturnValue(undefined);
       const { DataService } = await loadService();
-      expect(DataService.getData(mockPlayer as unknown as Player)).toBeUndefined();
+      expect(DataService.getData(mockPlayer)).toBeUndefined();
     });
   });
 
   describe("addCoins", () => {
     it("adds coins and marks dirty", async () => {
       const { DataService } = await loadService();
-      DataService.addCoins(mockPlayer as unknown as Player, 50);
+      DataService.addCoins(mockPlayer, 50);
       expect(mockSession.data["coins"]).toBe(150);
       expect(mockSession.markDirty).toHaveBeenCalled();
       expect(mockStore.markDirty).toHaveBeenCalledWith(mockPlayer);
@@ -114,14 +129,14 @@ describe("DataService (starter)", () => {
     it("does nothing when no session", async () => {
       mockSessionManager.getSession.mockReturnValue(undefined);
       const { DataService } = await loadService();
-      DataService.addCoins(mockPlayer as unknown as Player, 50);
+      DataService.addCoins(mockPlayer, 50);
     });
   });
 
   describe("incrementKills", () => {
     it("increments kills by 1 and marks dirty", async () => {
       const { DataService } = await loadService();
-      DataService.incrementKills(mockPlayer as unknown as Player);
+      DataService.incrementKills(mockPlayer);
       expect(mockSession.data["kills"]).toBe(6);
       expect(mockSession.markDirty).toHaveBeenCalled();
     });
@@ -129,14 +144,14 @@ describe("DataService (starter)", () => {
     it("does nothing when no session", async () => {
       mockSessionManager.getSession.mockReturnValue(undefined);
       const { DataService } = await loadService();
-      DataService.incrementKills(mockPlayer as unknown as Player);
+      DataService.incrementKills(mockPlayer);
     });
   });
 
   describe("updateData", () => {
     it("updates specific fields and marks dirty", async () => {
       const { DataService } = await loadService();
-      DataService.updateData(mockPlayer as unknown as Player, { coins: 999 });
+      DataService.updateData(mockPlayer, { coins: 999 });
       expect(mockSession.data["coins"]).toBe(999);
       expect(mockSession.markDirty).toHaveBeenCalled();
     });
@@ -144,7 +159,7 @@ describe("DataService (starter)", () => {
     it("does nothing when no session", async () => {
       mockSessionManager.getSession.mockReturnValue(undefined);
       const { DataService } = await loadService();
-      DataService.updateData(mockPlayer as unknown as Player, { coins: 999 });
+      DataService.updateData(mockPlayer, { coins: 999 });
     });
   });
 
@@ -159,9 +174,7 @@ describe("DataService (starter)", () => {
     it("delegates onStart to dataHandle.Service", async () => {
       const { DataService } = await loadService();
       DataService.onStart!();
-      expect(
-        (mockDataHandle.Service as Record<string, ReturnType<typeof vi.fn>>).onStart
-      ).toHaveBeenCalled();
+      expect(mockDataHandle.Service.onStart).toHaveBeenCalled();
     });
   });
 });

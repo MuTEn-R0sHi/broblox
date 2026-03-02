@@ -11,8 +11,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("InventoryService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
-  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getItemRegistry: ReturnType<typeof vi.fn>;
+    getInventoryStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
+  let mockPlayerLifecycle: Record<string, unknown> & {
+    onPlayerRemoving: ReturnType<typeof vi.fn>;
+    onPlayerAdded: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -72,8 +81,17 @@ describe("InventoryService (obby)", () => {
 
 describe("PetService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
-  let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getPetRegistry: ReturnType<typeof vi.fn>;
+    getPetStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
+  let mockPlayerLifecycle: Record<string, unknown> & {
+    onPlayerRemoving: ReturnType<typeof vi.fn>;
+    onPlayerAdded: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -123,7 +141,13 @@ describe("PetService (obby)", () => {
 
 describe("CosmeticsService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getCosmeticRegistry: ReturnType<typeof vi.fn>;
+    getCosmeticStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -173,7 +197,11 @@ describe("CosmeticsService (obby)", () => {
 
 describe("NotificationService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getNotificationStore: ReturnType<typeof vi.fn>;
+    getAnnouncementManager: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -214,7 +242,10 @@ describe("NotificationService (obby)", () => {
 
 describe("CodeRedemptionService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getCodeStore: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -263,7 +294,11 @@ describe("CodeRedemptionService (obby)", () => {
 
 describe("AudioService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getSoundRegistry: ReturnType<typeof vi.fn>;
+    getAudioManager: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -305,7 +340,13 @@ describe("AudioService (obby)", () => {
 
 describe("TutorialService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getSequenceRegistry: ReturnType<typeof vi.fn>;
+    getTutorialManager: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -352,7 +393,10 @@ describe("TutorialService (obby)", () => {
 
 describe("WorldService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getWorldManager: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -387,7 +431,10 @@ describe("WorldService (obby)", () => {
 
 describe("LocalizationService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getI18n: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -428,7 +475,10 @@ describe("LocalizationService (obby)", () => {
 
 describe("MovementValidationService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, ReturnType<typeof vi.fn>>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    stateManager: { reset: ReturnType<typeof vi.fn> };
+  };
 
   beforeEach(() => {
     vi.resetModules();
