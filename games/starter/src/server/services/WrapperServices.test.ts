@@ -11,8 +11,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("SecurityService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockEnforcer: Record<string, unknown>;
-  let mockModeration: Record<string, unknown>;
+  let mockEnforcer: Record<string, unknown> & {
+    handleViolation: ReturnType<typeof vi.fn>;
+  };
+  let mockModeration: Record<string, unknown> & {
+    ban: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -63,7 +67,9 @@ describe("SecurityService (starter)", () => {
 
 describe("RemoteService (starter)", () => {
   let capturedOptions: Record<string, unknown> | undefined;
-  let mockRegistry: Record<string, unknown>;
+  let mockRegistry: Record<string, unknown> & {
+    initialize: ReturnType<typeof vi.fn>;
+  };
   let mockReportViolation: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -118,7 +124,11 @@ describe("RemoteService (starter)", () => {
 
 describe("AudioService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getSoundRegistry: ReturnType<typeof vi.fn>;
+    getAudioManager: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -155,7 +165,13 @@ describe("AudioService (starter)", () => {
 
 describe("BattlePassService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getSeasonRegistry: ReturnType<typeof vi.fn>;
+    getBattlePassStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -195,7 +211,13 @@ describe("BattlePassService (starter)", () => {
 
 describe("GachaService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getEggRegistry: ReturnType<typeof vi.fn>;
+    getGachaStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -237,7 +259,13 @@ describe("GachaService (starter)", () => {
 
 describe("InventoryService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getItemRegistry: ReturnType<typeof vi.fn>;
+    getInventoryStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -277,7 +305,13 @@ describe("InventoryService (starter)", () => {
 // ─── PetService ───────────────────────────────────────────────────────────
 
 describe("PetService (starter)", () => {
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getPetRegistry: ReturnType<typeof vi.fn>;
+    getPetStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -307,7 +341,13 @@ describe("PetService (starter)", () => {
 // ─── CosmeticsService ────────────────────────────────────────────────────
 
 describe("CosmeticsService (starter)", () => {
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getCosmeticRegistry: ReturnType<typeof vi.fn>;
+    getCosmeticStore: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -338,7 +378,11 @@ describe("CosmeticsService (starter)", () => {
 
 describe("NotificationService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getNotificationStore: ReturnType<typeof vi.fn>;
+    getAnnouncementManager: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -375,7 +419,10 @@ describe("NotificationService (starter)", () => {
 
 describe("CodeRedemptionService (starter)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getCodeStore: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -410,7 +457,10 @@ describe("CodeRedemptionService (starter)", () => {
 // ─── LeaderboardService ──────────────────────────────────────────────────
 
 describe("LeaderboardService (starter)", () => {
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getLeaderboardStore: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -435,7 +485,10 @@ describe("LeaderboardService (starter)", () => {
 // ─── LocalizationService ─────────────────────────────────────────────────
 
 describe("LocalizationService (starter)", () => {
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getI18n: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -458,7 +511,13 @@ describe("LocalizationService (starter)", () => {
 // ─── TutorialService ─────────────────────────────────────────────────────
 
 describe("TutorialService (starter)", () => {
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getSequenceRegistry: ReturnType<typeof vi.fn>;
+    getTutorialManager: ReturnType<typeof vi.fn>;
+    initPlayer: ReturnType<typeof vi.fn>;
+    cleanupPlayer: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
@@ -487,7 +546,10 @@ describe("TutorialService (starter)", () => {
 // ─── WorldService ─────────────────────────────────────────────────────────
 
 describe("WorldService (starter)", () => {
-  let mockHandle: Record<string, unknown>;
+  let mockHandle: Record<string, unknown> & {
+    Service: { name: string };
+    getWorldManager: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     vi.resetModules();
