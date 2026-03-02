@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
-    "@prisma/adapter-mariadb": "^7.4.1",
+    "@prisma/adapter-mariadb": "^7.4.2",
     "@prisma/client": "^7.4.1",
     "@tailwindcss/postcss": "^4.2.0",
     "autoprefixer": "^10.4.24",
