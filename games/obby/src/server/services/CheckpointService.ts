@@ -11,7 +11,7 @@ import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { movementStateManager } from "./MovementValidationService";
 import { getQuests } from "./QuestService";
-import { resetDeathlessStreak } from "./StageService";
+import { resetDeathlessStreak } from "./DeathlessStreakState";
 
 const logger = createLogger("CheckpointService");
 

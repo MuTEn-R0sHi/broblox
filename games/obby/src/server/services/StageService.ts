@@ -9,6 +9,11 @@ import { StageConfig, StageCompletedEvent, OBBY_CONSTANTS } from "shared/types";
 import { mapSize } from "@broblox/core";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
+import {
+  incrementDeathlessStreak,
+  deleteDeathlessStreak,
+  clearDeathlessStreaks,
+} from "./DeathlessStreakState";
 import { CheckpointService } from "./CheckpointService";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { getProgression } from "./ProgressionService";
@@ -23,8 +28,6 @@ const logger = createLogger("StageService");
 // Module-level state
 const stages = new Map<number, StageConfig>();
 const lastStageCompletion = new Map<string, number>(); // "playerId-stageNumber" -> timestamp
-const deathlessStreaks = new Map<number, number>(); // playerId -> consecutive deathless stages
-
 // Cooldown between stage completions (seconds)
 const STAGE_COMPLETION_COOLDOWN = 2;
 // Longer cooldown after completing entire obby
@@ -48,11 +51,6 @@ function getStageNumber(part: BasePart): number | undefined {
     return stageAttr;
   }
   return undefined;
-}
-
-/** Reset the deathless streak for a player (called by CheckpointService on death). */
-export function resetDeathlessStreak(playerId: number): void {
-  deathlessStreaks.set(playerId, 0);
 }
 
 export const StageService: Service & {
@@ -154,8 +152,7 @@ export const StageService: Service & {
     }
 
     // Advance deathless-stages quest objective (absolute progress = current streak)
-    const streak = (deathlessStreaks.get(player.UserId) ?? 0) + 1;
-    deathlessStreaks.set(player.UserId, streak);
+    const streak = incrementDeathlessStreak(player.UserId);
     if (questStore !== undefined) {
       questStore.setObjectiveProgress("weekly_no_deaths", "obj_deathless", streak);
     }
@@ -321,7 +318,7 @@ export const StageService: Service & {
       stages.forEach((_, stageNumber) => {
         lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
       });
-      deathlessStreaks.delete(player.UserId);
+      deleteDeathlessStreak(player.UserId);
     });
 
     // Helper to setup end zone touch detection
@@ -380,6 +377,6 @@ export const StageService: Service & {
   onDestroy() {
     stages.clear();
     lastStageCompletion.clear();
-    deathlessStreaks.clear();
+    clearDeathlessStreaks();
   },
 };
