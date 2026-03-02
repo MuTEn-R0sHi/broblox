@@ -225,9 +225,10 @@ describe("GachaService (starter)", () => {
     expect(mockHandle.getGachaStore).toHaveBeenCalledWith(42);
   });
 
-  it("configures starter_egg with coins currency", async () => {
+  it("configures basic_egg with coins currency", async () => {
     await import("./GachaService");
     const eggs = capturedConfig!["eggs"] as Array<{ id: string; currency: string }>;
+    expect(eggs[0].id).toBe("basic_egg");
     expect(eggs[0].currency).toBe("coins");
   });
 });
