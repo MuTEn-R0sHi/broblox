@@ -19,12 +19,12 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@broblox/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
-    "@rbxts/types": "^1.0.908",
+    "@rbxts/types": "^1.0.909",
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18",
-    "@broblox/testing": "workspace:*"
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@broblox/core": "workspace:*"

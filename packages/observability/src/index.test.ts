@@ -462,6 +462,7 @@ describe("Metrics", () => {
   describe("Gauge", () => {
     it("sets to specific value", () => {
       let value = 0;
+      expect(value).toBe(0);
       value = 42;
       expect(value).toBe(42);
     });
