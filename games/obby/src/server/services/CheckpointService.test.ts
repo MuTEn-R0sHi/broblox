@@ -126,7 +126,7 @@ describe("CheckpointService", () => {
         setObjectiveProgress: vi.fn(),
       })),
     }));
-    vi.doMock("./StageService", () => ({ resetDeathlessStreak: vi.fn() }));
+    vi.doMock("./DeathlessStreakState", () => ({ resetDeathlessStreak: vi.fn() }));
   });
 
   async function loadCheckpointService() {
