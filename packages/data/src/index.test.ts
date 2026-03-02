@@ -254,6 +254,7 @@ describe("Session state transitions", () => {
 
   it("follows valid state flow: active -> closing -> closed", () => {
     let state: SessionState = "active";
+    expect(state).toBe("active");
 
     // Start close
     state = "closing";
@@ -266,11 +267,15 @@ describe("Session state transitions", () => {
 
   it("follows valid state flow: active -> saving -> closing -> closed", () => {
     let state: SessionState = "active";
+    expect(state).toBe("active");
 
     state = "saving";
-    state = "closing";
-    state = "closed";
+    expect(state).toBe("saving");
 
+    state = "closing";
+    expect(state).toBe("closing");
+
+    state = "closed";
     expect(state).toBe("closed");
   });
 });

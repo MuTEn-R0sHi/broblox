@@ -71,7 +71,6 @@ export default async function DashboardPage() {
   } catch (error) {
     if (isMissingTableError(error)) {
       dbNotInitialized = true;
-      modActions = 0;
     } else {
       throw error;
     }
@@ -113,9 +112,6 @@ export default async function DashboardPage() {
   } catch (error) {
     if (isMissingTableError(error)) {
       dbNotInitialized = true;
-      uniquePlayers = [];
-      recentEvents = [];
-      activeServers = [];
     } else {
       throw error;
     }
