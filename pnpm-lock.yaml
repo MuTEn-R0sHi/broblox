@@ -6,7 +6,8 @@ settings:
 
 overrides:
   lodash@>=4.0.0 <4.17.23: ">=4.17.23"
-  hono@<4.11.10: ">=4.11.10"
+  hono@<4.12.4: ">=4.12.4"
+  "@hono/node-server@<1.19.10": ">=1.19.10"
   minimatch@>=10.0.0 <10.2.3: ">=10.2.3"
   ajv@<6.14.0: ^6.14.0
   ajv@>=8.0.0 <8.18.0: ">=8.18.0"
@@ -2144,14 +2145,14 @@ packages:
       "@noble/hashes":
         optional: true
 
-  "@hono/node-server@1.19.9":
+  "@hono/node-server@1.19.11":
     resolution:
       {
-        integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==,
+        integrity: sha512-dr8/3zEaB+p0D2n/IUrlPF1HZm586qgJNXK1a9fhg/PzdtkK7Ksd5l312tJX2yBuALqDYBlG20QEbayqPyxn+g==,
       }
     engines: { node: ">=18.14.1" }
     peerDependencies:
-      hono: ">=4.11.10"
+      hono: ">=4.12.4"
 
   "@humanfs/core@0.19.1":
     resolution:
@@ -4242,10 +4243,10 @@ packages:
       }
     engines: { node: ">= 0.4" }
 
-  hono@4.12.3:
+  hono@4.12.5:
     resolution:
       {
-        integrity: sha512-SFsVSjp8sj5UumXOOFlkZOG6XS9SJDKw0TbwFeV+AJ8xlST8kxK5Z/5EYa111UY8732lK2S/xB653ceuaoGwpg==,
+        integrity: sha512-3qq+FUBtlTHhtYxbxheZgY8NIFnkkC/MR8u5TTsr7YZ3wixryQ3cCwn3iZbg8p8B88iDBBAYSfZDS75t8MN7Vg==,
       }
     engines: { node: ">=16.9.0" }
 
@@ -6421,9 +6422,9 @@ snapshots:
 
   "@exodus/bytes@1.14.1": {}
 
-  "@hono/node-server@1.19.9(hono@4.12.3)":
+  "@hono/node-server@1.19.11(hono@4.12.5)":
     dependencies:
-      hono: 4.12.3
+      hono: 4.12.5
 
   "@humanfs/core@0.19.1": {}
 
@@ -6617,13 +6618,13 @@ snapshots:
       "@electric-sql/pglite": 0.3.15
       "@electric-sql/pglite-socket": 0.0.20(@electric-sql/pglite@0.3.15)
       "@electric-sql/pglite-tools": 0.2.20(@electric-sql/pglite@0.3.15)
-      "@hono/node-server": 1.19.9(hono@4.12.3)
+      "@hono/node-server": 1.19.11(hono@4.12.5)
       "@mrleebo/prisma-ast": 0.13.1
       "@prisma/get-platform": 7.2.0
       "@prisma/query-plan-executor": 7.2.0
       foreground-child: 3.3.1
       get-port-please: 3.2.0
-      hono: 4.12.3
+      hono: 4.12.5
       http-status-codes: 2.3.0
       pathe: 2.0.3
       proper-lockfile: 4.1.2
@@ -7611,7 +7612,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  hono@4.12.3: {}
+  hono@4.12.5: {}
 
   html-encoding-sniffer@6.0.0:
     dependencies:
