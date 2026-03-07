@@ -1,13 +1,13 @@
 # Getting started: Overview
 
-This project is a **monorepo platform** with 32 shared packages, 2 games, a web dashboard, and full CI/CD.
+This project is a **monorepo platform** with 33 shared packages, 2 games, a web dashboard, and full CI/CD.
 
 ## Intended stack
 
 - Roblox game code: **roblox-ts** (TypeScript → Luau)
 - Project sync/build: **Rojo** (filesystem → DataModel)
 - Dependencies: **pnpm** workspaces
-- Formatting/linting/testing: ESLint + Prettier + **vitest** (2,900+ tests across 125+ test files)
+- Formatting/linting/testing: ESLint + Prettier + **vitest** (3,100+ tests across 150+ test files)
 - CI/CD: GitHub Actions + Roblox **Open Cloud**
 - Docs hosting: static **MkDocs** site
 - Web dashboard: **Next.js** + Prisma (audit logs, config history, moderation workflow)

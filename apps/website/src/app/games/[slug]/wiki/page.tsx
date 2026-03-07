@@ -51,19 +51,19 @@ const wikiContent: Record<string, { sections: { heading: string; body: string }[
     sections: [
       {
         heading: "Overview",
-        body: "Test Park is BroBlox's free-roam sandbox. There are no objectives — explore, collect hidden achievement tokens, and chat with other players.",
+        body: "Test Park is BroBlox's behind-the-scenes sandbox — a staff-only space where we test new platform features, run experiments, and break things before they ship. The map is auto-generated at runtime from a zone registry, with multiple themed zones arranged in a circle around a central hub.",
       },
       {
-        heading: "Achievements",
-        body: "18 achievements are currently available in Test Park. Achievements cover exploration, social interactions, and hidden collectibles. Unlocking all 18 earns you the Early Supporter badge visible on your profile.",
+        heading: "Zones",
+        body: "Each zone showcases a different platform feature: combat, quests, pets, gacha, cosmetics, progression, and more. Zones are generated automatically — as we add new features, new zones appear on the map without any manual placement.",
       },
       {
-        heading: "Hidden Tokens",
-        body: "There are 10 hidden gold tokens scattered across the map. Collecting all 10 unlocks the Explorer achievement. Tokens respawn every server reset.",
+        heading: "Staff Gate",
+        body: "Test Park is restricted to staff members via the StaffGateService. When the staff gate is enabled, non-staff players are kicked on join; in some internal testing environments it may be temporarily disabled via a feature flag. Public access with phased playtests and limited-time preview events is planned for the future.",
       },
       {
         heading: "Coming Soon",
-        body: "Structured game modes, a quest board, and an expanded map are in active development. Join our Discord to get early access announcements.",
+        body: "We're actively building toward opening Test Park to everyone. Expect phased playtests, limited-time preview events, and new zones as platform features ship. Join our Discord to get early access announcements.",
       },
     ],
   },

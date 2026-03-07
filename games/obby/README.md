@@ -1,6 +1,6 @@
 # @broblox/game-obby
 
-An obstacle course (Obby) game template built with BroBlox.
+An obstacle course (Obby) game built with BroBlox.
 
 ## Features
 

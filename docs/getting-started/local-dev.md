@@ -30,7 +30,7 @@ The dashboard is a Next.js application for managing feature flags and viewing au
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 22+
 - pnpm (via corepack)
 - MySQL/MariaDB database
 

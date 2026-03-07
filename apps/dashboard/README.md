@@ -9,7 +9,7 @@ Operations control plane for the BroBlox game studio.
 - **GitHub OAuth** authentication
 - **Feature flags** with per-environment toggles (dev/stage/prod)
 - **Audit logging** for all privileged actions
-- **Role-based permissions** (VIEWER, MODERATOR, ENGINEER, ADMIN)
+- **Role-based permissions** (VIEWER, SUPPORT, MODERATOR, ENGINEER, ADMIN)
 - **REST API** for game servers to fetch flags
 
 ## Tech Stack
@@ -24,7 +24,7 @@ Operations control plane for the BroBlox game studio.
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 22+
 - pnpm (via corepack)
 - MySQL/MariaDB database
 
@@ -134,15 +134,16 @@ curl https://dashboard.broblox-games.com/api/flags/dev
 
 ## Role Permissions
 
-| Action              | VIEWER | MODERATOR | ENGINEER | ADMIN |
-| ------------------- | ------ | --------- | -------- | ----- |
-| View flags          | ✅     | ✅        | ✅       | ✅    |
-| Toggle dev flags    | ❌     | ✅        | ✅       | ✅    |
-| Toggle stage flags  | ❌     | ✅        | ✅       | ✅    |
-| Toggle prod flags   | ❌     | ❌        | ✅       | ✅    |
-| Create/delete flags | ❌     | ❌        | ✅       | ✅    |
-| View audit logs     | ✅     | ✅        | ✅       | ✅    |
-| Manage users        | ❌     | ❌        | ❌       | ✅    |
+| Action              | VIEWER | SUPPORT | MODERATOR | ENGINEER | ADMIN |
+| ------------------- | ------ | ------- | --------- | -------- | ----- |
+| View flags          | ✅     | ✅      | ✅        | ✅       | ✅    |
+| View audit logs     | ❌     | ✅      | ✅        | ✅       | ✅    |
+| Moderation actions  | ❌     | ❌      | ✅        | ✅       | ✅    |
+| Toggle dev flags    | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Toggle stage flags  | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Toggle prod flags   | ❌     | ❌      | ❌        | ❌       | ✅    |
+| Create/delete flags | ❌     | ❌      | ❌        | ✅       | ✅    |
+| Manage users        | ❌     | ❌      | ❌        | ❌       | ✅    |
 
 ## Deployment
 
