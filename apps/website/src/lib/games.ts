@@ -55,29 +55,29 @@ export const games: Game[] = [
     slug: "test-park",
     name: "Test Park",
     shortDescription:
-      "Our open sandbox experience. Explore the platform features before the next big game drops.",
+      "Our internal sandbox playground. We use it to test platform features — public access is coming soon.",
     longDescription:
-      "Test Park is the BroBlox sandbox — a free-roam space where you can explore our platform features, test achievements, and hang out while we build the next game. Think of it as the lobby. More structured gameplay is on the way.",
-    tags: ["Sandbox", "Explore", "Free Roam"],
+      "Test Park is BroBlox's behind-the-scenes sandbox — a staff-only space where we test new platform features, run experiments, and break things before they ship. Think of it as our dev playground. Public access is on the roadmap.",
+    tags: ["Sandbox", "Internal", "Dev Playground"],
     genre: "Sandbox",
     status: "coming-soon",
     accent: "purple",
-    highlights: ["Free roam", "Achievements", "Coming soon"],
+    highlights: ["Staff-only", "Feature testing", "Coming soon"],
     features: [
       {
-        title: "Free Roam",
+        title: "Feature Testing",
         description:
-          "Explore the world at your own pace. No objectives, no time limits — just vibes.",
+          "Every platform feature gets tested here first — combat, quests, pets, gacha, and more.",
       },
       {
-        title: "Achievement Preview",
+        title: "Auto-Generated Zones",
         description:
-          "Try out the achievement system before the full game ships. Unlock early supporter badges.",
+          "The map builds itself from a zone registry at runtime. New zones appear as we add features.",
       },
       {
-        title: "More Coming Soon",
+        title: "Coming Soon",
         description:
-          "We're actively building out Test Park. Expect regular drops of new areas and mechanics.",
+          "We're working toward opening Test Park to everyone. Public access is on the roadmap.",
       },
       {
         title: "Community Hub",
