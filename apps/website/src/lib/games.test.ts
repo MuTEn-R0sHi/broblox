@@ -53,8 +53,8 @@ describe("games data", () => {
     expect(game?.status).toBe("live");
   });
 
-  it("includes the starter game", () => {
-    const game = games.find((g) => g.slug === "starter");
+  it("includes the test-park game", () => {
+    const game = games.find((g) => g.slug === "test-park");
     expect(game).toBeDefined();
     expect(game?.accent).toBe("purple");
   });
@@ -68,10 +68,10 @@ describe("getGame", () => {
     expect(game?.name).toBe("BroBlox Obby");
   });
 
-  it("returns the starter game by slug", () => {
-    const game = getGame("starter");
+  it("returns the test-park game by slug", () => {
+    const game = getGame("test-park");
     expect(game).toBeDefined();
-    expect(game?.slug).toBe("starter");
+    expect(game?.slug).toBe("test-park");
   });
 
   it("returns undefined for an unknown slug", () => {

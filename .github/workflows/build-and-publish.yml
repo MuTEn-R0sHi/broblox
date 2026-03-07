@@ -44,16 +44,16 @@ jobs:
           echo "name=$GAME" >> $GITHUB_OUTPUT
           ENV="${{ inputs.environment }}"
 
-          if [ "$GAME" = "starter" ]; then
+          if [ "$GAME" = "test-park" ]; then
             if [ "$ENV" = "staging" ]; then
-              echo "universe_id=${{ vars.STARTER_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-              echo "place_id=${{ vars.STARTER_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
+              echo "universe_id=${{ vars.TEST_PARK_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+              echo "place_id=${{ vars.TEST_PARK_STAGING_PLACE_ID }}" >> $GITHUB_OUTPUT
             else
-              echo "universe_id=${{ vars.STARTER_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-              echo "place_id=${{ vars.STARTER_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
+              echo "universe_id=${{ vars.TEST_PARK_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+              echo "place_id=${{ vars.TEST_PARK_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
             fi
-            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
-            echo "game_path=games/starter" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm run build:test-park" >> $GITHUB_OUTPUT
+            echo "game_path=games/test-park" >> $GITHUB_OUTPUT
           elif [ "$GAME" = "obby" ]; then
             if [ "$ENV" = "staging" ]; then
               echo "universe_id=${{ vars.OBBY_STAGING_UNIVERSE_ID }}" >> $GITHUB_OUTPUT

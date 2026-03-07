@@ -13,7 +13,7 @@ import { BattlePassStore } from "./battle-pass-store";
 export interface BattlePassServiceConfig {
   /** Seasons to register at init (usually one active). */
   seasons: SeasonDefinition[];
-  /** DataStore name, e.g. "StarterBattlePass". */
+  /** DataStore name, e.g. "TestParkBattlePass". */
   datastoreName: string;
   /** Extra BattlePassStore options. */
   storeOptions?: Partial<BattlePassConfig>;

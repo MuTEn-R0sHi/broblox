@@ -239,6 +239,9 @@ importers:
       "@broblox/localization":
         specifier: workspace:*
         version: link:../../packages/localization
+      "@broblox/marketplace":
+        specifier: workspace:*
+        version: link:../../packages/marketplace
       "@broblox/moderation":
         specifier: workspace:*
         version: link:../../packages/moderation
@@ -348,6 +351,9 @@ importers:
       "@broblox/localization":
         specifier: workspace:*
         version: link:../../packages/localization
+      "@broblox/marketplace":
+        specifier: workspace:*
+        version: link:../../packages/marketplace
       "@broblox/moderation":
         specifier: workspace:*
         version: link:../../packages/moderation

@@ -4,14 +4,7 @@ import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
 import { auditMuteCreate, auditMuteSync } from "@/lib/audit";
 import { bridgeCreateMuteToRoblox } from "@/lib/moderation-bridge";
-
-interface CreateMuteInput {
-  playerId: string;
-  playerName?: string;
-  type: "CHAT" | "VOICE" | "ALL";
-  reason: string;
-  durationMinutes: number;
-}
+import { parseInput, createMuteSchema, type CreateMuteInput } from "@/lib/schemas";
 
 export async function createMute(input: CreateMuteInput): Promise<{ id?: string; error?: string }> {
   const auth = await checkPermission("moderation:mute");
@@ -19,23 +12,21 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
     return { error: "Unauthorized" };
   }
 
+  const parsed = parseInput(input, createMuteSchema);
+  if (parsed.error) {
+    return { error: parsed.error };
+  }
+
+  const { playerId, playerName, type, reason, durationMinutes } = parsed.data;
+
   let playerIdBigInt: bigint;
   try {
-    playerIdBigInt = BigInt(input.playerId);
+    playerIdBigInt = BigInt(playerId);
   } catch {
     return { error: "Invalid player ID" };
   }
 
-  const reason = input.reason?.trim();
-  if (!reason || reason.length < 5) {
-    return { error: "Reason must be at least 5 characters" };
-  }
-
-  if (!Number.isFinite(input.durationMinutes) || input.durationMinutes < 1) {
-    return { error: "Invalid duration" };
-  }
-
-  const expiresAt = new Date(Date.now() + input.durationMinutes * 60 * 1000);
+  const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000);
 
   const existingMute = await prisma.mute.findFirst({
     where: {
@@ -52,19 +43,19 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
   const mute = await prisma.mute.create({
     data: {
       playerId: playerIdBigInt,
-      playerName: input.playerName,
-      type: input.type,
+      playerName,
+      type,
       reason,
-      durationMinutes: input.durationMinutes,
+      durationMinutes,
       expiresAt,
       issuedById: auth.user.id,
     },
   });
 
   await auditMuteCreate(auth.user.id, playerIdBigInt, {
-    type: input.type,
+    type,
     reason,
-    durationMinutes: input.durationMinutes,
+    durationMinutes,
   });
 
   const syncResult = await bridgeCreateMuteToRoblox({

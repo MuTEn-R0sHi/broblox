@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
 import { auditAppealResolve, auditBanRevoke } from "@/lib/audit";
+import { parseInput, resolveAppealSchema } from "@/lib/schemas";
 
 export async function resolveAppeal(
   appealId: string,
@@ -15,10 +16,11 @@ export async function resolveAppeal(
     return { error: "Unauthorized" };
   }
 
-  const normalizedResolution = resolution?.trim();
-  if (!normalizedResolution || normalizedResolution.length < 5) {
-    return { error: "Resolution must be at least 5 characters" };
+  const parsed = parseInput({ status, resolution }, resolveAppealSchema);
+  if (parsed.error) {
+    return { error: parsed.error };
   }
+  const normalizedResolution = parsed.data.resolution;
 
   const appeal = await prisma.appeal.findUnique({
     where: { id: appealId },

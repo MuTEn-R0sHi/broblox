@@ -16,7 +16,7 @@ const MUTE_TYPE_ATTRIBUTE = "rbx.moderation.muteType";
 const MUTE_EXPIRES_IN_ATTRIBUTE = "rbx.moderation.muteExpiresIn";
 
 export interface ModerationEnforcementConfig {
-  /** Game-specific DataStore name (e.g. "StarterModeration", "ObbyModeration"). */
+  /** Game-specific DataStore name (e.g. "TestParkModeration", "ObbyModeration"). */
   datastoreName: string;
 
   /**
@@ -58,7 +58,7 @@ function setMutedAttributes(
  * @example
  * ```ts
  * const handle = createModerationEnforcementService({
- *   datastoreName: "StarterModeration",
+ *   datastoreName: "TestParkModeration",
  *   onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
  * });
  * export const ModerationEnforcementService = handle.Service;

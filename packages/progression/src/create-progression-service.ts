@@ -9,7 +9,7 @@ import { ProgressionConfig } from "./types";
 import { ProgressionStore } from "./progression-store";
 
 export interface ProgressionServiceConfig {
-  /** DataStore name, e.g. "StarterProgression". */
+  /** DataStore name, e.g. "TestParkProgression". */
   datastoreName: string;
   /** Progression curve and prestige settings. */
   maxLevel: number;

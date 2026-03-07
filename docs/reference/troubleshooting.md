@@ -75,13 +75,13 @@ See [Roblox-TS Conventions](../roblox-ts/conventions.md#package-configuration-cr
 ## Studio + Rojo
 
 - Studio cannot connect to Rojo:
-  - confirm Rojo server is running (`pnpm run game:starter:rojo`)
+  - confirm Rojo server is running (`pnpm run game:test-park:rojo`)
   - confirm the Rojo Studio plugin is installed
   - check firewall isn't blocking port 34872
 
 - Changes not syncing:
   - rebuild packages first: `pnpm run build:packages`
-  - regenerate sourcemap: `cd games/starter && rojo sourcemap default.project.json -o sourcemap.json`
+  - regenerate sourcemap: `cd games/test-park && rojo sourcemap default.project.json -o sourcemap.json`
 
 ## "Works locally, fails in production"
 

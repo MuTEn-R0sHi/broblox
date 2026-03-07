@@ -24,7 +24,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Add user ID and role to session
       if (session.user) {
         session.user.id = user.id;
-        // @ts-expect-error - role is added by Prisma adapter
         session.user.role = user.role;
       }
       return session;

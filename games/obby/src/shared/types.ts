@@ -173,6 +173,26 @@ export const OBBY_CONSTANTS = {
 } as const;
 
 // ============================================================================
+// Marketplace Payloads
+// ============================================================================
+
+/** Client → Server: buy a developer product */
+export interface BuyProductRequest {
+  productId: number;
+}
+
+/** Client → Server: check game pass ownership */
+export interface CheckGamePassRequest {
+  passId: number;
+}
+
+/** Server → Client: game pass ownership result */
+export interface GamePassOwnershipPayload {
+  passId: number;
+  owned: boolean;
+}
+
+// ============================================================================
 // Remote Request Payloads (Client → Server)
 // ============================================================================
 

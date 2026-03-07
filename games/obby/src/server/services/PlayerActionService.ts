@@ -16,6 +16,7 @@
 
 import { Service, createLogger } from "@broblox/core";
 import { ok, err, ErrorCode } from "@broblox/net";
+import { Players } from "@rbxts/services";
 import type { FullPlayerDataPayload } from "shared/types";
 import type { EquipSlot } from "@broblox/cosmetics";
 import type { HatchResult } from "@broblox/gacha";
@@ -32,6 +33,13 @@ import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
 import { getDailyRewards, REWARD_CYCLE, registerRewardFulfiller } from "./RewardsService";
 import { getCodeStore } from "./CodeRedemptionService";
 import { fulfillRewards } from "./RewardFulfillment";
+import {
+  registerProduct,
+  processReceipt,
+  userOwnsGamePass,
+  DEVELOPER_PRODUCTS,
+} from "./MarketplaceService";
+import { trackPurchase } from "./TelemetryService";
 
 const logger = createLogger("PlayerActionService");
 
@@ -263,6 +271,85 @@ export const PlayerActionService: Service = {
         fulfillRewards(player, [result.reward.reward]);
         logger.info(`Player ${player.UserId} claimed battle pass reward ${request.rewardId}`);
       }
+    });
+
+    // ── Marketplace: Register product handlers ────────────────────────
+    // 100 Coins product
+    registerProduct(
+      { productId: DEVELOPER_PRODUCTS[0].productId, name: DEVELOPER_PRODUCTS[0].name },
+      (receipt) => {
+        const player = Players.GetPlayerByUserId(receipt.PlayerId);
+        if (player !== undefined) {
+          DataService.addCoins(player, 100);
+          trackPurchase(
+            player,
+            DEVELOPER_PRODUCTS[0].name,
+            DEVELOPER_PRODUCTS[0].productId,
+            DEVELOPER_PRODUCTS[0].robuxPrice
+          );
+          logger.info(`Player ${receipt.PlayerId} purchased 100 Coins`);
+        }
+        return "PurchaseGranted";
+      }
+    );
+
+    // 500 Coins product
+    registerProduct(
+      { productId: DEVELOPER_PRODUCTS[1].productId, name: DEVELOPER_PRODUCTS[1].name },
+      (receipt) => {
+        const player = Players.GetPlayerByUserId(receipt.PlayerId);
+        if (player !== undefined) {
+          DataService.addCoins(player, 500);
+          trackPurchase(
+            player,
+            DEVELOPER_PRODUCTS[1].name,
+            DEVELOPER_PRODUCTS[1].productId,
+            DEVELOPER_PRODUCTS[1].robuxPrice
+          );
+          logger.info(`Player ${receipt.PlayerId} purchased 500 Coins`);
+        }
+        return "PurchaseGranted";
+      }
+    );
+
+    // Skip Stage product
+    registerProduct(
+      { productId: DEVELOPER_PRODUCTS[2].productId, name: DEVELOPER_PRODUCTS[2].name },
+      (receipt) => {
+        const player = Players.GetPlayerByUserId(receipt.PlayerId);
+        if (player !== undefined) {
+          // Skip stage logic — advance checkpoint by 1 stage
+          const coreData = DataService.getData(player);
+          if (coreData) {
+            coreData.currentStage += 1;
+            trackPurchase(
+              player,
+              DEVELOPER_PRODUCTS[2].name,
+              DEVELOPER_PRODUCTS[2].productId,
+              DEVELOPER_PRODUCTS[2].robuxPrice
+            );
+            logger.info(
+              `Player ${receipt.PlayerId} purchased Skip Stage → now on stage ${coreData.currentStage}`
+            );
+          }
+        }
+        return "PurchaseGranted";
+      }
+    );
+
+    // ── Marketplace: BuyProduct event (client fires to initiate prompt)
+    registry.onEvent("BuyProduct", (player, request) => {
+      // Signal from client — actual purchase handled by Roblox prompt flow.
+      logger.debug(`Player ${player.UserId} requested to buy product ${request.productId}`);
+    });
+
+    // ── Marketplace: CheckGamePass function
+    registry.onFunction("CheckGamePass", (player, request) => {
+      const result = userOwnsGamePass(player.UserId, request.passId);
+      return ok({
+        passId: request.passId,
+        owned: result.owned,
+      });
     });
 
     logger.info("PlayerActionService started — all remote handlers registered.");

@@ -8,4 +8,15 @@ declare module "next-auth" {
       role: Role;
     } & DefaultSession["user"];
   }
+
+  /** Extend so Prisma adapter's user includes `role` in callbacks. */
+  interface User {
+    role: Role;
+  }
+}
+
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    role: Role;
+  }
 }

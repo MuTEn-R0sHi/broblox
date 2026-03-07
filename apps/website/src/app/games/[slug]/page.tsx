@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const icons: Record<string, React.ReactNode> = {
   obby: <Gamepad2 className="h-7 w-7" />,
-  starter: <Trophy className="h-7 w-7" />,
+  "test-park": <Trophy className="h-7 w-7" />,
 };
 
 export default async function GameDetailPage({ params }: Props) {

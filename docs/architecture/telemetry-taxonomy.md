@@ -41,7 +41,7 @@ Use dot-separated namespaces:
 - `deviceClass`: `kbm|gamepad|touch`
 - `region`
 
-## Event catalog (starter)
+## Event catalog (test-park)
 
 ### Security
 

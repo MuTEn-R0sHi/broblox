@@ -12,7 +12,7 @@ import { GachaStore } from "./gacha-store";
 export interface GachaServiceConfig {
   /** Egg definitions with loot tables to register. */
   eggs: EggDefinition[];
-  /** DataStore name, e.g. "StarterGacha". */
+  /** DataStore name, e.g. "TestParkGacha". */
   datastoreName: string;
   /** Extra GachaStore options. */
   storeOptions?: Partial<GachaConfig>;

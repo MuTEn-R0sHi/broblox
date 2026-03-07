@@ -566,4 +566,119 @@ describe("QuestStore", () => {
       expect(data.activeQuests).toHaveLength(1);
     });
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  describe("DataStore error paths", () => {
+    it("load returns false on DataStore error", () => {
+      const { store } = makeStore();
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.load()).toBe(false);
+    });
+
+    it("save returns false on DataStore error", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.save()).toBe(false);
+    });
+
+    it("load returns false before init (no store)", async () => {
+      const { QuestRegistry: QR } = await import("./quest-registry");
+      const { QuestStore: QS } = await import("./quest-store");
+      const reg = new QR();
+      const s = new QS(1, reg, { enableLogging: false });
+      // Don't call init()
+      expect(s.load()).toBe(false);
+    });
+
+    it("save returns false before init (no store)", async () => {
+      const { QuestRegistry: QR } = await import("./quest-registry");
+      const { QuestStore: QS } = await import("./quest-store");
+      const reg = new QR();
+      const s = new QS(1, reg, { enableLogging: false });
+      expect(s.save()).toBe(false);
+    });
+
+    it("load ignores non-table stored data", () => {
+      const { store } = makeStore();
+      const ds = getOrCreateStore("QuestStore");
+      ds.SetAsync("quests_1", "corrupted");
+      store.load();
+      expect(store.activeCount()).toBe(0);
+    });
+  });
+
+  describe("quest acceptance edge cases", () => {
+    it("rejects re-accepting a once-schedule completed quest", () => {
+      const { store } = makeStore([makeKillQuest({ schedule: "once" })]);
+      store.acceptQuest("quest_kill_10");
+      store.incrementObjective("kill", 10);
+      // Quest auto-completes
+      expect(store.isCompleted("quest_kill_10")).toBe(true);
+      // Try again
+      expect(store.acceptQuest("quest_kill_10")).toBe(false);
+    });
+
+    it("rejects quest when only some prerequisites are met", () => {
+      const { store } = makeStore([
+        makeKillQuest({ id: "prereq1" }),
+        makeKillQuest({ id: "prereq2" }),
+        makeKillQuest({ id: "main", prerequisites: ["prereq1", "prereq2"] }),
+      ]);
+      // Complete only prereq1
+      store.acceptQuest("prereq1");
+      store.incrementObjective("kills", 10);
+      expect(store.acceptQuest("main")).toBe(false);
+    });
+  });
+
+  describe("objective edge cases", () => {
+    it("incrementObjective skips non-active quests", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      store.failQuest("quest_kill_10");
+      const updated = store.incrementObjective("kills", 5);
+      expect(updated).toBe(0);
+    });
+
+    it("setObjectiveProgress returns false for unknown objectiveId", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      expect(store.setObjectiveProgress("quest_kill_10", "nonexistent", 5)).toBe(false);
+    });
+
+    it("failQuest returns false for unknown quest", () => {
+      const { store } = makeStore();
+      expect(store.failQuest("nonexistent")).toBe(false);
+    });
+
+    it("abandonQuest returns false for unknown quest", () => {
+      const { store } = makeStore();
+      expect(store.abandonQuest("nonexistent")).toBe(false);
+    });
+
+    it("getQuestProgress returns 1 for quest with no objectives", () => {
+      const { store } = makeStore([{ ...makeKillQuest(), id: "empty_obj", objectives: [] }]);
+      store.acceptQuest("empty_obj");
+      expect(store.getQuestProgress("empty_obj")).toBe(1);
+    });
+
+    it("getActiveQuests excludes failed quests", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      store.acceptQuest("quest_multi");
+      store.failQuest("quest_kill_10");
+      expect(store.getActiveQuests()).toHaveLength(1);
+    });
+
+    it("activeCount returns number of active quests", () => {
+      const { store } = makeStore();
+      store.acceptQuest("quest_kill_10");
+      store.acceptQuest("quest_multi");
+      expect(store.activeCount()).toBe(2);
+    });
+  });
 });

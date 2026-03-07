@@ -235,7 +235,7 @@ If game-specific logic starts duplicating across games, it belongs in `packages/
 
 Current games:
 
-- `games/starter/` — Starter game template (Phase 1). Demonstrates core platform integration with handshake, actions, remotes, moderation, feature flags, observability, data persistence, and input handling. Includes a Baseplate and SpawnLocation via Rojo model files.
+- `games/test-park/` — Test Park template (Phase 1). Demonstrates core platform integration with handshake, actions, remotes, moderation, feature flags, observability, data persistence, and input handling. Includes a Baseplate and SpawnLocation via Rojo model files.
 - `games/obby/` — Obby game (Phase 3). Stages, checkpoints, coins, leaderboards, and remote payload validation.
 
 ## Roblox-TS monorepo setup
@@ -269,11 +269,11 @@ Packages must be compiled before the game:
 
 ```bash
 # Build all packages, then the game
-pnpm run build:starter
+pnpm run build:test-park
 
 # Or separately:
 pnpm run build:packages    # Compiles packages to out/
-pnpm game:starter:build
+pnpm game:test-park:build
 ```
 
 ### How games consume packages

@@ -4,15 +4,7 @@ import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
 import { auditBanCreate, auditBanSync } from "@/lib/audit";
 import { bridgeCreateBanToRoblox } from "@/lib/moderation-bridge";
-
-interface CreateBanInput {
-  playerId: string;
-  playerName?: string;
-  type: "TEMPORARY" | "PERMANENT";
-  reason: string;
-  durationHours?: number;
-  internalNote?: string;
-}
+import { parseInput, createBanSchema, type CreateBanInput } from "@/lib/schemas";
 
 export async function createBan(input: CreateBanInput): Promise<{ id?: string; error?: string }> {
   const auth = await checkPermission("moderation:ban");
@@ -20,24 +12,25 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
     return { error: "Unauthorized" };
   }
 
-  // Validate player ID
+  const parsed = parseInput(input, createBanSchema);
+  if (parsed.error) {
+    return { error: parsed.error };
+  }
+
+  const { playerId, playerName, type, reason, durationHours, internalNote } = parsed.data;
+
+  // Validate player ID (BigInt conversion)
   let playerIdBigInt: bigint;
   try {
-    playerIdBigInt = BigInt(input.playerId);
+    playerIdBigInt = BigInt(playerId);
   } catch {
     return { error: "Invalid player ID" };
   }
 
-  // Validate reason
-  const reason = input.reason?.trim();
-  if (!reason || reason.length < 5) {
-    return { error: "Reason must be at least 5 characters" };
-  }
-
   // Calculate expiry for temporary bans
   let expiresAt: Date | undefined;
-  if (input.type === "TEMPORARY" && input.durationHours) {
-    expiresAt = new Date(Date.now() + input.durationHours * 60 * 60 * 1000);
+  if (type === "TEMPORARY" && durationHours) {
+    expiresAt = new Date(Date.now() + durationHours * 60 * 60 * 1000);
   }
 
   // Check if player already has an active ban
@@ -56,11 +49,11 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
   const ban = await prisma.ban.create({
     data: {
       playerId: playerIdBigInt,
-      playerName: input.playerName,
-      type: input.type,
+      playerName: playerName,
+      type: type,
       reason,
-      internalNote: input.internalNote,
-      durationHours: input.durationHours,
+      internalNote: internalNote,
+      durationHours: durationHours,
       expiresAt,
       issuedById: auth.user.id,
     },
@@ -68,9 +61,9 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
 
   // Audit log
   await auditBanCreate(auth.user.id, playerIdBigInt, {
-    type: input.type,
+    type: type,
     reason,
-    durationHours: input.durationHours,
+    durationHours: durationHours,
   });
 
   const syncResult = await bridgeCreateBanToRoblox({

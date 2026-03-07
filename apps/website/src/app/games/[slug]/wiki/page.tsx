@@ -47,15 +47,15 @@ const wikiContent: Record<string, { sections: { heading: string; body: string }[
       },
     ],
   },
-  starter: {
+  "test-park": {
     sections: [
       {
         heading: "Overview",
-        body: "Starter World is BroBlox's free-roam sandbox. There are no objectives — explore, collect hidden achievement tokens, and chat with other players.",
+        body: "Test Park is BroBlox's free-roam sandbox. There are no objectives — explore, collect hidden achievement tokens, and chat with other players.",
       },
       {
         heading: "Achievements",
-        body: "18 achievements are currently available in Starter World. Achievements cover exploration, social interactions, and hidden collectibles. Unlocking all 18 earns you the Early Supporter badge visible on your profile.",
+        body: "18 achievements are currently available in Test Park. Achievements cover exploration, social interactions, and hidden collectibles. Unlocking all 18 earns you the Early Supporter badge visible on your profile.",
       },
       {
         heading: "Hidden Tokens",

@@ -48,7 +48,7 @@ export const REMOTES = {
 ### Server handler
 
 ```typescript
-// games/starter/src/server/services/ActionService.ts
+// games/test-park/src/server/services/ActionService.ts
 import { REMOTES, validateDoActionPayload, ErrorCode, Result } from "@broblox/net";
 import { isFlagEnabled } from "@broblox/config-featureflags";
 
@@ -88,7 +88,7 @@ export function handleDoAction(player: Player, rawPayload: unknown): Result<{ ne
 ### Client caller
 
 ```typescript
-// games/starter/src/client/controllers/ActionController.ts
+// games/test-park/src/client/controllers/ActionController.ts
 import { RemoteController } from "./RemoteController";
 import { type Result, type DoActionPayload } from "@broblox/net";
 

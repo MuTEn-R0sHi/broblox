@@ -9,12 +9,12 @@
  * (GitHub Actions repository variables). To seed locally, either:
  *
  *   a) add them to apps/dashboard/.env:
- *        STARTER_DEV_UNIVERSE_ID=123
- *        STARTER_DEV_PLACE_ID=456
+ *        TEST_PARK_DEV_UNIVERSE_ID=123
+ *        TEST_PARK_DEV_PLACE_ID=456
  *        ...etc
  *
  *   b) pass inline:
- *        STARTER_DEV_UNIVERSE_ID=123 ... pnpm db:seed
+ *        TEST_PARK_DEV_UNIVERSE_ID=123 ... pnpm db:seed
  */
 import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
@@ -46,15 +46,15 @@ const e = process.env;
 
 const GAMES = [
   {
-    slug: "starter",
-    name: "Starter Game",
-    description: "Starter combat/template game using the BroBlox platform skeleton.",
-    universeIdDev: bigint(e.STARTER_DEV_UNIVERSE_ID),
-    placeIdDev: bigint(e.STARTER_DEV_PLACE_ID),
-    universeIdStage: bigint(e.STARTER_STAGING_UNIVERSE_ID),
-    placeIdStage: bigint(e.STARTER_STAGING_PLACE_ID),
-    universeIdProd: bigint(e.STARTER_PROD_UNIVERSE_ID),
-    placeIdProd: bigint(e.STARTER_PROD_PLACE_ID),
+    slug: "test-park",
+    name: "Test Park",
+    description: "Test Park game using the BroBlox platform skeleton.",
+    universeIdDev: bigint(e.TEST_PARK_DEV_UNIVERSE_ID),
+    placeIdDev: bigint(e.TEST_PARK_DEV_PLACE_ID),
+    universeIdStage: bigint(e.TEST_PARK_STAGING_UNIVERSE_ID),
+    placeIdStage: bigint(e.TEST_PARK_STAGING_PLACE_ID),
+    universeIdProd: bigint(e.TEST_PARK_PROD_UNIVERSE_ID),
+    placeIdProd: bigint(e.TEST_PARK_PROD_PLACE_ID),
   },
   {
     slug: "obby",

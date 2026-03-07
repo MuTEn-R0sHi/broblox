@@ -3,9 +3,9 @@ description: "Builds the Roblox game and packages it for publishing"
 
 inputs:
   game:
-    description: "Game to build (e.g., starter)"
+    description: "Game to build (e.g., test-park)"
     required: true
-    default: "starter"
+    default: "test-park"
   node-version:
     description: "Node.js version"
     required: false

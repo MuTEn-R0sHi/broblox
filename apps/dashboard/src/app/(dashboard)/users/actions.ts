@@ -5,6 +5,7 @@ import { checkPermission } from "@/lib/authorize";
 import { auditRoleChange } from "@/lib/audit";
 import { assertHighRiskConfirmation, normalizeHighRiskReason } from "@/lib/high-risk";
 import { canModifyRole, Role } from "@/lib/rbac";
+import { parseFormData, updateUserRoleSchema } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -14,18 +15,17 @@ export async function updateUserRole(formData: FormData): Promise<void> {
     redirect("/users?error=forbidden");
   }
 
-  const targetUserId = String(formData.get("userId") ?? "").trim();
-  const newRole = String(formData.get("role") ?? "").trim() as Role;
-  const providedReason = String(formData.get("reason") ?? "");
-  const providedConfirmation = String(formData.get("confirmation") ?? "");
-
-  if (!targetUserId) {
-    redirect("/users?error=invalid_request");
+  const parsed = parseFormData(formData, updateUserRoleSchema);
+  if (parsed.error) {
+    redirect(`/users?error=${encodeURIComponent(parsed.error)}`);
   }
 
-  if (!Object.values(Role).includes(newRole)) {
-    redirect("/users?error=invalid_role");
-  }
+  const {
+    userId: targetUserId,
+    role: newRole,
+    reason: providedReason,
+    confirmation: providedConfirmation,
+  } = parsed.data;
 
   if (targetUserId === auth.user.id) {
     redirect("/users?error=cannot_edit_self");

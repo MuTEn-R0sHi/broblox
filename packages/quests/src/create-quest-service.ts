@@ -12,7 +12,7 @@ import { QuestStore } from "./quest-store";
 export interface QuestServiceConfig {
   /** Quest definitions to register. */
   quests: QuestDefinition[];
-  /** DataStore name, e.g. "StarterQuests". */
+  /** DataStore name, e.g. "TestParkQuests". */
   datastoreName: string;
   /** Maximum active quests per player. */
   maxActiveQuests?: number;

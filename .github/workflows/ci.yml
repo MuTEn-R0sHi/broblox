@@ -2,6 +2,13 @@ name: CI
 
 "on":
   pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "site/**"
+      - "*.md"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - "ideas/**"
   push:
     branches: [main]
 
@@ -55,11 +62,22 @@ jobs:
       - name: Check testing ↔ shared-types sync
         run: pnpm run check:sync
 
-      - name: Test
-        run: pnpm test
+      - name: Validate error catalog
+        run: node tools/generate-error-catalog.mjs --check
 
-      - name: Build starter game
-        run: pnpm run build:starter
+      - name: Test with coverage
+        run: pnpm test -- --coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/coverage-summary.json
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Build test-park game
+        run: pnpm run build:test-park
 
       - name: Build obby game
         run: pnpm run build:obby

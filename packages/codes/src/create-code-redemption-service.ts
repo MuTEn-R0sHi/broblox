@@ -11,7 +11,7 @@ import { CodeStore } from "./code-store";
 export interface CodeRedemptionServiceConfig {
   /** Promo codes to register. */
   codes: RedeemableCode[];
-  /** DataStore name, e.g. "StarterCodes". */
+  /** DataStore name, e.g. "TestParkCodes". */
   datastoreName: string;
   /** Callback fired on successful redemption. */
   onRedeem?: (playerId: number, code: string, rewards: CodeReward[]) => void;

@@ -274,7 +274,7 @@ model Appeal {
 model Game {
   id          String  @id @default(cuid())
   name        String
-  slug        String  @unique  // URL-safe identifier, e.g. "obby", "starter"
+  slug        String  @unique  // URL-safe identifier, e.g. "obby", "test-park"
   description String? @db.Text
   iconUrl     String? // URL for the game thumbnail / icon
 

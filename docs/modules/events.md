@@ -103,7 +103,7 @@ Pure class with no Roblox API dependencies. Useful for tests and independent que
 4. In `onEventEnd`, broadcast via `EventEnded` and restore defaults.
 
 ```ts
-// games/starter/src/server/services/EventService.ts
+// games/test-park/src/server/services/EventService.ts
 const handle = createEventService({
   events: EVENTS,
   onEventStart: (ev) => {

@@ -10,12 +10,12 @@ on:
         required: true
         type: choice
         options:
-          - starter
+          - test-park
           - obby
-        default: starter
+        default: test-park
 
 concurrency:
-  group: publish-dev-${{ inputs.game || 'starter' }}
+  group: publish-dev-${{ inputs.game || 'test-park' }}
   cancel-in-progress: true
 
 permissions:
@@ -31,14 +31,14 @@ jobs:
       - name: Set game variables
         id: game
         run: |
-          GAME="${{ inputs.game || 'starter' }}"
+          GAME="${{ inputs.game || 'test-park' }}"
           echo "name=$GAME" >> $GITHUB_OUTPUT
 
-          if [ "$GAME" = "starter" ]; then
-            echo "universe_id=${{ vars.STARTER_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
-            echo "place_id=${{ vars.STARTER_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm run build:starter" >> $GITHUB_OUTPUT
-            echo "game_path=games/starter" >> $GITHUB_OUTPUT
+          if [ "$GAME" = "test-park" ]; then
+            echo "universe_id=${{ vars.TEST_PARK_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
+            echo "place_id=${{ vars.TEST_PARK_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT
+            echo "build_cmd=pnpm run build:test-park" >> $GITHUB_OUTPUT
+            echo "game_path=games/test-park" >> $GITHUB_OUTPUT
           elif [ "$GAME" = "obby" ]; then
             echo "universe_id=${{ vars.OBBY_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
             echo "place_id=${{ vars.OBBY_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT

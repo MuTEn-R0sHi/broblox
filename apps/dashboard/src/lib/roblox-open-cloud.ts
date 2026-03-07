@@ -45,7 +45,7 @@ export function getOpenCloudModerationBridgeConfig(): OpenCloudModerationBridgeC
 
   return {
     enabled,
-    datastoreName: process.env.ROBLOX_MODERATION_DATASTORE_NAME?.trim() || "StarterModeration",
+    datastoreName: process.env.ROBLOX_MODERATION_DATASTORE_NAME?.trim() || "TestParkModeration",
     scope: process.env.ROBLOX_MODERATION_DATASTORE_SCOPE?.trim() || undefined,
     banTopic: process.env.ROBLOX_MODERATION_BAN_TOPIC?.trim() || "ModBanSync",
     muteTopic: process.env.ROBLOX_MODERATION_MUTE_TOPIC?.trim() || "ModMuteSync",
@@ -57,7 +57,7 @@ export function getOpenCloudFeatureFlagsBridgeConfig(): OpenCloudFeatureFlagsBri
 
   return {
     enabled,
-    datastoreName: process.env.ROBLOX_FEATUREFLAGS_DATASTORE_NAME?.trim() || "StarterFeatureFlags",
+    datastoreName: process.env.ROBLOX_FEATUREFLAGS_DATASTORE_NAME?.trim() || "TestParkFeatureFlags",
     scope: process.env.ROBLOX_FEATUREFLAGS_DATASTORE_SCOPE?.trim() || undefined,
     topic: process.env.ROBLOX_FEATUREFLAGS_TOPIC?.trim() || "FeatureFlagsSync",
     entryKeyPrefix: process.env.ROBLOX_FEATUREFLAGS_ENTRY_KEY_PREFIX?.trim() || "featureflags_",

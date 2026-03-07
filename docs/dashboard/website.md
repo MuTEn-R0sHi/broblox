@@ -17,12 +17,12 @@ The website has **no database** — it consumes data from the Dashboard API and 
 
 ## Pages
 
-| Route           | Description                                                     |
-| --------------- | --------------------------------------------------------------- |
-| `/`             | Landing page — Hero, Games, Features, Stats sections            |
-| `/news`         | News listing — fetches published posts from Dashboard API       |
-| `/rankings`     | Global leaderboards for all games (Starter World, BroBlox Obby) |
-| `/games/[slug]` | Individual game detail pages (statically generated)             |
+| Route           | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| `/`             | Landing page — Hero, Games, Features, Stats sections        |
+| `/news`         | News listing — fetches published posts from Dashboard API   |
+| `/rankings`     | Global leaderboards for all games (Test Park, BroBlox Obby) |
+| `/games/[slug]` | Individual game detail pages (statically generated)         |
 
 ## Data flow
 

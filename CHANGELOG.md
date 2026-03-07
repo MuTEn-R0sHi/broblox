@@ -37,7 +37,7 @@ Notes:
 - **@broblox/movement — server teleport auto-detection** — large server-side position changes are automatically detected and reset state instead of flagging a violation.
 - **@broblox/movement — character-change detection** — movement state resets when Roblox's UI character reset creates a new character model.
 - **@broblox/moderation — chat moderation** — `createChatModerationService()` prevents muted players from sending chat messages.
-- **Starter game — Baseplate and SpawnLocation** — added ground plane and spawn point via Rojo model JSON files and Workspace section in `default.project.json`.
+- **Test Park — Baseplate and SpawnLocation** — added ground plane and spawn point via Rojo model JSON files and Workspace section in `default.project.json`.
 
 - **Dashboard News CMS** — full CRUD for studio news posts (`/dashboard/news`).
   - `NewsPost` Prisma model (title, slug, content, excerpt, coverImage, published, author).
@@ -72,9 +72,9 @@ Notes:
 - **@broblox/movement — speed tolerance raised** — `speedTolerance` default changed from `1.5` to `2.0` for more lag-tolerant speed checks.
 - **@broblox/movement — teleportDistanceMin raised** — default `teleportDistanceMin` changed from `20` to `30` studs.
 - **Obby game — movement thresholds** — overrides `teleportDistanceMin: 75` for large vertical drops between stages.
-- **Starter game — added dependencies** — `@broblox/observability`, `@broblox/data`, `@broblox/input` added as dependencies with Rojo mappings.
+- **Test Park — added dependencies** — `@broblox/observability`, `@broblox/data`, `@broblox/input` added as dependencies with Rojo mappings.
 - **Test suite** — 2,329 tests across 105 test suites (up from 2,307 / 105).
-- **Documentation** — Updated movement.md (thresholds, axis-split detection, notifyTeleport API), core.md (153 tests, PlayerAdded dedup), security.md (threshold interaction with @broblox/movement), folders-and-packages.md (starter game deps, movement description).
+- **Documentation** — Updated movement.md (thresholds, axis-split detection, notifyTeleport API), core.md (153 tests, PlayerAdded dedup), security.md (threshold interaction with @broblox/movement), folders-and-packages.md (test park deps, movement description).
 - **Roadmap** — Phase 4 marked complete; future-phases and overview docs updated with deliverables.
 - **mkdocs.yml** — Navigation updated: 10 new module entries, 2 new dashboard entries, ADR-0007.
 - **docs/modules/rewards.md** — Rewritten with accurate DailyRewardStore + AchievementStore coverage (47 tests).
@@ -88,7 +88,7 @@ Notes:
   - Homepage: hero with shimmer headline, games grid, platform features, animated stats counters, footer.
   - `/games` — full games listing page.
   - `/games/[slug]` — per-game detail page with features grid and wiki/Roblox CTAs.
-  - `/games/[slug]/wiki` — player wiki and mechanics reference (Obby + Starter World).
+  - `/games/[slug]/wiki` — player wiki and mechanics reference (Obby + Test Park).
   - `/rankings` — global leaderboard page (static placeholder; live Roblox Open Cloud wiring TBD).
   - `/news` — studio announcements and patch notes.
   - Root monorepo scripts: `pnpm website:dev`, `pnpm website:build`.
@@ -107,29 +107,29 @@ Notes:
 - **@broblox/config-featureflags — pcall wrappers** — `GetAsync` and `Connect` calls wrapped in `pcall` for safe fallback when RemoteConfig is unavailable.
 - **@broblox/movement — checkpoint respawn false positives** — `CheckpointService` now calls `notifyTeleport()` after CFrame respawns so the movement validator doesn't flag the teleport.
 - **@broblox/movement — invalid_jump false positives** — early return when `input.velocity.Y < 0` (falling, not jumping).
-- **Starter game — missing module: observability** — added `@broblox/observability`, `@broblox/data`, `@broblox/input` Rojo mappings and package.json dependencies.
-- **Starter game — no ground** — added Baseplate (512×512 Part) and SpawnLocation via Rojo model JSON files; players no longer fall through the void.
+- **Test Park — missing module: observability** — added `@broblox/observability`, `@broblox/data`, `@broblox/input` Rojo mappings and package.json dependencies.
+- **Test Park — no ground** — added Baseplate (512×512 Part) and SpawnLocation via Rojo model JSON files; players no longer fall through the void.
 
 - Removed `prisma db push` from the dashboard `build` script — it requires a live database which is not available in Vercel's build environment. Moved to a separate `db:push` script.
 
 - **Game service wiring & test coverage (notification callbacks, event remotes, analytics)**
-  - Added `onQuestCompleted` callback to `createQuestService` config; wired in both games to fire typed (obby) or generic Notification (starter) client events.
+  - Added `onQuestCompleted` callback to `createQuestService` config; wired in both games to fire typed (obby) or generic Notification (test-park) client events.
   - Added `onAchievementCompleted` and `onDailyRewardClaimed` callbacks to `createRewardsService` config; wired in both games.
   - **Obby typed remotes** — `LevelUp`, `PrestigeUnlocked`, `QuestCompleted`, `AchievementCompleted`, `DailyRewardClaimed` added to `ObbyRemotes`.
-  - **Event broadcast remotes** — `EventStarted` / `EventEnded` (typed `EventActivePayload`) added to both `GameRemotes` (starter) and `ObbyRemotes`, with `fireAllClients` wiring in both games' `EventService`; removes the long-standing TODO comment.
+  - **Event broadcast remotes** — `EventStarted` / `EventEnded` (typed `EventActivePayload`) added to both `GameRemotes` (test-park) and `ObbyRemotes`, with `fireAllClients` wiring in both games' `EventService`; removes the long-standing TODO comment.
   - **Stage achievements** — `StageService.completeStage` now increments `ach_first_stage`, `ach_stages_25`, `ach_stages_100` progress on every completion.
-  - **Level achievements** — Obby `ProgressionService.onLevelUp` sets `ach_level_25`; starter sets `ach_level_10` and `ach_level_50`.
-  - **Kill routing** — Starter `ActionService` routes `actionId === "kill"` to quest `incrementObjective("kill")`, achievement `incrementProgress` for `ach_first_kill` / `ach_kill_100`, and analytics `track("action.kill")`.
-  - `action.kill` event definition added to starter `AnalyticsService`.
-  - `player.level_up` analytics event now fired from starter `ProgressionService.onLevelUp`.
+  - **Level achievements** — Obby `ProgressionService.onLevelUp` sets `ach_level_25`; test-park sets `ach_level_10` and `ach_level_50`.
+  - **Kill routing** — Test Park `ActionService` routes `actionId === "kill"` to quest `incrementObjective("kill")`, achievement `incrementProgress` for `ach_first_kill` / `ach_kill_100`, and analytics `track("action.kill")`.
+  - `action.kill` event definition added to test-park `AnalyticsService`.
+  - `player.level_up` analytics event now fired from test-park `ProgressionService.onLevelUp`.
   - Removed dead `initPlayerProgression` / `initPlayerQuests` / `initPlayerRewards` functions and unused loggers from both games.
 - **New test files (103 suites / 2,266 tests, up from 101 / 2,253)**
   - `games/obby/src/server/services/AnalyticsService.test.ts` (14 tests) — datastoreName, event defs, funnel defs, lifecycle wiring.
   - `games/obby/src/server/services/EventService.test.ts` (9 tests) — `EventStarted` / `EventEnded` broadcast, no-modifier path, lifecycle wiring.
-  - `games/starter/src/server/services/AnalyticsService.test.ts` (15 tests) — datastoreName, all 7 event defs incl. `action.kill`, funnel, lifecycle.
-  - `games/starter/src/server/services/EventService.test.ts` (9 tests) — same broadcast coverage.
-  - `games/starter/src/server/services/ActionService.test.ts` (9 tests) — kill quest/achievement/analytics routing, graceful undefined stores, validation-fail short-circuit.
-  - Updated `games/starter/src/server/services/ProgressionService.test.ts` — added `player.level_up` analytics assertion and `./AnalyticsService` mock.
+  - `games/test-park/src/server/services/AnalyticsService.test.ts` (15 tests) — datastoreName, all 7 event defs incl. `action.kill`, funnel, lifecycle.
+  - `games/test-park/src/server/services/EventService.test.ts` (9 tests) — same broadcast coverage.
+  - `games/test-park/src/server/services/ActionService.test.ts` (9 tests) — kill quest/achievement/analytics routing, graceful undefined stores, validation-fail short-circuit.
+  - Updated `games/test-park/src/server/services/ProgressionService.test.ts` — added `player.level_up` analytics assertion and `./AnalyticsService` mock.
 
 - **Defensive Guards (Deep Review Rounds 1–15)** — Systematic hardening across all packages:
   - `@broblox/progression` — NaN/Infinity XP guard, corrupt data clamping in `load()`.
@@ -217,9 +217,9 @@ Notes:
 - **@broblox/world-systems configs** - `DayNightConfig.presets`, `WeatherConfig.definitions`, `SeasonConfig.seasons/startingSeason` now optional with sane defaults.
 - **input + ui packages** - Added missing `lint`, `typecheck`, and `test` scripts.
 - **Roadmap** - Updated through Phase 5c reflecting all completed work.
-- **Starter/Obby games** - Fixed `registerStrings` arg order, `registerPlaylist` signatures, and all roblox-ts reserved identifier usage.
+- **Test Park/Obby games** - Fixed `registerStrings` arg order, `registerPlaylist` signatures, and all roblox-ts reserved identifier usage.
 - **CI caching** - Added pnpm store caching to ci.yml for faster builds.
-- **CI obby build** - ci.yml now builds both starter and obby games.
+- **CI obby build** - ci.yml now builds both test-park and obby games.
 - **CI DRY refactor** - promote.yml reduced from 260 to ~75 lines; shared logic extracted to reusable `build-and-publish.yml` workflow.
 - **@broblox/observability** - Deprecated `createCounter`/`createGauge`/`createHistogram` factory functions in favour of direct class constructors.
 - **Coverage thresholds** - Raised vitest thresholds from 50% to 80% lines/functions/statements and 65% branches.
@@ -247,7 +247,7 @@ Notes:
 - **Reusable build-game action** - Composite GitHub Action for DRY build steps.
 - **CI/CD secrets documentation** - Setup guide for Roblox Open Cloud API keys and GitHub Environments.
 - Initial docs site (MkDocs) and architecture plan.
-- Monorepo scaffold (pnpm workspaces) for platform packages, starter game, and dashboard.
+- Monorepo scaffold (pnpm workspaces) for platform packages, test park, and dashboard.
 - CI workflows for JS checks and docs publishing.
 - roblox-ts monorepo architecture: packages (`@broblox/*`) compile independently with `--type package`, games consume them via Rojo symlinks.
 - Parallel docs deployment to lima-city (`lftp --parallel=10`).
@@ -255,7 +255,7 @@ Notes:
 - Branch protection on `main` requiring CI and PR reviews.
 - **MIT License** for open-source distribution.
 - **Package README files** with comprehensive API documentation for all packages.
-- **Build verification in CI** - packages and starter game are now built in CI pipeline.
+- **Build verification in CI** - packages and test park are now built in CI pipeline.
 - **Pre-commit hooks** using simple-git-hooks and lint-staged for automatic linting and formatting.
 - **Test coverage configuration** with vitest, including coverage thresholds (80% lines/functions/statements, 65% branches).
 - **VSCode workspace settings** with recommended extensions, tasks, and editor configuration.
@@ -263,7 +263,7 @@ Notes:
 - **Error code reference documentation** auto-generated from ErrorCode enum.
 - **Enhanced CONTRIBUTING.md** with detailed workflow, commit conventions, and branch protection info.
 - **@broblox/testing package** - Shared test utilities, mocks, and helpers for vitest.
-- **Expanded test coverage** - 241 tests across all packages (core, config-featureflags, net, shared-types, constants, dashboard, starter game).
+- **Expanded test coverage** - 241 tests across all packages (core, config-featureflags, net, shared-types, constants, dashboard, test park).
 - **Commitlint** - Conventional commit enforcement with commit-msg hook.
 - **Coverage tooling** - `@vitest/coverage-v8` for test coverage reporting.
 - **Luau tooling** - Added selene (linter) and stylua (formatter) to aftman.toml with configuration.
@@ -302,7 +302,7 @@ Notes:
 - **Creation utilities** - `createFrame()`, `createLabel()`, `createButton()`, `createScrollFrame()`.
 - **Layout helpers** - `addCorner()`, `addPadding()`, `addListLayout()`, `addGridLayout()`, `addStroke()`.
 - **Components** - `Dialog`, `Toast`, `ListView`, `ProgressBar`, `Spinner` higher-level components.
-- **Starter game tests** - 32 unit tests for handshake, action validation, and remote contracts.
+- **Test Park tests** - 32 unit tests for handshake, action validation, and remote contracts.
 - **Root package.json** - Added `"type": "module"` for ES modules support.
 
 ### Changed

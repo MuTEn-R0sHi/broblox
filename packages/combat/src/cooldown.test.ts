@@ -524,4 +524,104 @@ describe("Event Listeners", () => {
     useAbility(createPlayerId(2), "fireball");
     expect(events).toHaveLength(1); // Still 1
   });
+
+  it("unsubscribe is idempotent", () => {
+    const events: CooldownStartedEvent[] = [];
+    const unsubscribe = onCooldownStarted((e) => events.push(e));
+
+    unsubscribe();
+    unsubscribe(); // calling again should not throw
+
+    useAbility(createPlayerId(1), "fireball");
+    expect(events).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge-case tests for branch coverage
+// ---------------------------------------------------------------------------
+
+describe("getAvailableCharges", () => {
+  it("returns 0 for unknown ability", () => {
+    expect(getAvailableCharges(createPlayerId(1), "nonexistent")).toBe(0);
+  });
+
+  it("returns current charges for known ability", () => {
+    registerAbility({ abilityId: "fireball", durationSeconds: 5 });
+    expect(getAvailableCharges(createPlayerId(1), "fireball")).toBe(1);
+  });
+
+  it("returns 0 after ability used and on cooldown", () => {
+    registerAbility({ abilityId: "fireball", durationSeconds: 5 });
+    const pid = createPlayerId(1);
+    useAbility(pid, "fireball");
+    expect(getAvailableCharges(pid, "fireball")).toBe(0);
+  });
+
+  it("returns restored charges after recovery time", () => {
+    registerAbility({ abilityId: "fireball", durationSeconds: 5 });
+    const pid = createPlayerId(1);
+    useAbility(pid, "fireball");
+    advanceTime(6);
+    expect(getAvailableCharges(pid, "fireball")).toBe(1);
+  });
+});
+
+describe("resetCooldown edge cases", () => {
+  it("returns NotFound for unknown ability", () => {
+    const result = resetCooldown(createPlayerId(1), "unknown");
+    expect(result.ok).toBe(false);
+  });
+
+  it("returns ok when player has no state", () => {
+    registerAbility({ abilityId: "fireball", durationSeconds: 5 });
+    const result = resetCooldown(createPlayerId(99), "fireball");
+    expect(result.ok).toBe(true);
+  });
+
+  it("returns ok when ability has no state for player", () => {
+    registerAbility({ abilityId: "fireball", durationSeconds: 5 });
+    registerAbility({ abilityId: "icebolt", durationSeconds: 3 });
+    const pid = createPlayerId(1);
+    useAbility(pid, "fireball"); // creates state for fireball only
+    const result = resetCooldown(pid, "icebolt");
+    expect(result.ok).toBe(true);
+  });
+});
+
+describe("resetAllCooldowns edge cases", () => {
+  it("is no-op for unknown player", () => {
+    registerAbility({ abilityId: "fireball", durationSeconds: 5 });
+    // Should not throw
+    resetAllCooldowns(createPlayerId(999));
+  });
+});
+
+describe("multi-charge recovery", () => {
+  it("uses durationSeconds as recovery fallback when chargeRecoverySeconds is omitted", () => {
+    registerAbility({ abilityId: "triple", durationSeconds: 2, charges: 3 });
+    const pid = createPlayerId(1);
+    useAbility(pid, "triple"); // 3→2
+    useAbility(pid, "triple"); // 2→1
+    useAbility(pid, "triple"); // 1→0
+
+    // After 2s (durationSeconds) one charge should recover
+    advanceTime(2);
+    expect(getAvailableCharges(pid, "triple")).toBe(1);
+
+    // After 2 more, another charge
+    advanceTime(2);
+    expect(getAvailableCharges(pid, "triple")).toBe(2);
+  });
+
+  it("getRemainingCooldown returns time for partial charge recovery", () => {
+    registerAbility({ abilityId: "dual", durationSeconds: 4, charges: 2 });
+    const pid = createPlayerId(1);
+    useAbility(pid, "dual");
+    useAbility(pid, "dual");
+    advanceTime(1);
+    const remaining = getRemainingCooldown(pid, "dual");
+    expect(remaining).toBeGreaterThan(0);
+    expect(remaining).toBeLessThanOrEqual(3);
+  });
 });

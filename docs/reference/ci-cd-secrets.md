@@ -88,17 +88,17 @@ For each environment, add the following:
 
 #### Variables (visible)
 
-The workflows support multiple games (starter, obby, etc.). Each game needs its own set of environment variables:
+The workflows support multiple games (test-park, obby, etc.). Each game needs its own set of environment variables:
 
-**Starter Game:**
+**Test Park:**
 | Name | Description |
 | ---------------------------- | ------------------------------ |
-| `STARTER_DEV_UNIVERSE_ID` | Universe ID for dev |
-| `STARTER_DEV_PLACE_ID` | Place ID for dev |
-| `STARTER_STAGING_UNIVERSE_ID`| Universe ID for staging |
-| `STARTER_STAGING_PLACE_ID` | Place ID for staging |
-| `STARTER_PROD_UNIVERSE_ID` | Universe ID for production |
-| `STARTER_PROD_PLACE_ID` | Place ID for production |
+| `TEST_PARK_DEV_UNIVERSE_ID` | Universe ID for dev |
+| `TEST_PARK_DEV_PLACE_ID` | Place ID for dev |
+| `TEST_PARK_STAGING_UNIVERSE_ID`| Universe ID for staging |
+| `TEST_PARK_STAGING_PLACE_ID` | Place ID for staging |
+| `TEST_PARK_PROD_UNIVERSE_ID` | Universe ID for production |
+| `TEST_PARK_PROD_PLACE_ID` | Place ID for production |
 
 **Obby Game:**
 | Name | Description |
@@ -126,7 +126,7 @@ The workflows support multiple games (starter, obby, etc.). Each game needs its 
 
 1. Go to **Actions** → **Promote** workflow
 2. Click **Run workflow**
-3. Select the `game` (starter/obby)
+3. Select the `game` (test-park/obby)
 4. Select `staging` environment
 5. Enter the git ref to promote (commit SHA or tag)
 6. Provide a reason for promotion
@@ -137,7 +137,7 @@ The workflows support multiple games (starter, obby, etc.). Each game needs its 
 1. Create a version tag: `git tag v1.0.0 && git push origin v1.0.0`
 2. Go to **Actions** → **Promote** workflow
 3. Click **Run workflow**
-4. Select the `game` (starter/obby)
+4. Select the `game` (test-park/obby)
 5. Select `production` environment
 6. Enter the version tag (e.g., `v1.0.0`)
 7. Provide a reason for promotion
@@ -211,14 +211,14 @@ Required environment variables for the dashboard runtime:
 MODERATION_OPEN_CLOUD_ENABLED=true
 ROBLOX_OPEN_CLOUD_API_KEY=...
 ROBLOX_UNIVERSE_ID=...
-ROBLOX_MODERATION_DATASTORE_NAME=StarterModeration
+ROBLOX_MODERATION_DATASTORE_NAME=TestParkModeration
 ROBLOX_MODERATION_DATASTORE_SCOPE=global # optional
 ROBLOX_MODERATION_BAN_TOPIC=ModBanSync # optional
 ROBLOX_MODERATION_MUTE_TOPIC=ModMuteSync # optional
 
 ```
 
-Important: `ROBLOX_MODERATION_DATASTORE_NAME` must match the value passed to `getModeration(...)` in the game server (for starter, this is currently `StarterModeration`).
+Important: `ROBLOX_MODERATION_DATASTORE_NAME` must match the value passed to `getModeration(...)` in the game server (for test-park, this is currently `TestParkModeration`).
 ```
 
 ### Dashboard Feature Flags Bridge (Optional)
@@ -232,7 +232,7 @@ Required environment variables for the dashboard runtime:
 FEATUREFLAGS_OPEN_CLOUD_ENABLED=true
 ROBLOX_OPEN_CLOUD_API_KEY=...
 ROBLOX_UNIVERSE_ID=...
-ROBLOX_FEATUREFLAGS_DATASTORE_NAME=StarterFeatureFlags
+ROBLOX_FEATUREFLAGS_DATASTORE_NAME=TestParkFeatureFlags
 ROBLOX_FEATUREFLAGS_DATASTORE_SCOPE=global # optional
 ROBLOX_FEATUREFLAGS_TOPIC=FeatureFlagsSync # optional
 ROBLOX_FEATUREFLAGS_ENTRY_KEY_PREFIX=featureflags_ # optional
@@ -243,7 +243,7 @@ Important: `ROBLOX_FEATUREFLAGS_DATASTORE_NAME` must match what the game server 
 
 ### Variables summary
 
-No additional repository-level variables are required. The workflows read game-specific variables (`STARTER_*`, `OBBY_*`) from the selected GitHub Actions Environment.
+No additional repository-level variables are required. The workflows read game-specific variables (`TEST_PARK_*`, `OBBY_*`) from the selected GitHub Actions Environment.
 
 ## Website Environment Variables (`apps/website`)
 
@@ -251,13 +251,13 @@ The website is deployed to Vercel and reads its secrets from Vercel environment 
 
 ### Vercel Environment Variables
 
-| Name                                     | Where  | Description                                                     |
-| ---------------------------------------- | ------ | --------------------------------------------------------------- |
-| `ROBLOX_API_KEY`                         | Secret | Open Cloud API key for live player counts. See setup below.     |
-| `NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY`    | Plain  | Roblox universe ID for the Obby game (`9624221556`)             |
-| `NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER` | Plain  | Roblox universe ID for the Starter game (`9617061511`)          |
-| `NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY`       | Plain  | Full Roblox game URL for deep link (empty until game published) |
-| `NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER`    | Plain  | Full Roblox game URL for deep link (empty until game published) |
+| Name                                       | Where  | Description                                                     |
+| ------------------------------------------ | ------ | --------------------------------------------------------------- |
+| `ROBLOX_API_KEY`                           | Secret | Open Cloud API key for live player counts. See setup below.     |
+| `NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY`      | Plain  | Roblox universe ID for the Obby game (`9624221556`)             |
+| `NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_TEST_PARK` | Plain  | Roblox universe ID for the Test Park (`9617061511`)             |
+| `NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY`         | Plain  | Full Roblox game URL for deep link (empty until game published) |
+| `NEXT_PUBLIC_ROBLOX_GAME_URL_TEST_PARK`    | Plain  | Full Roblox game URL for deep link (empty until game published) |
 
 ### Creating the website Roblox API key
 

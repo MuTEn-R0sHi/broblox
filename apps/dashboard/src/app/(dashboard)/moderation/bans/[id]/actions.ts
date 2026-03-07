@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
 import { auditBanRevoke, auditBanSync, auditEvidenceCreate } from "@/lib/audit";
 import { bridgeRevokeBanToRoblox } from "@/lib/moderation-bridge";
+import { parseInput, revokeBanSchema, addEvidenceSchema } from "@/lib/schemas";
 
 export async function revokeBan(
   banId: string,
@@ -15,10 +16,11 @@ export async function revokeBan(
     return { error: "Unauthorized" };
   }
 
-  const revokeReason = reason?.trim();
-  if (!revokeReason || revokeReason.length < 3) {
-    return { error: "Reason must be at least 3 characters" };
+  const parsed = parseInput({ reason }, revokeBanSchema);
+  if (parsed.error) {
+    return { error: parsed.error };
   }
+  const revokeReason = parsed.data.reason;
 
   const ban = await prisma.ban.findUnique({
     where: { id: banId },
@@ -75,25 +77,16 @@ export async function addEvidence(
     return { error: "Unauthorized" };
   }
 
-  const type = input.type;
-  const content = input.content?.trim();
-  const description = input.description?.trim() || undefined;
-
   if (!banId) {
     return { error: "Invalid ban" };
   }
 
-  if (!content || content.length < 3) {
-    return { error: "Evidence content must be at least 3 characters" };
+  const parsed = parseInput(input, addEvidenceSchema);
+  if (parsed.error) {
+    return { error: parsed.error };
   }
 
-  if (content.length > 20_000) {
-    return { error: "Evidence content is too large" };
-  }
-
-  if (!type || !["text", "screenshot", "video", "log"].includes(type)) {
-    return { error: "Invalid evidence type" };
-  }
+  const { type, content, description } = parsed.data;
 
   const ban = await prisma.ban.findUnique({ where: { id: banId }, select: { id: true } });
   if (!ban) {

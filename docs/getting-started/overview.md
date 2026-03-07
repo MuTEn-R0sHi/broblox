@@ -37,4 +37,4 @@ This project is a **monorepo platform** with 32 shared packages, 2 game template
 | 5b    | pets, gacha, cosmetics, battle-pass                                                                        | ✅     |
 | 5c    | localization, audio, tutorial, world-systems                                                               | ✅     |
 
-Games: **starter** (Phase 1 template) and **obby** (checkpoint/coin game).
+Games: **test-park** (Phase 1 template) and **obby** (checkpoint/coin game).

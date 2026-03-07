@@ -16,9 +16,9 @@
       "problemMatcher": []
     },
     {
-      "label": "Build Starter Game",
+      "label": "Build Test Park",
       "type": "shell",
-      "command": "pnpm run build:starter",
+      "command": "pnpm run build:test-park",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -30,9 +30,9 @@
       "problemMatcher": []
     },
     {
-      "label": "Dev: Starter Game",
+      "label": "Dev: Test Park",
       "type": "shell",
-      "command": "pnpm run game:starter:dev",
+      "command": "pnpm run game:test-park:dev",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -55,9 +55,9 @@
       }
     },
     {
-      "label": "Rojo: Serve Starter",
+      "label": "Rojo: Serve Test Park",
       "type": "shell",
-      "command": "pnpm run game:starter:rojo",
+      "command": "pnpm run game:test-park:rojo",
       "isBackground": true,
       "presentation": {
         "reveal": "always",

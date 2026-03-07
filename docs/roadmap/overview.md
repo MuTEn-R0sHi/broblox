@@ -15,19 +15,19 @@ The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, 
 
 Both games are deployed to Roblox across 3 environments (dev/staging/prod) — all 6 experiences are **private**. The website is live at [broblox-games.com](https://broblox-games.com), but deep links to the experiences are not configured yet (the "Play on Roblox" button currently points to roblox.com, not the specific games). There are zero public players, zero feedback, and zero revenue.
 
-| Asset            | Status                                                |
-| ---------------- | ----------------------------------------------------- |
-| `games/starter`  | Deployed to Roblox (3 envs) — **private**             |
-| `games/obby`     | Deployed to Roblox (3 envs) — **private**             |
-| `apps/dashboard` | Live on Vercel (internal)                             |
-| `apps/website`   | Live at broblox-games.com                             |
-| CI/CD pipeline   | Green — build, test, lint, publish, promote, rollback |
-| Test coverage    | 2,900+ tests across 125+ test files                   |
+| Asset             | Status                                                |
+| ----------------- | ----------------------------------------------------- |
+| `games/test-park` | Deployed to Roblox (3 envs) — **private**             |
+| `games/obby`      | Deployed to Roblox (3 envs) — **private**             |
+| `apps/dashboard`  | Live on Vercel (internal)                             |
+| `apps/website`    | Live at broblox-games.com                             |
+| CI/CD pipeline    | Green — build, test, lint, publish, promote, rollback |
+| Test coverage     | 2,900+ tests across 125+ test files                   |
 
 ### What's built (do not re-build)
 
 - **33 `@broblox/*` packages** — core, net, combat, matchmaking, moderation, movement, data, config, analytics, notifications, leaderboards, codes, events, inventory, progression, quests, rewards, pets, gacha, cosmetics, battle-pass, marketplace, localization, audio, tutorial, world-systems, ui, input, security, observability, shared-types, constants, testing
-- **2 games** (starter + obby) — fully integrated with all packages
+- **2 games** (test-park + obby) — fully integrated with all packages
 - **Dashboard v2** — RBAC, audit, bans, flags, match history, news CMS, moderation
 - **Website v1** — homepage, games listing, per-game detail + wiki, rankings, news
 - **Open Cloud CI** — publish/promote/rollback wired, branch protection enforced
@@ -43,7 +43,7 @@ The platform is heavily over-engineered relative to zero players. Before buildin
 **Effort: trivial · Impact: unlocks everything**
 
 1. Flip both games to **public** on Roblox (Creator Hub → each experience → Settings → set Public)
-2. Set `NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER` and `NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY` env vars in Vercel
+2. Set `NEXT_PUBLIC_ROBLOX_GAME_URL_TEST_PARK` and `NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY` env vars in Vercel
 3. Verify deep links work on broblox-games.com
 
 This is a prerequisite for everything else. Nothing below matters without real players.
@@ -54,7 +54,7 @@ This is a prerequisite for everything else. Nothing below matters without real p
 
 Play both games yourself and with a small group. Focus on:
 
-- Does the starter game loop feel fun for 5 minutes? 30 minutes?
+- Does the test park loop feel fun for 5 minutes? 30 minutes?
 - Does the obby have enough stages / variety?
 - Are the UI screens (daily rewards, quests, inventory, etc.) intuitive?
 - Does matchmaking work with real concurrent players?
@@ -103,7 +103,7 @@ Build pipeline validated end-to-end: roblox-ts → Rojo → Roblox Studio.
 
 ### Phase 1 — Platform MVP ✅
 
-Core platform skeleton: `core`, `shared-types`, `net`, `config-featureflags`. Starter game proving server authority, schema validation, rate limiting.
+Core platform skeleton: `core`, `shared-types`, `net`, `config-featureflags`. Test Park proving server authority, schema validation, rate limiting.
 
 > Detail: [Phase 1 scope](phase-1-platform-mvp.md)
 
@@ -157,12 +157,12 @@ Localization, audio, tutorial/FTUE, world systems (day/night, weather, seasons).
 
 ### Games + apps
 
-| Asset            | Phase | Status                |
-| ---------------- | ----- | --------------------- |
-| `games/starter`  | 1     | ✅ Deployed (private) |
-| `games/obby`     | 3     | ✅ Deployed (private) |
-| `apps/dashboard` | 3     | ✅ Live               |
-| `apps/website`   | 4     | ✅ Live               |
+| Asset             | Phase | Status                |
+| ----------------- | ----- | --------------------- |
+| `games/test-park` | 1     | ✅ Deployed (private) |
+| `games/obby`      | 3     | ✅ Deployed (private) |
+| `apps/dashboard`  | 3     | ✅ Live               |
+| `apps/website`    | 4     | ✅ Live               |
 
 ---
 

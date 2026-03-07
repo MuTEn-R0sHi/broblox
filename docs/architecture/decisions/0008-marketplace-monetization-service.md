@@ -77,6 +77,6 @@ No suitable roblox-ts library exists that fits our security model (explicit vali
 
 1. ✅ Add `packages/marketplace` with `DeveloperProductRegistry`, `GamePassCache`, `PurchaseValidator`, `createMarketplaceService`.
 2. Add `@broblox/marketplace` to `tsconfig.roblox.json` and `vitest.config.ts`.
-3. In the next Phase 6 session: wire `@broblox/marketplace` into the starter and obby games.
+3. In the next Phase 6 session: wire `@broblox/marketplace` into the test-park and obby games.
 4. Update `packages/gacha`, `packages/battle-pass`, `packages/pets` to delegate Robux flows to `@broblox/marketplace`.
 5. Write an ADR for Phase 6 BroCoins / economy once the marketplace layer is proven in a deployed game.

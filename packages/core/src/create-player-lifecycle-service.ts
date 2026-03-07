@@ -17,7 +17,7 @@ export interface PlayerLifecycleConfig {
 
   /**
    * When to fire callbacks for players already in the game.
-   * - `"onInit"` — fires during onInit (starter pattern)
+   * - `"onInit"` — fires during onInit (test-park pattern)
    * - `"onStart"` — fires during onStart (obby pattern)
    * Defaults to `"onInit"`.
    */

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { checkPermission } from "@/lib/authorize";
 import { auditMuteRevoke, auditMuteSync } from "@/lib/audit";
 import { bridgeRevokeMuteToRoblox } from "@/lib/moderation-bridge";
+import { parseInput, revokeMuteSchema } from "@/lib/schemas";
 
 export async function revokeMute(
   muteId: string,
@@ -15,10 +16,11 @@ export async function revokeMute(
     return { error: "Unauthorized" };
   }
 
-  const revokeReason = reason?.trim();
-  if (!revokeReason || revokeReason.length < 3) {
-    return { error: "Reason must be at least 3 characters" };
+  const parsed = parseInput({ reason }, revokeMuteSchema);
+  if (parsed.error) {
+    return { error: parsed.error };
   }
+  const revokeReason = parsed.data.reason;
 
   const mute = await prisma.mute.findUnique({
     where: { id: muteId },

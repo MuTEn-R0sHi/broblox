@@ -2,7 +2,7 @@
 
 > **Status: ✅ COMPLETE** — All acceptance criteria met. Ready for Phase 2.
 
-This page locks the scope for **Phase 1**: a single playable starter experience that proves the platform skeleton and its security posture.
+This page locks the scope for **Phase 1**: a single playable test-park experience that proves the platform skeleton and its security posture.
 
 It is intentionally small: the goal is to validate **architecture + workflow**, not ship a full game.
 
@@ -10,7 +10,7 @@ It is intentionally small: the goal is to validate **architecture + workflow**, 
 
 - A new game can adopt the platform skeleton quickly.
 - Networking has a real hardened path (registry → schema validation → rate limit → stable errors).
-- A single starter experience demonstrates server authority and configuration toggles.
+- A single test-park experience demonstrates server authority and configuration toggles.
 
 ## In scope (must ship)
 
@@ -39,9 +39,9 @@ It is intentionally small: the goal is to validate **architecture + workflow**, 
   - replicated read-only snapshot to clients
   - server-enforced kill-switch for at least one feature
 
-### Starter game
+### Test Park
 
-The starter game proves the platform via a minimal, testable loop:
+The test park proves the platform via a minimal, testable loop:
 
 - Server bootstraps cleanly using `core` lifecycle patterns
 - Client sends **intent** to server via `net`
@@ -61,14 +61,14 @@ Concrete vertical slice for Phase 1:
 ### Engineering
 
 - `pnpm lint`, `pnpm typecheck`, `pnpm test` are green
-- `pnpm game:starter:build` produces `games/starter/out/*` reliably
+- `pnpm game:test-park:build` produces `games/test-park/out/*` reliably
 - Rojo sync path exists and is documented:
-  - `games/starter/default.project.json`
-  - `pnpm game:starter:rojo`
+  - `games/test-park/default.project.json`
+  - `pnpm game:test-park:rojo`
 
 ### Security posture
 
-- All inbound remotes used by the starter game:
+- All inbound remotes used by the test park:
   - are registry-defined
   - are schema-validated server-side
   - have rate limits
@@ -103,7 +103,7 @@ Concrete vertical slice for Phase 1:
 What is implemented:
 
 - ✅ Docs deploy: GitHub Actions → lima-city
-- ✅ Build verification: `pnpm game:starter:build` runs in CI
+- ✅ Build verification: `pnpm game:test-park:build` runs in CI
 - ✅ Quality gates: lint, typecheck, test
 - ✅ Optional Open Cloud workflows: publish dev + promote to staging/production (requires GitHub environment secrets/vars)
 

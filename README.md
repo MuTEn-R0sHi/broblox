@@ -51,7 +51,7 @@ broblox/
 │   ├── marketplace/          # MonetizationService wrapper: developer products, game passes, receipt validation
 │   └── testing/              # Test utilities and Roblox API mocks for vitest
 ├── games/                    # Roblox-TS game projects
-│   ├── starter/              # Starter game template
+│   ├── test-park/              # Test Park template
 │   └── obby/                 # Obby game with stages, coins, leaderboards
 ├── apps/                     # Web applications
 │   ├── dashboard/            # Next.js admin dashboard (deployed on Vercel)
@@ -115,24 +115,24 @@ pnpm dev
 # Build all packages
 pnpm run build:packages
 
-# Build starter game (builds packages first)
-pnpm run build:starter
+# Build test park (builds packages first)
+pnpm run build:test-park
 
 # Watch mode for development
-pnpm run game:starter:dev
+pnpm run game:test-park:dev
 
 # Run Rojo server (in separate terminal)
-pnpm run game:starter:rojo
+pnpm run game:test-park:rojo
 ```
 
 ### Rojo Project Files
 
 This repository contains two Rojo project files:
 
-| File                                 | Purpose              | When to use                                             |
-| ------------------------------------ | -------------------- | ------------------------------------------------------- |
-| `games/starter/default.project.json` | Starter game project | **Development** - Use this for syncing to Roblox Studio |
-| `games/obby/default.project.json`    | Obby game project    | **Development** - Use this for syncing to Roblox Studio |
+| File                                   | Purpose           | When to use                                             |
+| -------------------------------------- | ----------------- | ------------------------------------------------------- |
+| `games/test-park/default.project.json` | Test Park project | **Development** - Use this for syncing to Roblox Studio |
+| `games/obby/default.project.json`      | Obby game project | **Development** - Use this for syncing to Roblox Studio |
 
 > **Note**: Each game has its own `default.project.json` for Rojo syncing and builds.
 
@@ -174,7 +174,7 @@ Layer 6 — Client
   (← core + constants)
 
 Games
-  starter    obby
+  test-park    obby
   (compose from all layers above)
 ```
 

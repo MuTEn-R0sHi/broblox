@@ -28,6 +28,7 @@
     "@broblox/inventory": "workspace:*",
     "@broblox/leaderboards": "workspace:*",
     "@broblox/localization": "workspace:*",
+    "@broblox/marketplace": "workspace:*",
     "@broblox/moderation": "workspace:*",
     "@broblox/movement": "workspace:*",
     "@broblox/net": "workspace:*",

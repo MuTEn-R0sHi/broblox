@@ -9,7 +9,7 @@ export const metadata = {
 
 const icons: Record<string, React.ReactNode> = {
   obby: <Gamepad2 className="h-6 w-6" />,
-  starter: <Trophy className="h-6 w-6" />,
+  "test-park": <Trophy className="h-6 w-6" />,
 };
 
 export default function GamesPage() {

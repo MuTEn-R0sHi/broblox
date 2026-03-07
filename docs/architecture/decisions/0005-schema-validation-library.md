@@ -103,4 +103,4 @@ We could write all guards from scratch, but this would be significant maintenanc
 2. Implement `validation.ts` with wrapper and bounded helpers
 3. Add unit tests for validation edge cases
 4. Update `networking.md` to reference this wrapper
-5. Phase 1 starter game uses the wrapper for all remotes
+5. Phase 1 test park uses the wrapper for all remotes

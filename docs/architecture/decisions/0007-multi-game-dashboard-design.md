@@ -15,7 +15,7 @@ environment variable, making it impossible to manage multiple title
 experiences from one dashboard without code changes.
 
 The platform roadmap calls for shipping several distinct Roblox experiences
-(obby, starter, future titles) all operated by the same team with the same
+(obby, test-park, future titles) all operated by the same team with the same
 tooling. The dashboard must therefore act as a **multi-game control plane** —
 registering each experience and routing all actions to the correct universe.
 

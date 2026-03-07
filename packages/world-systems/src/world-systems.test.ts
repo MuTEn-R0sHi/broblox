@@ -304,4 +304,42 @@ describe("WorldManager", () => {
     wm.update(-500);
     expect(events).toHaveLength(0);
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  it("setClockTime fires callback only when period changes", async () => {
+    const wm = await loadManager({ dayNight: { startClockTime: 12 } });
+    const events: TimePeriodChangedEvent[] = [];
+    wm.onTimePeriodChanged((e) => events.push(e));
+    wm.start();
+    const before = events.length;
+    // Jump to a very different time to ensure period changes
+    wm.setClockTime(0); // midnight
+    const after1 = events.length;
+    // A second call to midnight should NOT fire again
+    wm.setClockTime(0);
+    expect(events.length).toBe(after1);
+    // Verify at least one event was fired for the initial change
+    expect(after1).toBeGreaterThan(before);
+  });
+
+  it("setSeason is no-op when setting current season", async () => {
+    const wm = await loadManager({ season: { enabled: true } });
+    wm.start();
+    const currentSeason = wm.getSeason();
+    const events: SeasonChangedEvent[] = [];
+    wm.onSeasonChanged((e) => events.push(e));
+    wm.setSeason(currentSeason);
+    expect(events).toHaveLength(0);
+  });
+
+  it("getState returns complete world state snapshot", async () => {
+    const wm = await loadManager();
+    wm.start();
+    const state = wm.getState();
+    expect(state).toBeDefined();
+    expect(state).toHaveProperty("clockTime");
+  });
 });

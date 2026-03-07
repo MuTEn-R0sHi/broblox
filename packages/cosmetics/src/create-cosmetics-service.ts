@@ -12,7 +12,7 @@ import { CosmeticStore } from "./cosmetic-store";
 export interface CosmeticsServiceConfig {
   /** Cosmetic items to register. */
   cosmetics: CosmeticDefinition[];
-  /** DataStore name, e.g. "StarterCosmetics". */
+  /** DataStore name, e.g. "TestParkCosmetics". */
   datastoreName: string;
   /** Extra CosmeticStore options. */
   storeOptions?: Partial<CosmeticsConfig>;
