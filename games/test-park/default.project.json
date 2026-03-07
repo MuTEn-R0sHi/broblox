@@ -83,6 +83,12 @@
                 "$path": "node_modules/@broblox/codes/out"
               }
             },
+            "combat": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@broblox/combat/out"
+              }
+            },
             "leaderboards": {
               "$className": "Folder",
               "out": {
