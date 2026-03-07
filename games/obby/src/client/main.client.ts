@@ -18,7 +18,7 @@ const app = new Application();
 logger.info("Starting Obby client...");
 
 // Initialise the unified input system (registers common actions, default bindings, device detection)
-const cleanupInput = initInput();
+initInput();
 
 // Register obby-specific actions
 registerAction({

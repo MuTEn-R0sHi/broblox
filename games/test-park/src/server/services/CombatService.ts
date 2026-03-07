@@ -14,9 +14,7 @@ import type { PlayerId } from "@broblox/shared-types";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 import { movementStateManager } from "./MovementValidationService";
 import { DataService } from "./DataService";
-import { RemoteService } from "./RemoteService";
 import { getEventTracker } from "./AnalyticsService";
-import { trackPurchase } from "./TelemetryService";
 
 const logger = createLogger("CombatService");
 

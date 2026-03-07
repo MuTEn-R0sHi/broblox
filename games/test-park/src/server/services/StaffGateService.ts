@@ -14,6 +14,7 @@
  */
 
 import { Service, createLogger } from "@broblox/core";
+import { defineFlag, isFlagEnabled } from "@broblox/config-featureflags";
 import { Players } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
@@ -24,21 +25,31 @@ const logger = createLogger("StaffGateService");
 // =========================================================================
 
 /**
+ * Feature flag that disables the staff gate, allowing everyone in.
+ *
+ * Defaults to `false` (gate enforced). Set to `true` via the dashboard
+ * or a remote snapshot during development when testing with arbitrary accounts.
+ */
+const STAFF_GATE_DISABLED_FLAG = defineFlag({
+  name: "test_park.staff_gate_disabled",
+  defaultValue: false,
+  description:
+    "When enabled, the staff-only gate is bypassed and all players may join the test park.",
+  category: "security",
+});
+
+/**
  * Roblox UserIds of staff who may enter the test park.
  * Add / remove entries here — the gate adapts automatically.
+ *
+ * IMPORTANT: At least one UserId must be listed here before enabling
+ * the gate in a shared environment, otherwise every player will be kicked.
  */
 const STAFF_IDS: ReadonlySet<number> = new Set([
   // ──────────────── Add your team's UserIds below ────────────────
   // 123456789,  // ExampleDev
   // 987654321,  // ExampleQA
 ]);
-
-/**
- * If true, the gate is disabled and everyone is allowed in.
- * Useful during development when testing with arbitrary accounts.
- * Set to `false` before publishing to a shared environment.
- */
-const GATE_DISABLED = true;
 
 /** Kick message shown to non-staff. */
 const KICK_MESSAGE =
@@ -51,9 +62,9 @@ const KICK_MESSAGE =
 
 export const StaffGateService: Service = {
   onInit() {
-    if (GATE_DISABLED) {
+    if (isFlagEnabled(STAFF_GATE_DISABLED_FLAG.name)) {
       logger.warn(
-        "⚠️  Staff gate is DISABLED — all players allowed. Set GATE_DISABLED = false to enforce."
+        "⚠️  Staff gate is DISABLED — all players allowed. Disable the 'test_park.staff_gate_disabled' flag to enforce."
       );
       return;
     }
@@ -70,7 +81,7 @@ export const StaffGateService: Service = {
   },
 
   onStart() {
-    if (GATE_DISABLED) return;
+    if (isFlagEnabled(STAFF_GATE_DISABLED_FLAG.name)) return;
 
     // Gate future joins via the lifecycle bus
     PlayerLifecycleService.onPlayerAdded((player: Player) => {

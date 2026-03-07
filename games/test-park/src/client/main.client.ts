@@ -20,7 +20,7 @@ const app = new Application();
 logger.info("Starting client...");
 
 // Initialise the unified input system (registers common actions, default bindings, device detection)
-const cleanupInput = initInput();
+initInput();
 
 // Register controllers in dependency order
 app
