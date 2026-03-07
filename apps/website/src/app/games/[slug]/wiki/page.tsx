@@ -51,7 +51,7 @@ const wikiContent: Record<string, { sections: { heading: string; body: string }[
     sections: [
       {
         heading: "Overview",
-        body: "Test Park is BroBlox's behind-the-scenes sandbox — a staff-only space where we test new platform features, run experiments, and break things before they ship. The map is auto-generated at runtime from a zone registry, with 15 themed zones arranged in a circle around a central hub.",
+        body: "Test Park is BroBlox's behind-the-scenes sandbox — a staff-only space where we test new platform features, run experiments, and break things before they ship. The map is auto-generated at runtime from a zone registry, with multiple themed zones arranged in a circle around a central hub.",
       },
       {
         heading: "Zones",
@@ -59,7 +59,7 @@ const wikiContent: Record<string, { sections: { heading: string; body: string }[
       },
       {
         heading: "Staff Gate",
-        body: "Test Park is restricted to staff members via the StaffGateService. Non-staff players are kicked on join. Public access with phased playtests and limited-time preview events is planned for the future.",
+        body: "Test Park is restricted to staff members via the StaffGateService. When the staff gate is enabled, non-staff players are kicked on join; in some internal testing environments it may be temporarily disabled via a feature flag. Public access with phased playtests and limited-time preview events is planned for the future.",
       },
       {
         heading: "Coming Soon",
