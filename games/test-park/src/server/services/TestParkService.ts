@@ -569,7 +569,9 @@ function createPlatform(zone: ZoneConfig, x: number, z: number, folder: Folder):
   const platform = new Instance("Part");
   platform.Name = "Platform";
   platform.Size = new Vector3(ZONE_PLATFORM_SIZE, PLATFORM_HEIGHT, ZONE_PLATFORM_SIZE);
-  platform.Position = new Vector3(x, PLATFORM_HEIGHT / 2, z);
+  const pos = new Vector3(x, PLATFORM_HEIGHT / 2, z);
+  const toCenter = dirToCenter(x, z);
+  platform.CFrame = CFrame.lookAt(pos, pos.add(toCenter));
   platform.Anchored = true;
   platform.Color = new Color3(zone.color[0], zone.color[1], zone.color[2]);
   platform.Material = Enum.Material.SmoothPlastic;
