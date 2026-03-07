@@ -114,7 +114,7 @@ moderation.onMute((record) => {
 
 ## Game Integration
 
-Both the **Test Park** and **Obby** game templates integrate moderation via two
+Both the **Test Park** and **Obby** games integrate moderation via two
 services:
 
 | Service                        | Role                                                                                       |

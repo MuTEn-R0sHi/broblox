@@ -1,7 +1,7 @@
 {
   "name": "@broblox/game-test-park",
   "version": "0.1.0",
-  "description": "Staff-only system test park using rbx-game-platform",
+  "description": "Staff-only sandbox for testing BroBlox platform features",
   "private": true,
   "scripts": {
     "lint": "eslint .",
