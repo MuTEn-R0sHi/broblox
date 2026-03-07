@@ -28,7 +28,7 @@ export async function createNewsPost(formData: FormData): Promise<void> {
   if (auth instanceof Response) redirect("/news");
 
   const parsed = parseFormData(formData, createNewsPostSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     redirect(`/news/new?error=${encodeURIComponent(parsed.error)}`);
   }
 
@@ -44,7 +44,7 @@ export async function createNewsPost(formData: FormData): Promise<void> {
   const tags = tagsRaw
     ? tagsRaw
         .split(",")
-        .map((t) => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean)
     : [];
 
@@ -78,7 +78,7 @@ export async function updateNewsPost(postId: string, formData: FormData): Promis
   if (auth instanceof Response) redirect("/news");
 
   const parsed = parseFormData(formData, createNewsPostSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     redirect(`/news/${postId}?error=${encodeURIComponent(parsed.error)}`);
   }
 
@@ -92,7 +92,7 @@ export async function updateNewsPost(postId: string, formData: FormData): Promis
   const tags = tagsRaw
     ? tagsRaw
         .split(",")
-        .map((t) => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean)
     : [];
 

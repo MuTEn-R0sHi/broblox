@@ -17,7 +17,7 @@ export async function revokeBan(
   }
 
   const parsed = parseInput({ reason }, revokeBanSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     return { error: parsed.error };
   }
   const revokeReason = parsed.data.reason;
@@ -82,7 +82,7 @@ export async function addEvidence(
   }
 
   const parsed = parseInput(input, addEvidenceSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     return { error: parsed.error };
   }
 

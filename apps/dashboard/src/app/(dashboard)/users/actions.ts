@@ -16,7 +16,7 @@ export async function updateUserRole(formData: FormData): Promise<void> {
   }
 
   const parsed = parseFormData(formData, updateUserRoleSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     redirect(`/users?error=${encodeURIComponent(parsed.error)}`);
   }
 

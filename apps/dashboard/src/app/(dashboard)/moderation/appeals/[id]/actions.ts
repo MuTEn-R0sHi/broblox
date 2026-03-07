@@ -17,7 +17,7 @@ export async function resolveAppeal(
   }
 
   const parsed = parseInput({ status, resolution }, resolveAppealSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     return { error: parsed.error };
   }
   const normalizedResolution = parsed.data.resolution;

@@ -173,36 +173,41 @@ export type UpdateRolloutInput = z.infer<typeof updateRolloutSchema>;
 // Helpers
 // ============================================================================
 
+/** Discriminated result returned by {@link parseFormData} and {@link parseInput}. */
+export type ParseResult<T> =
+  | { success: true; data: T; error?: undefined }
+  | { success: false; data?: undefined; error: string };
+
 /**
  * Parse FormData into a plain object, then validate with a schema.
- * Returns `{ data }` on success or `{ error }` with the first issue message.
+ * Returns `{ success, data }` on success or `{ success, error }` with the first issue message.
  */
 export function parseFormData<T extends z.ZodTypeAny>(
   formData: FormData,
   schema: T
-): { data: z.infer<T>; error?: never } | { data?: never; error: string } {
+): ParseResult<z.infer<T>> {
   const raw: Record<string, unknown> = {};
   formData.forEach((value, key) => {
     raw[key] = value === "true" ? true : value === "false" ? false : value;
   });
   const result = schema.safeParse(raw);
   if (result.success) {
-    return { data: result.data };
+    return { success: true, data: result.data };
   }
-  return { error: result.error.issues[0]?.message ?? "Validation failed" };
+  return { success: false, error: result.error.issues[0]?.message ?? "Validation failed" };
 }
 
 /**
  * Validate a typed input against a schema.
- * Returns `{ data }` on success or `{ error }` with the first issue message.
+ * Returns `{ success, data }` on success or `{ success, error }` with the first issue message.
  */
 export function parseInput<T extends z.ZodTypeAny>(
   input: unknown,
   schema: T
-): { data: z.infer<T>; error?: never } | { data?: never; error: string } {
+): ParseResult<z.infer<T>> {
   const result = schema.safeParse(input);
   if (result.success) {
-    return { data: result.data };
+    return { success: true, data: result.data };
   }
-  return { error: result.error.issues[0]?.message ?? "Validation failed" };
+  return { success: false, error: result.error.issues[0]?.message ?? "Validation failed" };
 }

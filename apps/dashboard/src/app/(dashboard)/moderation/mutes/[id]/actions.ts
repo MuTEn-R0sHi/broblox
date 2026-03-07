@@ -17,7 +17,7 @@ export async function revokeMute(
   }
 
   const parsed = parseInput({ reason }, revokeMuteSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     return { error: parsed.error };
   }
   const revokeReason = parsed.data.reason;

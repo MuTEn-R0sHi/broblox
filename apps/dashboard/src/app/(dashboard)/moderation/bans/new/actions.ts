@@ -13,7 +13,7 @@ export async function createBan(input: CreateBanInput): Promise<{ id?: string; e
   }
 
   const parsed = parseInput(input, createBanSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     return { error: parsed.error };
   }
 

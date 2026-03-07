@@ -13,7 +13,7 @@ export async function createMute(input: CreateMuteInput): Promise<{ id?: string;
   }
 
   const parsed = parseInput(input, createMuteSchema);
-  if (parsed.error) {
+  if (!parsed.success) {
     return { error: parsed.error };
   }
 

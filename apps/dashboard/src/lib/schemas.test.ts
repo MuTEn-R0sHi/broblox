@@ -428,7 +428,7 @@ describe("parseFormData", () => {
     fd.set("role", "ADMIN");
 
     const result = parseFormData(fd, updateUserRoleSchema);
-    expect(result.error).toBeUndefined();
+    expect(result.success).toBe(true);
     expect(result.data?.userId).toBe("user-1");
     expect(result.data?.role).toBe("ADMIN");
   });
@@ -440,7 +440,7 @@ describe("parseFormData", () => {
     fd.set("publish", "true");
 
     const result = parseFormData(fd, createNewsPostSchema);
-    expect(result.error).toBeUndefined();
+    expect(result.success).toBe(true);
     expect(result.data?.publish).toBe(true);
   });
 
@@ -450,7 +450,7 @@ describe("parseFormData", () => {
     fd.set("role", "INVALID");
 
     const result = parseFormData(fd, updateUserRoleSchema);
-    expect(result.data).toBeUndefined();
+    expect(result.success).toBe(false);
     expect(result.error).toBeDefined();
   });
 });
@@ -462,13 +462,13 @@ describe("parseFormData", () => {
 describe("parseInput", () => {
   it("parses valid input", () => {
     const result = parseInput({ reason: "Valid reason" }, revokeBanSchema);
-    expect(result.error).toBeUndefined();
+    expect(result.success).toBe(true);
     expect(result.data?.reason).toBe("Valid reason");
   });
 
   it("returns error for invalid input", () => {
     const result = parseInput({ reason: "" }, revokeBanSchema);
-    expect(result.data).toBeUndefined();
+    expect(result.success).toBe(false);
     expect(result.error).toBeDefined();
   });
 

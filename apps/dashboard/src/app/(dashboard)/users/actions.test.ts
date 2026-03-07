@@ -50,7 +50,7 @@ vi.mock("@/lib/rbac", async () => {
 });
 
 vi.mock("next/navigation", () => ({
-  redirect: (...a: unknown[]) => mockRedirect(...a),
+  redirect: (url: string) => mockRedirect(url),
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
