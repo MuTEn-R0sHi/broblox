@@ -9,7 +9,7 @@ This is the single source of truth for BroBlox project planning. Raw brainstormi
 
 ## Where we are today
 
-The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (2,900+ tests), and deployed.
+The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (3,100+ tests), and deployed.
 
 **But nobody has played the games yet.**
 
@@ -22,7 +22,7 @@ Both games are deployed to Roblox across 3 environments (dev/staging/prod) — a
 | `apps/dashboard`  | Live on Vercel (internal)                             |
 | `apps/website`    | Live at broblox-games.com                             |
 | CI/CD pipeline    | Green — build, test, lint, publish, promote, rollback |
-| Test coverage     | 2,900+ tests across 125+ test files                   |
+| Test coverage     | 3,100+ tests across 150+ test files                   |
 
 ### What's built (do not re-build)
 

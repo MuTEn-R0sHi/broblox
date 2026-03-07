@@ -2,7 +2,7 @@
   "name": "@broblox/game-obby",
   "version": "0.1.0",
   "private": true,
-  "description": "Obby (obstacle course) game template using rbx-game-platform",
+  "description": "Obby (obstacle course) game built with BroBlox",
   "scripts": {
     "lint": "eslint .",
     "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude",

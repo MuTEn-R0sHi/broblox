@@ -1,6 +1,6 @@
 # Modules: Observability
 
-Observability utilities — telemetry, metrics, and tracing (`@broblox/observability`). **Status: Implemented** (~44 tests).
+Observability utilities — telemetry, metrics, and tracing (`@broblox/observability`). **Status: Implemented** (~244 tests).
 
 ## Purpose
 

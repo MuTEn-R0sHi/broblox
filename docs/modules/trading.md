@@ -1,5 +1,7 @@
 # Modules: Trading
 
+> **Status: NOT IMPLEMENTED** — This module is planned for a future phase. No `@broblox/trading` package exists yet. See [Future Phases](../roadmap/future-phases.md).
+
 Trading is high risk (fraud, scams, economy abuse). It must be gated and kill-switchable.
 
 ## Purpose

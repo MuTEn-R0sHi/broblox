@@ -87,7 +87,7 @@ The operations dashboard provides:
 
 - **Feature flags** with per-environment toggles (dev/stage/prod)
 - **Audit logging** for all privileged actions
-- **Role-based permissions** (VIEWER, MODERATOR, ENGINEER, ADMIN)
+- **Role-based permissions** (VIEWER, SUPPORT, MODERATOR, ENGINEER, ADMIN)
 - **REST API** for game servers to fetch flags
 
 See [apps/dashboard/README.md](apps/dashboard/README.md) for setup instructions.
