@@ -102,7 +102,7 @@ Open http://localhost:3000
 
 ### Available Games
 
-- **test-park** - Base template game for new projects
+- **test-park** - Staff-only sandbox for exploring and testing platform features
 - **obby** - Obstacle course game with stages, checkpoints, and coins
 
 ### 1) Install dependencies

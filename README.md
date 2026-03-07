@@ -51,7 +51,7 @@ broblox/
 │   ├── marketplace/          # MonetizationService wrapper: developer products, game passes, receipt validation
 │   └── testing/              # Test utilities and Roblox API mocks for vitest
 ├── games/                    # Roblox-TS game projects
-│   ├── test-park/              # Test Park template
+│   ├── test-park/              # Test Park sandbox (staff-only)
 │   └── obby/                 # Obby game with stages, coins, leaderboards
 ├── apps/                     # Web applications
 │   ├── dashboard/            # Next.js admin dashboard (deployed on Vercel)

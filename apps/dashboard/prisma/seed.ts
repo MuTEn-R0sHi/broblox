@@ -48,7 +48,7 @@ const GAMES = [
   {
     slug: "test-park",
     name: "Test Park",
-    description: "Test Park game using the BroBlox platform skeleton.",
+    description: "Staff-only sandbox for testing BroBlox platform features.",
     universeIdDev: bigint(e.TEST_PARK_DEV_UNIVERSE_ID),
     placeIdDev: bigint(e.TEST_PARK_DEV_PLACE_ID),
     universeIdStage: bigint(e.TEST_PARK_STAGING_UNIVERSE_ID),
@@ -59,7 +59,7 @@ const GAMES = [
   {
     slug: "obby",
     name: "Obby",
-    description: "Obstacle course game template using the BroBlox platform.",
+    description: "Obstacle course game with stages, checkpoints, coins, and leaderboards.",
     universeIdDev: bigint(e.OBBY_DEV_UNIVERSE_ID),
     placeIdDev: bigint(e.OBBY_DEV_PLACE_ID),
     universeIdStage: bigint(e.OBBY_STAGING_UNIVERSE_ID),

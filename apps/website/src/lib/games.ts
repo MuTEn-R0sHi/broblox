@@ -55,7 +55,7 @@ export const games: Game[] = [
     slug: "test-park",
     name: "Test Park",
     shortDescription:
-      "Our open sandbox starter experience. Explore the platform features before the next big game drops.",
+      "Our open sandbox experience. Explore the platform features before the next big game drops.",
     longDescription:
       "Test Park is the BroBlox sandbox — a free-roam space where you can explore our platform features, test achievements, and hang out while we build the next game. Think of it as the lobby. More structured gameplay is on the way.",
     tags: ["Sandbox", "Explore", "Free Roam"],

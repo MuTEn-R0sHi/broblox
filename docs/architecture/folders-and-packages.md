@@ -235,7 +235,7 @@ If game-specific logic starts duplicating across games, it belongs in `packages/
 
 Current games:
 
-- `games/test-park/` — Test Park template (Phase 1). Demonstrates core platform integration with handshake, actions, remotes, moderation, feature flags, observability, data persistence, and input handling. Includes a Baseplate and SpawnLocation via Rojo model files.
+- `games/test-park/` — Test Park (staff-only sandbox). Free-roam space with auto-generated zones for testing platform features — handshake, actions, remotes, moderation, feature flags, observability, data persistence, input handling, and combat. Map and zones are generated at runtime from the zone registry.
 - `games/obby/` — Obby game (Phase 3). Stages, checkpoints, coins, leaderboards, and remote payload validation.
 
 ## Roblox-TS monorepo setup

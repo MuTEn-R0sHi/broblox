@@ -1,6 +1,6 @@
 # Getting started: Overview
 
-This project is a **monorepo platform** with 32 shared packages, 2 game templates, a web dashboard, and full CI/CD.
+This project is a **monorepo platform** with 32 shared packages, 2 games, a web dashboard, and full CI/CD.
 
 ## Intended stack
 
@@ -37,4 +37,4 @@ This project is a **monorepo platform** with 32 shared packages, 2 game template
 | 5b    | pets, gacha, cosmetics, battle-pass                                                                        | ✅     |
 | 5c    | localization, audio, tutorial, world-systems                                                               | ✅     |
 
-Games: **test-park** (Phase 1 template) and **obby** (checkpoint/coin game).
+Games: **test-park** (sandbox / platform test park) and **obby** (checkpoint/coin game).
