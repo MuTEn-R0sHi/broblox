@@ -47,8 +47,7 @@ const STAFF_GATE_DISABLED_FLAG = defineFlag({
  */
 const STAFF_IDS: ReadonlySet<number> = new Set([
   // ──────────────── Add your team's UserIds below ────────────────
-  // 123456789,  // ExampleDev
-  // 987654321,  // ExampleQA
+  10272041833, // MuTEn-R0sHi
 ]);
 
 /** Kick message shown to non-staff. */
