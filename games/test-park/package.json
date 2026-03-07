@@ -17,6 +17,7 @@
     "@broblox/audio": "workspace:*",
     "@broblox/battle-pass": "workspace:*",
     "@broblox/codes": "workspace:*",
+    "@broblox/combat": "workspace:*",
     "@broblox/config-featureflags": "workspace:*",
     "@broblox/constants": "workspace:*",
     "@broblox/core": "workspace:*",

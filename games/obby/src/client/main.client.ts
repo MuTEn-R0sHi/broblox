@@ -24,7 +24,7 @@ const cleanupInput = initInput();
 registerAction({
   name: "respawn",
   category: "gameplay",
-  description: "Reset character to last checkpoint",
+  displayName: "Reset to Checkpoint",
 });
 addDefaultBinding(bind("respawn", key("R" as never)));
 

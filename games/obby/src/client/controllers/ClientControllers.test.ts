@@ -205,7 +205,7 @@ describe("UIController (obby client)", () => {
 // ============================================================================
 
 describe("InputController (obby client)", () => {
-  let capturedRespawnCallback: ((state: { active: boolean }) => void) | undefined;
+  let capturedRespawnCallback: ((action: string, state: { active: boolean }) => void) | undefined;
   let mockRequestRespawn: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -223,7 +223,7 @@ describe("InputController (obby client)", () => {
     }));
 
     vi.doMock("@broblox/input", () => ({
-      onAction: vi.fn((name: string, cb: (state: { active: boolean }) => void) => {
+      onAction: vi.fn((name: string, cb: (action: string, state: { active: boolean }) => void) => {
         if (name === "respawn") {
           capturedRespawnCallback = cb;
         }
@@ -257,7 +257,7 @@ describe("InputController (obby client)", () => {
     mod.InputController.onStart!();
 
     expect(capturedRespawnCallback).toBeDefined();
-    capturedRespawnCallback!({ active: true });
+    capturedRespawnCallback!("respawn", { active: true });
 
     expect(mockRequestRespawn).toHaveBeenCalled();
   });
@@ -266,7 +266,7 @@ describe("InputController (obby client)", () => {
     const mod = await import("./InputController");
     mod.InputController.onStart!();
 
-    capturedRespawnCallback!({ active: false });
+    capturedRespawnCallback!("respawn", { active: false });
     expect(mockRequestRespawn).not.toHaveBeenCalled();
   });
 
@@ -536,9 +536,9 @@ describe("HudController (obby client)", () => {
 
     const menuCall = mockOnAction.mock.calls.find((call: unknown[]) => call[0] === "menu");
     expect(menuCall).toBeDefined();
-    const menuCallback = menuCall![1] as (state: { active: boolean }) => void;
+    const menuCallback = menuCall![1] as (action: string, state: { active: boolean }) => void;
 
-    menuCallback({ active: true });
+    menuCallback("menu", { active: true });
     expect(ScreenController.closeActiveModal).toHaveBeenCalled();
   });
 
@@ -548,9 +548,9 @@ describe("HudController (obby client)", () => {
     mod.HudController.onStart!();
 
     const menuCall = mockOnAction.mock.calls.find((call: unknown[]) => call[0] === "menu");
-    const menuCallback = menuCall![1] as (state: { active: boolean }) => void;
+    const menuCallback = menuCall![1] as (action: string, state: { active: boolean }) => void;
 
-    menuCallback({ active: false });
+    menuCallback("menu", { active: false });
     expect(ScreenController.closeActiveModal).not.toHaveBeenCalled();
   });
 });

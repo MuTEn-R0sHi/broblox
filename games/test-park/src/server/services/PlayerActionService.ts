@@ -343,7 +343,8 @@ export const PlayerActionService: Service = {
 
     // ── Combat: UseAbility event
     registry.onEvent("UseAbility", (player, request) => {
-      const result = combatHandle.validateHit ? undefined : undefined; // abilities are validated via cooldown system internally
+      // Abilities are validated via the cooldown system internally.
+      // validateHit is called when a ReportHit arrives; this event just logs intent.
       logger.debug(`Player ${player.UserId} used ability: ${request.abilityId}`);
     });
 

@@ -282,7 +282,7 @@ export const HudController: Controller = {
 
     // ── Keybind: Escape closes active modal ─────────────────────────
 
-    onAction("menu", (state) => {
+    onAction("menu", (_action, state) => {
       if (!state.active) return;
       ScreenController.closeActiveModal();
     });

@@ -18,7 +18,7 @@ export const InputController: Controller & {
     logger.info("InputController starting...");
 
     // Respawn action (R key — registered in main.client.ts)
-    this.unsubscribe = onAction("respawn", (state) => {
+    this.unsubscribe = onAction("respawn", (_action, state) => {
       if (!state.active) return;
       logger.debug("Reset requested");
       RemoteController.requestRespawnAtCheckpoint();

@@ -500,9 +500,9 @@ const ACTION_HANDLERS: Record<string, ActionHandler> = {
   "audio:switch_lang": () => {
     const i18n = getI18n();
     const current = i18n.getLocale();
-    const next = current === "en" ? "es" : "en";
-    i18n.setLocale(next);
-    return `✅ Locale switched: ${current} → ${next}`;
+    const newLocale = current === "en" ? "es" : "en";
+    i18n.setLocale(newLocale);
+    return `✅ Locale switched: ${current} → ${newLocale}`;
   },
 
   // ── Leaderboards ────────────────────────────────────────────────────
@@ -769,10 +769,7 @@ function validateHandlers(): void {
 
   // Count totals
   const totalActions = ZONE_REGISTRY.reduce((sum, z) => sum + z.actions.size(), 0);
-  let totalHandlers = 0;
-  for (const _ in ACTION_HANDLERS) {
-    totalHandlers++;
-  }
+  const totalHandlers = totalActions - missing;
   logger.info(
     `Zones: ${ZONE_REGISTRY.size()} | Actions: ${totalActions} | Handlers: ${totalHandlers}`
   );

@@ -320,6 +320,9 @@ importers:
       "@broblox/codes":
         specifier: workspace:*
         version: link:../../packages/codes
+      "@broblox/combat":
+        specifier: workspace:*
+        version: link:../../packages/combat
       "@broblox/config-featureflags":
         specifier: workspace:*
         version: link:../../packages/config-featureflags

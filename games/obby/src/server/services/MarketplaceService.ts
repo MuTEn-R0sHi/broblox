@@ -84,13 +84,16 @@ export const userOwnsGamePass = (userId: number, passId: number) =>
   handle.userOwnsGamePass(userId, passId);
 
 /** Register a product handler at runtime (called from PlayerActionService). */
-export const registerProduct = handle.registerProduct.bind(handle);
+export const registerProduct: typeof handle.registerProduct = (product, handler) =>
+  handle.registerProduct(product, handler);
 
 /** Process a purchase receipt — idempotent. */
-export const processReceipt = handle.processReceipt.bind(handle);
+export const processReceipt: typeof handle.processReceipt = (receipt) =>
+  handle.processReceipt(receipt);
 
 /** Directly mark a player as owning a game pass. */
-export const setPassOwned = handle.setPassOwned.bind(handle);
+export const setPassOwned: typeof handle.setPassOwned = (userId, passId, owned) =>
+  handle.setPassOwned(userId, passId, owned);
 
 /** Access the underlying product registry. */
 export const getProductRegistry = () => handle.getProductRegistry();

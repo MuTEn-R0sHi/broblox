@@ -256,7 +256,7 @@ export const HudController: Controller = {
         );
     });
 
-    onAction("menu", (state) => {
+    onAction("menu", (_action, state) => {
       if (!state.active) return;
       ScreenController.closeActiveModal();
     });

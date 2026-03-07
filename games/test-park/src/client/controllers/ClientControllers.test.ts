@@ -296,7 +296,7 @@ describe("HandshakeController (test-park client)", () => {
 // ============================================================================
 
 describe("ActionController (test-park client)", () => {
-  let capturedActionCallback: ((state: { active: boolean }) => void) | undefined;
+  let capturedActionCallback: ((action: string, state: { active: boolean }) => void) | undefined;
   let mockRegistryInvoke: ReturnType<typeof vi.fn>;
   let mockShowActionResult: ReturnType<typeof vi.fn>;
 
@@ -316,7 +316,7 @@ describe("ActionController (test-park client)", () => {
     }));
 
     vi.doMock("@broblox/input", () => ({
-      onAction: vi.fn((name: string, cb: (state: { active: boolean }) => void) => {
+      onAction: vi.fn((name: string, cb: (action: string, state: { active: boolean }) => void) => {
         if (name === "interact") {
           capturedActionCallback = cb;
         }
@@ -363,7 +363,7 @@ describe("ActionController (test-park client)", () => {
     mod.ActionController.onStart!();
 
     expect(capturedActionCallback).toBeDefined();
-    capturedActionCallback!({ active: true });
+    capturedActionCallback!("interact", { active: true });
 
     expect(mockRegistryInvoke).toHaveBeenCalledWith(
       "DoAction",
@@ -375,14 +375,14 @@ describe("ActionController (test-park client)", () => {
     const mod = await import("./ActionController");
     mod.ActionController.onStart!();
 
-    capturedActionCallback!({ active: false });
+    capturedActionCallback!("interact", { active: false });
     expect(mockRegistryInvoke).not.toHaveBeenCalled();
   });
 
   it("shows success result on OK response", async () => {
     const mod = await import("./ActionController");
     mod.ActionController.onStart!();
-    capturedActionCallback!({ active: true });
+    capturedActionCallback!("interact", { active: true });
     expect(mockShowActionResult).toHaveBeenCalledWith(expect.stringContaining("Action:"), true);
   });
 
@@ -390,7 +390,7 @@ describe("ActionController (test-park client)", () => {
     mockRegistryInvoke.mockReturnValue({ ok: false, code: "ERR", message: "nope" });
     const mod = await import("./ActionController");
     mod.ActionController.onStart!();
-    capturedActionCallback!({ active: true });
+    capturedActionCallback!("interact", { active: true });
     expect(mockShowActionResult).toHaveBeenCalledWith(expect.stringContaining("failed"), false);
   });
 
@@ -667,10 +667,10 @@ describe("HudController (test-park client)", () => {
     // Find the menu action callback
     const menuCall = mockOnAction.mock.calls.find((call: unknown[]) => call[0] === "menu");
     expect(menuCall).toBeDefined();
-    const menuCallback = menuCall![1] as (state: { active: boolean }) => void;
+    const menuCallback = menuCall![1] as (action: string, state: { active: boolean }) => void;
 
     // Simulate press
-    menuCallback({ active: true });
+    menuCallback("menu", { active: true });
     expect(ScreenController.closeActiveModal).toHaveBeenCalled();
   });
 
@@ -680,9 +680,9 @@ describe("HudController (test-park client)", () => {
     mod.HudController.onStart!();
 
     const menuCall = mockOnAction.mock.calls.find((call: unknown[]) => call[0] === "menu");
-    const menuCallback = menuCall![1] as (state: { active: boolean }) => void;
+    const menuCallback = menuCall![1] as (action: string, state: { active: boolean }) => void;
 
-    menuCallback({ active: false });
+    menuCallback("menu", { active: false });
     expect(ScreenController.closeActiveModal).not.toHaveBeenCalled();
   });
 });

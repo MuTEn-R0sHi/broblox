@@ -22,7 +22,7 @@ export const ActionController: Controller & {
     logger.info("ActionController listening for input (interact action)");
     const registry = RemoteController.getRegistry();
 
-    this.unsubscribe = onAction("interact", (state) => {
+    this.unsubscribe = onAction("interact", (_action, state) => {
       if (!state.active) return;
 
       const request: ActionRequest = {

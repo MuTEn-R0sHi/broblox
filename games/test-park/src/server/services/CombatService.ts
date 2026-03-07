@@ -66,34 +66,33 @@ const config: CombatServiceConfig = {
   hitValidation: {
     maxLagMs: 200,
     maxRange: 100,
-    maxAngleDeg: 90,
   },
 
   positionProvider: (playerId: PlayerId) => {
     const state = movementStateManager.getState(playerId);
     if (!state) return undefined;
-    return state.position;
+    const pos = state.getState().position;
+    return { X: pos.X, Y: pos.Y, Z: pos.Z };
   },
 
   onHit: (result) => {
-    const damage = ABILITY_DAMAGE[result.abilityId] ?? 10;
+    const damage = ABILITY_DAMAGE[result.reason ?? "melee_attack"] ?? 10;
     logger.debug(
-      `Validated hit: shooter=${result.shooterId} → target=${result.targetId}, ability=${result.abilityId}, damage=${damage}`
+      `Validated hit: target=${result.targetId}, distance=${result.hitDistance}, damage=${damage}`
     );
 
     // Fire analytics event
     const tracker = getEventTracker();
-    tracker.trackEvent(result.shooterId as PlayerId, "action.kill", {
-      targetId: result.targetId,
-      abilityId: result.abilityId,
-      damage,
-    });
+    if (result.targetId !== undefined) {
+      tracker.track("action.kill", result.targetId as unknown as number, {
+        damage,
+        hitDistance: result.hitDistance,
+      });
+    }
   },
 
   onSuspicious: (event) => {
-    logger.warn(
-      `Suspicious hit from player ${event.shooterId}: ${event.reason} (count: ${event.count})`
-    );
+    logger.warn(`Suspicious hit from player ${event.playerId}: ${event.reason}`);
   },
 
   onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
@@ -120,11 +119,10 @@ export function processHitReport(
 ): { valid: boolean; damage: number; targetId: number } {
   const result = handle.validateHit(shooterPlayerId as PlayerId, {
     targetId: targetPlayerId as PlayerId,
-    abilityId,
+    weaponId: abilityId,
     origin: { X: origin.X, Y: origin.Y, Z: origin.Z },
     direction: { X: direction.X, Y: direction.Y, Z: direction.Z },
     clientTimestamp,
-    serverTimestamp: os.clock() * 1000,
   });
 
   if (result.ok) {
