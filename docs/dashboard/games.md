@@ -34,14 +34,14 @@ overrides without duplicating every flag.
 
 Navigate to **Dashboard → Games → New Game**.
 
-| Field         | Description                                                   |
-| ------------- | ------------------------------------------------------------- |
-| `Name`        | Human-readable display name (e.g. "Starter Combat")           |
-| `Slug`        | URL-safe identifier used in API calls (e.g. `starter-combat`) |
-| `Description` | Optional description shown in the games list                  |
-| `Icon URL`    | Optional image URL for the games list card                    |
-| `Universe ID` | Roblox universe ID per environment (dev / stage / prod)       |
-| `Place ID`    | Roblox starting place ID per environment (dev / stage / prod) |
+| Field         | Description                                                     |
+| ------------- | --------------------------------------------------------------- |
+| `Name`        | Human-readable display name (e.g. "Test Park Combat")           |
+| `Slug`        | URL-safe identifier used in API calls (e.g. `test-park-combat`) |
+| `Description` | Optional description shown in the games list                    |
+| `Icon URL`    | Optional image URL for the games list card                      |
+| `Universe ID` | Roblox universe ID per environment (dev / stage / prod)         |
+| `Place ID`    | Roblox starting place ID per environment (dev / stage / prod)   |
 
 > **Why separate per-environment IDs?**  
 > Most studios have three separate Roblox universes — a dev sandbox, a stage canary, and the live

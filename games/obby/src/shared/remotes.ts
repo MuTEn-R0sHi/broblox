@@ -21,6 +21,9 @@ import type {
   ClaimBattlePassRewardRequest,
   FullPlayerDataPayload,
   CodeRedeemResultPayload,
+  BuyProductRequest,
+  CheckGamePassRequest,
+  GamePassOwnershipPayload,
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -305,6 +308,39 @@ export const ObbyRemotes = {
       return typeOf(p["rewardId"]) === "string";
     },
   }),
+
+  // ────────────────────────────────────────────────────────────────────
+  // Marketplace
+  // ────────────────────────────────────────────────────────────────────
+
+  /**
+   * Client → Server: Request to buy a developer product.
+   */
+  BuyProduct: defineServerEvent<BuyProductRequest>("BuyProduct", {
+    rateLimit: { windowMs: 2000, maxRequests: 2 },
+    description: "Client requests to buy a developer product",
+    validate: (v): v is BuyProductRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["productId"]) === "number";
+    },
+  }),
+
+  /**
+   * Client → Server: Check if the player owns a game pass.
+   */
+  CheckGamePass: defineServerFunction<CheckGamePassRequest, GamePassOwnershipPayload>(
+    "CheckGamePass",
+    {
+      rateLimit: { windowMs: 2000, maxRequests: 5 },
+      description: "Check game pass ownership",
+      validate: (v): v is CheckGamePassRequest => {
+        if (typeOf(v) !== "table") return false;
+        const p = v as Record<string, unknown>;
+        return typeOf(p["passId"]) === "number";
+      },
+    }
+  ),
 } as const;
 
 /** Type of the obby remotes registry */

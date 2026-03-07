@@ -492,4 +492,110 @@ describe("PetStore", () => {
       expect.objectContaining({ equipped: true, speciesId: "fire_slime" })
     );
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  describe("DataStore error paths", () => {
+    it("load returns false on DataStore error", () => {
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.load()).toBe(false);
+    });
+
+    it("save returns false on DataStore error", () => {
+      store.addPet("fire_slime");
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.save()).toBe(false);
+    });
+
+    it("load returns false before init (no store)", () => {
+      const s = new PetStore(99, registry, { enableLogging: false });
+      expect(s.load()).toBe(false);
+    });
+
+    it("save returns false before init (no store)", () => {
+      const s = new PetStore(99, registry, { enableLogging: false });
+      expect(s.save()).toBe(false);
+    });
+
+    it("load ignores non-table stored data", () => {
+      const ds = getOrCreateStore("PetStore");
+      ds.SetAsync("pets_1", "corrupt");
+      store.load();
+      expect(store.petCount()).toBe(0);
+    });
+
+    it("load uses defaults when saved data has missing fields", () => {
+      const ds = getOrCreateStore("PetStore");
+      ds.SetAsync("pets_1", { playerId: 1 }); // no pets, maxSlots, version
+      store.load();
+      expect(store.petCount()).toBe(0);
+    });
+  });
+
+  describe("pet lookups and errors", () => {
+    it("addXp returns pet_not_found for unknown instanceId", () => {
+      const result = store.addXp("no-such-pet", 10);
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("pet_not_found");
+    });
+
+    it("evolvePet returns species_not_found when evolution target is unregistered", () => {
+      // Register a species that evolves into something not in registry
+      const temp: PetSpecies = {
+        ...fireSlime,
+        id: "temp_evolve",
+        evolvesInto: "nonexistent_species",
+        evolveLevel: 1,
+      };
+      registry.register(temp);
+      const { pet } = store.addPet("temp_evolve");
+      pet!.level = 1; // meets evolveLevel
+      const result = store.evolvePet(pet!.instanceId);
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("species_not_found");
+    });
+
+    it("getEffectiveStats returns undefined for unknown pet", () => {
+      expect(store.getEffectiveStats("nonexistent")).toBeUndefined();
+    });
+
+    it("setLocked returns pet_not_found for unknown pet", () => {
+      expect(store.setLocked("nonexistent", true).ok).toBe(false);
+    });
+
+    it("setNickname returns pet_not_found for unknown pet", () => {
+      expect(store.setNickname("nonexistent", "Test").ok).toBe(false);
+    });
+
+    it("getPetsBySpecies returns matching pets", () => {
+      store.addPet("fire_slime");
+      store.addPet("fire_slime");
+      store.addPet("water_sprite");
+      expect(store.getPetsBySpecies("fire_slime")).toHaveLength(2);
+    });
+  });
+
+  describe("getEffectiveStats abilities", () => {
+    it("applies speed ability bonus", () => {
+      const { pet } = store.addPet("fire_slime");
+      // Level up to 7 to unlock speed_burst ability
+      for (let i = 0; i < 6; i++) {
+        store.addXp(pet!.instanceId, 999);
+      }
+      const stats = store.getEffectiveStats(pet!.instanceId);
+      expect(stats).toBeDefined();
+      expect(stats!.speed).toBeGreaterThan(0);
+    });
+
+    it("does not apply ability below unlock level", () => {
+      const { pet } = store.addPet("fire_slime");
+      // Level 1 — no abilities unlocked yet
+      const stats = store.getEffectiveStats(pet!.instanceId);
+      expect(stats).toBeDefined();
+      // Base power * levelMultiplier, no ability bonus
+      expect(stats!.power).toBe(10); // level 1: 1 + (1-1)*0.1 = 1.0
+    });
+  });
 });

@@ -18,7 +18,7 @@ vi.mock("@/lib/roblox-open-cloud", () => {
   return {
     getOpenCloudModerationBridgeConfig: () => ({
       enabled: true,
-      datastoreName: "StarterModeration",
+      datastoreName: "TestParkModeration",
       scope: undefined,
       banTopic: "ModBanSync",
       muteTopic: "ModMuteSync",
@@ -66,7 +66,7 @@ describe("moderation-bridge (mutes)", () => {
 
     expect(updateStandardDataStoreEntry).toHaveBeenCalledTimes(1);
     const dsCall = updateStandardDataStoreEntry.mock.calls[0]?.[0];
-    expect(dsCall.datastore.datastoreName).toBe("StarterModeration_Mutes");
+    expect(dsCall.datastore.datastoreName).toBe("TestParkModeration_Mutes");
     expect(dsCall.entryKey).toBe("mutes_123");
 
     expect(publishMessagingService).toHaveBeenCalledTimes(1);
@@ -148,7 +148,7 @@ describe("moderation-bridge (bans)", () => {
 
     expect(updateStandardDataStoreEntry).toHaveBeenCalledTimes(1);
     const dsCall = updateStandardDataStoreEntry.mock.calls[0]?.[0];
-    expect(dsCall.datastore.datastoreName).toBe("StarterModeration_Bans");
+    expect(dsCall.datastore.datastoreName).toBe("TestParkModeration_Bans");
     expect(dsCall.entryKey).toBe("bans_456");
 
     expect(publishMessagingService).toHaveBeenCalledTimes(1);

@@ -52,12 +52,12 @@ export const games: Game[] = [
     robloxUniverseId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY ?? null,
   },
   {
-    slug: "starter",
-    name: "Starter World",
+    slug: "test-park",
+    name: "Test Park",
     shortDescription:
       "Our open sandbox starter experience. Explore the platform features before the next big game drops.",
     longDescription:
-      "Starter World is the BroBlox sandbox — a free-roam space where you can explore our platform features, test achievements, and hang out while we build the next game. Think of it as the lobby. More structured gameplay is on the way.",
+      "Test Park is the BroBlox sandbox — a free-roam space where you can explore our platform features, test achievements, and hang out while we build the next game. Think of it as the lobby. More structured gameplay is on the way.",
     tags: ["Sandbox", "Explore", "Free Roam"],
     genre: "Sandbox",
     status: "coming-soon",
@@ -77,7 +77,7 @@ export const games: Game[] = [
       {
         title: "More Coming Soon",
         description:
-          "We're actively building out Starter World. Expect regular drops of new areas and mechanics.",
+          "We're actively building out Test Park. Expect regular drops of new areas and mechanics.",
       },
       {
         title: "Community Hub",
@@ -85,8 +85,8 @@ export const games: Game[] = [
           "Meet other BroBlox players. Our community Discord links directly from the in-game menu.",
       },
     ],
-    robloxUrl: process.env.NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER ?? null,
-    robloxUniverseId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER ?? null,
+    robloxUrl: process.env.NEXT_PUBLIC_ROBLOX_GAME_URL_TEST_PARK ?? null,
+    robloxUniverseId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_TEST_PARK ?? null,
   },
 ];
 

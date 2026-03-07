@@ -11,7 +11,7 @@ import { initFeatureFlagSync, type FeatureFlagSyncConfig } from "./sync";
 export interface FeatureFlagSyncServiceConfig {
   /** Runtime environment. */
   environment: FeatureFlagSyncConfig["environment"];
-  /** Game-specific DataStore name (e.g. "StarterFeatureFlags"). */
+  /** Game-specific DataStore name (e.g. "TestParkFeatureFlags"). */
   datastoreName: string;
   /** MessagingService topic for cross-server invalidation (default "FeatureFlagsSync"). */
   topic?: string;
@@ -31,7 +31,7 @@ export interface FeatureFlagSyncHandle {
  * ```ts
  * const handle = createFeatureFlagSyncService({
  *   environment: BUILD_ENVIRONMENT,
- *   datastoreName: "StarterFeatureFlags",
+ *   datastoreName: "TestParkFeatureFlags",
  * });
  * export const FeatureFlagSyncService = handle.Service;
  * ```

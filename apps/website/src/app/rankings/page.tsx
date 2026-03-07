@@ -30,9 +30,9 @@ const boardIcons: Record<string, typeof Trophy> = {
 
 const rankedGames = [
   {
-    slug: "starter",
-    name: "Starter World",
-    universeId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER ?? "",
+    slug: "test-park",
+    name: "Test Park",
+    universeId: process.env.NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_TEST_PARK ?? "",
     accent: "purple" as const,
   },
   {

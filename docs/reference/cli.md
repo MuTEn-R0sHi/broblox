@@ -7,9 +7,9 @@ Available commands for development, testing, and documentation.
 ```bash
 pnpm install              # Install all dependencies
 pnpm run build:packages   # Compile all roblox-ts packages
-pnpm run build:starter    # Build starter game (builds packages first)
-pnpm run game:starter:dev # Watch mode for development
-pnpm run game:starter:rojo # Start Rojo server for Studio sync
+pnpm run build:test-park    # Build test park (builds packages first)
+pnpm run game:test-park:dev # Watch mode for development
+pnpm run game:test-park:rojo # Start Rojo server for Studio sync
 ```
 
 ## Quality

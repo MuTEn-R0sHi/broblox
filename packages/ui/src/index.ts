@@ -19,3 +19,4 @@ export * from "./screens/cosmetics";
 export * from "./screens/gacha";
 export * from "./screens/settings";
 export * from "./screens/battle-pass";
+export * from "./screens/shop";

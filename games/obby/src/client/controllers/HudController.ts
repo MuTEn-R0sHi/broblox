@@ -8,6 +8,7 @@
 
 import { Players } from "@rbxts/services";
 import { Controller, createLogger } from "@broblox/core";
+import { onAction } from "@broblox/input";
 import { RemoteController } from "./RemoteController";
 import { ScreenController } from "./ScreenController";
 
@@ -281,11 +282,9 @@ export const HudController: Controller = {
 
     // ── Keybind: Escape closes active modal ─────────────────────────
 
-    game.GetService("UserInputService").InputBegan.Connect((input, processed) => {
-      if (processed) return;
-      if (input.KeyCode === Enum.KeyCode.Escape) {
-        ScreenController.closeActiveModal();
-      }
+    onAction("menu", (_action, state) => {
+      if (!state.active) return;
+      ScreenController.closeActiveModal();
     });
 
     logger.info("HudController started — sidebar created.");

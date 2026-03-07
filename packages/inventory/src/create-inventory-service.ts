@@ -12,7 +12,7 @@ import { InventoryStore } from "./inventory-store";
 export interface InventoryServiceConfig {
   /** Item definitions to register. */
   items: ItemDefinition[];
-  /** DataStore name, e.g. "StarterInventory". */
+  /** DataStore name, e.g. "TestParkInventory". */
   datastoreName: string;
   /** Max inventory slots per player. */
   defaultMaxSlots?: number;

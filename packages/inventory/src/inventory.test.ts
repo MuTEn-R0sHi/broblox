@@ -192,7 +192,7 @@ describe("ItemRegistry", () => {
         category: "weapon",
         rarity: "common",
         maxStack: 1,
-        tags: ["melee", "starter"],
+        tags: ["melee", "test-park"],
       },
       { id: "bow", name: "Bow", category: "weapon", rarity: "rare", maxStack: 1, tags: ["ranged"] },
       {
@@ -751,6 +751,121 @@ describe("InventoryStore", () => {
       const result = store.addItem("potion", 5);
       expect(result.ok).toBe(false);
       expect(result.status).toBe("inventory_full");
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  describe("DataStore error paths", () => {
+    it("load returns error on DataStore failure", () => {
+      const { store } = makeStore();
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      const result = store.load();
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("datastore_error");
+    });
+
+    it("save returns error on DataStore failure", () => {
+      const { store } = makeStore();
+      store.addItem("wood", 5);
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      const result = store.save();
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("datastore_error");
+    });
+
+    it("load creates empty inventory when stored data is not a table", () => {
+      const { store } = makeStore();
+      const ds = getOrCreateStore("InventoryStore");
+      ds.SetAsync("inventory_1", "not a table");
+      store.load();
+      expect(store.getUsedSlots()).toBe(0);
+    });
+  });
+
+  describe("instance operations", () => {
+    it("removeInstance returns item_not_found for unknown instanceId", () => {
+      const { store } = makeStore();
+      const result = store.removeInstance("no-such-id");
+      expect(result.ok).toBe(false);
+      expect(result.status).toBe("item_not_found");
+    });
+
+    it("hasItem checks against specified quantity", () => {
+      const { store } = makeStore();
+      store.addItem("wood", 5);
+      expect(store.hasItem("wood", 5)).toBe(true);
+      expect(store.hasItem("wood", 6)).toBe(false);
+    });
+  });
+
+  describe("sorting edge cases", () => {
+    it("sort falls back to itemId comparison when definition is missing", () => {
+      const { store, registry } = makeStore();
+      store.addItem("wood", 1);
+      store.addItem("stone", 1);
+      // Remove a definition to trigger the fallback
+      registry.unregister("stone");
+      // Should not throw
+      store.sort();
+    });
+
+    it("sort orders same-category same-rarity items alphabetically", () => {
+      const { store } = makeStore();
+      store.addItem("wood", 1);
+      store.addItem("stone", 1);
+      store.sort();
+      const items = store.getAllItems();
+      // Both are "material" category, both "common" rarity
+      expect(items[0].itemId).toBe("stone");
+      expect(items[1].itemId).toBe("wood");
+    });
+  });
+
+  describe("metadata", () => {
+    it("updateInstanceMetadata initializes metadata when none exists", () => {
+      const { store } = makeStore();
+      store.addItem("iron_sword");
+      const items = store.getAllItems();
+      const updates = new Map<string, unknown>();
+      updates.set("enchantment", "fire");
+      const result = store.updateInstanceMetadata(items[0].instanceId, updates);
+      expect(result.ok).toBe(true);
+      expect(result.item?.metadata).toEqual({ enchantment: "fire" });
+    });
+  });
+
+  describe("slot management", () => {
+    it("expandSlots increases max slots", () => {
+      const { store } = makeStore();
+      const before = store.getMaxSlots();
+      store.expandSlots(5);
+      expect(store.getMaxSlots()).toBe(before + 5);
+    });
+
+    it("setMaxSlots rejects values below 1", () => {
+      const { store } = makeStore();
+      const before = store.getMaxSlots();
+      store.setMaxSlots(0);
+      expect(store.getMaxSlots()).toBe(before); // unchanged
+    });
+
+    it("getItemsByCategory returns items matching category", () => {
+      const { store } = makeStore();
+      store.addItem("wood", 5);
+      store.addItem("iron_sword");
+      const materials = store.getItemsByCategory("material");
+      expect(materials).toHaveLength(1);
+      expect(materials[0].itemId).toBe("wood");
+    });
+
+    it("removeItem defaults to quantity 1", () => {
+      const { store } = makeStore();
+      store.addItem("wood", 5);
+      store.removeItem("wood");
+      expect(store.getItemCount("wood")).toBe(4);
     });
   });
 });

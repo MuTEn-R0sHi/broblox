@@ -485,3 +485,64 @@ describe("Full Match Lifecycle", () => {
     expect(isInMatch(createPlayerId(1))).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Edge-case tests for branch coverage
+// ---------------------------------------------------------------------------
+
+describe("ready status edge cases", () => {
+  it("getReadyStatus returns undefined for unknown match", () => {
+    expect(getReadyStatus(createMatchId("nonexistent"))).toBeUndefined();
+  });
+
+  it("getReadyStatus returns 0 ready when readySet missing", () => {
+    const match = createTestMatch();
+    registerMatch(match);
+    const status = getReadyStatus(match.matchId);
+    expect(status).toBeDefined();
+    expect(status!.ready).toBe(0);
+    expect(status!.total).toBe(2);
+  });
+
+  it("isPlayerReady returns false when not in match", () => {
+    expect(isPlayerReady(createPlayerId(999))).toBe(false);
+  });
+
+  it("isPlayerReady returns false when readySet is missing", () => {
+    const match = createTestMatch();
+    registerMatch(match);
+    expect(isPlayerReady(createPlayerId(1))).toBe(false);
+  });
+});
+
+describe("match transition edge cases", () => {
+  it("startMatch returns error for unknown match", () => {
+    const result = startMatch(createMatchId("nonexistent"));
+    expect(result.ok).toBe(false);
+  });
+
+  it("endMatch returns error for unknown match", () => {
+    const result = endMatch(createMatchId("nonexistent"));
+    expect(result.ok).toBe(false);
+  });
+
+  it("getPlayerMatch returns undefined when match was cleaned up", () => {
+    expect(getPlayerMatch(createPlayerId(999))).toBeUndefined();
+  });
+});
+
+describe("removePlayerFromMatch edge cases", () => {
+  it("returns NotFound when player not in any match", () => {
+    const result = removePlayerFromMatch(createPlayerId(999));
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe("event unsubscribe idempotence", () => {
+  it("unsubscribe is idempotent", () => {
+    const events: MatchStatusChangedEvent[] = [];
+    const unsub = onMatchStatusChanged((e) => events.push(e));
+    unsub();
+    unsub(); // second call should not throw
+  });
+});

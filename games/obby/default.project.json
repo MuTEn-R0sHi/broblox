@@ -185,6 +185,12 @@
                 "$path": "node_modules/@broblox/events/out"
               }
             },
+            "marketplace": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@broblox/marketplace/out"
+              }
+            },
             "ui": {
               "$className": "Folder",
               "out": {

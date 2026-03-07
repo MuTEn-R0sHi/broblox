@@ -36,7 +36,7 @@ export interface LeaderboardResponse {
 export interface BoardDef {
   id: string;
   label: string;
-  /** DataStore prefix (default "lb" for starter, "obby_lb" for obby). */
+  /** DataStore prefix (default "lb" for test-park, "obby_lb" for obby). */
   prefix: string;
   period: LeaderboardPeriod;
   /** Format a raw score for display (e.g. seconds → "4m 12s"). */
@@ -58,7 +58,7 @@ function formatCount(n: number): string {
  * The `id` matches the board name registered via `@broblox/leaderboards`.
  */
 export const GAME_BOARDS: Record<string, BoardDef[]> = {
-  starter: [
+  "test-park": [
     { id: "kills", label: "Top Kills", prefix: "lb", period: "alltime", formatValue: formatCount },
     { id: "wins", label: "Most Wins", prefix: "lb", period: "alltime", formatValue: formatCount },
     {

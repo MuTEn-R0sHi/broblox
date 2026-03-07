@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { requireApiPermission } from "@/lib/authorize";
 import { audit } from "@/lib/audit";
+import { parseFormData, createNewsPostSchema } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -26,16 +27,12 @@ export async function createNewsPost(formData: FormData): Promise<void> {
   const auth = await requireApiPermission("news:create");
   if (auth instanceof Response) redirect("/news");
 
-  const title = formData.get("title") as string;
-  const body = formData.get("body") as string;
-  const excerpt = formData.get("excerpt") as string | null;
-  const tagsRaw = formData.get("tags") as string | null;
-  const gameId = formData.get("gameId") as string | null;
-  const publish = formData.get("publish") === "true";
-
-  if (!title?.trim() || !body?.trim()) {
-    redirect("/news/new?error=Title+and+body+are+required");
+  const parsed = parseFormData(formData, createNewsPostSchema);
+  if (!parsed.success) {
+    redirect(`/news/new?error=${encodeURIComponent(parsed.error)}`);
   }
+
+  const { title, body, excerpt, tags: tagsRaw, gameId, publish } = parsed.data;
 
   // Generate unique slug
   let slug = slugify(title);
@@ -47,7 +44,7 @@ export async function createNewsPost(formData: FormData): Promise<void> {
   const tags = tagsRaw
     ? tagsRaw
         .split(",")
-        .map((t) => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean)
     : [];
 
@@ -80,16 +77,12 @@ export async function updateNewsPost(postId: string, formData: FormData): Promis
   const auth = await requireApiPermission("news:edit");
   if (auth instanceof Response) redirect("/news");
 
-  const title = formData.get("title") as string;
-  const body = formData.get("body") as string;
-  const excerpt = formData.get("excerpt") as string | null;
-  const tagsRaw = formData.get("tags") as string | null;
-  const gameId = formData.get("gameId") as string | null;
-  const publish = formData.get("publish") === "true";
-
-  if (!title?.trim() || !body?.trim()) {
-    redirect(`/news/${postId}?error=Title+and+body+are+required`);
+  const parsed = parseFormData(formData, createNewsPostSchema);
+  if (!parsed.success) {
+    redirect(`/news/${postId}?error=${encodeURIComponent(parsed.error)}`);
   }
+
+  const { title, body, excerpt, tags: tagsRaw, gameId, publish } = parsed.data;
 
   const existing = await prisma.newsPost.findUnique({ where: { id: postId } });
   if (!existing) {
@@ -99,7 +92,7 @@ export async function updateNewsPost(postId: string, formData: FormData): Promis
   const tags = tagsRaw
     ? tagsRaw
         .split(",")
-        .map((t) => t.trim())
+        .map((t: string) => t.trim())
         .filter(Boolean)
     : [];
 

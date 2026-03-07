@@ -102,7 +102,7 @@ Open http://localhost:3000
 
 ### Available Games
 
-- **starter** - Base template game for new projects
+- **test-park** - Base template game for new projects
 - **obby** - Obstacle course game with stages, checkpoints, and coins
 
 ### 1) Install dependencies
@@ -116,31 +116,31 @@ pnpm install
 
 The build compiles shared packages first, then the game:
 
-**Starter Game:**
+**Test Park:**
 
-- Build once: `pnpm game:starter:build`
-- Watch: `pnpm game:starter:dev`
+- Build once: `pnpm game:test-park:build`
+- Watch: `pnpm game:test-park:dev`
 
 **Obby Game:**
 
 - Build once: `pnpm game:obby:build`
 - Watch: `pnpm game:obby:dev`
 
-> **Note:** `build:starter` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @broblox/game-starter build` directly.
+> **Note:** `build:test-park` runs `build:packages` automatically. If you only change game code (not packages), you can run `pnpm --filter @broblox/game-test-park build` directly.
 
 If you prefer using repo-level scripts for consistency, the equivalent is:
 
-- `pnpm game:starter:build`
+- `pnpm game:test-park:build`
 
 ### 3) Rojo + Studio sync
 
 Recommended: install Rojo via Aftman (toolchain pinned in `aftman.toml`).
 
-**Starter Game:**
+**Test Park:**
 
 ```bash
 aftman install
-pnpm game:starter:rojo
+pnpm game:test-park:rojo
 ```
 
 **Obby Game:**
@@ -150,7 +150,7 @@ aftman install
 pnpm game:obby:rojo
 ```
 
-The Rojo project file is `games/starter/default.project.json`.
+The Rojo project file is `games/test-park/default.project.json`.
 
 ## Debugging principles
 
@@ -184,11 +184,11 @@ ROBLOX_API_KEY="your-key-here"
 
 # Universe IDs (already have defaults in .env.example)
 NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_OBBY="9624221556"
-NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_STARTER="9617061511"
+NEXT_PUBLIC_ROBLOX_UNIVERSE_ID_TEST_PARK="9617061511"
 
 # Optional: direct Play button deep links (leave empty until games are published)
 NEXT_PUBLIC_ROBLOX_GAME_URL_OBBY=""
-NEXT_PUBLIC_ROBLOX_GAME_URL_STARTER=""
+NEXT_PUBLIC_ROBLOX_GAME_URL_TEST_PARK=""
 ```
 
 ### Run development server

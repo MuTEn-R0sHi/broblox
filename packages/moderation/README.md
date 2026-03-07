@@ -20,7 +20,7 @@ data per game:
 ```typescript
 import { getModeration } from "@broblox/moderation";
 
-const moderation = getModeration("StarterModeration");
+const moderation = getModeration("TestParkModeration");
 ```
 
 ### Check Bans on Player Join
@@ -28,7 +28,7 @@ const moderation = getModeration("StarterModeration");
 ```typescript
 import { getModeration } from "@broblox/moderation";
 
-const moderation = getModeration("StarterModeration");
+const moderation = getModeration("TestParkModeration");
 
 Players.PlayerAdded.Connect((player) => {
   const result = moderation.checkBan(player.UserId);
@@ -114,7 +114,7 @@ moderation.onMute((record) => {
 
 ## Game Integration
 
-Both the **Starter** and **Obby** game templates integrate moderation via two
+Both the **Test Park** and **Obby** game templates integrate moderation via two
 services:
 
 | Service                        | Role                                                                                       |

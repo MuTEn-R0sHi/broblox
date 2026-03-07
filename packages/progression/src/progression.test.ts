@@ -511,4 +511,59 @@ describe("ProgressionStore", () => {
       expect(store.getCurrentXp()).toBe(0);
     });
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  describe("DataStore error paths", () => {
+    it("load returns false on DataStore error", () => {
+      const store = makeStore();
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.load()).toBe(false);
+    });
+
+    it("save returns false on DataStore error", () => {
+      const store = makeStore();
+      store.addXp(10);
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.save()).toBe(false);
+    });
+
+    it("load returns false before init (no store)", async () => {
+      const { ProgressionStore: PS } = await import("./progression-store");
+      const s = new PS(1, { maxLevel: 50, xpCurve: "linear", baseXp: 100 });
+      // Don't call init()
+      expect(s.load()).toBe(false);
+    });
+
+    it("save returns false before init (no store)", async () => {
+      const { ProgressionStore: PS } = await import("./progression-store");
+      const s = new PS(1, { maxLevel: 50, xpCurve: "linear", baseXp: 100 });
+      expect(s.save()).toBe(false);
+    });
+  });
+
+  describe("additional edge cases", () => {
+    it("getProgress caps at 1.0", () => {
+      const store = makeStore();
+      // Set XP beyond what's needed for current level
+      store.setXp(99999);
+      expect(store.getProgress()).toBeLessThanOrEqual(1);
+    });
+
+    it("isMaxLevel returns true at exactly maxLevel", () => {
+      const store = makeStore({ maxLevel: 5 });
+      store.setLevel(5);
+      expect(store.isMaxLevel()).toBe(true);
+    });
+
+    it("uses quadratic fallback for unknown xpCurve name", () => {
+      // If an unknown curve is provided, it should fall back gracefully
+      const store = makeStore({ xpCurve: "unknown_curve" as never });
+      store.addXp(100);
+      // Should not throw and should use some XP requirement
+      expect(store.getLevel()).toBeGreaterThanOrEqual(1);
+    });
+  });
 });

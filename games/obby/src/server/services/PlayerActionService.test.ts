@@ -188,6 +188,36 @@ describe("PlayerActionService (obby)", () => {
         InvalidPayload: "INVALID_PAYLOAD",
       },
     }));
+
+    vi.doMock("@rbxts/services", () => ({
+      Players: {
+        GetPlayerByUserId: vi.fn((userId: number) =>
+          userId === mockPlayer.UserId ? mockPlayer : undefined
+        ),
+      },
+    }));
+
+    vi.doMock("./MarketplaceService", () => ({
+      registerProduct: vi.fn(),
+      processReceipt: vi.fn(),
+      userOwnsGamePass: vi.fn(() => ({ owned: true })),
+      DEVELOPER_PRODUCTS: [
+        { productId: 3_000_001, name: "100 Coins", description: "Get 100 coins", robuxPrice: 25 },
+        { productId: 3_000_002, name: "500 Coins", description: "Get 500 coins", robuxPrice: 99 },
+        {
+          productId: 3_000_003,
+          name: "Skip Stage",
+          description: "Skip the current stage",
+          robuxPrice: 49,
+        },
+      ],
+    }));
+
+    vi.doMock("./TelemetryService", () => ({
+      trackPurchase: vi.fn(),
+      trackStageComplete: vi.fn(),
+      trackPlayerDeath: vi.fn(),
+    }));
   });
 
   async function loadAndStart() {

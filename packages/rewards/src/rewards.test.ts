@@ -561,4 +561,72 @@ describe("AchievementStore", () => {
       expect(data.achievements[0].current).toBe(20);
     });
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  describe("DataStore error paths", () => {
+    it("load returns false on DataStore error", () => {
+      const store = makeStore();
+      // Override pcall to simulate DataStore failure
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.load()).toBe(false);
+    });
+
+    it("save returns false on DataStore error", () => {
+      const store = makeStore();
+      store.incrementProgress("ach_kills", 1);
+      (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+      expect(store.save()).toBe(false);
+    });
+
+    it("load returns false before init (no store)", () => {
+      const store = new AchievementStore(1, { enableLogging: false });
+      // Don't call init()
+      expect(store.load()).toBe(false);
+    });
+
+    it("save returns false before init (no store)", () => {
+      const store = new AchievementStore(1, { enableLogging: false });
+      expect(store.save()).toBe(false);
+    });
+
+    it("load ignores non-table stored data", () => {
+      const store = makeStore();
+      // Inject non-table data into the DataStore
+      const ds = getOrCreateStore("AchievementStore");
+      ds.SetAsync("achievements_1", "corrupted string");
+      store.load();
+      // Should still have default progress
+      expect(store.getProgress("ach_kills")).toBeUndefined();
+    });
+  });
+
+  describe("additional queries", () => {
+    it("getCompletionFraction returns 0 when target is zero", () => {
+      const store = makeStore([makeAchievementDef({ id: "ach_zero", target: 0 })]);
+      expect(store.getCompletionFraction("ach_zero")).toBe(0);
+    });
+
+    it("setProgress returns false when achievement already completed", () => {
+      const store = makeStore([makeAchievementDef({ target: 5 })]);
+      store.incrementProgress("ach_kills", 5);
+      expect(store.setProgress("ach_kills", 10)).toBe(false);
+    });
+
+    it("getDefinition returns undefined for unknown id", () => {
+      const store = makeStore();
+      expect(store.getDefinition("nonexistent")).toBeUndefined();
+    });
+
+    it("definitionCount returns number of registered achievements", () => {
+      const store = makeStore([
+        makeAchievementDef({ id: "a1" }),
+        makeAchievementDef({ id: "a2" }),
+        makeAchievementDef({ id: "a3" }),
+      ]);
+      expect(store.definitionCount()).toBe(3);
+    });
+  });
 });

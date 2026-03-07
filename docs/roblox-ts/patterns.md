@@ -29,7 +29,7 @@ export interface Service {
 ### Boot sequence (server)
 
 ```typescript
-// games/starter/src/server/main.server.ts
+// games/test-park/src/server/main.server.ts
 import { Application } from "@broblox/core";
 
 // Import services to ensure side-effects run (loading into Application)
@@ -54,7 +54,7 @@ export interface Controller {
 We prefer **Singletons** defined as objects over classes for simpler dependency management in Roblox-TS.
 
 ```typescript
-// games/starter/src/server/services/ActionService.ts
+// games/test-park/src/server/services/ActionService.ts
 import { Service, createLogger } from "@broblox/core";
 
 const logger = createLogger("ActionService");
@@ -119,12 +119,12 @@ export function createModerationEnforcementService(
 #### Consuming a factory (game side)
 
 ```typescript
-// games/starter/src/server/services/ModerationEnforcementService.ts
+// games/test-park/src/server/services/ModerationEnforcementService.ts
 import { createModerationEnforcementService } from "@broblox/moderation";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
 
 const handle = createModerationEnforcementService({
-  datastoreName: "StarterModeration",
+  datastoreName: "TestParkModeration",
   onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
 });
 

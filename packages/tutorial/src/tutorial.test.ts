@@ -546,4 +546,68 @@ describe("TutorialManager", () => {
     expect(m2.isCompleted("seq-1")).toBe(true);
     expect(m2.totalStepsCompleted()).toBe(1);
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  it("load returns false on DataStore error", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    manager.init();
+    // Override pcall to simulate DataStore failure
+    (globalThis as Record<string, unknown>).pcall = () => [false, "DataStore error"];
+    expect(manager.load()).toBe(false);
+  });
+
+  it("save returns false on DataStore error", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence({ steps: [makeStep()] })]);
+    manager.init();
+    manager.startSequence("seq-1");
+    (globalThis as Record<string, unknown>).pcall = () => [false, "write error"];
+    expect(manager.save()).toBe(false);
+  });
+
+  it("save returns false before init", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    // Don't call init()
+    expect(manager.save()).toBe(false);
+  });
+
+  it("advanceStep returns sequence_not_found when no active sequence", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    const result = manager.advanceStep();
+    expect(result.ok).toBe(false);
+  });
+
+  it("skipStep returns error when no active sequence", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    const result = manager.skipStep();
+    expect(result.ok).toBe(false);
+  });
+
+  it("completeAction returns error when no active sequence", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    const result = manager.completeAction("some_action");
+    expect(result.ok).toBe(false);
+  });
+
+  it("getCurrentStep returns undefined when no active sequence", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence()]);
+    expect(manager.getCurrentStep()).toBeUndefined();
+  });
+
+  it("isSkipped returns true for skipped sequence", async () => {
+    setupGlobals();
+    const { manager } = await loadManager([makeSequence({ skippable: true, steps: [makeStep()] })]);
+    manager.startSequence("seq-1");
+    manager.skipSequence();
+    expect(manager.isSkipped("seq-1")).toBe(true);
+  });
 });

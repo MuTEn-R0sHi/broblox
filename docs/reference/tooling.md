@@ -29,15 +29,15 @@ Deploy:
 - Deployment is handled by the GitHub Actions workflow `.github/workflows/docs-deploy-limacity.yml`
 - Setup details: `docs/reference/docs-deployment.md`
 
-## Starter game (Roblox-TS)
+## Test Park (Roblox-TS)
 
 Build once:
 
-- `pnpm game:starter:build`
+- `pnpm game:test-park:build`
 
 Watch compile:
 
-- `pnpm game:starter:dev`
+- `pnpm game:test-park:dev`
 
 ## Obby game (Roblox-TS)
 
@@ -55,9 +55,9 @@ Toolchain (recommended):
 
 - `aftman install`
 
-Start Rojo server (starter):
+Start Rojo server (test-park):
 
-- `pnpm game:starter:rojo`
+- `pnpm game:test-park:rojo`
 
 Start Rojo server (obby):
 
@@ -65,7 +65,7 @@ Start Rojo server (obby):
 
 Rojo project files:
 
-- `games/starter/default.project.json`
+- `games/test-park/default.project.json`
 - `games/obby/default.project.json`
 
 ## Dashboard

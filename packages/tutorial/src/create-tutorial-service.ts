@@ -12,7 +12,7 @@ import { TutorialManager } from "./tutorial-manager";
 export interface TutorialServiceConfig {
   /** Tutorial sequences to register. */
   sequences: TutorialSequence[];
-  /** DataStore name, e.g. "StarterTutorial". */
+  /** DataStore name, e.g. "TestParkTutorial". */
   datastoreName: string;
   /** Extra TutorialManager options. */
   storeOptions?: Partial<TutorialConfig>;

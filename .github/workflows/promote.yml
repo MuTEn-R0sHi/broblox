@@ -8,9 +8,9 @@ on:
         required: true
         type: choice
         options:
-          - starter
+          - test-park
           - obby
-        default: starter
+        default: test-park
       environment:
         description: "Target environment"
         required: true

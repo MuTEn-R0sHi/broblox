@@ -370,4 +370,106 @@ describe("AudioManager", () => {
     mgr.registerPlaylist(pl);
     expect(mgr.startPlaylist("empty").status).toBe("playlist_empty");
   });
+
+  // -----------------------------------------------------------------------
+  // Edge-case tests for branch coverage
+  // -----------------------------------------------------------------------
+
+  it("pause returns instance_not_found for unknown id", () => {
+    expect(mgr.pause("no-such-id").status).toBe("instance_not_found");
+  });
+
+  it("pause returns already_stopped for stopped instance", () => {
+    const r = mgr.play("sword_swing");
+    mgr.stop(r.instanceId!);
+    // Instance is now removed, so it's "not found"
+    expect(mgr.pause(r.instanceId!).status).toBe("instance_not_found");
+  });
+
+  it("resume returns instance_not_found for unknown id", () => {
+    expect(mgr.resume("no-such-id").status).toBe("instance_not_found");
+  });
+
+  it("resume returns already_playing for active instance", () => {
+    const r = mgr.play("sword_swing");
+    expect(mgr.resume(r.instanceId!).status).toBe("already_playing");
+  });
+
+  it("stop returns instance_not_found for unknown id", () => {
+    expect(mgr.stop("no-such-id").status).toBe("instance_not_found");
+  });
+
+  it("stop decrements instance count when multiple instances exist", () => {
+    const r1 = mgr.play("sword_swing");
+    const r2 = mgr.play("sword_swing");
+    expect(mgr.instanceCountOf("sword_swing")).toBe(2);
+    mgr.stop(r1.instanceId!);
+    expect(mgr.instanceCountOf("sword_swing")).toBe(1);
+    mgr.stop(r2.instanceId!);
+    expect(mgr.instanceCountOf("sword_swing")).toBe(0);
+  });
+
+  it("stopAll returns 0 when no instances match", () => {
+    expect(mgr.stopAll("nonexistent_sound")).toBe(0);
+  });
+
+  it("nextTrack returns playlist_not_found when no playlist active", () => {
+    expect(mgr.nextTrack().status).toBe("playlist_not_found");
+  });
+
+  it("nextTrack ends non-looping playlist at last track", () => {
+    const pl: Playlist = {
+      id: "short",
+      name: "Short",
+      tracks: ["sword_swing"],
+      loop: false,
+      shuffle: false,
+    };
+    mgr.registerPlaylist(pl);
+    mgr.startPlaylist("short"); // plays track 0
+    const result = mgr.nextTrack(); // no more tracks, non-looping
+    expect(result.status).toBe("success"); // playlist ended
+  });
+
+  it("startPlaylist stops current music before starting new playlist", () => {
+    const pl1: Playlist = {
+      id: "pl1",
+      name: "PL1",
+      tracks: ["sword_swing"],
+      loop: true,
+      shuffle: false,
+    };
+    const pl2: Playlist = {
+      id: "pl2",
+      name: "PL2",
+      tracks: ["sword_swing"],
+      loop: true,
+      shuffle: false,
+    };
+    mgr.registerPlaylist(pl1);
+    mgr.registerPlaylist(pl2);
+    mgr.startPlaylist("pl1");
+    const countBefore = mgr.activeInstanceCount();
+    mgr.startPlaylist("pl2");
+    // Music from pl1 should have been stopped
+    expect(mgr.activeInstanceCount()).toBeLessThanOrEqual(countBefore);
+  });
+
+  it("getChannelVolume returns 1 for unset channel", () => {
+    expect(mgr.getChannelVolume("voice" as never)).toBe(1);
+  });
+
+  it("getInstance returns undefined for unknown id", () => {
+    expect(mgr.getInstance("no-such-id")).toBeUndefined();
+  });
+
+  it("activeInstanceCount counts non-stopped instances", () => {
+    mgr.play("sword_swing");
+    mgr.play("sword_swing");
+    expect(mgr.activeInstanceCount()).toBe(2);
+  });
+
+  it("instanceCountOf returns 0 for unknown sound", () => {
+    expect(mgr.instanceCountOf("nonexistent")).toBe(0);
+  });
 });

@@ -58,8 +58,8 @@ pnpm test
 # Build packages
 pnpm run build:packages
 
-# Build starter game
-pnpm run build:starter
+# Build test park
+pnpm run build:test-park
 ```
 
 ### 5. Commit conventions

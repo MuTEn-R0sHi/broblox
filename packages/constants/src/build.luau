@@ -12,10 +12,10 @@
 	*
 	 * Current build ID.
 	 * Format: <game>-<semver>[-<commit>]
-	 * Examples: "starter-1.0.0", "starter-1.0.0-abc123"
+	 * Examples: "test-park-1.0.0", "test-park-1.0.0-abc123"
 	 
 ]]
-local BUILD_ID = "starter-0.0.0"
+local BUILD_ID = "test-park-0.0.0"
 --[[
 	*
 	 * Build timestamp (Unix seconds).

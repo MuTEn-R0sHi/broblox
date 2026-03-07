@@ -12,7 +12,7 @@ import { PetStore } from "./pet-store";
 export interface PetServiceConfig {
   /** Pet species to register. */
   pets: PetSpecies[];
-  /** DataStore name, e.g. "StarterPets". */
+  /** DataStore name, e.g. "TestParkPets". */
   datastoreName: string;
   /** Max simultaneously equipped pets. */
   maxEquipped?: number;

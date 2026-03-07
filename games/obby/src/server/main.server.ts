@@ -30,6 +30,9 @@ import { WorldService } from "./services/WorldService";
 import { AnalyticsService } from "./services/AnalyticsService";
 import { NotificationService } from "./services/NotificationService";
 import { EventService } from "./services/EventService";
+import { MarketplaceService } from "./services/MarketplaceService";
+import { ObservabilityService } from "./services/ObservabilityService";
+import { TelemetryService } from "./services/TelemetryService";
 import { PlayerActionService } from "./services/PlayerActionService";
 
 const logger = createLogger("Main");
@@ -44,9 +47,12 @@ logger.info("Starting Obby server...");
 // Register services in dependency order
 app
   .register(PlayerLifecycleService)
+  .register(ObservabilityService)
+  .register(TelemetryService)
   .register(SecurityService)
   .register(RemoteService)
   .register(DataService)
+  .register(MarketplaceService)
   .register(StageService)
   .register(CheckpointService)
   .register(LeaderboardService)

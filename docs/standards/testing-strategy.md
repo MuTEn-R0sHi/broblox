@@ -250,7 +250,7 @@ Before Phase 1 is complete, these tests must exist:
 
 - [x] React component tests (2 tests)
 
-### games/starter ✅
+### games/test-park ✅
 
 - [x] Handshake service tests (10 tests)
 - [x] Action service tests (10 tests)

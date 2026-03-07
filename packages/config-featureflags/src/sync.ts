@@ -64,7 +64,7 @@ class FeatureFlagSyncService {
   private connection: RBXScriptConnection | undefined;
 
   private constructor(cfg: FeatureFlagSyncConfig) {
-    const datastoreName = cfg.datastoreName ?? "StarterFeatureFlags";
+    const datastoreName = cfg.datastoreName ?? "TestParkFeatureFlags";
     const entryKeyPrefix = cfg.entryKeyPrefix ?? "featureflags_";
 
     this.environment = cfg.environment;
