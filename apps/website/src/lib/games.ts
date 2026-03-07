@@ -77,7 +77,7 @@ export const games: Game[] = [
       {
         title: "Coming Soon",
         description:
-          "We're working toward opening Test Park to everyone. Public access is on the roadmap.",
+          "We're working toward opening Test Park to everyone, with phased playtests and limited-time preview events planned.",
       },
       {
         title: "Community Hub",
