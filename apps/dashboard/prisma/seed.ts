@@ -72,6 +72,28 @@ const GAMES = [
 async function main() {
   console.log("Seeding games…\n");
 
+  // ── Migrate legacy "starter" → "test-park" ──────────────────────────────
+  // The game was renamed in the codebase; update the DB record so existing
+  // relations (flags, bans, matches, etc.) stay linked to the same row.
+  const legacy = await prisma.game.findUnique({ where: { slug: "starter" } });
+  if (legacy) {
+    const existing = await prisma.game.findUnique({ where: { slug: "test-park" } });
+    if (existing) {
+      console.warn(
+        "  ⚠  Both 'starter' and 'test-park' slugs exist in the database.\n" +
+          "     Skipping automatic migration — please merge or delete the duplicate manually.\n" +
+          `     starter id:    ${legacy.id}\n` +
+          `     test-park id:  ${existing.id}\n`
+      );
+    } else {
+      await prisma.game.update({
+        where: { id: legacy.id },
+        data: { slug: "test-park", name: "Test Park" },
+      });
+      console.log("  ↻  Migrated legacy 'starter' → 'test-park'\n");
+    }
+  }
+
   for (const game of GAMES) {
     const { slug, name, description, ...ids } = game;
     const result = await prisma.game.upsert({
