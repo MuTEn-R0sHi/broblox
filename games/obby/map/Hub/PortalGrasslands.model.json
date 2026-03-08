@@ -9,7 +9,7 @@
         "CanCollide": false,
         "Size": [10, 14, 2],
         "Position": [0, 9, 90],
-        "BrickColor": "Bright green",
+        "BrickColor": 37,
         "Material": "Neon",
         "Transparency": 0.4
       }
@@ -22,7 +22,7 @@
         "CanCollide": true,
         "Size": [2, 16, 2],
         "Position": [-6, 10, 90],
-        "BrickColor": "Earth green",
+        "BrickColor": 141,
         "Material": "Cobblestone"
       }
     },
@@ -34,7 +34,7 @@
         "CanCollide": true,
         "Size": [2, 16, 2],
         "Position": [6, 10, 90],
-        "BrickColor": "Earth green",
+        "BrickColor": 141,
         "Material": "Cobblestone"
       }
     },
@@ -46,7 +46,7 @@
         "CanCollide": true,
         "Size": [14, 2, 2],
         "Position": [0, 18, 90],
-        "BrickColor": "Earth green",
+        "BrickColor": 141,
         "Material": "Cobblestone"
       }
     },
@@ -58,7 +58,7 @@
         "CanCollide": false,
         "Size": [10, 3, 0.5],
         "Position": [0, 20, 90],
-        "BrickColor": "Earth green",
+        "BrickColor": 141,
         "Material": "SmoothPlastic"
       },
       "children": [
