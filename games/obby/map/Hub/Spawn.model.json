@@ -6,7 +6,7 @@
     "CanCollide": true,
     "Size": [12, 1, 12],
     "Position": [0, 2, 0],
-    "BrickColor": 194,
+    "Color": [0.631, 0.647, 0.635],
     "Material": "SmoothPlastic",
     "Neutral": true,
     "AllowTeamChangeOnTouch": false

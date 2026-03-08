@@ -6,7 +6,7 @@
     "CanCollide": true,
     "Size": [200, 1, 200],
     "Position": [0, 0, 20],
-    "BrickColor": 194,
+    "Color": [0.631, 0.647, 0.635],
     "Material": "Grass",
     "Transparency": 0
   }
