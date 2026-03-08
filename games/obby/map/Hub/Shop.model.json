@@ -36,12 +36,8 @@
               "name": "Text",
               "className": "TextLabel",
               "properties": {
-                "Size": [
-                  [1, 0],
-                  [1, 0]
-                ],
                 "BackgroundTransparency": 1,
-                "Text": "🛒 SHOP",
+                "Text": "\ud83d\uded2 SHOP",
                 "TextColor3": [1, 1, 1],
                 "TextScaled": true,
                 "Font": "GothamBold"
