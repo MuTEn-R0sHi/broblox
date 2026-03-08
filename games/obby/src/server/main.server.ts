@@ -3,7 +3,7 @@
  */
 
 import { Application, createLogger } from "@broblox/core";
-import { Lighting } from "@rbxts/services";
+import { Lighting, Workspace } from "@rbxts/services";
 import { PlayerLifecycleService } from "./services/PlayerLifecycleService";
 import { SecurityService } from "./services/SecurityService";
 import { RemoteService } from "./services/RemoteService";
@@ -85,6 +85,16 @@ app
 
 app.boot();
 logger.info("Obby server booted.");
+
+// Configure Hub TextLabel sizes at runtime (Rojo JSON models cannot represent UDim2)
+const hubFolder = Workspace.FindFirstChild("Hub") as Folder | undefined;
+if (hubFolder) {
+  for (const desc of hubFolder.GetDescendants()) {
+    if (desc.IsA("TextLabel")) {
+      desc.Size = new UDim2(1, 0, 1, 0);
+    }
+  }
+}
 
 // Handle graceful shutdown
 game.BindToClose(() => {
