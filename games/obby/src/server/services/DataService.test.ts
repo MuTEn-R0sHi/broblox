@@ -23,11 +23,14 @@ describe("DataService", () => {
   let playerAddedCallback: ((player: Player) => void) | undefined;
   let playerRemovingCallback: ((player: Player) => void) | undefined;
 
+  let capturedMigrations: Map<string, (data: unknown) => unknown> | undefined;
+
   beforeEach(() => {
     vi.resetModules();
 
     playerAddedCallback = undefined;
     playerRemovingCallback = undefined;
+    capturedMigrations = undefined;
 
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
 
@@ -69,24 +72,29 @@ describe("DataService", () => {
     }));
 
     vi.doMock("@broblox/data", () => ({
-      createDataService: () => ({
-        Service: {
-          name: "DataService",
-          onInit: vi.fn(),
-          onStart: vi.fn(() => mockSessionManager.startAutoSave()),
-          onDestroy: vi.fn(() => mockSessionManager.closeAll()),
-        },
-        getStore: () => mockStore,
-        getSessionManager: () => mockSessionManager,
-        initPlayer: vi.fn((player: unknown) => {
-          const session = mockSessionManager.startSession(player);
-          // Mirror factory behaviour: if startSession fails, getSession returns undefined.
-          if (session === undefined) mockSessionManager.getSession.mockReturnValue(undefined);
-        }),
-        cleanupPlayer: vi.fn((player: unknown) => {
-          mockSessionManager.endSession(player);
-        }),
-      }),
+      createDataService: (config: {
+        storeConfig: { migrations: Map<string, (data: unknown) => unknown> };
+      }) => {
+        capturedMigrations = config.storeConfig.migrations;
+        return {
+          Service: {
+            name: "DataService",
+            onInit: vi.fn(),
+            onStart: vi.fn(() => mockSessionManager.startAutoSave()),
+            onDestroy: vi.fn(() => mockSessionManager.closeAll()),
+          },
+          getStore: () => mockStore,
+          getSessionManager: () => mockSessionManager,
+          initPlayer: vi.fn((player: unknown) => {
+            const session = mockSessionManager.startSession(player);
+            // Mirror factory behaviour: if startSession fails, getSession returns undefined.
+            if (session === undefined) mockSessionManager.getSession.mockReturnValue(undefined);
+          }),
+          cleanupPlayer: vi.fn((player: unknown) => {
+            mockSessionManager.endSession(player);
+          }),
+        };
+      },
     }));
 
     vi.doMock("./RemoteService", () => ({
@@ -430,6 +438,80 @@ describe("DataService", () => {
       svc.onDestroy!();
 
       expect(mockSessionManager.closeAll).toHaveBeenCalled();
+    });
+  });
+
+  // ─── v1 → v2 migration ────────────────────────────────────────────────
+
+  describe("v1 → v2 migration", () => {
+    it("registers a 1_2 migration", async () => {
+      await loadDataService();
+      expect(capturedMigrations).toBeDefined();
+      expect(capturedMigrations!.has("1_2")).toBe(true);
+    });
+
+    it("maps all v1 fields to v2 worlds.grasslands", async () => {
+      await loadDataService();
+      const migrate = capturedMigrations!.get("1_2")!;
+
+      const v1Data = {
+        __version: 1,
+        currentStage: 5,
+        currentCheckpoint: 2,
+        coins: 42,
+        totalDeaths: 10,
+        totalCompletions: 3,
+        bestFullRunTime: 120.5,
+        stageProgress: {
+          "1": { stageNumber: 1, firstCompletedAt: 100, completions: 2, deaths: 1, bestTime: 30 },
+        },
+        unlockedItems: ["trail_fire"],
+        equippedTrail: "trail_fire",
+        lastPlayedAt: 9999,
+      };
+
+      const result = migrate(v1Data) as Record<string, unknown>;
+
+      expect(result.__version).toBe(2);
+      expect(result.coins).toBe(42);
+      expect(result.totalDeaths).toBe(10);
+      expect(result.totalCompletions).toBe(3);
+      expect(result.equippedTrail).toBe("trail_fire");
+
+      // World-scoped fields
+      const worlds = result.worlds as Record<string, Record<string, unknown>>;
+      expect(worlds.grasslands).toBeDefined();
+      expect(worlds.grasslands.currentStage).toBe(5);
+      expect(worlds.grasslands.currentCheckpoint).toBe(2);
+      expect(worlds.grasslands.completions).toBe(3);
+      expect(worlds.grasslands.bestFullRunTime).toBe(120.5);
+      expect(worlds.grasslands.stageProgress).toEqual(v1Data.stageProgress);
+
+      // New v2 defaults
+      const attrs = result.attributes as Record<string, number>;
+      expect(attrs.speed).toBe(10);
+      expect(attrs.jump).toBe(30);
+      expect(attrs.stamina).toBe(5);
+      expect(result.inventory).toEqual([]);
+      expect(result.equipped).toEqual({});
+    });
+
+    it("handles missing optional v1 fields gracefully", async () => {
+      await loadDataService();
+      const migrate = capturedMigrations!.get("1_2")!;
+
+      const minimalV1 = { __version: 1 };
+      const result = migrate(minimalV1) as Record<string, unknown>;
+
+      expect(result.__version).toBe(2);
+      expect(result.coins).toBe(0);
+      expect(result.totalDeaths).toBe(0);
+
+      const worlds = result.worlds as Record<string, Record<string, unknown>>;
+      expect(worlds.grasslands.currentStage).toBe(1);
+      expect(worlds.grasslands.currentCheckpoint).toBe(0);
+      expect(worlds.grasslands.bestFullRunTime).toBeUndefined();
+      expect(worlds.grasslands.stageProgress).toEqual({});
     });
   });
 });

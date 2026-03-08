@@ -108,6 +108,15 @@ describe("Marketplace E2E (obby)", () => {
       DataService: {
         getData: vi.fn(() => mockCoreData),
         addCoins: mockAddCoins,
+        setWorldStage: vi.fn(
+          (player: Player, worldId: string, stage: number, checkpoint: number) => {
+            const world = mockCoreData.worlds[worldId as keyof typeof mockCoreData.worlds];
+            if (world) {
+              world.currentStage = stage;
+              world.currentCheckpoint = checkpoint;
+            }
+          }
+        ),
       },
     }));
 

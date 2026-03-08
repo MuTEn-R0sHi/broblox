@@ -324,7 +324,7 @@ export const PlayerActionService: Service = {
           if (coreData) {
             const world = coreData.worlds["grasslands"];
             if (world) {
-              world.currentStage += 1;
+              DataService.setWorldStage(player, "grasslands", world.currentStage + 1, 0);
               trackPurchase(
                 player,
                 DEVELOPER_PRODUCTS[2].name,

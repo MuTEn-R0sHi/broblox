@@ -23,7 +23,8 @@
 local DSS = game:GetService("DataStoreService")
 
 -- ⚠️ SET YOUR USER ID HERE (find it at https://www.roblox.com/users/YOUR_ID/profile)
-local userId = 10272041833
+local userId = 0 -- CHANGE THIS before running!
+assert(userId ~= 0, "[ResetData] You must set 'userId' to your real UserId before running this script.")
 
 print(string.format("[ResetData] Wiping ALL obby data for UserId: %d ...", userId))
 

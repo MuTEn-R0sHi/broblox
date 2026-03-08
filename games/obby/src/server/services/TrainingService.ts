@@ -15,7 +15,7 @@
 
 import { CollectionService } from "@rbxts/services";
 import { Service, createLogger } from "@broblox/core";
-import { OBBY_CONSTANTS, AttributeType, PlayerAttributes } from "shared/types";
+import { OBBY_CONSTANTS, AttributeType } from "shared/types";
 import { DataService } from "./DataService";
 import { AttributeService } from "./AttributeService";
 import { RemoteService } from "./RemoteService";
@@ -26,6 +26,9 @@ const logger = createLogger("TrainingService");
 
 /** userId → last training completion time (os.clock) */
 const lastTrainTime = new Map<number, number>();
+
+/** userId set of players currently in a training rep */
+const trainingInProgress = new Set<number>();
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -103,6 +106,12 @@ export const TrainingService: Service = {
         return;
       }
 
+      // Block overlapping reps
+      if (trainingInProgress.has(player.UserId)) {
+        logger.debug(`${player.Name} already training`);
+        return;
+      }
+
       // Check attribute cap
       const attrs = DataService.getAttributes(player);
       if (!attrs) return;
@@ -114,12 +123,19 @@ export const TrainingService: Service = {
         return;
       }
 
-      // Simulate mini-activity (3s delay on server)
-      lastTrainTime.set(player.UserId, now);
+      // Mark in-progress and simulate mini-activity (3s delay on server)
+      trainingInProgress.add(player.UserId);
 
       task.delay(3, () => {
+        trainingInProgress.delete(player.UserId);
+        lastTrainTime.set(player.UserId, os.clock());
+
         // Re-validate player is still in game and near station
         if (!player.Parent) return;
+        if (!isNearStation(player, stationType)) {
+          logger.debug(`${player.Name} moved away from ${stationType} station during training`);
+          return;
+        }
         const currentAttrs = DataService.getAttributes(player);
         if (!currentAttrs) return;
 
