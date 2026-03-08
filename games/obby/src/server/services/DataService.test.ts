@@ -168,24 +168,17 @@ describe("DataService", () => {
   // ─── updateData ──────────────────────────────────────────────────────
 
   describe("updateData", () => {
-    it("updates currentCheckpoint", async () => {
+    it("updates currentStage and currentCheckpoint via setWorldStage", async () => {
       const svc = await loadDataService();
       const player = makePlayer();
 
-      svc.updateData(player, { currentCheckpoint: 3 });
+      svc.setWorldStage(player, "grasslands", 5, 3);
 
-      expect(mockSession.data.currentCheckpoint).toBe(3);
+      const worlds = mockSession.data.worlds as Record<string, Record<string, unknown>>;
+      expect(worlds.grasslands.currentStage).toBe(5);
+      expect(worlds.grasslands.currentCheckpoint).toBe(3);
       expect(mockSession.markDirty).toHaveBeenCalled();
       expect(mockStore.markDirty).toHaveBeenCalledWith(player);
-    });
-
-    it("updates currentStage", async () => {
-      const svc = await loadDataService();
-      const player = makePlayer();
-
-      svc.updateData(player, { currentStage: 5 });
-
-      expect(mockSession.data.currentStage).toBe(5);
     });
 
     it("updates coins", async () => {
@@ -215,13 +208,15 @@ describe("DataService", () => {
       expect(mockSession.data.totalCompletions).toBe(2);
     });
 
-    it("updates bestFullRunTime", async () => {
+    it("updates bestFullRunTime via setWorldBestRunTime", async () => {
       const svc = await loadDataService();
       const player = makePlayer();
 
-      svc.updateData(player, { bestFullRunTime: 120.5 });
+      svc.setWorldBestRunTime(player, "grasslands", 120.5);
 
-      expect(mockSession.data.bestFullRunTime).toBe(120.5);
+      const worlds = mockSession.data.worlds as Record<string, Record<string, unknown>>;
+      expect(worlds.grasslands.bestFullRunTime).toBe(120.5);
+      expect(mockSession.markDirty).toHaveBeenCalled();
     });
 
     it("logs warning and returns when no session", async () => {
@@ -242,9 +237,13 @@ describe("DataService", () => {
       const svc = await loadDataService();
       const player = makePlayer();
 
-      svc.updateStageProgress(player, 1, { completions: 1, bestTime: 30 });
+      svc.updateStageProgress(player, "grasslands", 1, { completions: 1, bestTime: 30 });
 
-      const progress = mockSession.data.stageProgress as Record<string, Record<string, unknown>>;
+      const worlds = mockSession.data.worlds as Record<
+        string,
+        Record<string, Record<string, Record<string, unknown>>>
+      >;
+      const progress = worlds.grasslands.stageProgress;
       expect(progress["1"]).toBeDefined();
       expect(progress["1"].stageNumber).toBe(1);
       expect(progress["1"].completions).toBe(1);
@@ -256,8 +255,12 @@ describe("DataService", () => {
       const svc = await loadDataService();
       const player = makePlayer();
 
-      // Pre-seed existing progress
-      (mockSession.data.stageProgress as Record<string, unknown>)["1"] = {
+      // Pre-seed existing progress in world
+      const worlds = mockSession.data.worlds as Record<
+        string,
+        Record<string, Record<string, unknown>>
+      >;
+      worlds.grasslands.stageProgress["1"] = {
         stageNumber: 1,
         firstCompletedAt: 1000,
         completions: 2,
@@ -265,9 +268,9 @@ describe("DataService", () => {
         bestTime: 40,
       };
 
-      svc.updateStageProgress(player, 1, { completions: 1 });
+      svc.updateStageProgress(player, "grasslands", 1, { completions: 1 });
 
-      const progress = mockSession.data.stageProgress as Record<string, Record<string, number>>;
+      const progress = worlds.grasslands.stageProgress as Record<string, Record<string, number>>;
       expect(progress["1"].completions).toBe(3);
     });
 
@@ -275,7 +278,11 @@ describe("DataService", () => {
       const svc = await loadDataService();
       const player = makePlayer();
 
-      (mockSession.data.stageProgress as Record<string, unknown>)["1"] = {
+      const worlds = mockSession.data.worlds as Record<
+        string,
+        Record<string, Record<string, unknown>>
+      >;
+      worlds.grasslands.stageProgress["1"] = {
         stageNumber: 1,
         firstCompletedAt: 1000,
         completions: 1,
@@ -284,12 +291,12 @@ describe("DataService", () => {
       };
 
       // Worse time — should NOT update
-      svc.updateStageProgress(player, 1, { bestTime: 50 });
-      const progress = mockSession.data.stageProgress as Record<string, Record<string, number>>;
+      svc.updateStageProgress(player, "grasslands", 1, { bestTime: 50 });
+      const progress = worlds.grasslands.stageProgress as Record<string, Record<string, number>>;
       expect(progress["1"].bestTime).toBe(30);
 
       // Better time — should update
-      svc.updateStageProgress(player, 1, { bestTime: 20 });
+      svc.updateStageProgress(player, "grasslands", 1, { bestTime: 20 });
       expect(progress["1"].bestTime).toBe(20);
     });
 
@@ -298,7 +305,7 @@ describe("DataService", () => {
       const svc = await loadDataService();
       const player = makePlayer();
 
-      svc.updateStageProgress(player, 1, { completions: 1 });
+      svc.updateStageProgress(player, "grasslands", 1, { completions: 1 });
 
       expect(mockSession.markDirty).not.toHaveBeenCalled();
     });

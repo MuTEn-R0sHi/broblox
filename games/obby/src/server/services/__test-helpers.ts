@@ -53,21 +53,45 @@ export function makePlayer(overrides: MakePlayerOverrides = {}): Player {
 // ── Default data factory ───────────────────────────────────────────────────
 
 /**
- * Creates a default `ObbyPlayerData` object, optionally overriding fields.
+ * Creates a default `ObbyPlayerData` object (v2), optionally overriding fields.
+ *
+ * For backwards-compatibility with existing tests, top-level `currentStage`,
+ * `currentCheckpoint`, `bestFullRunTime`, and `stageProgress` overrides are
+ * routed into the grasslands world entry.
  */
 export function makeDefaultData(overrides: Record<string, unknown> = {}) {
+  // Pull world-scoped fields out of overrides so they end up in the right place
+  const { currentStage, currentCheckpoint, bestFullRunTime, stageProgress, ...rest } = overrides;
+
   return {
-    __version: 1,
-    currentCheckpoint: 0,
-    currentStage: 1,
+    __version: 2,
+    attributes: { speed: 10, jump: 30, stamina: 5 },
+    trainingReps: { speed: 0, jump: 0, stamina: 0 },
     coins: 0,
+    worlds: {
+      grasslands: {
+        currentStage: (currentStage as number) ?? 1,
+        currentCheckpoint: (currentCheckpoint as number) ?? 0,
+        completions: 0,
+        bestFullRunTime: bestFullRunTime ?? undefined,
+        stageProgress: stageProgress ?? {},
+      },
+    },
+    inventory: [],
+    equipped: {},
     totalDeaths: 0,
     totalCompletions: 0,
-    bestFullRunTime: undefined,
-    stageProgress: {},
     unlockedItems: [],
     equippedTrail: undefined,
     lastPlayedAt: 0,
-    ...overrides,
+    ...rest,
   };
+}
+
+/**
+ * Get world progress helper for tests — mirrors DataService.getWorldProgress.
+ */
+export function getWorldProgress(data: ReturnType<typeof makeDefaultData>, worldId: string) {
+  const worlds = data.worlds as Record<string, Record<string, unknown>>;
+  return worlds[worldId];
 }

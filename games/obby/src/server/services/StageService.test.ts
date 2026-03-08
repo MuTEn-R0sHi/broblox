@@ -43,6 +43,13 @@ describe("StageService", () => {
 
     mockDataService = {
       getData: vi.fn(() => makeDefaultData()),
+      getWorldProgress: vi.fn((_player: unknown, worldId: string) => {
+        const data = mockDataService.getData();
+        return (data.worlds as Record<string, unknown>)[worldId];
+      }),
+      setWorldStage: vi.fn(),
+      setWorldBestRunTime: vi.fn(),
+      incrementWorldCompletions: vi.fn(),
       updateData: vi.fn(),
       addCoins: vi.fn(),
       incrementDeaths: vi.fn(),
@@ -236,16 +243,13 @@ describe("StageService", () => {
       expect(mockDataService.addCoins).toHaveBeenCalledWith(player, 10);
 
       // Updates stage progress
-      expect(mockDataService.updateStageProgress).toHaveBeenCalledWith(player, 1, {
+      expect(mockDataService.updateStageProgress).toHaveBeenCalledWith(player, "grasslands", 1, {
         completions: 1,
         bestTime: 5.0,
       });
 
       // Advances to next stage
-      expect(mockDataService.updateData).toHaveBeenCalledWith(player, {
-        currentStage: 2,
-        currentCheckpoint: 0,
-      });
+      expect(mockDataService.setWorldStage).toHaveBeenCalledWith(player, "grasslands", 2, 0);
 
       // Resets stage timer
       expect(mockDataService.startStageTimer).toHaveBeenCalledWith(player);
@@ -287,7 +291,7 @@ describe("StageService", () => {
       svc.completeStage(player, 1);
 
       // bestTime not passed since old time is better
-      expect(mockDataService.updateStageProgress).toHaveBeenCalledWith(player, 1, {
+      expect(mockDataService.updateStageProgress).toHaveBeenCalledWith(player, "grasslands", 1, {
         completions: 1,
         bestTime: undefined,
       });
@@ -302,12 +306,20 @@ describe("StageService", () => {
 
     it("syncs PlayerDataSync after advancing", async () => {
       const updatedData = makeDefaultData({ currentStage: 2, coins: 10 });
-      let callCount = 0;
+      let getDataCallCount = 0;
       mockDataService.getData.mockImplementation(() => {
-        callCount++;
-        // First call (in completeStage validation): stage 1
-        // Second call (after advancing): stage 2
-        return callCount <= 1 ? makeDefaultData({ currentStage: 1 }) : updatedData;
+        getDataCallCount++;
+        // First getData call: validation check — returns stage 1
+        // Subsequent getData calls: after advancing — returns stage 2
+        return getDataCallCount <= 1 ? makeDefaultData({ currentStage: 1 }) : updatedData;
+      });
+      // getWorldProgress is called during validation — should return stage 1
+      mockDataService.getWorldProgress.mockReturnValue({
+        currentStage: 1,
+        currentCheckpoint: 0,
+        completions: 0,
+        bestFullRunTime: undefined,
+        stageProgress: {},
       });
       setupTwoStages();
       const svc = await loadStageService();
@@ -349,15 +361,15 @@ describe("StageService", () => {
       expect(mockDataService.addCoins).toHaveBeenCalledWith(player, 50);
 
       // Resets to stage 1 with incremented completions
+      expect(mockDataService.incrementWorldCompletions).toHaveBeenCalledWith(player, "grasslands");
       expect(mockDataService.updateData).toHaveBeenCalledWith(
         player,
         expect.objectContaining({
           totalCompletions: 1,
-          currentStage: 1,
-          currentCheckpoint: 0,
-          bestFullRunTime: 120.0,
         })
       );
+      expect(mockDataService.setWorldStage).toHaveBeenCalledWith(player, "grasslands", 1, 0);
+      expect(mockDataService.setWorldBestRunTime).toHaveBeenCalledWith(player, "grasslands", 120.0);
 
       // Restarts both timers for new run
       expect(mockDataService.startRunTimer).toHaveBeenCalledWith(player);
@@ -381,11 +393,8 @@ describe("StageService", () => {
 
       svc.completeStage(player, 1);
 
-      // Should NOT include bestFullRunTime since 120 > 50
-      expect(mockDataService.updateData).toHaveBeenCalledWith(
-        player,
-        expect.not.objectContaining({ bestFullRunTime: expect.anything() })
-      );
+      // Should NOT update best run time since 120 > 50
+      expect(mockDataService.setWorldBestRunTime).not.toHaveBeenCalled();
     });
 
     it("task.delay respawns player after full obby completion", async () => {

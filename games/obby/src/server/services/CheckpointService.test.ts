@@ -67,6 +67,20 @@ describe("CheckpointService", () => {
 
     mockDataService = {
       getData: vi.fn(() => makeDefaultData()),
+      getWorldProgress: vi.fn((_player: unknown, worldId: string) => {
+        const data = mockDataService.getData();
+        return (data.worlds as Record<string, unknown>)[worldId];
+      }),
+      setWorldStage: vi.fn(
+        (_player: unknown, worldId: string, stage: number, checkpoint: number) => {
+          const data = mockDataService.getData();
+          const worlds = data.worlds as Record<string, Record<string, number>>;
+          if (worlds[worldId]) {
+            worlds[worldId].currentStage = stage;
+            worlds[worldId].currentCheckpoint = checkpoint;
+          }
+        }
+      ),
       updateData: vi.fn(),
       addCoins: vi.fn(),
       incrementDeaths: vi.fn(),
@@ -91,6 +105,7 @@ describe("CheckpointService", () => {
 
     mockWorkspace = {
       FindFirstChild: vi.fn(() => undefined),
+      Raycast: vi.fn(() => undefined),
     };
 
     vi.doMock("@broblox/core", () => ({
@@ -165,7 +180,7 @@ describe("CheckpointService", () => {
 
       svc.touchCheckpoint(player, 2, 0);
 
-      expect(mockDataService.updateData).not.toHaveBeenCalled();
+      expect(mockDataService.setWorldStage).not.toHaveBeenCalled();
     });
 
     it("returns early when checkpoint already passed", async () => {
@@ -177,7 +192,7 @@ describe("CheckpointService", () => {
 
       svc.touchCheckpoint(player, 1, 2); // cp 2 < current 3
 
-      expect(mockDataService.updateData).not.toHaveBeenCalled();
+      expect(mockDataService.setWorldStage).not.toHaveBeenCalled();
     });
 
     it("updates data when touching valid checkpoint (same as current)", async () => {
@@ -214,7 +229,7 @@ describe("CheckpointService", () => {
       svc.touchCheckpoint(player, 1, 0);
 
       // Same checkpoint, not new, but still updates data
-      expect(mockDataService.updateData).toHaveBeenCalledWith(player, { currentCheckpoint: 0 });
+      expect(mockDataService.setWorldStage).toHaveBeenCalledWith(player, "grasslands", 1, 0);
     });
 
     it("fires client event when touching a new checkpoint", async () => {
@@ -245,7 +260,7 @@ describe("CheckpointService", () => {
 
       svc.touchCheckpoint(player, 1, 1);
 
-      expect(mockDataService.updateData).toHaveBeenCalledWith(player, { currentCheckpoint: 1 });
+      expect(mockDataService.setWorldStage).toHaveBeenCalledWith(player, "grasslands", 1, 1);
       expect(mockRegistry.fireClient).toHaveBeenCalledWith(
         "CheckpointReached",
         player,
@@ -287,7 +302,7 @@ describe("CheckpointService", () => {
       svc.touchCheckpoint(player, 1, 2); // same as current
 
       // Still updates data
-      expect(mockDataService.updateData).toHaveBeenCalled();
+      expect(mockDataService.setWorldStage).toHaveBeenCalled();
       // But no client event since not new
       expect(mockRegistry.fireClient).not.toHaveBeenCalled();
     });
@@ -320,11 +335,11 @@ describe("CheckpointService", () => {
 
       // First touch succeeds
       svc.touchCheckpoint(player, 1, 0);
-      expect(mockDataService.updateData).toHaveBeenCalledTimes(1);
+      expect(mockDataService.setWorldStage).toHaveBeenCalledTimes(1);
 
       // Immediate second touch silently ignored (cooldown)
       svc.touchCheckpoint(player, 1, 0);
-      expect(mockDataService.updateData).toHaveBeenCalledTimes(1);
+      expect(mockDataService.setWorldStage).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -785,7 +800,7 @@ describe("CheckpointService", () => {
       };
       requestRespawnHandler!(player, { toCheckpoint: 1 });
 
-      expect(mockDataService.updateData).toHaveBeenCalledWith(player, { currentCheckpoint: 1 });
+      expect(mockDataService.setWorldStage).toHaveBeenCalledWith(player, "grasslands", 1, 1);
     });
 
     it("ignores toCheckpoint beyond current", async () => {
@@ -1056,7 +1071,7 @@ describe("CheckpointService", () => {
       const touchCallback = cpPart.Touched.Connect.mock.calls[0][0] as (h: unknown) => void;
       touchCallback(hitPart);
 
-      expect(mockDataService.updateData).toHaveBeenCalledWith(player, { currentCheckpoint: 0 });
+      expect(mockDataService.setWorldStage).toHaveBeenCalledWith(player, "grasslands", 1, 0);
     });
 
     it("ignores touch when no humanoid present", async () => {

@@ -170,7 +170,11 @@ describe("UIController (obby client)", () => {
         onLeaderboard: vi.fn(),
         onLeaderboardRefreshStatus: vi.fn(),
         onDataSync: vi.fn(),
+        onAttributeSync: vi.fn(),
+        onTrainingComplete: vi.fn(),
+        onStaminaSync: vi.fn(),
         requestLeaderboardRefresh: vi.fn(),
+        requestTraining: vi.fn(),
       },
     }));
   });
