@@ -52,7 +52,6 @@ jobs:
               echo "universe_id=${{ vars.TEST_PARK_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
               echo "place_id=${{ vars.TEST_PARK_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
             fi
-            echo "build_cmd=pnpm run build:test-park" >> $GITHUB_OUTPUT
             echo "game_path=games/test-park" >> $GITHUB_OUTPUT
           elif [ "$GAME" = "obby" ]; then
             if [ "$ENV" = "staging" ]; then
@@ -62,7 +61,6 @@ jobs:
               echo "universe_id=${{ vars.OBBY_PROD_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
               echo "place_id=${{ vars.OBBY_PROD_PLACE_ID }}" >> $GITHUB_OUTPUT
             fi
-            echo "build_cmd=pnpm --filter @broblox/game-obby run build" >> $GITHUB_OUTPUT
             echo "game_path=games/obby" >> $GITHUB_OUTPUT
           fi
 
@@ -106,7 +104,7 @@ jobs:
         run: pnpm run build:packages
 
       - name: Build game
-        run: ${{ steps.game.outputs.build_cmd }}
+        run: pnpm --filter @broblox/game-${{ inputs.game }} run build
 
       - name: Setup Aftman (Rojo)
         uses: ok-nick/setup-aftman@v0.4.2
