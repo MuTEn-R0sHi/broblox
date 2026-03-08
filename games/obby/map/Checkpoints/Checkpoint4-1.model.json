@@ -9,7 +9,7 @@
     "CanCollide": false,
     "CanTouch": true,
     "Size": [4, 8, 1],
-    "Position": [0, 72, 548],
+    "Position": [0, 68, 544],
     "Material": "Neon",
     "Transparency": 0.5
   }

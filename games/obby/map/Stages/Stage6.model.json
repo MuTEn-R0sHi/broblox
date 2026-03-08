@@ -17,7 +17,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [20, 2, 20],
-        "Position": [0, 119, 845],
+        "Position": [0, 104, 820],
         "Material": "SmoothPlastic"
       }
     },
@@ -28,7 +28,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [3, 2, 3],
-        "Position": [5, 123, 862],
+        "Position": [3, 107, 835],
         "Material": "SmoothPlastic"
       }
     },
@@ -39,7 +39,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [-6, 127, 878],
+        "Position": [-3, 109, 847],
         "Material": "SmoothPlastic"
       }
     },
@@ -50,7 +50,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [3, 2, 3],
-        "Position": [8, 131, 893],
+        "Position": [3, 111, 859],
         "Material": "SmoothPlastic"
       }
     },
@@ -61,7 +61,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [8, 2, 8],
-        "Position": [0, 134, 910],
+        "Position": [0, 113, 874],
         "Material": "SmoothPlastic"
       }
     },
@@ -72,7 +72,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [-7, 138, 926],
+        "Position": [-3, 116, 888],
         "Material": "SmoothPlastic"
       }
     },
@@ -83,7 +83,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [6, 142, 942],
+        "Position": [3, 118, 900],
         "Material": "SmoothPlastic"
       }
     },
@@ -94,7 +94,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [-4, 146, 958],
+        "Position": [-2, 120, 912],
         "Material": "SmoothPlastic"
       }
     },
@@ -105,7 +105,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [7, 150, 972],
+        "Position": [3, 122, 924],
         "Material": "SmoothPlastic"
       }
     },
@@ -116,7 +116,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [8, 2, 8],
-        "Position": [0, 153, 988],
+        "Position": [0, 124, 940],
         "Material": "SmoothPlastic"
       }
     },
@@ -127,7 +127,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [5, 157, 1004],
+        "Position": [3, 127, 954],
         "Material": "SmoothPlastic"
       }
     },
@@ -138,7 +138,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [2, 2, 2],
-        "Position": [-6, 161, 1018],
+        "Position": [-3, 129, 966],
         "Material": "SmoothPlastic"
       }
     },
@@ -152,7 +152,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [20, 2, 20],
-        "Position": [0, 165, 1040],
+        "Position": [0, 132, 985],
         "Material": "SmoothPlastic"
       }
     },
@@ -167,7 +167,7 @@
         "CanCollide": false,
         "CanTouch": true,
         "Size": [200, 1, 300],
-        "Position": [0, 90, 940],
+        "Position": [0, 75, 900],
         "Material": "Neon",
         "Transparency": 0.3
       }
@@ -184,7 +184,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [5, 126, 862],
+        "Position": [3, 110, 835],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -201,7 +201,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [-6, 130, 878],
+        "Position": [-3, 112, 847],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -218,7 +218,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [-7, 141, 926],
+        "Position": [-3, 119, 888],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -235,7 +235,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [6, 145, 942],
+        "Position": [3, 121, 900],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -252,7 +252,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [3, 3, 3],
-        "Position": [7, 153, 972],
+        "Position": [3, 125, 924],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -269,7 +269,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [3, 3, 3],
-        "Position": [5, 160, 1004],
+        "Position": [3, 130, 954],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -286,7 +286,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [4, 4, 4],
-        "Position": [0, 168, 1040],
+        "Position": [0, 135, 985],
         "Material": "Neon",
         "Transparency": 0.2
       }
