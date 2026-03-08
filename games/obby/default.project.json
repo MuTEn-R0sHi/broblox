@@ -293,6 +293,9 @@
 
     "Workspace": {
       "$className": "Workspace",
+      "Hub": {
+        "$path": "map/Hub"
+      },
       "Stages": {
         "$path": "map/Stages"
       },

@@ -34,6 +34,9 @@ import { MarketplaceService } from "./services/MarketplaceService";
 import { ObservabilityService } from "./services/ObservabilityService";
 import { TelemetryService } from "./services/TelemetryService";
 import { PlayerActionService } from "./services/PlayerActionService";
+import { AttributeService } from "./services/AttributeService";
+import { StaminaService } from "./services/StaminaService";
+import { TrainingService } from "./services/TrainingService";
 
 const logger = createLogger("Main");
 const app = new Application();
@@ -52,6 +55,9 @@ app
   .register(SecurityService)
   .register(RemoteService)
   .register(DataService)
+  .register(AttributeService)
+  .register(StaminaService)
+  .register(TrainingService)
   .register(MarketplaceService)
   .register(StageService)
   .register(CheckpointService)

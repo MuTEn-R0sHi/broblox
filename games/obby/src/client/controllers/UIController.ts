@@ -11,6 +11,8 @@ import {
   CheckpointReachedEvent,
   LeaderboardRefreshStatusPayload,
   LeaderboardUpdatePayload,
+  PlayerAttributes,
+  OBBY_CONSTANTS,
 } from "shared/types";
 
 const logger = createLogger("UIController");
@@ -26,6 +28,13 @@ let leaderboardFrame: Frame | undefined;
 let leaderboardUpdatedLabel: TextLabel | undefined;
 let leaderboardList: Frame | undefined;
 let leaderboardRefreshButton: TextButton | undefined;
+let speedBar: Frame | undefined;
+let jumpBar: Frame | undefined;
+let staminaBar: Frame | undefined;
+let staminaBarFill: Frame | undefined;
+let speedValueLabel: TextLabel | undefined;
+let jumpValueLabel: TextLabel | undefined;
+let staminaValueLabel: TextLabel | undefined;
 
 // State
 let currentStage = 1;
@@ -34,6 +43,13 @@ let stageStartTime = os.clock();
 let leaderboardRefreshCoolingDown = false;
 let leaderboardRefreshPending = false;
 let leaderboardRefreshNonce = 0;
+let currentAttributes: PlayerAttributes = {
+  speed: OBBY_CONSTANTS.DEFAULT_SPEED,
+  jump: OBBY_CONSTANTS.DEFAULT_JUMP,
+  stamina: OBBY_CONSTANTS.DEFAULT_STAMINA,
+};
+let currentStamina: number = OBBY_CONSTANTS.DEFAULT_STAMINA;
+let maxStamina: number = OBBY_CONSTANTS.DEFAULT_STAMINA;
 
 function updateLeaderboardRefreshButton(): void {
   const btn = leaderboardRefreshButton;
@@ -111,7 +127,11 @@ function onCheckpointReached(event: CheckpointReachedEvent): void {
   }
 
   stageStartTime = os.clock();
-  showNotification(`✓ Checkpoint ${event.checkpointId}`, new Color3(0.2, 0.8, 0.2), 2);
+  showNotification(
+    `✓ Stage ${event.stageNumber} — Checkpoint ${event.checkpointId + 1}`,
+    new Color3(0.2, 0.8, 0.2),
+    2
+  );
 }
 
 function onStageCompleted(event: StageCompletedEvent): void {
@@ -134,6 +154,7 @@ function onDataSync(data: {
   coins: number;
   currentStage: number;
   currentCheckpoint: number;
+  attributes?: PlayerAttributes;
 }): void {
   logger.debug(`Data sync received: coins=${data.coins}`);
   const coinDelta = data.coins - coins;
@@ -147,6 +168,54 @@ function onDataSync(data: {
 
   if (coinDelta > 0) {
     showNotification(`+${coinDelta} coins!`, new Color3(1, 0.8, 0), 1.5);
+  }
+
+  if (data.attributes) {
+    currentAttributes = data.attributes;
+    maxStamina = data.attributes.stamina;
+    currentStamina = maxStamina;
+    updateAttributeBars();
+    updateStaminaBar();
+  }
+}
+
+function updateAttributeBars(): void {
+  if (speedBar && speedValueLabel) {
+    const pct =
+      (currentAttributes.speed - OBBY_CONSTANTS.DEFAULT_SPEED) /
+      (OBBY_CONSTANTS.MAX_SPEED - OBBY_CONSTANTS.DEFAULT_SPEED);
+    speedBar.Size = new UDim2(math.clamp(pct, 0, 1), 0, 1, 0);
+    speedValueLabel.Text = string.format("SPD %.0f", currentAttributes.speed);
+  }
+  if (jumpBar && jumpValueLabel) {
+    const pct =
+      (currentAttributes.jump - OBBY_CONSTANTS.DEFAULT_JUMP) /
+      (OBBY_CONSTANTS.MAX_JUMP - OBBY_CONSTANTS.DEFAULT_JUMP);
+    jumpBar.Size = new UDim2(math.clamp(pct, 0, 1), 0, 1, 0);
+    jumpValueLabel.Text = string.format("JMP %.0f", currentAttributes.jump);
+  }
+  if (staminaBar && staminaValueLabel) {
+    const pct =
+      (currentAttributes.stamina - OBBY_CONSTANTS.DEFAULT_STAMINA) /
+      (OBBY_CONSTANTS.MAX_STAMINA - OBBY_CONSTANTS.DEFAULT_STAMINA);
+    staminaBar.Size = new UDim2(math.clamp(pct, 0, 1), 0, 1, 0);
+    staminaValueLabel.Text = string.format("STA %.0f", currentAttributes.stamina);
+  }
+}
+
+function updateStaminaBar(): void {
+  if (staminaBarFill) {
+    const pct = maxStamina > 0 ? currentStamina / maxStamina : 0;
+    staminaBarFill.Size = new UDim2(math.clamp(pct, 0, 1), 0, 1, 0);
+
+    // Color shifts from green → yellow → red as stamina drops
+    if (pct > 0.5) {
+      staminaBarFill.BackgroundColor3 = new Color3(0.2, 0.8, 0.2);
+    } else if (pct > 0.2) {
+      staminaBarFill.BackgroundColor3 = new Color3(0.9, 0.7, 0.1);
+    } else {
+      staminaBarFill.BackgroundColor3 = new Color3(0.9, 0.2, 0.2);
+    }
   }
 }
 
@@ -297,6 +366,104 @@ function createUI(playerGui: PlayerGui): void {
   coinsLabel.Text = `🪙 ${coins}`;
   coinsLabel.Parent = topBar;
 
+  // Attribute bars row (below top bar)
+  const attrRow = new Instance("Frame");
+  attrRow.Name = "AttributeBars";
+  attrRow.Size = new UDim2(0.5, 0, 0, 22);
+  attrRow.Position = new UDim2(0.25, 0, 0, 54);
+  attrRow.BackgroundTransparency = 1;
+  attrRow.Parent = mainGui;
+
+  const attrLayout = new Instance("UIListLayout");
+  attrLayout.FillDirection = Enum.FillDirection.Horizontal;
+  attrLayout.SortOrder = Enum.SortOrder.LayoutOrder;
+  attrLayout.Padding = new UDim(0, 8);
+  attrLayout.Parent = attrRow;
+
+  // Helper to create a stat bar
+  const barColors: [string, Color3][] = [
+    ["Speed", new Color3(0.2, 0.5, 1)],
+    ["Jump", new Color3(0.2, 0.8, 0.3)],
+    ["Stamina", new Color3(1, 0.6, 0.1)],
+  ];
+
+  const barRefs: Frame[] = [];
+  const labelRefs: TextLabel[] = [];
+
+  for (const [barName, barColor] of barColors) {
+    const container = new Instance("Frame");
+    container.Name = barName;
+    container.Size = new UDim2(0, 150, 1, 0);
+    container.BackgroundColor3 = new Color3(0.15, 0.15, 0.15);
+    container.BackgroundTransparency = 0.4;
+    container.BorderSizePixel = 0;
+    container.Parent = attrRow;
+
+    const cCorner = new Instance("UICorner");
+    cCorner.CornerRadius = new UDim(0, 6);
+    cCorner.Parent = container;
+
+    const fill = new Instance("Frame");
+    fill.Name = "Fill";
+    fill.Size = new UDim2(0, 0, 1, 0);
+    fill.BackgroundColor3 = barColor;
+    fill.BackgroundTransparency = 0.3;
+    fill.BorderSizePixel = 0;
+    fill.Parent = container;
+
+    const fCorner = new Instance("UICorner");
+    fCorner.CornerRadius = new UDim(0, 6);
+    fCorner.Parent = fill;
+
+    const lbl = new Instance("TextLabel");
+    lbl.Name = "Label";
+    lbl.Size = new UDim2(1, 0, 1, 0);
+    lbl.BackgroundTransparency = 1;
+    lbl.TextColor3 = new Color3(1, 1, 1);
+    lbl.TextSize = 13;
+    lbl.Font = Enum.Font.GothamBold;
+    lbl.Text = barName;
+    lbl.ZIndex = 2;
+    lbl.Parent = container;
+
+    barRefs.push(fill);
+    labelRefs.push(lbl);
+  }
+
+  speedBar = barRefs[0];
+  jumpBar = barRefs[1];
+  staminaBar = barRefs[2];
+  speedValueLabel = labelRefs[0];
+  jumpValueLabel = labelRefs[1];
+  staminaValueLabel = labelRefs[2];
+  updateAttributeBars();
+
+  // Stamina energy bar (bottom center)
+  const staminaContainer = new Instance("Frame");
+  staminaContainer.Name = "StaminaEnergy";
+  staminaContainer.Size = new UDim2(0.3, 0, 0, 12);
+  staminaContainer.Position = new UDim2(0.35, 0, 1, -30);
+  staminaContainer.BackgroundColor3 = new Color3(0.1, 0.1, 0.1);
+  staminaContainer.BackgroundTransparency = 0.4;
+  staminaContainer.BorderSizePixel = 0;
+  staminaContainer.Parent = mainGui;
+
+  const staminaContainerCorner = new Instance("UICorner");
+  staminaContainerCorner.CornerRadius = new UDim(0, 6);
+  staminaContainerCorner.Parent = staminaContainer;
+
+  staminaBarFill = new Instance("Frame");
+  staminaBarFill.Name = "Fill";
+  staminaBarFill.Size = new UDim2(1, 0, 1, 0);
+  staminaBarFill.BackgroundColor3 = new Color3(0.2, 0.8, 0.2);
+  staminaBarFill.BackgroundTransparency = 0.2;
+  staminaBarFill.BorderSizePixel = 0;
+  staminaBarFill.Parent = staminaContainer;
+
+  const staminaFillCorner = new Instance("UICorner");
+  staminaFillCorner.CornerRadius = new UDim(0, 6);
+  staminaFillCorner.Parent = staminaBarFill;
+
   // Notification frame
   notificationFrame = new Instance("Frame");
   notificationFrame.Name = "Notifications";
@@ -434,6 +601,28 @@ export const UIController: Controller = {
     RemoteController.onDataSync((data) => onDataSync(data));
     RemoteController.onLeaderboard((data) => onLeaderboardUpdate(data));
     RemoteController.onLeaderboardRefreshStatus((data) => onLeaderboardRefreshStatus(data));
+
+    // RPG event subscriptions
+    RemoteController.onAttributeSync((data) => {
+      currentAttributes = data.effective;
+      updateAttributeBars();
+    });
+
+    RemoteController.onTrainingComplete((data) => {
+      const label =
+        data.attribute === "speed" ? "Speed" : data.attribute === "jump" ? "Jump" : "Stamina";
+      showNotification(
+        `${label} +${string.format("%.1f", data.gain)}  →  ${string.format("%.1f", data.newValue)}`,
+        new Color3(0.3, 0.9, 0.3),
+        2
+      );
+    });
+
+    RemoteController.onStaminaSync((data) => {
+      currentStamina = data.current;
+      maxStamina = data.max;
+      updateStaminaBar();
+    });
 
     // Start timer update loop
     task.spawn(() => timerLoop());

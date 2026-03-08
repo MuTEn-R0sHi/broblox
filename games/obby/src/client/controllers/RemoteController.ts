@@ -18,6 +18,12 @@ import {
   EventActivePayload,
 } from "shared/remotes";
 import type {
+  AttributeSyncPayload,
+  TrainingCompletePayload,
+  StaminaSyncPayload,
+  AttributeType,
+} from "shared/types";
+import type {
   CheckpointReachedEvent,
   LeaderboardRefreshStatusPayload,
   LeaderboardUpdatePayload,
@@ -46,6 +52,9 @@ type AchievementCompletedCallback = (data: AchievementCompletedPayload) => void;
 type DailyRewardClaimedCallback = (data: DailyRewardClaimedPayload) => void;
 type EventStartedCallback = (data: EventActivePayload) => void;
 type EventEndedCallback = (data: EventActivePayload) => void;
+type AttributeSyncCallback = (data: AttributeSyncPayload) => void;
+type TrainingCompleteCallback = (data: TrainingCompletePayload) => void;
+type StaminaSyncCallback = (data: StaminaSyncPayload) => void;
 
 // ============================================================================
 // Module state
@@ -65,6 +74,9 @@ const achievementCompletedCallbacks: AchievementCompletedCallback[] = [];
 const dailyRewardClaimedCallbacks: DailyRewardClaimedCallback[] = [];
 const eventStartedCallbacks: EventStartedCallback[] = [];
 const eventEndedCallbacks: EventEndedCallback[] = [];
+const attributeSyncCallbacks: AttributeSyncCallback[] = [];
+const trainingCompleteCallbacks: TrainingCompleteCallback[] = [];
+const staminaSyncCallbacks: StaminaSyncCallback[] = [];
 
 // ============================================================================
 // Controller
@@ -79,6 +91,7 @@ export const RemoteController: Controller & {
   equipCosmetic(cosmeticId: string, slot: string): void;
   unequipCosmetic(slot: string): void;
   claimBattlePassReward(rewardId: string): void;
+  requestTraining(stationType: AttributeType): void;
 
   // Invoke methods (Client → Server functions, yields)
   getFullPlayerData(): FullPlayerDataPayload | undefined;
@@ -99,6 +112,9 @@ export const RemoteController: Controller & {
   onDailyRewardClaimed(callback: DailyRewardClaimedCallback): void;
   onEventStarted(callback: EventStartedCallback): void;
   onEventEnded(callback: EventEndedCallback): void;
+  onAttributeSync(callback: AttributeSyncCallback): void;
+  onTrainingComplete(callback: TrainingCompleteCallback): void;
+  onStaminaSync(callback: StaminaSyncCallback): void;
 } = {
   onInit() {
     logger.info("RemoteController initializing...");
@@ -192,6 +208,25 @@ export const RemoteController: Controller & {
       }
     });
 
+    registry.onEvent("AttributeSync", (data) => {
+      for (const cb of attributeSyncCallbacks) {
+        cb(data);
+      }
+    });
+
+    registry.onEvent("TrainingComplete", (data) => {
+      logger.debug(`Training complete: ${data.attribute} +${data.gain}`);
+      for (const cb of trainingCompleteCallbacks) {
+        cb(data);
+      }
+    });
+
+    registry.onEvent("StaminaSync", (data) => {
+      for (const cb of staminaSyncCallbacks) {
+        cb(data);
+      }
+    });
+
     logger.info("RemoteController initialized.");
   },
 
@@ -229,6 +264,10 @@ export const RemoteController: Controller & {
 
   claimBattlePassReward(rewardId: string): void {
     registry.fire("ClaimBattlePassReward", { rewardId });
+  },
+
+  requestTraining(stationType: AttributeType): void {
+    registry.fire("RequestTraining", { stationType });
   },
 
   // ── Invoke methods (Client → Server functions, yields) ──────────────
@@ -319,5 +358,17 @@ export const RemoteController: Controller & {
 
   onEventEnded(callback: EventEndedCallback): void {
     eventEndedCallbacks.push(callback);
+  },
+
+  onAttributeSync(callback: AttributeSyncCallback): void {
+    attributeSyncCallbacks.push(callback);
+  },
+
+  onTrainingComplete(callback: TrainingCompleteCallback): void {
+    trainingCompleteCallbacks.push(callback);
+  },
+
+  onStaminaSync(callback: StaminaSyncCallback): void {
+    staminaSyncCallbacks.push(callback);
   },
 };

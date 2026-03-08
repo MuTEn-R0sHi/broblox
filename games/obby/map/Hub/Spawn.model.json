@@ -1,0 +1,14 @@
+{
+  "className": "SpawnLocation",
+  "properties": {
+    "Name": "HubSpawn",
+    "Anchored": true,
+    "CanCollide": true,
+    "Size": [12, 1, 12],
+    "Position": [0, 2, 0],
+    "BrickColor": "Medium stone grey",
+    "Material": "SmoothPlastic",
+    "Neutral": true,
+    "AllowTeamChangeOnTouch": false
+  }
+}

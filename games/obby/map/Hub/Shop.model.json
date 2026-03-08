@@ -1,0 +1,52 @@
+{
+  "className": "Model",
+  "children": [
+    {
+      "name": "Base",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [12, 1, 12],
+        "Position": [0, 2, 50],
+        "BrickColor": "Sand yellow",
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Counter",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [10, 3, 1],
+        "Position": [0, 4, 55],
+        "BrickColor": "Reddish brown",
+        "Material": "Wood"
+      },
+      "children": [
+        {
+          "name": "Label",
+          "className": "SurfaceGui",
+          "properties": {
+            "Face": "Front"
+          },
+          "children": [
+            {
+              "name": "Text",
+              "className": "TextLabel",
+              "properties": {
+                "Size": [1, 0, 1, 0],
+                "BackgroundTransparency": 1,
+                "Text": "🛒 SHOP",
+                "TextColor3": [1, 1, 1],
+                "TextScaled": true,
+                "Font": "GothamBold"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

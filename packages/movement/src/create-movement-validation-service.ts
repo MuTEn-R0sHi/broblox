@@ -12,7 +12,7 @@ import { Service, createLogger } from "@broblox/core";
 import { MovementStateManager } from "./state";
 import { MovementValidator } from "./validator";
 import { VALIDATION_THRESHOLDS } from "./constants";
-import type { MovementInput, ValidationThresholds } from "./types";
+import type { MovementConfig, MovementInput, ValidationThresholds } from "./types";
 
 export interface MovementValidationConfig {
   /**
@@ -37,6 +37,13 @@ export interface MovementValidationConfig {
    * Studio lag spikes.
    */
   thresholds?: Partial<ValidationThresholds>;
+
+  /**
+   * Override default movement config (walkSpeed, runSpeed, jumpPower, etc.).
+   * Games with dynamic player speeds should set these to the maximum
+   * possible values to avoid false positive speed violations.
+   */
+  movementConfig?: Partial<MovementConfig>;
 }
 
 export interface MovementValidationHandle {
@@ -76,7 +83,7 @@ export function createMovementValidationService(
   const logger = createLogger("MovementValidationService");
   const stateManager = new MovementStateManager();
   const mergedThresholds = { ...VALIDATION_THRESHOLDS, ...config.thresholds };
-  const validator = new MovementValidator(undefined, mergedThresholds);
+  const validator = new MovementValidator(config.movementConfig, mergedThresholds);
   const connections: RBXScriptConnection[] = [];
   /** Track character references to detect Roblox UI character resets. */
   const lastCharacter = new Map<number, Model>();

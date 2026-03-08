@@ -51,23 +51,90 @@ export interface CheckpointData {
 // Player Data Types
 // ============================================================================
 
+/** Player attributes (base values, before gear bonuses) */
+export interface PlayerAttributes {
+  /** Speed attribute: 10.0 – 30.0 */
+  speed: number;
+  /** Jump attribute: 30.0 – 70.0 */
+  jump: number;
+  /** Stamina attribute: 5.0 – 30.0 */
+  stamina: number;
+}
+
+/** Lifetime training rep counters (for diminishing returns) */
+export interface TrainingReps {
+  speed: number;
+  jump: number;
+  stamina: number;
+}
+
+/** Per-world progression data */
+export interface WorldProgressData {
+  currentStage: number;
+  currentCheckpoint: number;
+  completions: number;
+  bestFullRunTime: number | undefined;
+  stageProgress: Record<string, StageProgress>;
+}
+
+/** A single inventory slot */
+export interface InventorySlot {
+  itemId: string;
+  quantity: number;
+}
+
+/** Equipment slot names */
+export type EquipSlot =
+  | "feet"
+  | "back"
+  | "body"
+  | "accessory1"
+  | "accessory2"
+  | "consumable1"
+  | "consumable2"
+  | "consumable3";
+
+/** v1 schema (legacy — kept for migration) */
+export interface ObbyPlayerDataV1 {
+  readonly __version: number;
+  currentCheckpoint: number;
+  currentStage: number;
+  coins: number;
+  totalDeaths: number;
+  totalCompletions: number;
+  bestFullRunTime?: number;
+  stageProgress: Record<string, StageProgress>;
+  unlockedItems: string[];
+  equippedTrail?: string;
+  lastPlayedAt: number;
+}
+
+/** Current player data schema (v2) */
 export interface ObbyPlayerData {
   /** Data schema version for persistence */
   readonly __version: number;
-  /** Current checkpoint (highest reached) */
-  currentCheckpoint: number;
-  /** Current stage number */
-  currentStage: number;
+
+  /** Base attributes (before gear) */
+  attributes: PlayerAttributes;
+  /** Lifetime training reps (for diminishing returns) */
+  trainingReps: TrainingReps;
+
   /** Total coins collected */
   coins: number;
-  /** Total deaths */
+
+  /** Per-world progression */
+  worlds: Record<string, WorldProgressData>;
+
+  /** Gear inventory */
+  inventory: InventorySlot[];
+  /** Equipped gear: slot → itemId */
+  equipped: Partial<Record<EquipSlot, string>>;
+
+  /** Total deaths (global) */
   totalDeaths: number;
-  /** Total completions (full obby) */
+  /** Total world completions (any world) */
   totalCompletions: number;
-  /** Best full run time (seconds) */
-  bestFullRunTime?: number;
-  /** Stage-by-stage progress */
-  stageProgress: Record<string, StageProgress>;
+
   /** Unlocked cosmetics/trails */
   unlockedItems: string[];
   /** Equipped trail */
@@ -146,6 +213,36 @@ export interface LeaderboardRefreshStatusPayload {
 }
 
 // ============================================================================
+// Attribute & Training Payloads
+// ============================================================================
+
+/** Server → Client: Full attribute sync (base + effective) */
+export interface AttributeSyncPayload {
+  base: PlayerAttributes;
+  effective: PlayerAttributes;
+  trainingReps: TrainingReps;
+}
+
+/** Server → Client: Training rep completed */
+export interface TrainingCompletePayload {
+  attribute: AttributeType;
+  newValue: number;
+  gain: number;
+}
+
+/** Client → Server: Start training at a station */
+export interface TrainingRequestPayload {
+  stationType: AttributeType;
+}
+
+/** Server → Client: Stamina state sync */
+export interface StaminaSyncPayload {
+  current: number;
+  max: number;
+  exhausted: boolean;
+}
+
+// ============================================================================
 // Constants
 // ============================================================================
 
@@ -170,7 +267,53 @@ export const OBBY_CONSTANTS = {
   KILL_ZONE_TAG: "ObbyKillZone",
   /** CollectionService tag for coins */
   COIN_TAG: "ObbyCoin",
+  /** CollectionService tag for training stations */
+  TRAINING_STATION_TAG: "ObbyTrainingStation",
+
+  // ── Attribute defaults & caps ──────────────────────────────────────
+  /** Default Speed attribute for new players */
+  DEFAULT_SPEED: 10,
+  /** Default Jump attribute for new players */
+  DEFAULT_JUMP: 30,
+  /** Default Stamina attribute for new players */
+  DEFAULT_STAMINA: 5,
+  /** Max Speed attribute */
+  MAX_SPEED: 30,
+  /** Max Jump attribute */
+  MAX_JUMP: 70,
+  /** Max Stamina attribute */
+  MAX_STAMINA: 30,
+
+  // ── Training tuning ────────────────────────────────────────────────
+  /** Attribute gain per training rep */
+  TRAINING_GAIN: 0.1,
+  /** Reduced gain per rep once attribute exceeds this threshold */
+  TRAINING_DIMINISH_THRESHOLD: 20,
+  /** Attribute gain per rep after diminishing threshold */
+  TRAINING_GAIN_DIMINISHED: 0.05,
+  /** Cooldown between reps at the same station (seconds) */
+  TRAINING_COOLDOWN: 2,
+
+  // ── Humanoid formulae constants ────────────────────────────────────
+  /** Humanoid.WalkSpeed = WALK_SPEED_BASE + effectiveSpeed × WALK_SPEED_SCALE */
+  WALK_SPEED_BASE: 6,
+  WALK_SPEED_SCALE: 0.8,
+  /** RunSpeed = WalkSpeed × RUN_SPEED_MULTIPLIER */
+  RUN_SPEED_MULTIPLIER: 1.5,
+
+  // ── Stamina tuning ─────────────────────────────────────────────────
+  /** Stamina drain rate while sprinting (units/sec) */
+  STAMINA_DRAIN_RATE: 1,
+  /** Stamina recharge rate while walking (units/sec) */
+  STAMINA_RECHARGE_RATE: 0.5,
+  /** Stamina recharge rate while standing still (units/sec) */
+  STAMINA_RECHARGE_IDLE_RATE: 1,
+  /** Cooldown after stamina is fully depleted before recharge begins (seconds) */
+  STAMINA_EXHAUSTION_COOLDOWN: 2,
 } as const;
+
+/** Attribute type keys */
+export type AttributeType = keyof PlayerAttributes;
 
 // ============================================================================
 // Marketplace Payloads

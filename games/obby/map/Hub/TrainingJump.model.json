@@ -1,0 +1,94 @@
+{
+  "className": "Model",
+  "attributes": {
+    "StationType": "jump"
+  },
+  "properties": {
+    "Tags": ["ObbyTrainingStation"]
+  },
+  "children": [
+    {
+      "name": "Base",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [16, 1, 16],
+        "Position": [40, 2, 0],
+        "BrickColor": "Bright green",
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Pad1",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 1, 4],
+        "Position": [36, 3, 0],
+        "BrickColor": "Lime green",
+        "Material": "Neon"
+      }
+    },
+    {
+      "name": "Pad2",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 1, 4],
+        "Position": [40, 5, 0],
+        "BrickColor": "Lime green",
+        "Material": "Neon"
+      }
+    },
+    {
+      "name": "Pad3",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [4, 1, 4],
+        "Position": [44, 7, 0],
+        "BrickColor": "Lime green",
+        "Material": "Neon"
+      }
+    },
+    {
+      "name": "Sign",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Size": [6, 4, 0.5],
+        "Position": [40, 5, -7],
+        "BrickColor": "Bright green",
+        "Material": "SmoothPlastic"
+      },
+      "children": [
+        {
+          "name": "Label",
+          "className": "SurfaceGui",
+          "properties": {
+            "Face": "Front"
+          },
+          "children": [
+            {
+              "name": "Text",
+              "className": "TextLabel",
+              "properties": {
+                "Size": [1, 0, 1, 0],
+                "BackgroundTransparency": 1,
+                "Text": "🦘 JUMP TRAINING",
+                "TextColor3": [1, 1, 1],
+                "TextScaled": true,
+                "Font": "GothamBold"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
