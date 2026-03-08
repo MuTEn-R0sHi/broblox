@@ -15,7 +15,7 @@
         "CanCollide": true,
         "Size": [16, 1, 16],
         "Position": [-40, 2, 0],
-        "BrickColor": "Bright blue",
+        "BrickColor": 23,
         "Material": "SmoothPlastic"
       }
     },
@@ -27,7 +27,7 @@
         "CanCollide": true,
         "Size": [12, 0.2, 4],
         "Position": [-40, 2.6, 0],
-        "BrickColor": "Dark stone grey",
+        "BrickColor": 199,
         "Material": "Slate"
       }
     },
@@ -39,7 +39,7 @@
         "CanCollide": false,
         "Size": [6, 4, 0.5],
         "Position": [-40, 5, -7],
-        "BrickColor": "Bright blue",
+        "BrickColor": 23,
         "Material": "SmoothPlastic"
       },
       "children": [

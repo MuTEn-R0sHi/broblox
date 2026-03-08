@@ -9,7 +9,7 @@
         "CanCollide": true,
         "Size": [12, 1, 12],
         "Position": [0, 2, 50],
-        "BrickColor": "Sand yellow",
+        "BrickColor": 135,
         "Material": "SmoothPlastic"
       }
     },
@@ -21,7 +21,7 @@
         "CanCollide": true,
         "Size": [10, 3, 1],
         "Position": [0, 4, 55],
-        "BrickColor": "Reddish brown",
+        "BrickColor": 192,
         "Material": "Wood"
       },
       "children": [
