@@ -1,0 +1,89 @@
+{
+  "className": "Model",
+  "children": [
+    {
+      "name": "Portal",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Size": [10, 14, 2],
+        "Position": [0, 9, 90],
+        "BrickColor": "Bright green",
+        "Material": "Neon",
+        "Transparency": 0.4
+      }
+    },
+    {
+      "name": "Frame_Left",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [2, 16, 2],
+        "Position": [-6, 10, 90],
+        "BrickColor": "Earth green",
+        "Material": "Cobblestone"
+      }
+    },
+    {
+      "name": "Frame_Right",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [2, 16, 2],
+        "Position": [6, 10, 90],
+        "BrickColor": "Earth green",
+        "Material": "Cobblestone"
+      }
+    },
+    {
+      "name": "Frame_Top",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [14, 2, 2],
+        "Position": [0, 18, 90],
+        "BrickColor": "Earth green",
+        "Material": "Cobblestone"
+      }
+    },
+    {
+      "name": "Sign",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Size": [10, 3, 0.5],
+        "Position": [0, 20, 90],
+        "BrickColor": "Earth green",
+        "Material": "SmoothPlastic"
+      },
+      "children": [
+        {
+          "name": "Label",
+          "className": "SurfaceGui",
+          "properties": {
+            "Face": "Front"
+          },
+          "children": [
+            {
+              "name": "Text",
+              "className": "TextLabel",
+              "properties": {
+                "Size": [1, 0, 1, 0],
+                "BackgroundTransparency": 1,
+                "Text": "🌿 GRASSLANDS",
+                "TextColor3": [1, 1, 1],
+                "TextScaled": true,
+                "Font": "GothamBold"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

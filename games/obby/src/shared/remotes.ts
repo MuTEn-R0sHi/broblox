@@ -24,6 +24,11 @@ import type {
   BuyProductRequest,
   CheckGamePassRequest,
   GamePassOwnershipPayload,
+  AttributeSyncPayload,
+  TrainingCompletePayload,
+  TrainingRequestPayload,
+  StaminaSyncPayload,
+  PlayerAttributes,
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -36,6 +41,7 @@ export interface PlayerDataSyncPayload {
   coins: number;
   currentStage: number;
   currentCheckpoint: number;
+  attributes?: PlayerAttributes;
 }
 
 /** A single reward entry used across notification payloads. */
@@ -192,6 +198,45 @@ export const ObbyRemotes = {
    */
   EventEnded: defineClientEvent<EventActivePayload>("Obby_EventEnded", {
     description: "Server broadcasts that a scheduled event has become inactive",
+  }),
+
+  // ========================================================================
+  // Attribute / Training / Stamina
+  // ========================================================================
+
+  /**
+   * Server → Client: Full attribute sync (base + effective stats).
+   */
+  AttributeSync: defineClientEvent<AttributeSyncPayload>("AttributeSync", {
+    description: "Server syncs player attribute data to client",
+  }),
+
+  /**
+   * Server → Client: Training rep completed.
+   */
+  TrainingComplete: defineClientEvent<TrainingCompletePayload>("TrainingComplete", {
+    description: "Server notifies client that a training rep completed",
+  }),
+
+  /**
+   * Client → Server: Start training at a station.
+   */
+  RequestTraining: defineServerEvent<TrainingRequestPayload>("RequestTraining", {
+    rateLimit: { windowMs: 2000, maxRequests: 2 },
+    description: "Client requests to train at a station",
+    validate: (v): v is TrainingRequestPayload => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      const t = p["stationType"];
+      return t === "speed" || t === "jump" || t === "stamina";
+    },
+  }),
+
+  /**
+   * Server → Client: Stamina state sync (current, max, exhausted).
+   */
+  StaminaSync: defineClientEvent<StaminaSyncPayload>("StaminaSync", {
+    description: "Server syncs stamina state to client",
   }),
 
   // ========================================================================

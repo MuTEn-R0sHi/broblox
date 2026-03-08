@@ -41,6 +41,27 @@ function getCheckpointKey(stageNumber: number, checkpointIndex: number): string 
   return `${stageNumber}-${checkpointIndex}`;
 }
 
+// Raycast downward from above the checkpoint to find the actual platform surface,
+// then return a safe spawn position (surface + HRP standing offset).
+function findSpawnPosition(checkpoint: CheckpointData, character: Model): Vector3 {
+  const castX = checkpoint.position.X;
+  const castZ = checkpoint.position.Z - 1; // Slightly behind the gate
+  const rayOrigin = new Vector3(castX, checkpoint.position.Y + 10, castZ);
+  const rayDirection = new Vector3(0, -30, 0);
+  const params = new RaycastParams();
+  params.FilterDescendantsInstances = [character];
+  params.FilterType = Enum.RaycastFilterType.Exclude;
+
+  const result = Workspace.Raycast(rayOrigin, rayDirection, params);
+  if (result) {
+    // 3 studs above surface ≈ HumanoidRootPart standing height
+    return new Vector3(result.Position.X, result.Position.Y + 3, result.Position.Z);
+  }
+
+  // Fallback: above checkpoint center (gravity will settle)
+  return new Vector3(castX, checkpoint.position.Y + 3, castZ);
+}
+
 // Helper to parse checkpoint from part
 function parseCheckpointPart(part: BasePart): CheckpointData | undefined {
   const stageNumber = part.GetAttribute("StageNumber");
@@ -84,19 +105,23 @@ export const CheckpointService: Service & {
     lastCheckpointTouch.set(player.UserId, now);
 
     logger.debug(
-      `Checkpoint touch: player=${player.Name}, stage=${stageNumber}, cp=${checkpointIndex}, current=${data.currentCheckpoint}`
+      `Checkpoint touch: player=${player.Name}, stage=${stageNumber}, cp=${checkpointIndex}, current=${DataService.getWorldProgress(player, "grasslands")?.currentCheckpoint ?? 0}`
     );
 
+    const worldProgress = DataService.getWorldProgress(player, "grasslands");
+    const playerStage = worldProgress?.currentStage ?? 1;
+    const playerCheckpoint = worldProgress?.currentCheckpoint ?? 0;
+
     // Validate stage
-    if (data.currentStage !== stageNumber) {
+    if (playerStage !== stageNumber) {
       logger.debug(
-        `Player ${player.Name} touched checkpoint for wrong stage (expected ${data.currentStage}, got ${stageNumber})`
+        `Player ${player.Name} touched checkpoint for wrong stage (expected ${playerStage}, got ${stageNumber})`
       );
       return;
     }
 
     // Check if this is a new checkpoint (allow same checkpoint to re-register)
-    if (checkpointIndex < data.currentCheckpoint) {
+    if (checkpointIndex < playerCheckpoint) {
       return; // Already passed this checkpoint
     }
 
@@ -108,10 +133,10 @@ export const CheckpointService: Service & {
     }
 
     // Only notify if it's actually new
-    const isNew = checkpointIndex > data.currentCheckpoint;
+    const isNew = checkpointIndex > playerCheckpoint;
 
     // Update player data
-    DataService.updateData(player, { currentCheckpoint: checkpointIndex });
+    DataService.setWorldStage(player, "grasslands", playerStage, checkpointIndex);
 
     if (isNew) {
       logger.info(
@@ -151,21 +176,18 @@ export const CheckpointService: Service & {
     }
 
     // Find the checkpoint to respawn at
-    const checkpointKey = getCheckpointKey(data.currentStage, data.currentCheckpoint);
+    const worldProgress = DataService.getWorldProgress(player, "grasslands");
+    const playerStage = worldProgress?.currentStage ?? 1;
+    const playerCheckpoint = worldProgress?.currentCheckpoint ?? 0;
+    const checkpointKey = getCheckpointKey(playerStage, playerCheckpoint);
     const checkpoint = checkpoints.get(checkpointKey);
 
     logger.info(
-      `Respawning ${player.Name} at stage ${data.currentStage}, checkpoint ${data.currentCheckpoint}`
+      `Respawning ${player.Name} at stage ${playerStage}, checkpoint ${playerCheckpoint}`
     );
 
     if (checkpoint) {
-      // Respawn slightly behind checkpoint (negative Z) so player lands on platform
-      // Checkpoint gates are vertical, spawn 3 studs behind and at platform height
-      const spawnPos = new Vector3(
-        checkpoint.position.X,
-        checkpoint.position.Y - 2, // Checkpoint center is above platform, adjust down
-        checkpoint.position.Z - 3 // Behind the checkpoint gate
-      );
+      const spawnPos = findSpawnPosition(checkpoint, character);
       const cf = new CFrame(spawnPos).mul(CFrame.Angles(0, math.rad(checkpoint.rotation), 0));
       // Reset velocity to prevent any momentum
       humanoidRootPart.AssemblyLinearVelocity = Vector3.zero;
@@ -174,13 +196,9 @@ export const CheckpointService: Service & {
       logger.info(`Respawned at adjusted position: ${spawnPos}`);
     } else {
       // Respawn at stage start (checkpoint 0)
-      const stageStart = checkpoints.get(getCheckpointKey(data.currentStage, 0));
+      const stageStart = checkpoints.get(getCheckpointKey(playerStage, 0));
       if (stageStart) {
-        const spawnPos = new Vector3(
-          stageStart.position.X,
-          stageStart.position.Y - 2,
-          stageStart.position.Z - 3
-        );
+        const spawnPos = findSpawnPosition(stageStart, character);
         const cf = new CFrame(spawnPos).mul(CFrame.Angles(0, math.rad(stageStart.rotation), 0));
         humanoidRootPart.AssemblyLinearVelocity = Vector3.zero;
         humanoidRootPart.CFrame = cf;
@@ -191,14 +209,14 @@ export const CheckpointService: Service & {
       }
     }
 
-    logger.debug(`Respawned player ${player.Name} at checkpoint ${data.currentCheckpoint}`);
+    logger.debug(`Respawned player ${player.Name} at checkpoint ${playerCheckpoint}`);
 
     // Timing rules:
     // - If respawning to the start of the stage, restart the stage timer.
     // - If respawning to the start of the whole run (stage 1 checkpoint 0), restart the run timer.
-    if (data.currentCheckpoint === 0) {
+    if (playerCheckpoint === 0) {
       DataService.startStageTimer(player);
-      if (data.currentStage === 1) {
+      if (playerStage === 1) {
         DataService.startRunTimer(player);
       }
     }
@@ -229,8 +247,10 @@ export const CheckpointService: Service & {
       if (parsed.toCheckpoint !== undefined) {
         // Only allow respawning to already-reached checkpoints (including 0 = stage start).
         const target = math.floor(parsed.toCheckpoint);
-        if (target >= 0 && target <= data.currentCheckpoint) {
-          DataService.updateData(player, { currentCheckpoint: target });
+        const worldProgress = DataService.getWorldProgress(player, "grasslands");
+        const currentCP = worldProgress?.currentCheckpoint ?? 0;
+        if (target >= 0 && target <= currentCP) {
+          DataService.setWorldStage(player, "grasslands", worldProgress?.currentStage ?? 1, target);
         }
       }
 
@@ -489,10 +509,11 @@ export const CheckpointService: Service & {
         // Sync updated data to client
         const updatedData = DataService.getData(player);
         if (updatedData) {
+          const world = updatedData.worlds["grasslands"];
           RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
             coins: updatedData.coins,
-            currentStage: updatedData.currentStage,
-            currentCheckpoint: updatedData.currentCheckpoint,
+            currentStage: world?.currentStage ?? 1,
+            currentCheckpoint: world?.currentCheckpoint ?? 0,
           });
         }
       });

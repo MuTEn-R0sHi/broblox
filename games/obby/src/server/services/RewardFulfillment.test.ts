@@ -28,7 +28,16 @@ describe("fulfillRewards", () => {
 
     mockDataService = {
       addCoins: vi.fn(),
-      getData: vi.fn(() => ({ coins: 100, currentStage: 1, currentCheckpoint: 0 })),
+      getData: vi.fn(() => ({
+        coins: 100,
+        worlds: {
+          grasslands: { currentStage: 1, currentCheckpoint: 0 },
+        },
+      })),
+      getWorldProgress: vi.fn((_player: unknown, _worldId: string) => ({
+        currentStage: 1,
+        currentCheckpoint: 0,
+      })),
     };
 
     mockRegistry = { fireClient: vi.fn() };

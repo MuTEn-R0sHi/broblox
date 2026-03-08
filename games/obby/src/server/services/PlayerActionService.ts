@@ -75,10 +75,11 @@ function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined 
   // Always send the reward cycle so the UI can render the schedule
   const rewardCycle = REWARD_CYCLE;
 
+  const world = coreData.worlds["grasslands"];
   return {
     coins: coreData.coins,
-    currentStage: coreData.currentStage,
-    currentCheckpoint: coreData.currentCheckpoint,
+    currentStage: world?.currentStage ?? 1,
+    currentCheckpoint: world?.currentCheckpoint ?? 0,
 
     level: progression?.getLevel() ?? 1,
     xp: progression?.getCurrentXp() ?? 0,
@@ -321,16 +322,19 @@ export const PlayerActionService: Service = {
           // Skip stage logic — advance checkpoint by 1 stage
           const coreData = DataService.getData(player);
           if (coreData) {
-            coreData.currentStage += 1;
-            trackPurchase(
-              player,
-              DEVELOPER_PRODUCTS[2].name,
-              DEVELOPER_PRODUCTS[2].productId,
-              DEVELOPER_PRODUCTS[2].robuxPrice
-            );
-            logger.info(
-              `Player ${receipt.PlayerId} purchased Skip Stage → now on stage ${coreData.currentStage}`
-            );
+            const world = coreData.worlds["grasslands"];
+            if (world) {
+              DataService.setWorldStage(player, "grasslands", world.currentStage + 1, 0);
+              trackPurchase(
+                player,
+                DEVELOPER_PRODUCTS[2].name,
+                DEVELOPER_PRODUCTS[2].productId,
+                DEVELOPER_PRODUCTS[2].robuxPrice
+              );
+              logger.info(
+                `Player ${receipt.PlayerId} purchased Skip Stage → now on stage ${world.currentStage}`
+              );
+            }
           }
         }
         return "PurchaseGranted";

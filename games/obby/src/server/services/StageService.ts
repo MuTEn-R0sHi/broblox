@@ -85,9 +85,10 @@ export const StageService: Service & {
     }
 
     // Check if this is the current stage
-    if (data.currentStage !== stageNumber) {
+    const worldProgress = DataService.getWorldProgress(player, "grasslands");
+    if (!worldProgress || worldProgress.currentStage !== stageNumber) {
       logger.debug(
-        `Player ${player.Name} tried to complete stage ${stageNumber} but is on stage ${data.currentStage}`
+        `Player ${player.Name} tried to complete stage ${stageNumber} but is on stage ${worldProgress?.currentStage ?? "?"}`
       );
       return;
     }
@@ -108,12 +109,12 @@ export const StageService: Service & {
 
     // Calculate stage completion time
     const completionTime = DataService.getStageElapsedSeconds(player) ?? 0;
-    const existingProgress = data.stageProgress[tostring(stageNumber)];
+    const existingProgress = worldProgress.stageProgress[tostring(stageNumber)];
     const priorBest = existingProgress?.bestTime;
     const isNewBest = priorBest === undefined || completionTime < priorBest;
 
     // Update stage progress
-    DataService.updateStageProgress(player, stageNumber, {
+    DataService.updateStageProgress(player, "grasslands", stageNumber, {
       completions: 1,
       bestTime: isNewBest ? completionTime : undefined,
     });
@@ -189,10 +190,7 @@ export const StageService: Service & {
     // Advance to next stage
     const nextStage = stageNumber + 1;
     if (stages.has(nextStage)) {
-      DataService.updateData(player, {
-        currentStage: nextStage,
-        currentCheckpoint: 0,
-      });
+      DataService.setWorldStage(player, "grasslands", nextStage, 0);
 
       // Reset stage timer for the new stage
       DataService.startStageTimer(player);
@@ -203,30 +201,30 @@ export const StageService: Service & {
       // Sync current HUD state (coins/stage/checkpoint).
       const updated = DataService.getData(player);
       if (updated) {
+        const world = updated.worlds["grasslands"];
         RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
           coins: updated.coins,
-          currentStage: updated.currentStage,
-          currentCheckpoint: updated.currentCheckpoint,
+          currentStage: world?.currentStage ?? 1,
+          currentCheckpoint: world?.currentCheckpoint ?? 0,
         });
       }
     } else {
       // Full run completion time
       const totalTime = DataService.getRunElapsedSeconds(player) ?? 0;
-      const priorRunBest = data.bestFullRunTime;
+      const worldProgress = DataService.getWorldProgress(player, "grasslands");
+      const priorRunBest = worldProgress?.bestFullRunTime;
       const isNewRunBest = priorRunBest === undefined || totalTime < priorRunBest;
 
       // Game completed! Reset to start for another run
-      const updates = {
+      DataService.incrementWorldCompletions(player, "grasslands");
+      DataService.updateData(player, {
         totalCompletions: data.totalCompletions + 1,
-        currentStage: 1,
-        currentCheckpoint: 0,
-      } as Parameters<typeof DataService.updateData>[1];
+      });
+      DataService.setWorldStage(player, "grasslands", 1, 0);
 
       if (isNewRunBest) {
-        updates.bestFullRunTime = totalTime;
+        DataService.setWorldBestRunTime(player, "grasslands", totalTime);
       }
-
-      DataService.updateData(player, updates);
 
       // New run starts now
       DataService.startRunTimer(player);
@@ -240,10 +238,11 @@ export const StageService: Service & {
 
       const updated = DataService.getData(player);
       if (updated) {
+        const world = updated.worlds["grasslands"];
         RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
           coins: updated.coins,
-          currentStage: updated.currentStage,
-          currentCheckpoint: updated.currentCheckpoint,
+          currentStage: world?.currentStage ?? 1,
+          currentCheckpoint: world?.currentCheckpoint ?? 0,
         });
       }
 

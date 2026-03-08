@@ -35,8 +35,15 @@ describe("PlayerActionService (obby)", () => {
 
     mockCoreData = {
       coins: 500,
-      currentStage: 3,
-      currentCheckpoint: 2,
+      worlds: {
+        grasslands: {
+          currentStage: 3,
+          currentCheckpoint: 2,
+          completions: 0,
+          bestFullRunTime: undefined,
+          stageProgress: {},
+        },
+      },
     };
 
     mockProgressionStore = {

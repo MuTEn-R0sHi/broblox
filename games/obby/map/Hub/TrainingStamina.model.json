@@ -1,0 +1,103 @@
+{
+  "className": "Model",
+  "attributes": {
+    "StationType": "stamina"
+  },
+  "properties": {
+    "Tags": ["ObbyTrainingStation"]
+  },
+  "children": [
+    {
+      "name": "Base",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [16, 1, 16],
+        "Position": [0, 2, -50],
+        "BrickColor": "Bright orange",
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Ring1",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Shape": "Cylinder",
+        "Size": [0.5, 8, 8],
+        "Position": [-6, 6, -50],
+        "Orientation": [0, 0, 90],
+        "BrickColor": "Deep orange",
+        "Material": "Neon",
+        "Transparency": 0.3
+      }
+    },
+    {
+      "name": "Ring2",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Shape": "Cylinder",
+        "Size": [0.5, 8, 8],
+        "Position": [0, 6, -50],
+        "Orientation": [0, 0, 90],
+        "BrickColor": "Deep orange",
+        "Material": "Neon",
+        "Transparency": 0.3
+      }
+    },
+    {
+      "name": "Ring3",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Shape": "Cylinder",
+        "Size": [0.5, 8, 8],
+        "Position": [6, 6, -50],
+        "Orientation": [0, 0, 90],
+        "BrickColor": "Deep orange",
+        "Material": "Neon",
+        "Transparency": 0.3
+      }
+    },
+    {
+      "name": "Sign",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Size": [6, 4, 0.5],
+        "Position": [0, 5, -57],
+        "BrickColor": "Bright orange",
+        "Material": "SmoothPlastic"
+      },
+      "children": [
+        {
+          "name": "Label",
+          "className": "SurfaceGui",
+          "properties": {
+            "Face": "Front"
+          },
+          "children": [
+            {
+              "name": "Text",
+              "className": "TextLabel",
+              "properties": {
+                "Size": [1, 0, 1, 0],
+                "BackgroundTransparency": 1,
+                "Text": "🏃 STAMINA TRAINING",
+                "TextColor3": [1, 1, 1],
+                "TextScaled": true,
+                "Font": "GothamBold"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

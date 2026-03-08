@@ -6,43 +6,59 @@ on:
   workflow_dispatch:
     inputs:
       game:
-        description: "Game to publish"
+        description: "Game to publish (all = both games)"
         required: true
         type: choice
         options:
+          - all
           - test-park
           - obby
-        default: test-park
-
-concurrency:
-  group: publish-dev-${{ inputs.game || 'test-park' }}
-  cancel-in-progress: true
+        default: all
 
 permissions:
   contents: read
 
 jobs:
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      games: ${{ steps.set.outputs.games }}
+    steps:
+      - id: set
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ inputs.game }}" = "all" ]; then
+            echo 'games=["test-park","obby"]' >> $GITHUB_OUTPUT
+          else
+            echo 'games=["${{ inputs.game }}"]' >> $GITHUB_OUTPUT
+          fi
+
   build-and-publish:
+    needs: set-matrix
     runs-on: ubuntu-latest
     environment: dev
+    strategy:
+      fail-fast: false
+      matrix:
+        game: ${{ fromJSON(needs.set-matrix.outputs.games) }}
+    concurrency:
+      group: publish-dev-${{ matrix.game }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v6
 
       - name: Set game variables
         id: game
         run: |
-          GAME="${{ inputs.game || 'test-park' }}"
+          GAME="${{ matrix.game }}"
           echo "name=$GAME" >> $GITHUB_OUTPUT
 
           if [ "$GAME" = "test-park" ]; then
             echo "universe_id=${{ vars.TEST_PARK_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
             echo "place_id=${{ vars.TEST_PARK_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm run build:test-park" >> $GITHUB_OUTPUT
             echo "game_path=games/test-park" >> $GITHUB_OUTPUT
           elif [ "$GAME" = "obby" ]; then
             echo "universe_id=${{ vars.OBBY_DEV_UNIVERSE_ID }}" >> $GITHUB_OUTPUT
             echo "place_id=${{ vars.OBBY_DEV_PLACE_ID }}" >> $GITHUB_OUTPUT
-            echo "build_cmd=pnpm --filter @broblox/game-obby run build" >> $GITHUB_OUTPUT
             echo "game_path=games/obby" >> $GITHUB_OUTPUT
           fi
 
@@ -63,7 +79,7 @@ jobs:
         run: pnpm run build:packages
 
       - name: Build game
-        run: ${{ steps.game.outputs.build_cmd }}
+        run: pnpm --filter @broblox/game-${{ matrix.game }} run build
 
       - name: Setup Aftman (Rojo)
         uses: ok-nick/setup-aftman@v0.4.2
@@ -87,7 +103,7 @@ jobs:
           UNIVERSE_ID: ${{ steps.game.outputs.universe_id }}
           PLACE_ID: ${{ steps.game.outputs.place_id }}
         run: |
-          echo "Publishing ${{ steps.game.outputs.name }} to Dev environment..."
+          echo "Publishing ${{ matrix.game }} to Dev environment..."
           echo "Universe: $UNIVERSE_ID, Place: $PLACE_ID"
 
           MAX_RETRIES=5
@@ -122,7 +138,7 @@ jobs:
       - name: Post publish notification
         if: success()
         run: |
-          echo "✅ Published ${{ steps.game.outputs.name }} to Dev"
+          echo "✅ Published ${{ matrix.game }} to Dev"
           echo "Commit: ${{ github.sha }}"
           echo "Actor: ${{ github.actor }}"
           echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"

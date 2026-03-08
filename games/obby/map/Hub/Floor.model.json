@@ -1,0 +1,13 @@
+{
+  "className": "Part",
+  "properties": {
+    "Name": "HubFloor",
+    "Anchored": true,
+    "CanCollide": true,
+    "Size": [200, 1, 200],
+    "Position": [0, 0, 20],
+    "BrickColor": "Medium stone grey",
+    "Material": "Grass",
+    "Transparency": 0
+  }
+}

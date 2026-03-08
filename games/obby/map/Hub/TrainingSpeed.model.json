@@ -1,0 +1,70 @@
+{
+  "className": "Model",
+  "attributes": {
+    "StationType": "speed"
+  },
+  "properties": {
+    "Tags": ["ObbyTrainingStation"]
+  },
+  "children": [
+    {
+      "name": "Base",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [16, 1, 16],
+        "Position": [-40, 2, 0],
+        "BrickColor": "Bright blue",
+        "Material": "SmoothPlastic"
+      }
+    },
+    {
+      "name": "Track",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": true,
+        "Size": [12, 0.2, 4],
+        "Position": [-40, 2.6, 0],
+        "BrickColor": "Dark stone grey",
+        "Material": "Slate"
+      }
+    },
+    {
+      "name": "Sign",
+      "className": "Part",
+      "properties": {
+        "Anchored": true,
+        "CanCollide": false,
+        "Size": [6, 4, 0.5],
+        "Position": [-40, 5, -7],
+        "BrickColor": "Bright blue",
+        "Material": "SmoothPlastic"
+      },
+      "children": [
+        {
+          "name": "Label",
+          "className": "SurfaceGui",
+          "properties": {
+            "Face": "Front"
+          },
+          "children": [
+            {
+              "name": "Text",
+              "className": "TextLabel",
+              "properties": {
+                "Size": [1, 0, 1, 0],
+                "BackgroundTransparency": 1,
+                "Text": "⚡ SPEED TRAINING",
+                "TextColor3": [1, 1, 1],
+                "TextScaled": true,
+                "Font": "GothamBold"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

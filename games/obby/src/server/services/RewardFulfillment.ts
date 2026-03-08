@@ -147,10 +147,11 @@ export function fulfillRewards(player: Player, rewards: ReadonlyArray<RewardEntr
   if (currencyGranted) {
     const updated = DataService.getData(player);
     if (updated) {
+      const world = updated.worlds["grasslands"];
       RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
         coins: updated.coins,
-        currentStage: updated.currentStage,
-        currentCheckpoint: updated.currentCheckpoint,
+        currentStage: world?.currentStage ?? 1,
+        currentCheckpoint: world?.currentCheckpoint ?? 0,
       });
     }
   }

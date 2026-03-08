@@ -28,7 +28,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [7, 2, 7],
-        "Position": [10, 17, 135],
+        "Position": [4, 17, 135],
         "Material": "SmoothPlastic"
       }
     },
@@ -39,7 +39,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [7, 2, 7],
-        "Position": [-10, 19, 150],
+        "Position": [-4, 19, 150],
         "Material": "SmoothPlastic"
       }
     },
@@ -50,7 +50,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [6, 2, 6],
-        "Position": [10, 21, 165],
+        "Position": [4, 21, 165],
         "Material": "SmoothPlastic"
       }
     },
@@ -61,7 +61,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [6, 2, 6],
-        "Position": [-10, 23, 180],
+        "Position": [-4, 23, 180],
         "Material": "SmoothPlastic"
       }
     },
@@ -72,7 +72,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [6, 2, 6],
-        "Position": [10, 25, 195],
+        "Position": [4, 25, 195],
         "Material": "SmoothPlastic"
       }
     },
@@ -83,7 +83,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [5, 2, 5],
-        "Position": [-8, 27, 210],
+        "Position": [-3, 27, 210],
         "Material": "SmoothPlastic"
       }
     },
@@ -94,7 +94,7 @@
         "Anchored": true,
         "CanCollide": true,
         "Size": [5, 2, 5],
-        "Position": [8, 29, 225],
+        "Position": [3, 29, 225],
         "Material": "SmoothPlastic"
       }
     },
@@ -140,7 +140,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [10, 20, 135],
+        "Position": [4, 20, 135],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -157,7 +157,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [-10, 22, 150],
+        "Position": [-4, 22, 150],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -174,7 +174,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [10, 26, 195],
+        "Position": [4, 28, 195],
         "Material": "Neon",
         "Transparency": 0.2
       }
@@ -191,7 +191,7 @@
         "CanTouch": true,
         "Shape": "Ball",
         "Size": [2, 2, 2],
-        "Position": [-8, 30, 210],
+        "Position": [-3, 30, 210],
         "Material": "Neon",
         "Transparency": 0.2
       }

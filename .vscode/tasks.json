@@ -66,6 +66,56 @@
       "problemMatcher": []
     },
     {
+      "label": "Build Obby",
+      "type": "shell",
+      "command": "pnpm run build:obby",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Obby",
+      "type": "shell",
+      "command": "pnpm run game:obby:dev",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+)\\s+-\\s+(error|warning)\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*Starting compilation.*",
+          "endsPattern": ".*Compilation finished.*"
+        }
+      }
+    },
+    {
+      "label": "Rojo: Serve Obby",
+      "type": "shell",
+      "command": "pnpm run game:obby:rojo",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Lint",
       "type": "shell",
       "command": "pnpm lint",

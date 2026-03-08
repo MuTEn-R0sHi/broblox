@@ -147,7 +147,7 @@ export const LeaderboardService: Service & {
 
     const meta: MetaEntry = {
       playerName: player.Name,
-      bestTime: data.bestFullRunTime,
+      bestTime: DataService.getWorldProgress(player, "grasslands")?.bestFullRunTime,
     };
     metaCache.set(player.UserId, meta);
 

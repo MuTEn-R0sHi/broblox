@@ -18,8 +18,12 @@ describe("Marketplace E2E (obby)", () => {
   let mockPlayer: { UserId: number; Name: string };
   let mockCoreData: {
     coins: number;
-    currentStage: number;
-    currentCheckpoint: number;
+    worlds: {
+      grasslands: {
+        currentStage: number;
+        currentCheckpoint: number;
+      };
+    };
     totalDeaths: number;
     totalCompletions: number;
     lastPlayedAt: number;
@@ -42,12 +46,16 @@ describe("Marketplace E2E (obby)", () => {
     mockPlayer = { UserId: 42, Name: "TestPlayer" };
     mockCoreData = {
       coins: 500,
-      currentStage: 3,
-      currentCheckpoint: 2,
+      worlds: {
+        grasslands: {
+          currentStage: 3,
+          currentCheckpoint: 2,
+        },
+      },
       totalDeaths: 10,
       totalCompletions: 0,
       lastPlayedAt: 0,
-      __version: 1,
+      __version: 2,
       stageProgress: {},
       unlockedItems: [],
     };
@@ -100,6 +108,15 @@ describe("Marketplace E2E (obby)", () => {
       DataService: {
         getData: vi.fn(() => mockCoreData),
         addCoins: mockAddCoins,
+        setWorldStage: vi.fn(
+          (player: Player, worldId: string, stage: number, checkpoint: number) => {
+            const world = mockCoreData.worlds[worldId as keyof typeof mockCoreData.worlds];
+            if (world) {
+              world.currentStage = stage;
+              world.currentCheckpoint = checkpoint;
+            }
+          }
+        ),
       },
     }));
 
@@ -229,10 +246,10 @@ describe("Marketplace E2E (obby)", () => {
     it("advances stage by 1 and emits telemetry", async () => {
       await setup();
       const handler = registeredProducts.get(3_000_003)!;
-      const previousStage = mockCoreData.currentStage;
+      const previousStage = mockCoreData.worlds.grasslands.currentStage;
       handler(makeReceipt(3_000_003));
 
-      expect(mockCoreData.currentStage).toBe(previousStage + 1);
+      expect(mockCoreData.worlds.grasslands.currentStage).toBe(previousStage + 1);
       expect(mockTrackPurchase).toHaveBeenCalledWith(mockPlayer, "Skip Stage", 3_000_003, 49);
     });
 
@@ -240,10 +257,10 @@ describe("Marketplace E2E (obby)", () => {
       await setup();
       const handler = registeredProducts.get(3_000_003)!;
       const receipt = { ...makeReceipt(3_000_003), PlayerId: 999 };
-      const previousStage = mockCoreData.currentStage;
+      const previousStage = mockCoreData.worlds.grasslands.currentStage;
       handler(receipt);
 
-      expect(mockCoreData.currentStage).toBe(previousStage); // unchanged
+      expect(mockCoreData.worlds.grasslands.currentStage).toBe(previousStage); // unchanged
       expect(mockTrackPurchase).not.toHaveBeenCalled();
     });
   });

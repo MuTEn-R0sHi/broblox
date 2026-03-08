@@ -637,6 +637,15 @@ export function mockRobloxGlobals(): void {
       Contextual: enumItem("Contextual", 0),
       Border: enumItem("Border", 1),
     },
+    RaycastFilterType: {
+      Include: enumItem("Include", 0),
+      Exclude: enumItem("Exclude", 1),
+    },
+  };
+
+  g.RaycastParams = class MockRaycastParams {
+    FilterDescendantsInstances: unknown[] = [];
+    FilterType: unknown = (g.Enum as any).RaycastFilterType.Include;
   };
 
   // ── Roblox Instance Mock ──────────────────────────────────────────────

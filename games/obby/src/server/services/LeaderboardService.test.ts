@@ -62,6 +62,10 @@ describe("LeaderboardService", () => {
 
     mockDataService = {
       getData: vi.fn(() => makeDefaultData()),
+      getWorldProgress: vi.fn((_player: unknown, worldId: string) => {
+        const data = mockDataService.getData();
+        return (data.worlds as Record<string, unknown>)[worldId];
+      }),
     };
 
     mockPlayerLifecycle = {
