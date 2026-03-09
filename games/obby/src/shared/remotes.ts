@@ -36,6 +36,8 @@ import type {
   BuyGearRequest,
   BuyGearResultPayload,
   EquipmentSyncPayload,
+  HazardTogglePayload,
+  HazardDamagePayload,
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -474,6 +476,22 @@ export const ObbyRemotes = {
    */
   EquipmentSync: defineClientEvent<EquipmentSyncPayload>("EquipmentSync", {
     description: "Server syncs equipment state to client",
+  }),
+
+  // ── Hazard Remotes ───────────────────────────────────────────────────
+
+  /**
+   * Server → Client: A hazard instance toggled state (fire jet on/off, platform broke/respawned).
+   */
+  HazardToggle: defineClientEvent<HazardTogglePayload>("HazardToggle", {
+    description: "Server notifies hazard instance state change",
+  }),
+
+  /**
+   * Server → Client: Player took hazard damage (for UI feedback / screen shake).
+   */
+  HazardDamage: defineClientEvent<HazardDamagePayload>("HazardDamage", {
+    description: "Server notifies player of hazard damage",
   }),
 } as const;
 
