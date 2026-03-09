@@ -102,7 +102,10 @@ async function loadService() {
 describe("HazardService (obby)", () => {
   it("exports HazardService and getter functions", async () => {
     const mod = await loadService();
-    expect(mod.HazardService).toBe(mockHandle.Service);
+    expect(mod.HazardService.name).toBe("HazardService");
+    expect(typeof mod.HazardService.onInit).toBe("function");
+    expect(typeof mod.HazardService.onStart).toBe("function");
+    expect(typeof mod.HazardService.onDestroy).toBe("function");
     expect(typeof mod.getHazardRegistry).toBe("function");
     expect(typeof mod.getHazardManager).toBe("function");
     expect(typeof mod.initPlayerHazards).toBe("function");

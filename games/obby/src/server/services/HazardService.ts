@@ -89,7 +89,7 @@ const OBBY_HAZARDS: HazardDefinition[] = [
 const handle = createHazardService({
   definitions: OBBY_HAZARDS,
 
-  onDamage(playerId: number, damage: number, hazardId: string): boolean {
+  onDamage: (playerId: number, damage: number, hazardId: string): boolean => {
     const player = Players.GetPlayerByUserId(playerId);
     if (!player) return false;
 
@@ -109,13 +109,13 @@ const handle = createHazardService({
     return humanoid.Health <= 0;
   },
 
-  onKill(playerId: number, _hazardId: string): void {
+  onKill: (playerId: number, _hazardId: string): void => {
     const player = Players.GetPlayerByUserId(playerId);
     if (!player) return;
     DataService.incrementDeaths(player);
   },
 
-  onToggle(instanceKey: string, active: boolean): void {
+  onToggle: (instanceKey: string, active: boolean): void => {
     for (const player of Players.GetPlayers()) {
       RemoteService.getRegistry().fireClient("HazardToggle", player, {
         instanceKey,
@@ -124,7 +124,7 @@ const handle = createHazardService({
     }
   },
 
-  onPlayerRemoving(callback) {
+  onPlayerRemoving: (callback) => {
     PlayerLifecycleService.onPlayerRemoving(callback);
   },
 });
@@ -136,66 +136,69 @@ const handle = createHazardService({
 let heartbeatConn: RBXScriptConnection | undefined;
 const touchConns: RBXScriptConnection[] = [];
 
-const originalOnStart = handle.Service.onStart;
-handle.Service.onStart = function () {
-  if (originalOnStart) {
-    originalOnStart.call(handle.Service);
-  }
+/** Wrapper service that delegates lifecycle to the factory and adds game wiring. */
+const wrappedService = {
+  name: "HazardService" as const,
 
-  // --- Player lifecycle: init hazard state on join ---
-  PlayerLifecycleService.onPlayerAdded((player) => {
-    handle.initPlayer(player.UserId);
-  });
+  onInit() {
+    handle.Service.onInit?.();
+  },
 
-  // --- CollectionService: connect Touched for all hazard tags ---
-  const manager = handle.getHazardManager();
+  onStart() {
+    handle.Service.onStart?.();
 
-  for (const def of OBBY_HAZARDS) {
-    if (!def.tag) continue;
+    // --- Player lifecycle: init hazard state on join ---
+    PlayerLifecycleService.onPlayerAdded((player) => {
+      handle.initPlayer(player.UserId);
+    });
 
-    for (const part of CollectionService.GetTagged(def.tag)) {
-      if (!part.IsA("BasePart")) continue;
+    // --- CollectionService: connect Touched for all hazard tags ---
+    const manager = handle.getHazardManager();
 
-      const instanceKey = `${def.id}::${part.GetFullName()}`;
-      manager.addInstance(def.id, instanceKey);
+    for (const def of OBBY_HAZARDS) {
+      if (!def.tag) continue;
 
-      const conn = part.Touched.Connect((hit) => {
-        const character = hit.Parent as Model | undefined;
-        if (!character) return;
-        const humanoid = character.FindFirstChildOfClass("Humanoid");
-        if (!humanoid) return;
-        const touchPlayer = Players.GetPlayerFromCharacter(character);
-        if (!touchPlayer) return;
+      for (const part of CollectionService.GetTagged(def.tag)) {
+        if (!part.IsA("BasePart")) continue;
 
-        manager.processTouch(touchPlayer.UserId, instanceKey, os.clock());
-      });
-      touchConns.push(conn);
+        const instanceKey = `${def.id}::${part.GetFullName()}`;
+        manager.addInstance(def.id, instanceKey);
+
+        const conn = part.Touched.Connect((hit) => {
+          const character = hit.Parent as Model | undefined;
+          if (!character) return;
+          const humanoid = character.FindFirstChildOfClass("Humanoid");
+          if (!humanoid) return;
+          const touchPlayer = Players.GetPlayerFromCharacter(character);
+          if (!touchPlayer) return;
+
+          manager.processTouch(touchPlayer.UserId, instanceKey, os.clock());
+        });
+        touchConns.push(conn);
+      }
     }
-  }
 
-  // --- Heartbeat: advance hazard timers every frame ---
-  heartbeatConn = RunService.Heartbeat.Connect((dt) => {
-    manager.update(dt);
-  });
-};
+    // --- Heartbeat: advance hazard timers every frame ---
+    heartbeatConn = RunService.Heartbeat.Connect((dt) => {
+      manager.update(dt);
+    });
+  },
 
-const originalOnDestroy = handle.Service.onDestroy;
-handle.Service.onDestroy = function () {
-  if (originalOnDestroy) {
-    originalOnDestroy.call(handle.Service);
-  }
-  heartbeatConn?.Disconnect();
-  heartbeatConn = undefined;
-  for (const conn of touchConns) {
-    conn.Disconnect();
-  }
+  onDestroy() {
+    handle.Service.onDestroy?.();
+    heartbeatConn?.Disconnect();
+    heartbeatConn = undefined;
+    for (const conn of touchConns) {
+      conn.Disconnect();
+    }
+  },
 };
 
 // ============================================================================
 // Exports
 // ============================================================================
 
-export const HazardService = handle.Service;
+export const HazardService = wrappedService;
 export const getHazardRegistry = () => handle.getHazardRegistry();
 export const getHazardManager = () => handle.getHazardManager();
 export const initPlayerHazards = (playerId: number) => handle.initPlayer(playerId);
