@@ -323,7 +323,7 @@ describe("EquipmentService", () => {
 
       const registry = mod.getGearRegistry();
       const allGear = registry.getAll();
-      const slots = new Set(allGear.map((g) => g.slot));
+      const slots = new Set(allGear.map((g: { slot: string }) => g.slot));
 
       expect(slots.has("feet")).toBe(true);
       expect(slots.has("back")).toBe(true);

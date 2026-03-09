@@ -2,7 +2,7 @@
  * @broblox/equipment — createEquipmentService factory tests
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { createEquipmentService } from "./create-equipment-service";
 import type { GearDefinition } from "./types";
 

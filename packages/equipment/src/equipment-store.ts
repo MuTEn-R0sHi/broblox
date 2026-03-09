@@ -7,7 +7,6 @@
  */
 
 import type {
-  GearDefinition,
   EquipmentData,
   EquipmentResult,
   GearEquipEvent,
