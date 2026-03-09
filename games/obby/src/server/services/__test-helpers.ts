@@ -79,6 +79,7 @@ export function makeDefaultData(overrides: Record<string, unknown> = {}) {
     },
     inventory: [],
     equipped: {},
+    ownedGear: [],
     totalDeaths: 0,
     totalCompletions: 0,
     unlockedItems: [],

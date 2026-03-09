@@ -45,6 +45,7 @@ export default defineConfig({
       "@broblox/input": resolve(__dirname, "packages/input/src/index.ts"),
       "@broblox/ui": resolve(__dirname, "packages/ui/src/index.ts"),
       "@broblox/marketplace": resolve(__dirname, "packages/marketplace/src/index.ts"),
+      "@broblox/equipment": resolve(__dirname, "packages/equipment/src/index.ts"),
       "@broblox/testing": resolve(__dirname, "packages/testing/src/index.ts"),
       "@rbxts/t": resolve(__dirname, "packages/testing/src/t-mock.ts"),
 

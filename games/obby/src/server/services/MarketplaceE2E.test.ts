@@ -134,6 +134,21 @@ describe("Marketplace E2E (obby)", () => {
     vi.doMock("./PetService", () => ({ getPetStore: vi.fn() }));
     vi.doMock("./GachaService", () => ({ getGachaStore: vi.fn(), getEggRegistry: vi.fn() }));
     vi.doMock("./CosmeticsService", () => ({ getCosmeticStore: vi.fn() }));
+    vi.doMock("./EquipmentService", () => ({
+      getEquipmentStore: vi.fn(() => ({
+        getOwnedGear: vi.fn(() => []),
+        getAllEquipped: vi.fn(() => ({})),
+      })),
+      getGearRegistry: vi.fn(() => ({
+        getAll: vi.fn(() => []),
+      })),
+    }));
+    vi.doMock("./AttributeService", () => ({
+      AttributeService: {
+        applyToHumanoid: vi.fn(),
+        syncToClient: vi.fn(),
+      },
+    }));
     vi.doMock("./BattlePassService", () => ({
       getBattlePassStore: vi.fn(),
       getSeasonRegistry: vi.fn(),

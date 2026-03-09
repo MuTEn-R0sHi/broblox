@@ -47,6 +47,7 @@ function migrateV1toV2(raw: unknown): ObbyPlayerData {
     },
     inventory: [],
     equipped: {},
+    ownedGear: [],
     totalDeaths: old.totalDeaths ?? 0,
     totalCompletions: old.totalCompletions ?? 0,
     unlockedItems: old.unlockedItems ?? [],
@@ -71,6 +72,7 @@ const DEFAULT_PLAYER_DATA: ObbyPlayerData = {
   worlds: {},
   inventory: [],
   equipped: {},
+  ownedGear: [],
   totalDeaths: 0,
   totalCompletions: 0,
   unlockedItems: [],
@@ -126,6 +128,8 @@ export const DataService: Service & {
   setWorldBestRunTime(player: Player, worldId: string, time: number): void;
   incrementWorldCompletions(player: Player, worldId: string): void;
   ensureWorldProgress(player: Player, worldId: string): void;
+  grantGearOwnership(player: Player, gearId: string): boolean;
+  saveEquipmentState(player: Player, equipped: Record<string, string>): void;
 } = {
   getData(player: Player): ObbyPlayerData | undefined {
     return dataHandle.getSessionManager().getSession(player)?.data;
@@ -332,6 +336,31 @@ export const DataService: Service & {
       session.markDirty();
       dataHandle.getStore().markDirty(player);
     }
+  },
+
+  grantGearOwnership(player: Player, gearId: string): boolean {
+    const session = dataHandle.getSessionManager().getSession(player);
+    if (!session) return false;
+
+    const data = session.data;
+    if (!data.ownedGear) data.ownedGear = [];
+    if (data.ownedGear.includes(gearId)) return false;
+
+    data.ownedGear.push(gearId);
+    session.markDirty();
+    dataHandle.getStore().markDirty(player);
+    return true;
+  },
+
+  saveEquipmentState(player: Player, equipped: Record<string, string>): void {
+    const session = dataHandle.getSessionManager().getSession(player);
+    if (!session) return;
+
+    const data = session.data;
+    // Sync equipped slots from equipment store to persisted data
+    data.equipped = equipped as Partial<Record<import("shared/types").EquipSlot, string>>;
+    session.markDirty();
+    dataHandle.getStore().markDirty(player);
   },
 
   onInit() {

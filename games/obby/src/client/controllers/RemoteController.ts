@@ -31,6 +31,8 @@ import type {
   StageCompletedEvent,
   FullPlayerDataPayload,
   CodeRedeemResultPayload,
+  EquipmentSyncPayload,
+  BuyGearResultPayload,
 } from "shared/types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -57,6 +59,7 @@ type AttributeSyncCallback = (data: AttributeSyncPayload) => void;
 type TrainingCompleteCallback = (data: TrainingCompletePayload) => void;
 type StaminaSyncCallback = (data: StaminaSyncPayload) => void;
 type WorldChangedCallback = (data: WorldChangedPayload) => void;
+type EquipmentSyncCallback = (data: EquipmentSyncPayload) => void;
 
 // ============================================================================
 // Module state
@@ -80,6 +83,7 @@ const attributeSyncCallbacks: AttributeSyncCallback[] = [];
 const trainingCompleteCallbacks: TrainingCompleteCallback[] = [];
 const staminaSyncCallbacks: StaminaSyncCallback[] = [];
 const worldChangedCallbacks: WorldChangedCallback[] = [];
+const equipmentSyncCallbacks: EquipmentSyncCallback[] = [];
 
 // ============================================================================
 // Controller
@@ -93,6 +97,8 @@ export const RemoteController: Controller & {
   unequipPet(instanceId: string): void;
   equipCosmetic(cosmeticId: string, slot: string): void;
   unequipCosmetic(slot: string): void;
+  equipGear(gearId: string): void;
+  unequipGear(slot: string): void;
   claimBattlePassReward(rewardId: string): void;
   requestTraining(stationType: AttributeType): void;
   requestEnterWorld(worldId: string): void;
@@ -103,6 +109,7 @@ export const RemoteController: Controller & {
   claimDailyReward(): DailyRewardDay | undefined;
   redeemCode(code: string): CodeRedeemResultPayload | undefined;
   hatchEgg(eggId: string, count: number): HatchResult[];
+  buyGear(gearId: string): BuyGearResultPayload | undefined;
 
   // Event subscriptions
   onCheckpoint(callback: CheckpointCallback): void;
@@ -121,6 +128,7 @@ export const RemoteController: Controller & {
   onTrainingComplete(callback: TrainingCompleteCallback): void;
   onStaminaSync(callback: StaminaSyncCallback): void;
   onWorldChanged(callback: WorldChangedCallback): void;
+  onEquipmentSync(callback: EquipmentSyncCallback): void;
 } = {
   onInit() {
     logger.info("RemoteController initializing...");
@@ -240,6 +248,13 @@ export const RemoteController: Controller & {
       }
     });
 
+    registry.onEvent("EquipmentSync", (data) => {
+      logger.debug("Equipment sync received");
+      for (const cb of equipmentSyncCallbacks) {
+        cb(data);
+      }
+    });
+
     logger.info("RemoteController initialized.");
   },
 
@@ -273,6 +288,14 @@ export const RemoteController: Controller & {
 
   unequipCosmetic(slot: string): void {
     registry.fire("UnequipCosmetic", { slot });
+  },
+
+  equipGear(gearId: string): void {
+    registry.fire("EquipGear", { gearId });
+  },
+
+  unequipGear(slot: string): void {
+    registry.fire("UnequipGear", { slot });
   },
 
   claimBattlePassReward(rewardId: string): void {
@@ -329,6 +352,15 @@ export const RemoteController: Controller & {
     }
     logger.warn(`HatchEgg failed: code=${result.code} message=${result.message ?? "none"}`);
     return [];
+  },
+
+  buyGear(gearId: string): BuyGearResultPayload | undefined {
+    const result = registry.invoke("BuyGear", { gearId });
+    if (isOk(result)) {
+      return result.value;
+    }
+    logger.warn(`BuyGear failed: code=${result.code} message=${result.message ?? "none"}`);
+    return undefined;
   },
 
   // ── Event subscriptions ─────────────────────────────────────────────
@@ -395,5 +427,9 @@ export const RemoteController: Controller & {
 
   onWorldChanged(callback: WorldChangedCallback): void {
     worldChangedCallbacks.push(callback);
+  },
+
+  onEquipmentSync(callback: EquipmentSyncCallback): void {
+    equipmentSyncCallbacks.push(callback);
   },
 };

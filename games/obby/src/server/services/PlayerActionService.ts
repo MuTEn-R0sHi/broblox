@@ -8,6 +8,8 @@
  * - HatchEgg (server function → hatches eggs from gacha)
  * - EquipPet / UnequipPet (server events)
  * - EquipCosmetic / UnequipCosmetic (server events)
+ * - EquipGear / UnequipGear (server events)
+ * - BuyGear (server function → purchase gear from shop)
  * - ClaimBattlePassReward (server event)
  *
  * This service bridges the typed remote layer with the per-player stores
@@ -29,6 +31,7 @@ import { getQuests } from "./QuestService";
 import { getPetStore } from "./PetService";
 import { getGachaStore, getEggRegistry } from "./GachaService";
 import { getCosmeticStore } from "./CosmeticsService";
+import { getEquipmentStore, getGearRegistry } from "./EquipmentService";
 import { getBattlePassStore, getSeasonRegistry } from "./BattlePassService";
 import { getDailyRewards, REWARD_CYCLE, registerRewardFulfiller } from "./RewardsService";
 import { getCodeStore } from "./CodeRedemptionService";
@@ -40,6 +43,7 @@ import {
   DEVELOPER_PRODUCTS,
 } from "./MarketplaceService";
 import { trackPurchase } from "./TelemetryService";
+import { AttributeService } from "./AttributeService";
 
 const logger = createLogger("PlayerActionService");
 
@@ -57,6 +61,7 @@ function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined 
   const quests = getQuests(playerId);
   const petStore = getPetStore(playerId);
   const cosmeticStore = getCosmeticStore(playerId);
+  const equipmentStore = getEquipmentStore(playerId);
   const bpStore = getBattlePassStore(playerId);
   const dailyStore = getDailyRewards(playerId);
 
@@ -96,6 +101,10 @@ function buildFullPlayerData(player: Player): FullPlayerDataPayload | undefined 
 
     ownedCosmetics: cosmeticStore?.getOwned() ?? [],
     equippedCosmetics,
+
+    ownedGear: equipmentStore?.getOwnedGear() ?? [],
+    equippedGear: equipmentStore?.getAllEquipped() ?? {},
+    gearCatalog: getGearRegistry().getAll(),
 
     battlePass: bpStore
       ? {
@@ -261,6 +270,89 @@ export const PlayerActionService: Service = {
       if (result.ok) {
         logger.debug(`Player ${player.UserId} unequipped cosmetic slot ${request.slot}`);
       }
+    });
+
+    // ── EquipGear ─────────────────────────────────────────────────────
+    registry.onEvent("EquipGear", (player, request) => {
+      const store = getEquipmentStore(player.UserId);
+      if (!store) return;
+
+      const progression = getProgression(player.UserId);
+      const result = store.equip(request.gearId, progression?.getLevel());
+      if (result.ok) {
+        DataService.saveEquipmentState(player, store.getAllEquipped());
+        AttributeService.applyToHumanoid(player);
+        AttributeService.syncToClient(player);
+        registry.fireClient("EquipmentSync", player, {
+          ownedGear: store.getOwnedGear(),
+          equipped: store.getAllEquipped(),
+        });
+        logger.debug(`Player ${player.UserId} equipped gear ${request.gearId}`);
+      }
+    });
+
+    // ── UnequipGear ───────────────────────────────────────────────────
+    registry.onEvent("UnequipGear", (player, request) => {
+      const store = getEquipmentStore(player.UserId);
+      if (!store) return;
+
+      const result = store.unequip(request.slot);
+      if (result.ok) {
+        DataService.saveEquipmentState(player, store.getAllEquipped());
+        AttributeService.applyToHumanoid(player);
+        AttributeService.syncToClient(player);
+        registry.fireClient("EquipmentSync", player, {
+          ownedGear: store.getOwnedGear(),
+          equipped: store.getAllEquipped(),
+        });
+        logger.debug(`Player ${player.UserId} unequipped gear slot ${request.slot}`);
+      }
+    });
+
+    // ── BuyGear ───────────────────────────────────────────────────────
+    registry.onFunction("BuyGear", (player, request) => {
+      const store = getEquipmentStore(player.UserId);
+      if (!store) {
+        return ok({ success: false, message: "Equipment not loaded" });
+      }
+
+      const gearDef = getGearRegistry().get(request.gearId);
+      if (!gearDef) {
+        return ok({ success: false, message: "Unknown gear" });
+      }
+
+      if (store.ownsGear(request.gearId)) {
+        return ok({ success: false, message: "Already owned" });
+      }
+
+      // Check level requirement
+      const progression = getProgression(player.UserId);
+      const playerLevel = progression?.getLevel() ?? 1;
+      if (gearDef.levelRequirement !== undefined && playerLevel < gearDef.levelRequirement) {
+        return ok({ success: false, message: "Level too low" });
+      }
+
+      // Check coins
+      const data = DataService.getData(player);
+      if (!data || data.coins < gearDef.price) {
+        return ok({ success: false, message: "Not enough coins" });
+      }
+
+      // Deduct coins and grant gear
+      DataService.addCoins(player, -gearDef.price);
+      store.grantGear(request.gearId);
+      DataService.grantGearOwnership(player, request.gearId);
+
+      // Sync equipment state to client
+      registry.fireClient("EquipmentSync", player, {
+        ownedGear: store.getOwnedGear(),
+        equipped: store.getAllEquipped(),
+      });
+
+      logger.info(
+        `Player ${player.UserId} bought gear ${request.gearId} for ${gearDef.price} coins`
+      );
+      return ok({ success: true });
     });
 
     // ── ClaimBattlePassReward ─────────────────────────────────────────

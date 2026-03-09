@@ -20,6 +20,7 @@ import {
   createInventoryScreen,
   createPetCollection,
   createCosmeticsScreen,
+  createEquipmentScreen,
   createGachaScreen,
   createBattlePassScreen,
   createSettingsScreen,
@@ -459,6 +460,7 @@ interface ScreenHandles {
   inventory?: ReturnType<typeof createInventoryScreen>;
   petCollection?: ReturnType<typeof createPetCollection>;
   cosmetics?: ReturnType<typeof createCosmeticsScreen>;
+  equipment?: ReturnType<typeof createEquipmentScreen>;
   gacha?: ReturnType<typeof createGachaScreen>;
   battlePass?: ReturnType<typeof createBattlePassScreen>;
   settings?: ReturnType<typeof createSettingsScreen>;
@@ -497,6 +499,7 @@ function refreshAllScreens(): void {
   screens.inventory?.refresh();
   screens.petCollection?.refresh();
   screens.cosmetics?.refresh();
+  screens.equipment?.refresh();
   screens.gacha?.refresh();
   screens.battlePass?.refresh();
 }
@@ -533,6 +536,7 @@ export const ScreenController: Controller & {
   toggleInventory(): void;
   togglePets(): void;
   toggleCosmetics(): void;
+  toggleEquipment(): void;
   toggleGacha(): void;
   toggleBattlePass(): void;
   toggleSettings(): void;
@@ -652,6 +656,29 @@ export const ScreenController: Controller & {
       onClose: () => hideActiveModal(),
     });
 
+    // ── Create Equipment Screen ─────────────────────────────────────
+    screens.equipment = createEquipmentScreen(screenGui, {
+      getOwnedGear: () => cachedData?.ownedGear ?? [],
+      getEquippedGear: () => cachedData?.equippedGear ?? {},
+      getGearCatalog: () => cachedData?.gearCatalog ?? [],
+      getCoins: () => cachedData?.coins ?? 0,
+      getPlayerLevel: () => cachedData?.level ?? 1,
+      onEquip: (gearId) => {
+        RemoteController.equipGear(gearId);
+        task.spawn(() => refreshData());
+      },
+      onUnequip: (slot) => {
+        RemoteController.unequipGear(slot);
+        task.spawn(() => refreshData());
+      },
+      onBuy: (gearId) => {
+        const result = RemoteController.buyGear(gearId);
+        task.spawn(() => refreshData());
+        return result ?? { success: false, message: "Request failed" };
+      },
+      onClose: () => hideActiveModal(),
+    });
+
     // ── Create Gacha Screen ─────────────────────────────────────────
     screens.gacha = createGachaScreen(screenGui, {
       getEggs: () => EGG_DEFINITIONS,
@@ -727,6 +754,7 @@ export const ScreenController: Controller & {
       task.spawn(() => createDailyPopup());
     });
     RemoteController.onStage(() => requestRefresh());
+    RemoteController.onEquipmentSync(() => requestRefresh());
 
     logger.info("ScreenController started — all screens created.");
   },
@@ -747,6 +775,10 @@ export const ScreenController: Controller & {
 
   toggleCosmetics(): void {
     showModal("cosmetics");
+  },
+
+  toggleEquipment(): void {
+    showModal("equipment");
   },
 
   toggleGacha(): void {
