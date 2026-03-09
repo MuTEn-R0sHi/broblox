@@ -224,6 +224,9 @@ importers:
       "@broblox/data":
         specifier: workspace:*
         version: link:../../packages/data
+      "@broblox/equipment":
+        specifier: workspace:*
+        version: link:../../packages/equipment
       "@broblox/events":
         specifier: workspace:*
         version: link:../../packages/events
