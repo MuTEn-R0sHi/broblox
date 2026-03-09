@@ -450,12 +450,14 @@ export function createEquipmentScreen(
     };
 
     const sorted = [...filtered];
+    // Comparator returns boolean for roblox-ts (Lua table.sort); cast avoids TS/rbxtsc mismatch
     sorted.sort(((a: GearDisplayDef, b: GearDisplayDef) => {
       const oa = owned.has(a.id) ? 1 : 0;
       const ob = owned.has(b.id) ? 1 : 0;
       if (oa !== ob) return ob > oa;
       return (RARITY_ORD[b.rarity] ?? 0) > (RARITY_ORD[a.rarity] ?? 0);
-    }) as unknown as (a: GearDisplayDef, b: GearDisplayDef) => number);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }) as any);
 
     for (const gear of sorted) {
       const isOwned = owned.has(gear.id);
