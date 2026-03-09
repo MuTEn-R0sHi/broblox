@@ -352,4 +352,28 @@ describe("EquipmentService", () => {
       }
     });
   });
+
+  // ─── Direct export wrappers ─────────────────────────────────────────
+
+  describe("exported helper functions", () => {
+    it("initPlayerEquipment creates a store directly", async () => {
+      const mod = await loadEquipmentService();
+      mod.EquipmentService.onInit?.();
+
+      const store = mod.initPlayerEquipment(999);
+      expect(store).toBeDefined();
+      expect(mod.getEquipmentStore(999)).toBe(store);
+    });
+
+    it("cleanupPlayerEquipment removes a store directly", async () => {
+      const mod = await loadEquipmentService();
+      mod.EquipmentService.onInit?.();
+
+      mod.initPlayerEquipment(999);
+      expect(mod.getEquipmentStore(999)).toBeDefined();
+
+      mod.cleanupPlayerEquipment(999);
+      expect(mod.getEquipmentStore(999)).toBeUndefined();
+    });
+  });
 });

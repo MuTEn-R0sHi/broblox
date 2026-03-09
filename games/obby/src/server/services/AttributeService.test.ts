@@ -280,4 +280,22 @@ describe("AttributeService", () => {
       expect(mockRegistry.fireClient).not.toHaveBeenCalled();
     });
   });
+
+  // ─── lifecycle ───────────────────────────────────────────────────────
+
+  describe("lifecycle", () => {
+    it("onInit registers PlayerLifecycleService.onPlayerAdded callback", async () => {
+      const svc = await loadAttributeService();
+      svc.onInit?.();
+
+      expect(mockPlayerLifecycle.onPlayerAdded).toHaveBeenCalledTimes(1);
+    });
+
+    it("onStart logs without error", async () => {
+      const svc = await loadAttributeService();
+      svc.onStart?.();
+
+      expect(mockLogger.info).toHaveBeenCalled();
+    });
+  });
 });
