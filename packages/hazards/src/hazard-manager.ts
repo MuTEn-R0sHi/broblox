@@ -42,12 +42,16 @@ export function createHazardManager(
     return registry.get(defId);
   }
 
-  /** Apply damage and handle kill. Returns true if player died. */
+  /**
+   * Apply damage and handle kill. Returns true if player died.
+   * For `instant_kill`, the player is always considered dead regardless
+   * of onDamage's return value.
+   */
   function applyDamage(playerId: number, def: HazardDefinition): boolean {
     if (def.behaviour === "instant_kill") {
-      const died = callbacks.onDamage(playerId, 9999, def.id);
+      callbacks.onDamage(playerId, 9999, def.id);
       callbacks.onKill(playerId, def.id);
-      return died || true;
+      return true;
     }
     if (def.behaviour === "crumbling") {
       return false; // crumbling doesn't deal damage — the fall does
@@ -72,11 +76,8 @@ export function createHazardManager(
       const def = getDef(definitionId);
       if (!def) return false;
 
-      const startActive = def.behaviour !== "timed_burst" || true;
-      const nextToggle =
-        def.behaviour === "timed_burst" && def.activeDuration !== undefined
-          ? def.activeDuration
-          : math.huge;
+      const startActive = true;
+      const nextToggle = def.behaviour === "timed_burst" ? (def.activeDuration ?? 3) : math.huge;
 
       instances.set(instanceKey, {
         definitionId,
@@ -152,6 +153,9 @@ export function createHazardManager(
         setImmunity(playerId, instanceKey, def.cooldownDuration, now);
       }
       if (!died && def.behaviour === "damage_zone" && def.tickInterval) {
+        setImmunity(playerId, instanceKey, def.tickInterval, now);
+      }
+      if (!died && def.behaviour === "timed_burst" && def.tickInterval) {
         setImmunity(playerId, instanceKey, def.tickInterval, now);
       }
 

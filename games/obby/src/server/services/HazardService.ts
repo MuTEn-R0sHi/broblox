@@ -11,7 +11,10 @@
 
 import { createHazardService } from "@broblox/hazards";
 import type { HazardDefinition } from "@broblox/hazards";
+import { CollectionService, Players, RunService } from "@rbxts/services";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { RemoteService } from "./RemoteService";
+import { DataService } from "./DataService";
 
 // ============================================================================
 // Hazard Catalog
@@ -86,24 +89,107 @@ const OBBY_HAZARDS: HazardDefinition[] = [
 const handle = createHazardService({
   definitions: OBBY_HAZARDS,
 
-  onDamage(playerId: number, damage: number, _hazardId: string): boolean {
-    // In a real game this would find the player's Humanoid and call TakeDamage.
-    // For now this is the integration point — game-level code wires this up.
+  onDamage(playerId: number, damage: number, hazardId: string): boolean {
+    const player = Players.GetPlayerByUserId(playerId);
+    if (!player) return false;
 
-    void playerId;
-    void damage;
-    return false;
+    const character = player.Character;
+    if (!character) return false;
+
+    const humanoid = character.FindFirstChildOfClass("Humanoid");
+    if (!humanoid) return false;
+
+    humanoid.TakeDamage(damage);
+
+    RemoteService.getRegistry().fireClient("HazardDamage", player, {
+      hazardId,
+      damage,
+    });
+
+    return humanoid.Health <= 0;
   },
 
-  onKill(playerId: number, hazardId: string): void {
-    void playerId;
-    void hazardId;
+  onKill(playerId: number, _hazardId: string): void {
+    const player = Players.GetPlayerByUserId(playerId);
+    if (!player) return;
+    DataService.incrementDeaths(player);
+  },
+
+  onToggle(instanceKey: string, active: boolean): void {
+    for (const player of Players.GetPlayers()) {
+      RemoteService.getRegistry().fireClient("HazardToggle", player, {
+        instanceKey,
+        active,
+      });
+    }
   },
 
   onPlayerRemoving(callback) {
     PlayerLifecycleService.onPlayerRemoving(callback);
   },
 });
+
+// ============================================================================
+// Game-Level Wiring (Heartbeat, CollectionService, Player Lifecycle)
+// ============================================================================
+
+let heartbeatConn: RBXScriptConnection | undefined;
+const touchConns: RBXScriptConnection[] = [];
+
+const originalOnStart = handle.Service.onStart;
+handle.Service.onStart = function () {
+  if (originalOnStart) {
+    originalOnStart.call(handle.Service);
+  }
+
+  // --- Player lifecycle: init hazard state on join ---
+  PlayerLifecycleService.onPlayerAdded((player) => {
+    handle.initPlayer(player.UserId);
+  });
+
+  // --- CollectionService: connect Touched for all hazard tags ---
+  const manager = handle.getHazardManager();
+
+  for (const def of OBBY_HAZARDS) {
+    if (!def.tag) continue;
+
+    for (const part of CollectionService.GetTagged(def.tag)) {
+      if (!part.IsA("BasePart")) continue;
+
+      const instanceKey = `${def.id}::${part.GetFullName()}`;
+      manager.addInstance(def.id, instanceKey);
+
+      const conn = part.Touched.Connect((hit) => {
+        const character = hit.Parent as Model | undefined;
+        if (!character) return;
+        const humanoid = character.FindFirstChildOfClass("Humanoid");
+        if (!humanoid) return;
+        const touchPlayer = Players.GetPlayerFromCharacter(character);
+        if (!touchPlayer) return;
+
+        manager.processTouch(touchPlayer.UserId, instanceKey, os.clock());
+      });
+      touchConns.push(conn);
+    }
+  }
+
+  // --- Heartbeat: advance hazard timers every frame ---
+  heartbeatConn = RunService.Heartbeat.Connect((dt) => {
+    manager.update(dt);
+  });
+};
+
+const originalOnDestroy = handle.Service.onDestroy;
+handle.Service.onDestroy = function () {
+  if (originalOnDestroy) {
+    originalOnDestroy.call(handle.Service);
+  }
+  heartbeatConn?.Disconnect();
+  heartbeatConn = undefined;
+  for (const conn of touchConns) {
+    conn.Disconnect();
+  }
+};
 
 // ============================================================================
 // Exports

@@ -24,6 +24,7 @@ const FIRE_JET: HazardDefinition = {
   damage: 25,
   activeDuration: 2,
   cooldownDuration: 3,
+  tickInterval: 0.5,
   tag: "HazardFireJet",
 };
 
@@ -215,6 +216,25 @@ describe("HazardManager", () => {
       // Should be active initially
       expect(manager.processTouch(1, "jet_1", 0)).toBe(true);
       expect(callbacks.onDamage).toHaveBeenCalledWith(1, 25, "fire_jet");
+    });
+
+    it("grants immunity between ticks via tickInterval", () => {
+      const { manager, callbacks } = setup();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (manager as any)._initPlayer(1);
+      manager.addInstance("fire_jet", "jet_1");
+
+      // First touch deals damage
+      expect(manager.processTouch(1, "jet_1", 0)).toBe(true);
+      expect(callbacks.onDamage).toHaveBeenCalledTimes(1);
+
+      // Immune for tickInterval (0.5s)
+      expect(manager.processTouch(1, "jet_1", 0.3)).toBe(false);
+      expect(callbacks.onDamage).toHaveBeenCalledTimes(1);
+
+      // Damage again after tickInterval
+      expect(manager.processTouch(1, "jet_1", 0.6)).toBe(true);
+      expect(callbacks.onDamage).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -7,10 +7,19 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // ── Mocks ──────────────────────────────────────────────────────────────
 
 let capturedConfig: Record<string, unknown> | undefined;
+const mockManager = {
+  addInstance: vi.fn(() => true),
+  processTouch: vi.fn(),
+  update: vi.fn(),
+};
 const mockHandle = {
-  Service: { name: "HazardService" },
+  Service: {
+    name: "HazardService",
+    onStart: undefined as (() => void) | undefined,
+    onDestroy: undefined as (() => void) | undefined,
+  },
   getHazardRegistry: vi.fn(() => "hazard-registry"),
-  getHazardManager: vi.fn(() => "hazard-manager"),
+  getHazardManager: vi.fn(() => mockManager),
   initPlayer: vi.fn(),
   cleanupPlayer: vi.fn(),
 };
@@ -29,9 +38,58 @@ vi.mock("./PlayerLifecycleService", () => ({
   },
 }));
 
+const mockFireClient = vi.fn();
+vi.mock("./RemoteService", () => ({
+  RemoteService: {
+    getRegistry: () => ({ fireClient: mockFireClient }),
+  },
+}));
+
+vi.mock("./DataService", () => ({
+  DataService: {
+    incrementDeaths: vi.fn(),
+  },
+}));
+
+const mockHumanoid = {
+  TakeDamage: vi.fn(),
+  Health: 100,
+  MaxHealth: 100,
+};
+const mockCharacter = {
+  FindFirstChildOfClass: vi.fn((cls: string) => (cls === "Humanoid" ? mockHumanoid : undefined)),
+  Parent: undefined,
+};
+const mockPlayer = {
+  UserId: 1,
+  Character: mockCharacter,
+  Name: "TestPlayer",
+};
+
+vi.mock("@rbxts/services", () => ({
+  Players: {
+    GetPlayerByUserId: vi.fn((id: number) => (id === 1 ? mockPlayer : undefined)),
+    GetPlayerFromCharacter: vi.fn(() => mockPlayer),
+    GetPlayers: vi.fn(() => [mockPlayer]),
+  },
+  RunService: {
+    Heartbeat: {
+      Connect: vi.fn(() => ({ Disconnect: vi.fn() })),
+    },
+  },
+  CollectionService: {
+    GetTagged: vi.fn(() => []),
+  },
+}));
+
 beforeEach(() => {
   vi.resetModules();
   capturedConfig = undefined;
+  mockHandle.Service.onStart = undefined;
+  mockHandle.Service.onDestroy = undefined;
+  mockHumanoid.Health = 100;
+  mockHumanoid.TakeDamage.mockClear();
+  mockFireClient.mockClear();
   vi.clearAllMocks();
 });
 
@@ -114,7 +172,7 @@ describe("HazardService (obby)", () => {
     const mod = await loadService();
     const result = mod.getHazardManager();
     expect(mockHandle.getHazardManager).toHaveBeenCalled();
-    expect(result).toBe("hazard-manager");
+    expect(result).toBe(mockManager);
   });
 
   it("delegates initPlayerHazards", async () => {
@@ -134,24 +192,67 @@ describe("HazardService (obby)", () => {
     expect(capturedConfig!["onPlayerRemoving"]).toBeTypeOf("function");
   });
 
-  it("provides onDamage callback", async () => {
+  it("onDamage applies humanoid damage and fires remote", async () => {
     await loadService();
     const onDamage = capturedConfig!["onDamage"] as (
       playerId: number,
       damage: number,
       hazardId: string
     ) => boolean;
-    expect(onDamage).toBeTypeOf("function");
-    // Default impl returns false (no kill)
-    expect(onDamage(1, 25, "fire_jet")).toBe(false);
+
+    const result = onDamage(1, 25, "fire_jet");
+    expect(mockHumanoid.TakeDamage).toHaveBeenCalledWith(25);
+    expect(mockFireClient).toHaveBeenCalledWith("HazardDamage", mockPlayer, {
+      hazardId: "fire_jet",
+      damage: 25,
+    });
+    expect(result).toBe(false); // Health 100, not dead
   });
 
-  it("provides onKill callback", async () => {
+  it("onDamage returns true when player dies", async () => {
+    await loadService();
+    mockHumanoid.Health = 0;
+    const onDamage = capturedConfig!["onDamage"] as (
+      playerId: number,
+      damage: number,
+      hazardId: string
+    ) => boolean;
+
+    const result = onDamage(1, 100, "lava_floor");
+    expect(result).toBe(true);
+  });
+
+  it("onDamage returns false for unknown player", async () => {
+    await loadService();
+    const onDamage = capturedConfig!["onDamage"] as (
+      playerId: number,
+      damage: number,
+      hazardId: string
+    ) => boolean;
+
+    const result = onDamage(999, 25, "fire_jet");
+    expect(result).toBe(false);
+    expect(mockHumanoid.TakeDamage).not.toHaveBeenCalled();
+  });
+
+  it("onKill increments deaths via DataService", async () => {
+    const { DataService } = await import("./DataService");
     await loadService();
     const onKill = capturedConfig!["onKill"] as (playerId: number, hazardId: string) => void;
-    expect(onKill).toBeTypeOf("function");
-    // Should not throw
+
     onKill(1, "lava_floor");
+    expect(DataService.incrementDeaths).toHaveBeenCalledWith(mockPlayer);
+  });
+
+  it("onToggle fires HazardToggle remote to all players", async () => {
+    await loadService();
+    const onToggle = capturedConfig!["onToggle"] as (instanceKey: string, active: boolean) => void;
+
+    onToggle("fire_jet::jet_1", false);
+    expect(mockFireClient).toHaveBeenCalledWith("HazardToggle", mockPlayer, {
+      instanceKey: "fire_jet::jet_1",
+      active: false,
+    });
   });
 
   it("all hazard definitions have unique tags", async () => {

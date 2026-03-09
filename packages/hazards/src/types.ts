@@ -63,7 +63,7 @@ export interface HazardDefinition {
 
 /** Tracks per-player immunity / cooldown per hazard instance. */
 export interface PlayerHazardState {
-  /** Timestamp when immunity expires (os.clock based). */
+  /** Absolute timestamp when immunity expires (os.clock based). */
   immuneUntil: number;
 }
 
@@ -75,7 +75,7 @@ export interface HazardInstanceState {
   definitionId: string;
   /** Whether this instance is currently active (dealing damage). */
   active: boolean;
-  /** os.clock timestamp of next state toggle (for timed_burst / crumbling). */
+  /** Seconds remaining until next state toggle (for timed_burst / crumbling). Decremented by `update()` each frame. */
   nextToggleAt: number;
   /** For crumbling: whether the platform is broken. */
   broken?: boolean;
@@ -89,14 +89,22 @@ export interface HazardServiceConfig {
   definitions: HazardDefinition[];
 
   /**
-   * Apply damage to a player. If not provided, the service will call
-   * `humanoid.TakeDamage(damage)` internally.
-   * Return `true` if the player died.
+   * Apply damage to a player.
+   *
+   * This package is "pure-logic" and does not call `humanoid.TakeDamage`
+   * or otherwise apply damage by itself. If this callback is not provided,
+   * hazard contacts will not deal any damage (no-op).
+   *
+   * Implement this to integrate with your game's damage system. Return
+   * `true` if the player died as a result of the damage.
    */
   onDamage?: (playerId: number, damage: number, hazardId: string) => boolean;
 
   /** Called when a hazard kills a player. */
   onKill?: (playerId: number, hazardId: string) => void;
+
+  /** Called when a timed_burst / crumbling instance toggles state. */
+  onToggle?: (instanceKey: string, active: boolean) => void;
 
   /** Wire into PlayerLifecycleService. */
   onPlayerRemoving?: (callback: (player: { UserId: number }) => void) => void;

@@ -34,6 +34,12 @@ export function createHazardService(config: HazardServiceConfig): HazardServiceH
 
   let managerInstance: ReturnType<typeof createHazardManager> | undefined;
 
+  const onToggle =
+    config.onToggle ??
+    ((instanceKey: string, active: boolean) => {
+      logger.debug(`Hazard ${instanceKey} → ${active ? "active" : "inactive"}`);
+    });
+
   function getManager() {
     if (!managerInstance) {
       error("HazardService not initialized");
@@ -48,9 +54,7 @@ export function createHazardService(config: HazardServiceConfig): HazardServiceH
         managerInstance = createHazardManager(registry, {
           onDamage,
           onKill,
-          onToggle: (instanceKey, active) => {
-            logger.debug(`Hazard ${instanceKey} → ${active ? "active" : "inactive"}`);
-          },
+          onToggle,
         });
         logger.info(`Initialized with ${registry.count()} hazard definitions`);
       },
