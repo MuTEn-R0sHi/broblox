@@ -54,7 +54,7 @@ export interface GearDisplayDef {
   slot: string;
   modifiers: readonly { stat: string; flat: number }[];
   levelRequirement?: number;
-  price: number;
+  price?: number;
   tags?: readonly string[];
 }
 
@@ -212,6 +212,7 @@ export function createEquipmentScreen(
       font: Enum.Font.GothamMedium,
       onClick: () => {
         activeTab = slot;
+        selectedId = undefined;
         refresh();
       },
       parent: tabBar,
@@ -388,13 +389,14 @@ export function createEquipmentScreen(
     } else {
       // Buy button
       const coins = options.getCoins();
-      const canAfford = coins >= def.price;
+      const defPrice = def.price ?? 0;
+      const canAfford = coins >= defPrice;
       const playerLevel = options.getPlayerLevel();
       const meetsLevel = def.levelRequirement === undefined || playerLevel >= def.levelRequirement;
       const canBuy = canAfford && meetsLevel;
 
       const buyBtn = createButton({
-        text: canBuy ? `🪙 Buy (${def.price} coins)` : `🔒 ${def.price} coins`,
+        text: canBuy ? `🪙 Buy (${defPrice} coins)` : `🔒 ${defPrice} coins`,
         name: "BuyBtn",
         size: new UDim2(1, 0, 0, 32),
         position: new UDim2(0, 0, 0, y),
@@ -497,7 +499,7 @@ export function createEquipmentScreen(
       });
 
       // Price tag for unowned
-      if (!isOwned) {
+      if (!isOwned && gear.price !== undefined && gear.price > 0) {
         createLabel({
           text: `🪙${gear.price}`,
           name: "Price",
@@ -547,8 +549,30 @@ export function createEquipmentScreen(
       clickArea.MouseButton1Click.Connect(() => {
         selectedId = gear.id;
         renderDetail(gear, isOwned, isEquipped);
-        refresh();
       });
+    }
+
+    // Re-render detail panel if the selected item is still in this tab
+    if (selectedId !== undefined) {
+      const sel = sorted.find((g) => g.id === selectedId);
+      if (sel) {
+        const isOwned = owned.has(sel.id);
+        const isEquipped = equippedIds.has(sel.id);
+        renderDetail(sel, isOwned, isEquipped);
+      } else {
+        // Selected item not in current tab — clear detail
+        clearChildren(detailPanel);
+        createLabel({
+          text: "Select a gear item",
+          name: "NoSelection",
+          size: scale(1, 1),
+          textColor: theme.colors.textMuted,
+          textSize: 13,
+          textXAlignment: Enum.TextXAlignment.Center,
+          textYAlignment: Enum.TextYAlignment.Center,
+          parent: detailPanel,
+        });
+      }
     }
 
     // Refresh tabs highlight

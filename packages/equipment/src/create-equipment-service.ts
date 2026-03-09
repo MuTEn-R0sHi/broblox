@@ -5,15 +5,13 @@
  */
 
 import { Service, createLogger } from "@broblox/core";
-import type { GearDefinition, EquipmentConfig } from "./types";
+import type { GearDefinition } from "./types";
 import { GearRegistry } from "./gear-registry";
 import { EquipmentStore } from "./equipment-store";
 
 export interface EquipmentServiceConfig {
   /** Gear definitions to register. */
   gear: readonly GearDefinition[];
-  /** Optional config overrides. */
-  config?: Partial<EquipmentConfig>;
   /**
    * Wires player-leave cleanup.
    * Typically: `(cb) => PlayerLifecycleService.onPlayerRemoving(cb)`

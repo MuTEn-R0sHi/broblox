@@ -321,6 +321,11 @@ export const PlayerActionService: Service = {
         return ok({ success: false, message: "Unknown gear" });
       }
 
+      const price = gearDef.price ?? 0;
+      if (price <= 0) {
+        return ok({ success: false, message: "Not purchasable" });
+      }
+
       if (store.ownsGear(request.gearId)) {
         return ok({ success: false, message: "Already owned" });
       }
@@ -334,13 +339,18 @@ export const PlayerActionService: Service = {
 
       // Check coins
       const data = DataService.getData(player);
-      if (!data || data.coins < gearDef.price) {
+      if (!data || data.coins < price) {
         return ok({ success: false, message: "Not enough coins" });
       }
 
       // Deduct coins and grant gear
-      DataService.addCoins(player, -gearDef.price);
-      store.grantGear(request.gearId);
+      DataService.addCoins(player, -price);
+      const grantResult = store.grantGear(request.gearId);
+      if (!grantResult.ok) {
+        // Refund coins if grant failed
+        DataService.addCoins(player, price);
+        return ok({ success: false, message: "Grant failed" });
+      }
       DataService.grantGearOwnership(player, request.gearId);
 
       // Sync equipment state to client
@@ -349,9 +359,7 @@ export const PlayerActionService: Service = {
         equipped: store.getAllEquipped(),
       });
 
-      logger.info(
-        `Player ${player.UserId} bought gear ${request.gearId} for ${gearDef.price} coins`
-      );
+      logger.info(`Player ${player.UserId} bought gear ${request.gearId} for ${price} coins`);
       return ok({ success: true });
     });
 

@@ -44,8 +44,9 @@ export class EquipmentStore {
       }
     }
 
-    for (const [slot, gearId] of Object.entries(data.equipped)) {
-      if (this.registry.has(gearId) && this.ownedGear.has(gearId)) {
+    for (const [slot, gearId] of pairs(data.equipped)) {
+      const def = this.registry.get(gearId);
+      if (def && def.slot === slot && this.ownedGear.has(gearId)) {
         this.equipped.set(slot, gearId);
       }
     }

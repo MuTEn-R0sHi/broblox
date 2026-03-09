@@ -377,6 +377,18 @@ describe("EquipmentStore", () => {
       expect(store.getEquipped("feet")).toBeUndefined();
     });
 
+    it("skips equipped gear loaded into the wrong slot", () => {
+      const data: EquipmentData = {
+        ownedGear: ["running_shoes"],
+        equipped: { back: "running_shoes" }, // running_shoes is slot "feet"
+      };
+
+      store.loadFrom(data);
+      expect(store.ownsGear("running_shoes")).toBe(true);
+      expect(store.getEquipped("back")).toBeUndefined();
+      expect(store.getEquipped("feet")).toBeUndefined();
+    });
+
     it("round-trips correctly", () => {
       store.grantGear("running_shoes");
       store.grantGear("feather_cape");
