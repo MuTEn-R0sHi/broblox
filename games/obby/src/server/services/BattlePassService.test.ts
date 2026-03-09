@@ -70,6 +70,12 @@ describe("BattlePassService (obby)", () => {
     expect(seasons[0].tiers).toHaveLength(10);
   });
 
+  it("delegates getSeasonRegistry to handle", async () => {
+    const mod = await loadService();
+    mod.getSeasonRegistry();
+    expect(mockHandle.getSeasonRegistry).toHaveBeenCalled();
+  });
+
   it("delegates getBattlePassStore to handle", async () => {
     const mod = await loadService();
     mod.getBattlePassStore(42);

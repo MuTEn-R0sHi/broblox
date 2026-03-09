@@ -224,6 +224,9 @@ importers:
       "@broblox/data":
         specifier: workspace:*
         version: link:../../packages/data
+      "@broblox/equipment":
+        specifier: workspace:*
+        version: link:../../packages/equipment
       "@broblox/events":
         specifier: workspace:*
         version: link:../../packages/events
@@ -671,6 +674,37 @@ importers:
       "@broblox/core":
         specifier: workspace:*
         version: link:../core
+      "@broblox/shared-types":
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      "@broblox/testing":
+        specifier: workspace:*
+        version: link:../testing
+      "@rbxts/compiler-types":
+        specifier: 3.0.0-types.0
+        version: 3.0.0-types.0
+      "@rbxts/types":
+        specifier: ^1.0.910
+        version: 1.0.910
+      roblox-ts:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+
+  packages/equipment:
+    dependencies:
+      "@broblox/core":
+        specifier: workspace:*
+        version: link:../core
+      "@broblox/observability":
+        specifier: workspace:*
+        version: link:../observability
       "@broblox/shared-types":
         specifier: workspace:*
         version: link:../shared-types

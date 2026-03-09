@@ -119,6 +119,7 @@ describe("PlayerActionService (obby)", () => {
       onEvent: vi.fn((name: string, handler: (...args: unknown[]) => unknown) => {
         handlers[name] = handler;
       }),
+      fireClient: vi.fn(),
     };
 
     vi.doMock("./RemoteService", () => ({
@@ -157,6 +158,23 @@ describe("PlayerActionService (obby)", () => {
 
     vi.doMock("./CosmeticsService", () => ({
       getCosmeticStore: vi.fn(() => mockCosmeticStore),
+    }));
+
+    vi.doMock("./EquipmentService", () => ({
+      getEquipmentStore: vi.fn(() => ({
+        getOwnedGear: vi.fn(() => []),
+        getAllEquipped: vi.fn(() => ({})),
+      })),
+      getGearRegistry: vi.fn(() => ({
+        getAll: vi.fn(() => []),
+      })),
+    }));
+
+    vi.doMock("./AttributeService", () => ({
+      AttributeService: {
+        applyToHumanoid: vi.fn(),
+        syncToClient: vi.fn(),
+      },
     }));
 
     vi.doMock("./BattlePassService", () => ({

@@ -153,6 +153,20 @@ describe("AudioService (test-park)", () => {
     expect(typeof mod.getAudioManager).toBe("function");
   });
 
+  it("delegates getSoundRegistry", async () => {
+    const mod = await import("./AudioService");
+    const result = mod.getSoundRegistry();
+    expect(mockHandle.getSoundRegistry).toHaveBeenCalled();
+    expect(result).toBe("sound-registry");
+  });
+
+  it("delegates getAudioManager", async () => {
+    const mod = await import("./AudioService");
+    const result = mod.getAudioManager();
+    expect(mockHandle.getAudioManager).toHaveBeenCalled();
+    expect(result).toBe("audio-manager");
+  });
+
   it("configures 9 sound entries and lobby_music startup", async () => {
     await import("./AudioService");
     const sounds = capturedConfig!["sounds"] as unknown[];
@@ -200,6 +214,30 @@ describe("BattlePassService (test-park)", () => {
     expect(typeof mod.getBattlePassStore).toBe("function");
   });
 
+  it("delegates getSeasonRegistry", async () => {
+    const mod = await import("./BattlePassService");
+    mod.getSeasonRegistry();
+    expect(mockHandle.getSeasonRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates getBattlePassStore", async () => {
+    const mod = await import("./BattlePassService");
+    mod.getBattlePassStore(42);
+    expect(mockHandle.getBattlePassStore).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates initPlayerBattlePass", async () => {
+    const mod = await import("./BattlePassService");
+    mod.initPlayerBattlePass(42);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates cleanupPlayerBattlePass", async () => {
+    const mod = await import("./BattlePassService");
+    mod.cleanupPlayerBattlePass(42);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+  });
+
   it("configures season_1", async () => {
     await import("./BattlePassService");
     const seasons = capturedConfig!["seasons"] as Array<{ id: string }>;
@@ -245,6 +283,24 @@ describe("GachaService (test-park)", () => {
     expect(mod.GachaService).toBe(mockHandle.Service);
     mod.getGachaStore(42);
     expect(mockHandle.getGachaStore).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates getEggRegistry", async () => {
+    const mod = await import("./GachaService");
+    mod.getEggRegistry();
+    expect(mockHandle.getEggRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerGacha", async () => {
+    const mod = await import("./GachaService");
+    mod.initPlayerGacha(42);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates cleanupPlayerGacha", async () => {
+    const mod = await import("./GachaService");
+    mod.cleanupPlayerGacha(42);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
   });
 
   it("configures basic_egg with coins currency", async () => {
@@ -295,6 +351,24 @@ describe("InventoryService (test-park)", () => {
     expect(mockHandle.getInventoryStore).toHaveBeenCalledWith(42);
   });
 
+  it("delegates getItemRegistry", async () => {
+    const mod = await import("./InventoryService");
+    mod.getItemRegistry();
+    expect(mockHandle.getItemRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerInventory", async () => {
+    const mod = await import("./InventoryService");
+    mod.initPlayerInventory(42);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates cleanupPlayerInventory", async () => {
+    const mod = await import("./InventoryService");
+    mod.cleanupPlayerInventory(42);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+  });
+
   it("configures test-park items", async () => {
     await import("./InventoryService");
     const items = capturedConfig!["items"] as Array<{ id: string }>;
@@ -336,6 +410,24 @@ describe("PetService (test-park)", () => {
     mod.getPetStore(42);
     expect(mockHandle.getPetStore).toHaveBeenCalledWith(42);
   });
+
+  it("delegates getPetRegistry", async () => {
+    const mod = await import("./PetService");
+    mod.getPetRegistry();
+    expect(mockHandle.getPetRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerPets", async () => {
+    const mod = await import("./PetService");
+    mod.initPlayerPets(42);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates cleanupPlayerPets", async () => {
+    const mod = await import("./PetService");
+    mod.cleanupPlayerPets(42);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+  });
 });
 
 // ─── CosmeticsService ────────────────────────────────────────────────────
@@ -372,6 +464,24 @@ describe("CosmeticsService (test-park)", () => {
     mod.getCosmeticStore(42);
     expect(mockHandle.getCosmeticStore).toHaveBeenCalledWith(42);
   });
+
+  it("delegates getCosmeticRegistry", async () => {
+    const mod = await import("./CosmeticsService");
+    mod.getCosmeticRegistry();
+    expect(mockHandle.getCosmeticRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerCosmetics", async () => {
+    const mod = await import("./CosmeticsService");
+    mod.initPlayerCosmetics(42);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates cleanupPlayerCosmetics", async () => {
+    const mod = await import("./CosmeticsService");
+    mod.cleanupPlayerCosmetics(42);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+  });
 });
 
 // ─── NotificationService ─────────────────────────────────────────────────
@@ -406,6 +516,18 @@ describe("NotificationService (test-park)", () => {
   it("exports NotificationService", async () => {
     const mod = await import("./NotificationService");
     expect(mod.NotificationService).toBe(mockHandle.Service);
+  });
+
+  it("delegates getNotificationStore", async () => {
+    const mod = await import("./NotificationService");
+    mod.getNotificationStore();
+    expect(mockHandle.getNotificationStore).toHaveBeenCalled();
+  });
+
+  it("delegates getAnnouncementManager", async () => {
+    const mod = await import("./NotificationService");
+    mod.getAnnouncementManager();
+    expect(mockHandle.getAnnouncementManager).toHaveBeenCalled();
   });
 
   it("configures welcome announcement", async () => {
@@ -447,6 +569,12 @@ describe("CodeRedemptionService (test-park)", () => {
     expect(mod.CodeRedemptionService).toBe(mockHandle.Service);
   });
 
+  it("delegates getCodeStore", async () => {
+    const mod = await import("./CodeRedemptionService");
+    mod.getCodeStore();
+    expect(mockHandle.getCodeStore).toHaveBeenCalled();
+  });
+
   it("configures test-park promo codes", async () => {
     await import("./CodeRedemptionService");
     const codes = capturedConfig!["codes"] as Array<{ code: string }>;
@@ -480,6 +608,12 @@ describe("LeaderboardService (test-park)", () => {
     const mod = await import("./LeaderboardService");
     expect(mod.LeaderboardService).toBeDefined();
   });
+
+  it("delegates getLeaderboardStore", async () => {
+    const mod = await import("./LeaderboardService");
+    mod.getLeaderboardStore();
+    expect(mockHandle.getLeaderboardStore).toHaveBeenCalled();
+  });
 });
 
 // ─── LocalizationService ─────────────────────────────────────────────────
@@ -505,6 +639,12 @@ describe("LocalizationService (test-park)", () => {
     const mod = await import("./LocalizationService");
     expect(mod.LocalizationService).toBe(mockHandle.Service);
     expect(typeof mod.getI18n).toBe("function");
+  });
+
+  it("delegates getI18n", async () => {
+    const mod = await import("./LocalizationService");
+    mod.getI18n();
+    expect(mockHandle.getI18n).toHaveBeenCalled();
   });
 });
 
@@ -541,6 +681,30 @@ describe("TutorialService (test-park)", () => {
     expect(mod.TutorialService).toBe(mockHandle.Service);
     expect(typeof mod.getSequenceRegistry).toBe("function");
   });
+
+  it("delegates getSequenceRegistry", async () => {
+    const mod = await import("./TutorialService");
+    mod.getSequenceRegistry();
+    expect(mockHandle.getSequenceRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates getTutorialManager", async () => {
+    const mod = await import("./TutorialService");
+    mod.getTutorialManager(42);
+    expect(mockHandle.getTutorialManager).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates initPlayerTutorial", async () => {
+    const mod = await import("./TutorialService");
+    mod.initPlayerTutorial(42);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates cleanupPlayerTutorial", async () => {
+    const mod = await import("./TutorialService");
+    mod.cleanupPlayerTutorial(42);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(42);
+  });
 });
 
 // ─── WorldService ─────────────────────────────────────────────────────────
@@ -566,6 +730,12 @@ describe("WorldService (test-park)", () => {
     const mod = await import("./WorldService");
     expect(mod.WorldService).toBe(mockHandle.Service);
     expect(typeof mod.getWorldManager).toBe("function");
+  });
+
+  it("delegates getWorldManager", async () => {
+    const mod = await import("./WorldService");
+    mod.getWorldManager();
+    expect(mockHandle.getWorldManager).toHaveBeenCalled();
   });
 });
 

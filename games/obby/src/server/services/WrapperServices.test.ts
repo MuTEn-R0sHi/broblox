@@ -69,6 +69,24 @@ describe("InventoryService (obby)", () => {
     expect(mockHandle.getInventoryStore).toHaveBeenCalledWith(42);
   });
 
+  it("delegates getItemRegistry", async () => {
+    const mod = await import("./InventoryService");
+    mod.getItemRegistry();
+    expect(mockHandle.getItemRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerInventory", async () => {
+    const mod = await import("./InventoryService");
+    mod.initPlayerInventory(99);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(99);
+  });
+
+  it("delegates cleanupPlayerInventory", async () => {
+    const mod = await import("./InventoryService");
+    mod.cleanupPlayerInventory(99);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(99);
+  });
+
   it("wires lifecycle callbacks", async () => {
     await import("./InventoryService");
     const cb = vi.fn();
@@ -135,6 +153,24 @@ describe("PetService (obby)", () => {
     mod.getPetStore(42);
     expect(mockHandle.getPetStore).toHaveBeenCalledWith(42);
   });
+
+  it("delegates getPetRegistry", async () => {
+    const mod = await import("./PetService");
+    mod.getPetRegistry();
+    expect(mockHandle.getPetRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerPets", async () => {
+    const mod = await import("./PetService");
+    mod.initPlayerPets(99);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(99);
+  });
+
+  it("delegates cleanupPlayerPets", async () => {
+    const mod = await import("./PetService");
+    mod.cleanupPlayerPets(99);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(99);
+  });
 });
 
 // ─── CosmeticsService ─────────────────────────────────────────────────────
@@ -190,6 +226,24 @@ describe("CosmeticsService (obby)", () => {
     const mod = await import("./CosmeticsService");
     mod.getCosmeticStore(42);
     expect(mockHandle.getCosmeticStore).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates getCosmeticRegistry", async () => {
+    const mod = await import("./CosmeticsService");
+    mod.getCosmeticRegistry();
+    expect(mockHandle.getCosmeticRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates initPlayerCosmetics", async () => {
+    const mod = await import("./CosmeticsService");
+    mod.initPlayerCosmetics(99);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(99);
+  });
+
+  it("delegates cleanupPlayerCosmetics", async () => {
+    const mod = await import("./CosmeticsService");
+    mod.cleanupPlayerCosmetics(99);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(99);
   });
 });
 
@@ -324,6 +378,18 @@ describe("AudioService (obby)", () => {
     expect(typeof mod.getAudioManager).toBe("function");
   });
 
+  it("delegates getSoundRegistry", async () => {
+    const mod = await import("./AudioService");
+    mod.getSoundRegistry();
+    expect(mockHandle.getSoundRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates getAudioManager", async () => {
+    const mod = await import("./AudioService");
+    mod.getAudioManager();
+    expect(mockHandle.getAudioManager).toHaveBeenCalled();
+  });
+
   it("configures 7 sound entries", async () => {
     await import("./AudioService");
     const sounds = capturedConfig!["sounds"] as unknown[];
@@ -375,6 +441,30 @@ describe("TutorialService (obby)", () => {
     expect(mod.TutorialService).toBe(mockHandle.Service);
     expect(typeof mod.getSequenceRegistry).toBe("function");
     expect(typeof mod.getTutorialManager).toBe("function");
+  });
+
+  it("delegates getSequenceRegistry", async () => {
+    const mod = await import("./TutorialService");
+    mod.getSequenceRegistry();
+    expect(mockHandle.getSequenceRegistry).toHaveBeenCalled();
+  });
+
+  it("delegates getTutorialManager", async () => {
+    const mod = await import("./TutorialService");
+    mod.getTutorialManager(42);
+    expect(mockHandle.getTutorialManager).toHaveBeenCalledWith(42);
+  });
+
+  it("delegates initPlayerTutorial", async () => {
+    const mod = await import("./TutorialService");
+    mod.initPlayerTutorial(99);
+    expect(mockHandle.initPlayer).toHaveBeenCalledWith(99);
+  });
+
+  it("delegates cleanupPlayerTutorial", async () => {
+    const mod = await import("./TutorialService");
+    mod.cleanupPlayerTutorial(99);
+    expect(mockHandle.cleanupPlayer).toHaveBeenCalledWith(99);
   });
 
   it("configures ftue_obby sequence with 4 steps", async () => {

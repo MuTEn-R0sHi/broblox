@@ -129,8 +129,10 @@ export interface ObbyPlayerData {
 
   /** Gear inventory */
   inventory: InventorySlot[];
-  /** Equipped gear: slot → itemId */
+  /** Equipped gear: slot → gearId */
   equipped: Partial<Record<EquipSlot, string>>;
+  /** Owned gear IDs */
+  ownedGear: string[];
 
   /** Total deaths (global) */
   totalDeaths: number;
@@ -409,6 +411,33 @@ export interface ClaimBattlePassRewardRequest {
   rewardId: string;
 }
 
+/** Client → Server: equip a gear item */
+export interface EquipGearRequest {
+  gearId: string;
+}
+
+/** Client → Server: unequip a gear slot */
+export interface UnequipGearRequest {
+  slot: string;
+}
+
+/** Client → Server: buy a gear item from shop */
+export interface BuyGearRequest {
+  gearId: string;
+}
+
+/** Server → Client: gear buy result */
+export interface BuyGearResultPayload {
+  success: boolean;
+  message?: string;
+}
+
+/** Server → Client: equipment state sync */
+export interface EquipmentSyncPayload {
+  ownedGear: string[];
+  equipped: Record<string, string>;
+}
+
 // ============================================================================
 // Remote Response Payloads (Server → Client via server functions)
 // ============================================================================
@@ -429,6 +458,7 @@ import type { PetInstance } from "@broblox/pets";
 import type { BattlePassPlayerData } from "@broblox/battle-pass";
 import type { DailyRewardDay, RewardEntry } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
+import type { GearDefinition } from "@broblox/equipment";
 
 /** Comprehensive player data sync — serializable for remotes */
 export interface FullPlayerDataPayload {
@@ -458,6 +488,11 @@ export interface FullPlayerDataPayload {
   ownedCosmetics: string[];
   equippedCosmetics: Record<string, string>;
 
+  // Equipment / Gear
+  ownedGear: string[];
+  equippedGear: Record<string, string>;
+  gearCatalog: GearDefinition[];
+
   // Battle Pass
   battlePass?: BattlePassPlayerData;
 
@@ -478,4 +513,5 @@ export type {
   DailyRewardDay,
   RewardEntry,
   HatchResult,
+  GearDefinition,
 };

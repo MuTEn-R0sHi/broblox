@@ -16,6 +16,7 @@ export * from "./screens/quest-tracker";
 export * from "./screens/pet-collection";
 export * from "./screens/inventory";
 export * from "./screens/cosmetics";
+export * from "./screens/equipment";
 export * from "./screens/gacha";
 export * from "./screens/settings";
 export * from "./screens/battle-pass";

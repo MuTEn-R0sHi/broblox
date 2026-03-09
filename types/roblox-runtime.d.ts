@@ -119,6 +119,20 @@ declare const task: {
 };
 
 // ============================================================================
+// Roblox Player
+// ============================================================================
+
+/** Minimal Roblox Player interface used by platform packages. */
+interface Player {
+  readonly UserId: number;
+  readonly Name: string;
+  Character?: Instance;
+  Kick(message?: string): void;
+  GetAttribute(name: string): unknown;
+  SetAttribute(name: string, value: unknown): void;
+}
+
+// ============================================================================
 // Roblox Iteration
 // ============================================================================
 

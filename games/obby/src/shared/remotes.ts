@@ -31,6 +31,11 @@ import type {
   PlayerAttributes,
   WorldChangedPayload,
   EnterWorldRequestPayload,
+  EquipGearRequest,
+  UnequipGearRequest,
+  BuyGearRequest,
+  BuyGearResultPayload,
+  EquipmentSyncPayload,
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -420,6 +425,56 @@ export const ObbyRemotes = {
       },
     }
   ),
+
+  // ────────────────────────────────────────────────────────────────────
+  // Equipment / Gear
+  // ────────────────────────────────────────────────────────────────────
+
+  /**
+   * Client → Server: Equip a gear item.
+   */
+  EquipGear: defineServerEvent<EquipGearRequest>("EquipGear", {
+    rateLimit: { windowMs: 500, maxRequests: 3 },
+    description: "Client requests to equip a gear item",
+    validate: (v): v is EquipGearRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["gearId"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Unequip a gear slot.
+   */
+  UnequipGear: defineServerEvent<UnequipGearRequest>("UnequipGear", {
+    rateLimit: { windowMs: 500, maxRequests: 3 },
+    description: "Client requests to unequip a gear slot",
+    validate: (v): v is UnequipGearRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["slot"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Purchase a gear item from the shop.
+   */
+  BuyGear: defineServerFunction<BuyGearRequest, BuyGearResultPayload>("BuyGear", {
+    rateLimit: { windowMs: 1000, maxRequests: 2 },
+    description: "Client purchases gear from the shop",
+    validate: (v): v is BuyGearRequest => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["gearId"]) === "string";
+    },
+  }),
+
+  /**
+   * Server → Client: Equipment state sync (owned gear + equipped slots).
+   */
+  EquipmentSync: defineClientEvent<EquipmentSyncPayload>("EquipmentSync", {
+    description: "Server syncs equipment state to client",
+  }),
 } as const;
 
 /** Type of the obby remotes registry */

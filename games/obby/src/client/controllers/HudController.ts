@@ -193,18 +193,25 @@ export const HudController: Controller = {
         order: 5,
       },
       {
+        name: "Gear",
+        emoji: "⚔️",
+        tooltip: "Gear Shop",
+        action: () => ScreenController.toggleEquipment(),
+        order: 6,
+      },
+      {
         name: "BattlePass",
         emoji: "⭐",
         tooltip: "Battle Pass",
         action: () => ScreenController.toggleBattlePass(),
-        order: 6,
+        order: 7,
       },
       {
         name: "Settings",
         emoji: "⚙️",
         tooltip: "Settings",
         action: () => ScreenController.toggleSettings(),
-        order: 7,
+        order: 8,
       },
     ];
 

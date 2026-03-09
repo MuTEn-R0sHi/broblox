@@ -2,66 +2,31 @@
  * Attribute Service
  * Manages player speed/jump/stamina attributes and applies them to Humanoid.
  *
- * Effective stats = base attributes + gear bonuses.
+ * Effective stats = base attributes + gear bonuses (from EquipmentStore).
  * Humanoid.WalkSpeed = WALK_SPEED_BASE + effectiveSpeed × WALK_SPEED_SCALE
  * Humanoid.JumpPower = effectiveJump
  */
 
 import { Service, createLogger } from "@broblox/core";
-import { PlayerAttributes, OBBY_CONSTANTS, AttributeType, EquipSlot } from "shared/types";
+import { PlayerAttributes, OBBY_CONSTANTS } from "shared/types";
 import { DataService } from "./DataService";
 import { RemoteService } from "./RemoteService";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { getEquipmentStore } from "./EquipmentService";
 
 const logger = createLogger("AttributeService");
-
-// ── Gear stat definitions ────────────────────────────────────────────────────
-
-interface GearDef {
-  speed?: number;
-  jump?: number;
-  stamina?: number;
-}
-
-const GEAR_DEFS = new Map<string, GearDef>([
-  ["running_shoes", { speed: 2 }],
-  ["bouncy_boots", { jump: 5 }],
-  ["feather_cape", { jump: 3, speed: 1 }],
-  ["rocket_boots", { jump: 8 }],
-  ["sprint_trainers", { speed: 4, stamina: 2 }],
-  ["endurance_band", { stamina: 5 }],
-  ["champion_armor", { speed: 3, jump: 3, stamina: 3 }],
-]);
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function getGearBonuses(player: Player): PlayerAttributes {
-  const data = DataService.getData(player);
-  const bonuses: PlayerAttributes = { speed: 0, jump: 0, stamina: 0 };
-  if (!data) return bonuses;
+  const store = getEquipmentStore(player.UserId);
+  if (!store) return { speed: 0, jump: 0, stamina: 0 };
 
-  // Iterate equipped slots directly via known slot keys
-  const slots: EquipSlot[] = [
-    "feet",
-    "back",
-    "body",
-    "accessory1",
-    "accessory2",
-    "consumable1",
-    "consumable2",
-    "consumable3",
-  ];
-  for (const slot of slots) {
-    const itemId = data.equipped[slot];
-    if (itemId === undefined) continue;
-    const def = GEAR_DEFS.get(itemId);
-    if (!def) continue;
-    bonuses.speed += def.speed ?? 0;
-    bonuses.jump += def.jump ?? 0;
-    bonuses.stamina += def.stamina ?? 0;
-  }
-
-  return bonuses;
+  return {
+    speed: store.getStatBonus("speed"),
+    jump: store.getStatBonus("jump"),
+    stamina: store.getStatBonus("stamina"),
+  };
 }
 
 function computeEffective(base: PlayerAttributes, bonuses: PlayerAttributes): PlayerAttributes {

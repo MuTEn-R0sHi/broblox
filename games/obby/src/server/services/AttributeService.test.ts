@@ -15,6 +15,7 @@ describe("AttributeService", () => {
   let mockRegistry: Record<string, ReturnType<typeof vi.fn>>;
   let mockPlayerLifecycle: Record<string, ReturnType<typeof vi.fn>>;
   let _playerAddedCallback: ((player: Player) => void) | undefined;
+  let mockGetEquipmentStore: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.resetModules();
@@ -25,6 +26,10 @@ describe("AttributeService", () => {
     const defaultData = makeDefaultData();
     mockDataGetData = vi.fn(() => defaultData);
     mockDataGetAttributes = vi.fn(() => defaultData.attributes);
+
+    // Default: no equipment store (no gear bonuses).
+    // Tests that need gear bonuses override this via mockGetEquipmentStore.
+    mockGetEquipmentStore = vi.fn(() => undefined);
 
     mockRegistry = {
       fireClient: vi.fn(),
@@ -56,11 +61,27 @@ describe("AttributeService", () => {
     vi.doMock("./PlayerLifecycleService", () => ({
       PlayerLifecycleService: mockPlayerLifecycle,
     }));
+
+    vi.doMock("./EquipmentService", () => ({
+      getEquipmentStore: mockGetEquipmentStore,
+    }));
   });
 
   async function loadAttributeService() {
     const mod = await import("./AttributeService");
     return mod.AttributeService;
+  }
+
+  /** Create a mock equipment store with specific stat bonuses. */
+  function mockEquipStore(bonuses: { speed?: number; jump?: number; stamina?: number }) {
+    return {
+      getStatBonus: (stat: string) => {
+        if (stat === "speed") return bonuses.speed ?? 0;
+        if (stat === "jump") return bonuses.jump ?? 0;
+        if (stat === "stamina") return bonuses.stamina ?? 0;
+        return 0;
+      },
+    };
   }
 
   // ─── getEffective ────────────────────────────────────────────────────
@@ -79,9 +100,11 @@ describe("AttributeService", () => {
 
     it("adds gear bonuses to base attributes", async () => {
       const data = makeDefaultData();
-      data.equipped = { feet: "running_shoes", back: "feather_cape" };
       mockDataGetData.mockReturnValue(data);
       mockDataGetAttributes.mockReturnValue(data.attributes);
+
+      // running_shoes: speed+2, feather_cape: jump+3 speed+1
+      mockGetEquipmentStore.mockReturnValue(mockEquipStore({ speed: 3, jump: 3 }));
 
       const svc = await loadAttributeService();
       const player = makePlayer();
@@ -89,7 +112,7 @@ describe("AttributeService", () => {
       const effective = svc.getEffective(player);
 
       // running_shoes: speed+2, feather_cape: jump+3 speed+1
-      expect(effective.speed).toBe(10 + 2 + 1);
+      expect(effective.speed).toBe(10 + 3);
       expect(effective.jump).toBe(30 + 3);
       expect(effective.stamina).toBe(5);
     });
@@ -108,11 +131,14 @@ describe("AttributeService", () => {
 
     it("stacks multiple gear bonuses correctly", async () => {
       const data = makeDefaultData();
-      // champion_armor: speed+3 jump+3 stamina+3
-      // sprint_trainers: speed+4 stamina+2
-      data.equipped = { body: "champion_armor", feet: "sprint_trainers" };
       mockDataGetData.mockReturnValue(data);
       mockDataGetAttributes.mockReturnValue(data.attributes);
+
+      // champion_armor: speed+3 jump+3 stamina+3
+      // sprint_trainers: speed+4 stamina+2
+      mockGetEquipmentStore.mockReturnValue(
+        mockEquipStore({ speed: 3 + 4, jump: 3, stamina: 3 + 2 })
+      );
 
       const svc = await loadAttributeService();
       const player = makePlayer();
@@ -126,9 +152,11 @@ describe("AttributeService", () => {
 
     it("ignores unknown gear items", async () => {
       const data = makeDefaultData();
-      data.equipped = { feet: "nonexistent_item" };
       mockDataGetData.mockReturnValue(data);
       mockDataGetAttributes.mockReturnValue(data.attributes);
+
+      // Unknown gear → store returns 0 for all stats
+      mockGetEquipmentStore.mockReturnValue(mockEquipStore({}));
 
       const svc = await loadAttributeService();
       const player = makePlayer();
@@ -162,9 +190,11 @@ describe("AttributeService", () => {
 
     it("reflects gear bonuses in speed calculations", async () => {
       const data = makeDefaultData();
-      data.equipped = { feet: "sprint_trainers" }; // speed+4
       mockDataGetData.mockReturnValue(data);
       mockDataGetAttributes.mockReturnValue(data.attributes);
+
+      // sprint_trainers: speed+4
+      mockGetEquipmentStore.mockReturnValue(mockEquipStore({ speed: 4 }));
 
       const svc = await loadAttributeService();
       const player = makePlayer();
@@ -248,6 +278,24 @@ describe("AttributeService", () => {
       svc.syncToClient(player);
 
       expect(mockRegistry.fireClient).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─── lifecycle ───────────────────────────────────────────────────────
+
+  describe("lifecycle", () => {
+    it("onInit registers PlayerLifecycleService.onPlayerAdded callback", async () => {
+      const svc = await loadAttributeService();
+      svc.onInit?.();
+
+      expect(mockPlayerLifecycle.onPlayerAdded).toHaveBeenCalledTimes(1);
+    });
+
+    it("onStart logs without error", async () => {
+      const svc = await loadAttributeService();
+      svc.onStart?.();
+
+      expect(mockLogger.info).toHaveBeenCalled();
     });
   });
 });
