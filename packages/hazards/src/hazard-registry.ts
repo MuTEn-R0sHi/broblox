@@ -14,10 +14,10 @@ export function createHazardRegistry(definitions: HazardDefinition[]): HazardReg
 
   for (const def of definitions) {
     if (byId.has(def.id)) {
-      throw new Error(`Duplicate hazard id: ${def.id}`);
+      error(`Duplicate hazard id: ${def.id}`);
     }
     if (byTag.has(def.tag)) {
-      throw new Error(`Duplicate hazard tag: ${def.tag}`);
+      error(`Duplicate hazard tag: ${def.tag}`);
     }
     byId.set(def.id, def);
     byTag.set(def.tag, def);
@@ -39,7 +39,9 @@ export function createHazardRegistry(definitions: HazardDefinition[]): HazardReg
       return byId.has(id);
     },
     count() {
-      return byId.size;
+      let n = 0;
+      byId.forEach(() => n++);
+      return n;
     },
   };
 }

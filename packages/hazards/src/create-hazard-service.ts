@@ -36,7 +36,7 @@ export function createHazardService(config: HazardServiceConfig): HazardServiceH
 
   function getManager() {
     if (!managerInstance) {
-      throw new Error("HazardService not initialized");
+      error("HazardService not initialized");
     }
     return managerInstance;
   }
@@ -48,7 +48,7 @@ export function createHazardService(config: HazardServiceConfig): HazardServiceH
         managerInstance = createHazardManager(registry, {
           onDamage,
           onKill,
-          onToggle(instanceKey, active) {
+          onToggle: (instanceKey, active) => {
             logger.debug(`Hazard ${instanceKey} → ${active ? "active" : "inactive"}`);
           },
         });
@@ -73,13 +73,13 @@ export function createHazardService(config: HazardServiceConfig): HazardServiceH
     },
 
     initPlayer(playerId: number) {
-      const mgr = getManager() as ReturnType<typeof createHazardManager>;
-      mgr._initPlayer(playerId);
+      const mgr = getManager();
+      (mgr as unknown as { _initPlayer(id: number): void })._initPlayer(playerId);
     },
 
     cleanupPlayer(playerId: number) {
-      const mgr = getManager() as ReturnType<typeof createHazardManager>;
-      mgr._cleanupPlayer(playerId);
+      const mgr = getManager();
+      (mgr as unknown as { _cleanupPlayer(id: number): void })._cleanupPlayer(playerId);
     },
   };
 

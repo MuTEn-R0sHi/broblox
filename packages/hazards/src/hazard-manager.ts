@@ -76,7 +76,7 @@ export function createHazardManager(
       const nextToggle =
         def.behaviour === "timed_burst" && def.activeDuration !== undefined
           ? def.activeDuration
-          : Infinity;
+          : math.huge;
 
       instances.set(instanceKey, {
         definitionId,
@@ -91,7 +91,9 @@ export function createHazardManager(
     },
 
     instanceCount(): number {
-      return instances.size;
+      let n = 0;
+      instances.forEach(() => n++);
+      return n;
     },
 
     update(deltaSec: number): void {
@@ -169,16 +171,24 @@ export function createHazardManager(
   };
 
   return {
-    ...manager,
-    // Expose player tracking via closure — not on the interface
-    addInstance: manager.addInstance,
-    removeInstance: manager.removeInstance,
-    instanceCount: manager.instanceCount,
-    update: manager.update,
+    addInstance(definitionId: string, instanceKey: string): boolean {
+      return manager.addInstance(definitionId, instanceKey);
+    },
+    removeInstance(instanceKey: string): boolean {
+      return manager.removeInstance(instanceKey);
+    },
+    instanceCount(): number {
+      return manager.instanceCount();
+    },
+    update(deltaSec: number): void {
+      manager.update(deltaSec);
+    },
     processTouch(playerId: number, instanceKey: string, now: number): boolean {
       return manager.processTouch(playerId, instanceKey, now);
     },
-    isImmune: manager.isImmune,
+    isImmune(playerId: number, instanceKey: string, now: number): boolean {
+      return manager.isImmune(playerId, instanceKey, now);
+    },
     // Extra methods accessible via the factory
     _initPlayer(playerId: number) {
       activePlayers.add(playerId);
@@ -187,9 +197,10 @@ export function createHazardManager(
       activePlayers.delete(playerId);
       // Remove all immunity entries for this player
       const prefix = `${playerId}:`;
+      const prefixLen = prefix.size();
       const toDelete: string[] = [];
       playerStates.forEach((_v, k) => {
-        if (k.startsWith(prefix)) toDelete.push(k);
+        if (k.sub(1, prefixLen) === prefix) toDelete.push(k);
       });
       for (const k of toDelete) playerStates.delete(k);
     },
