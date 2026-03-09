@@ -18,32 +18,32 @@ importers:
   .:
     devDependencies:
       "@commitlint/cli":
-        specifier: ^20.4.2
-        version: 20.4.2(@types/node@25.3.3)(typescript@5.9.3)
+        specifier: ^20.4.3
+        version: 20.4.3(@types/node@25.3.5)(typescript@5.9.3)
       "@commitlint/config-conventional":
-        specifier: ^20.4.2
-        version: 20.4.2
+        specifier: ^20.4.3
+        version: 20.4.3
       "@eslint/js":
         specifier: ^10.0.1
-        version: 10.0.1(eslint@10.0.2(jiti@2.6.1))
+        version: 10.0.1(eslint@10.0.3(jiti@2.6.1))
       "@types/node":
-        specifier: ^25.3.3
-        version: 25.3.3
+        specifier: ^25.3.5
+        version: 25.3.5
       "@vitest/coverage-v8":
         specifier: ^4.0.17
-        version: 4.0.18(vitest@4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+        version: 4.0.18(vitest@4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
       eslint:
-        specifier: ^10.0.2
-        version: 10.0.2(jiti@2.6.1)
+        specifier: ^10.0.3
+        version: 10.0.3(jiti@2.6.1)
       eslint-config-prettier:
         specifier: ^10.1.8
-        version: 10.1.8(eslint@10.0.2(jiti@2.6.1))
+        version: 10.1.8(eslint@10.0.3(jiti@2.6.1))
       globals:
         specifier: ^17.4.0
         version: 17.4.0
       lint-staged:
-        specifier: ^16.3.1
-        version: 16.3.1
+        specifier: ^16.3.2
+        version: 16.3.2
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
@@ -55,10 +55,10 @@ importers:
         version: 5.9.3
       typescript-eslint:
         specifier: ^8.56.1
-        version: 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+        version: 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   apps/dashboard:
     dependencies:
@@ -76,7 +76,7 @@ importers:
         version: 4.2.1
       autoprefixer:
         specifier: ^10.4.27
-        version: 10.4.27(postcss@8.5.6)
+        version: 10.4.27(postcss@8.5.8)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -87,11 +87,11 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       lucide-react:
-        specifier: ^0.576.0
-        version: 0.576.0(react@19.2.4)
+        specifier: ^0.577.0
+        version: 0.577.0(react@19.2.4)
       mariadb:
-        specifier: ^3.5.1
-        version: 3.5.1(@types/geojson@7946.0.16)(@types/node@25.3.3)
+        specifier: ^3.5.2
+        version: 3.5.2
       next:
         specifier: ^16.1.6
         version: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -99,8 +99,8 @@ importers:
         specifier: 5.0.0-beta.30
         version: 5.0.0-beta.30(next@16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       postcss:
-        specifier: ^8.5.6
-        version: 8.5.6
+        specifier: ^8.5.8
+        version: 8.5.8
       prisma:
         specifier: ^7.4.2
         version: 7.4.2(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
@@ -131,7 +131,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       "@vitejs/plugin-react":
         specifier: ^5.1.4
-        version: 5.1.4(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+        version: 5.1.4(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
@@ -152,19 +152,19 @@ importers:
         version: 4.2.1
       autoprefixer:
         specifier: ^10.4.27
-        version: 10.4.27(postcss@8.5.6)
+        version: 10.4.27(postcss@8.5.8)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-react:
-        specifier: ^0.576.0
-        version: 0.576.0(react@19.2.4)
+        specifier: ^0.577.0
+        version: 0.577.0(react@19.2.4)
       next:
         specifier: ^16.1.6
         version: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       postcss:
-        specifier: ^8.5.6
-        version: 8.5.6
+        specifier: ^8.5.8
+        version: 8.5.8
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -179,8 +179,8 @@ importers:
         version: 4.2.1
     devDependencies:
       "@types/node":
-        specifier: ^25.3.3
-        version: 25.3.3
+        specifier: ^25.3.5
+        version: 25.3.5
       "@types/react":
         specifier: ^19.2.14
         version: 19.2.14
@@ -192,7 +192,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   games/obby:
     dependencies:
@@ -300,8 +300,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -415,8 +415,8 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -440,8 +440,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -450,7 +450,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/audio:
     dependencies:
@@ -465,8 +465,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -475,7 +475,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/battle-pass:
     dependencies:
@@ -496,8 +496,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -506,7 +506,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/codes:
     dependencies:
@@ -527,8 +527,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -537,7 +537,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/combat:
     dependencies:
@@ -555,8 +555,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -565,7 +565,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/config-featureflags:
     dependencies:
@@ -580,8 +580,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -590,7 +590,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/constants:
     devDependencies:
@@ -601,8 +601,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -611,7 +611,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/core:
     devDependencies:
@@ -622,8 +622,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -632,7 +632,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/cosmetics:
     dependencies:
@@ -653,8 +653,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -663,7 +663,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/data:
     dependencies:
@@ -681,8 +681,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -691,7 +691,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/events:
     dependencies:
@@ -709,8 +709,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -719,7 +719,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/gacha:
     dependencies:
@@ -740,8 +740,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -750,7 +750,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/input:
     dependencies:
@@ -765,8 +765,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -775,7 +775,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/inventory:
     dependencies:
@@ -796,8 +796,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -806,7 +806,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/leaderboards:
     dependencies:
@@ -827,8 +827,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -837,7 +837,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/localization:
     dependencies:
@@ -852,8 +852,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -862,7 +862,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/marketplace:
     dependencies:
@@ -880,8 +880,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -890,7 +890,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/matchmaking:
     dependencies:
@@ -914,8 +914,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -924,7 +924,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/moderation:
     dependencies:
@@ -948,8 +948,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -958,7 +958,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/movement:
     dependencies:
@@ -979,8 +979,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -989,7 +989,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/net:
     dependencies:
@@ -1013,8 +1013,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1023,7 +1023,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/notifications:
     dependencies:
@@ -1044,8 +1044,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1054,7 +1054,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/observability:
     dependencies:
@@ -1072,8 +1072,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1082,7 +1082,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/pets:
     dependencies:
@@ -1103,8 +1103,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1113,7 +1113,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/progression:
     dependencies:
@@ -1134,8 +1134,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1144,7 +1144,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/quests:
     dependencies:
@@ -1165,8 +1165,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1175,7 +1175,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/rewards:
     dependencies:
@@ -1193,8 +1193,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1203,7 +1203,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/security:
     dependencies:
@@ -1224,8 +1224,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1234,7 +1234,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/shared-types:
     devDependencies:
@@ -1245,8 +1245,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1255,13 +1255,13 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/testing:
     devDependencies:
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/tutorial:
     dependencies:
@@ -1276,8 +1276,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1286,7 +1286,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/ui:
     dependencies:
@@ -1331,8 +1331,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1341,7 +1341,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   packages/world-systems:
     dependencies:
@@ -1356,8 +1356,8 @@ importers:
         specifier: 3.0.0-types.0
         version: 3.0.0-types.0
       "@rbxts/types":
-        specifier: ^1.0.909
-        version: 1.0.909
+        specifier: ^1.0.910
+        version: 1.0.910
       roblox-ts:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1366,7 +1366,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
 packages:
   "@acemir/cssom@0.9.31":
@@ -1625,32 +1625,32 @@ packages:
         integrity: sha512-hBzuU5+JjB2cqNZyszkDHZgOSrUUT8V3dhgRl8Q9Gp6dAj/H5+KILGjbhDpc3Iy9qmqlm/akuOI2ut9VUtzJxQ==,
       }
 
-  "@commitlint/cli@20.4.2":
+  "@commitlint/cli@20.4.3":
     resolution:
       {
-        integrity: sha512-YjYSX2yj/WsVoxh9mNiymfFS2ADbg2EK4+1WAsMuckwKMCqJ5PDG0CJU/8GvmHWcv4VRB2V02KqSiecRksWqZQ==,
+        integrity: sha512-Z37EMoDT7+Upg500vlr/vZrgRsb6Xc5JAA3Tv7BYbobnN/ZpqUeZnSLggBg2+1O+NptRDtyujr2DD1CPV2qwhA==,
       }
     engines: { node: ">=v18" }
     hasBin: true
 
-  "@commitlint/config-conventional@20.4.2":
+  "@commitlint/config-conventional@20.4.3":
     resolution:
       {
-        integrity: sha512-rwkTF55q7Q+6dpSKUmJoScV0f3EpDlWKw2UPzklkLS4o5krMN1tPWAVOgHRtyUTMneIapLeQwaCjn44Td6OzBQ==,
+        integrity: sha512-9RtLySbYQAs8yEqWEqhSZo9nYhbm57jx7qHXtgRmv/nmeQIjjMcwf6Dl+y5UZcGWgWx435TAYBURONaJIuCjWg==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/config-validator@20.4.0":
+  "@commitlint/config-validator@20.4.3":
     resolution:
       {
-        integrity: sha512-zShmKTF+sqyNOfAE0vKcqnpvVpG0YX8F9G/ZIQHI2CoKyK+PSdladXMSns400aZ5/QZs+0fN75B//3Q5CHw++w==,
+        integrity: sha512-jCZpZFkcSL3ZEdL5zgUzFRdytv3xPo8iukTe9VA+QGus/BGhpp1xXSVu2B006GLLb2gYUAEGEqv64kTlpZNgmA==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/ensure@20.4.1":
+  "@commitlint/ensure@20.4.3":
     resolution:
       {
-        integrity: sha512-WLQqaFx1pBooiVvBrA1YfJNFqZF8wS/YGOtr5RzApDbV9tQ52qT5VkTsY65hFTnXhW8PcDfZLaknfJTmPejmlw==,
+        integrity: sha512-WcXGKBNn0wBKpX8VlXgxqedyrLxedIlLBCMvdamLnJFEbUGJ9JZmBVx4vhLV3ZyA8uONGOb+CzW0Y9HDbQ+ONQ==,
       }
     engines: { node: ">=v18" }
 
@@ -1661,66 +1661,66 @@ packages:
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/format@20.4.0":
+  "@commitlint/format@20.4.3":
     resolution:
       {
-        integrity: sha512-i3ki3WR0rgolFVX6r64poBHXM1t8qlFel1G1eCBvVgntE3fCJitmzSvH5JD/KVJN/snz6TfaX2CLdON7+s4WVQ==,
+        integrity: sha512-UDJVErjLbNghop6j111rsHJYGw6MjCKAi95K0GT2yf4eeiDHy3JDRLWYWEjIaFgO+r+dQSkuqgJ1CdMTtrvHsA==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/is-ignored@20.4.1":
+  "@commitlint/is-ignored@20.4.3":
     resolution:
       {
-        integrity: sha512-In5EO4JR1lNsAv1oOBBO24V9ND1IqdAJDKZiEpdfjDl2HMasAcT7oA+5BKONv1pRoLG380DGPE2W2RIcUwdgLA==,
+        integrity: sha512-W5VQKZ7fdJ1X3Tko+h87YZaqRMGN1KvQKXyCM8xFdxzMIf1KCZgN4uLz3osLB1zsFcVS4ZswHY64LI26/9ACag==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/lint@20.4.2":
+  "@commitlint/lint@20.4.3":
     resolution:
       {
-        integrity: sha512-buquzNRtFng6xjXvBU1abY/WPEEjCgUipNQrNmIWe8QuJ6LWLtei/LDBAzEe5ASm45+Q9L2Xi3/GVvlj50GAug==,
+        integrity: sha512-CYOXL23e+nRKij81+d0+dymtIi7Owl9QzvblJYbEfInON/4MaETNSLFDI74LDu+YJ0ML5HZyw9Vhp9QpckwQ0A==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/load@20.4.0":
+  "@commitlint/load@20.4.3":
     resolution:
       {
-        integrity: sha512-Dauup/GfjwffBXRJUdlX/YRKfSVXsXZLnINXKz0VZkXdKDcaEILAi9oflHGbfydonJnJAbXEbF3nXPm9rm3G6A==,
+        integrity: sha512-3cdJOUVP+VcgHa7bhJoWS+Z8mBNXB5aLWMBu7Q7uX8PSeWDzdbrBlR33J1MGGf7r1PZDp+mPPiFktk031PgdRw==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/message@20.4.0":
+  "@commitlint/message@20.4.3":
     resolution:
       {
-        integrity: sha512-B5lGtvHgiLAIsK5nLINzVW0bN5hXv+EW35sKhYHE8F7V9Uz1fR4tx3wt7mobA5UNhZKUNgB/+ldVMQE6IHZRyA==,
+        integrity: sha512-6akwCYrzcrFcTYz9GyUaWlhisY4lmQ3KvrnabmhoeAV8nRH4dXJAh4+EUQ3uArtxxKQkvxJS78hNX2EU3USgxQ==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/parse@20.4.1":
+  "@commitlint/parse@20.4.3":
     resolution:
       {
-        integrity: sha512-XNtZjeRcFuAfUnhYrCY02+mpxwY4OmnvD3ETbVPs25xJFFz1nRo/25nHj+5eM+zTeRFvWFwD4GXWU2JEtoK1/w==,
+        integrity: sha512-hzC3JCo3zs3VkQ833KnGVuWjWIzR72BWZWjQM7tY/7dfKreKAm7fEsy71tIFCRtxf2RtMP2d3RLF1U9yhFSccA==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/read@20.4.0":
+  "@commitlint/read@20.4.3":
     resolution:
       {
-        integrity: sha512-QfpFn6/I240ySEGv7YWqho4vxqtPpx40FS7kZZDjUJ+eHxu3azfhy7fFb5XzfTqVNp1hNoI3tEmiEPbDB44+cg==,
+        integrity: sha512-j42OWv3L31WfnP8WquVjHZRt03w50Y/gEE8FAyih7GQTrIv2+pZ6VZ6pWLD/ml/3PO+RV2SPtRtTp/MvlTb8rQ==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/resolve-extends@20.4.0":
+  "@commitlint/resolve-extends@20.4.3":
     resolution:
       {
-        integrity: sha512-ay1KM8q0t+/OnlpqXJ+7gEFQNlUtSU5Gxr8GEwnVf2TPN3+ywc5DzL3JCxmpucqxfHBTFwfRMXxPRRnR5Ki20g==,
+        integrity: sha512-QucxcOy+00FhS9s4Uy0OyS5HeUV+hbC6OLqkTSIm6fwMdKva+OEavaCDuLtgd9akZZlsUo//XzSmPP3sLKBPog==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/rules@20.4.2":
+  "@commitlint/rules@20.4.3":
     resolution:
       {
-        integrity: sha512-oz83pnp5Yq6uwwTAabuVQPNlPfeD2Y5ZjMb7Wx8FSUlu4sLYJjbBWt8031Z0osCFPfHzAwSYrjnfDFKtuSMdKg==,
+        integrity: sha512-Yuosd7Grn5qiT7FovngXLyRXTMUbj9PYiSkvUgWK1B5a7+ZvrbWDS7epeUapYNYatCy/KTpPFPbgLUdE+MUrBg==,
       }
     engines: { node: ">=v18" }
 
@@ -1731,17 +1731,17 @@ packages:
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/top-level@20.4.0":
+  "@commitlint/top-level@20.4.3":
     resolution:
       {
-        integrity: sha512-NDzq8Q6jmFaIIBC/GG6n1OQEaHdmaAAYdrZRlMgW6glYWGZ+IeuXmiymDvQNXPc82mVxq2KiE3RVpcs+1OeDeA==,
+        integrity: sha512-qD9xfP6dFg5jQ3NMrOhG0/w5y3bBUsVGyJvXxdWEwBm8hyx4WOk3kKXw28T5czBYvyeCVJgJJ6aoJZUWDpaacQ==,
       }
     engines: { node: ">=v18" }
 
-  "@commitlint/types@20.4.0":
+  "@commitlint/types@20.4.3":
     resolution:
       {
-        integrity: sha512-aO5l99BQJ0X34ft8b0h7QFkQlqxC6e7ZPVmBKz13xM9O8obDaM1Cld4sQlJDXXU/VFuUzQ30mVtHjVz74TuStw==,
+        integrity: sha512-51OWa1Gi6ODOasPmfJPq6js4pZoomima4XLZZCrkldaH2V5Nb3bVhNXPeT6XV0gubbainSpTw4zi68NqAeCNCg==,
       }
     engines: { node: ">=v18" }
 
@@ -2073,24 +2073,24 @@ packages:
       }
     engines: { node: ^12.0.0 || ^14.0.0 || >=16.0.0 }
 
-  "@eslint/config-array@0.23.2":
+  "@eslint/config-array@0.23.3":
     resolution:
       {
-        integrity: sha512-YF+fE6LV4v5MGWRGj7G404/OZzGNepVF8fxk7jqmqo3lrza7a0uUcDnROGRBG1WFC1omYUS/Wp1f42i0M+3Q3A==,
+        integrity: sha512-j+eEWmB6YYLwcNOdlwQ6L2OsptI/LO6lNBuLIqe5R7RetD658HLoF+Mn7LzYmAWWNNzdC6cqP+L6r8ujeYXWLw==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
-  "@eslint/config-helpers@0.5.2":
+  "@eslint/config-helpers@0.5.3":
     resolution:
       {
-        integrity: sha512-a5MxrdDXEvqnIq+LisyCX6tQMPF/dSJpCfBgBauY+pNZ28yCtSsTvyTYrMhaI+LK26bVyCJfJkT0u8KIj2i1dQ==,
+        integrity: sha512-lzGN0onllOZCGroKJmRwY6QcEHxbjBw1gwB8SgRSqK8YbbtEXMvKynsXc3553ckIEBxsbMBU7oOZXKIPGZNeZw==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
-  "@eslint/core@1.1.0":
+  "@eslint/core@1.1.1":
     resolution:
       {
-        integrity: sha512-/nr9K9wkr3P1EzFTdFdMoLuo1PmIxjmwvPozwoSodjNBdefGujXQUF93u1DDZpEaTuDvMsIQddsd35BwtrW9Xw==,
+        integrity: sha512-QUPblTtE51/7/Zhfv8BDwO0qkkzQL7P/aWWbqcf4xWLEYn1oKjdO0gglQBB4GAsu7u6wjijbCmzsUTy6mnk6oQ==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
@@ -2106,17 +2106,17 @@ packages:
       eslint:
         optional: true
 
-  "@eslint/object-schema@3.0.2":
+  "@eslint/object-schema@3.0.3":
     resolution:
       {
-        integrity: sha512-HOy56KJt48Bx8KmJ+XGQNSUMT/6dZee/M54XyUyuvTvPXJmsERRvBchsUVx1UMe1WwIH49XLAczNC7V2INsuUw==,
+        integrity: sha512-iM869Pugn9Nsxbh/YHRqYiqd23AmIbxJOcpUMOuWCVNdoQJ5ZtwL6h3t0bcZzJUlC3Dq9jCFCESBZnX0GTv7iQ==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
-  "@eslint/plugin-kit@0.6.0":
+  "@eslint/plugin-kit@0.6.1":
     resolution:
       {
-        integrity: sha512-bIZEUzOI1jkhviX2cp5vNyXQc6olzb2ohewQubuYlMXZ2Q/XjBO0x0XhGPvc9fjSIiUN0vw+0hq53BJ4eQSJKQ==,
+        integrity: sha512-iH1B076HoAshH1mLpHMgwdGeTs0CYwL0SPMkGuSebZrwBp16v415e9NZXg2jtrqPVQjf6IANe2Vtlr5KswtcZQ==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
@@ -2624,10 +2624,10 @@ packages:
         integrity: sha512-/fnf2QSx+TI3HSJ6QW2ikvGQk0mlx/63UXo60pLAKGqbxXiAuTJh88bpKpHw6aCzfFLJAwrVIcgCUOokLMPcag==,
       }
 
-  "@rbxts/types@1.0.909":
+  "@rbxts/types@1.0.910":
     resolution:
       {
-        integrity: sha512-jl/3uDQXlfCBpp4N/T0P+ZbKYQHQ9wbCLJI6MePnVj+b3soJKqnhR0JCh1WsxFuDKY4C7uFLm5H8iGA+UXZUYg==,
+        integrity: sha512-uMi5w8hQRmln+20/XHVewivIse+YnU3PZmv/+te0gF0dZsyV6S9L5HME3/XgwU4cnw6RiKtFBAJIb0RiE7RHJg==,
       }
 
   "@roblox-ts/luau-ast@2.0.0":
@@ -2853,6 +2853,13 @@ packages:
       }
     cpu: [x64]
     os: [win32]
+
+  "@simple-libs/stream-utils@1.2.0":
+    resolution:
+      {
+        integrity: sha512-KxXvfapcixpz6rVEB6HPjOUZT22yN6v0vI0urQSk1L8MlEWPDFCZkhw2xmkyoTGYeFw7tWTZd7e3lVzRZRN/EA==,
+      }
+    engines: { node: ">=18" }
 
   "@standard-schema/spec@1.1.0":
     resolution:
@@ -3090,16 +3097,22 @@ packages:
         integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==,
       }
 
-  "@types/node@24.11.0":
+  "@types/node@24.12.0":
     resolution:
       {
-        integrity: sha512-fPxQqz4VTgPI/IQ+lj9r0h+fDR66bzoeMGHp8ASee+32OSGIkeASsoZuJixsQoVef1QJbeubcPBxKk22QVoWdw==,
+        integrity: sha512-GYDxsZi3ChgmckRT9HPU0WEhKLP08ev/Yfcq2AstjrDASOYCSXeyjDsHg4v5t4jOj7cyDX3vmprafKlWIG9MXQ==,
       }
 
-  "@types/node@25.3.3":
+  "@types/node@25.3.5":
     resolution:
       {
-        integrity: sha512-DpzbrH7wIcBaJibpKo9nnSQL0MTRdnWttGyE5haGwK86xgMOkFLp7vEyfQPGLOJh5wNYiJ3V9PmUMDhV9u8kkQ==,
+        integrity: sha512-oX8xrhvpiyRCQkG1MFchB09f+cXftgIXb3a7UUa4Y3wpmZPw5tyZGTLWhlESOLq1Rq6oDlc8npVU2/9xiCuXMA==,
+      }
+
+  "@types/node@25.4.0":
+    resolution:
+      {
+        integrity: sha512-9wLpoeWuBlcbBpOY3XmzSTG3oscB6xjBEEtn+pYXTfhyXhIxC5FsBer2KTopBlvKEiW9l13po9fq+SJY/5lkhw==,
       }
 
   "@types/react-dom@19.2.3":
@@ -3619,24 +3632,24 @@ packages:
       }
     engines: { node: ^14.18.0 || >=16.10.0 }
 
-  conventional-changelog-angular@8.1.0:
+  conventional-changelog-angular@8.3.0:
     resolution:
       {
-        integrity: sha512-GGf2Nipn1RUCAktxuVauVr1e3r8QrLP/B0lEUsFktmGqc3ddbQkhoJZHJctVU829U1c6mTSWftrVOCHaL85Q3w==,
+        integrity: sha512-DOuBwYSqWzfwuRByY9O4oOIvDlkUCTDzfbOgcSbkY+imXXj+4tmrEFao3K+FxemClYfYnZzsvudbwrhje9VHDA==,
       }
     engines: { node: ">=18" }
 
-  conventional-changelog-conventionalcommits@9.1.0:
+  conventional-changelog-conventionalcommits@9.3.0:
     resolution:
       {
-        integrity: sha512-MnbEysR8wWa8dAEvbj5xcBgJKQlX/m0lhS8DsyAAWDHdfs2faDJxTgzRYlRYpXSe7UiKrIIlB4TrBKU9q9DgkA==,
+        integrity: sha512-kYFx6gAyjSIMwNtASkI3ZE99U1fuVDJr0yTYgVy+I2QG46zNZfl2her+0+eoviG82c5WQvW1jMt1eOQTeJLodA==,
       }
     engines: { node: ">=18" }
 
-  conventional-commits-parser@6.2.1:
+  conventional-commits-parser@6.3.0:
     resolution:
       {
-        integrity: sha512-20pyHgnO40rvfI0NGF/xiEoFMkXDtkF8FwHvk5BokoFoCuTQRI8vrNCNFWUOfuolKJMm1tPCHc8GgYEtr1XRNA==,
+        integrity: sha512-RfOq/Cqy9xV9bOA8N+ZH6DlrDR+5S3Mi0B5kACEjESpE+AviIpAptx9a9cFpWCCvgRtWT+0BbUw+e1BZfts9jg==,
       }
     engines: { node: ">=18" }
     hasBin: true
@@ -3658,10 +3671,10 @@ packages:
       cosmiconfig: ">=9"
       typescript: ">=5"
 
-  cosmiconfig@9.0.0:
+  cosmiconfig@9.0.1:
     resolution:
       {
-        integrity: sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==,
+        integrity: sha512-hr4ihw+DBqcvrsEDioRO31Z17x71pUYoNe/4h6Z0wB72p7MU7/9gH8Q3s12NFhHPfYBBOV3qyfUxmr/Yn3shnQ==,
       }
     engines: { node: ">=14" }
     peerDependencies:
@@ -3910,10 +3923,10 @@ packages:
     peerDependencies:
       eslint: ">=7.0.0"
 
-  eslint-scope@9.1.1:
+  eslint-scope@9.1.2:
     resolution:
       {
-        integrity: sha512-GaUN0sWim5qc8KVErfPBWmc31LEsOkrUJbvJZV+xuL3u2phMUK4HIvXlWAakfC8W4nzlK+chPEAkYOYb5ZScIw==,
+        integrity: sha512-xS90H51cKw0jltxmvmHy2Iai1LIqrfbw57b79w/J7MfvDfkIkFZ+kj6zC3BjtUwh150HsSSdxXZcsuv72miDFQ==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
@@ -3931,10 +3944,10 @@ packages:
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
-  eslint@10.0.2:
+  eslint@10.0.3:
     resolution:
       {
-        integrity: sha512-uYixubwmqJZH+KLVYIVKY1JQt7tysXhtj21WSvjcSmU5SVNzMus1bgLe+pAt816yQ8opKfheVVoPLqvVMGejYw==,
+        integrity: sha512-COV33RzXZkqhG9P2rZCFl9ZmJ7WL+gQSCRzE7RhkbclbQPtLAWReL7ysA0Sh4c8Im2U9ynybdR56PV0XcKvqaQ==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
     hasBin: true
@@ -3944,10 +3957,10 @@ packages:
       jiti:
         optional: true
 
-  espree@11.1.1:
+  espree@11.2.0:
     resolution:
       {
-        integrity: sha512-AVHPqQoZYc+RUM4/3Ly5udlZY/U4LS8pIG05jEjWM2lQMU/oaZ7qshzAl2YP1tfNmXfftH3ohurfwNAug+MnsQ==,
+        integrity: sha512-7p3DrVEIopW1B1avAGLuCSh1jubc01H2JHc8B4qqGblmg5gI9yumBgACjWo4JlIc04ufug4xJ3SQI8HkS/Rgzw==,
       }
     engines: { node: ^20.19.0 || ^22.13.0 || >=24 }
 
@@ -4075,10 +4088,10 @@ packages:
       }
     engines: { node: ">=16" }
 
-  flatted@3.3.4:
+  flatted@3.4.1:
     resolution:
       {
-        integrity: sha512-3+mMldrTAPdta5kjX2G2J7iX4zxtnwpdA8Tr2ZSjkyPSanvbZAcy6flmtnXbEybHrDcU9641lxrMfFuUxVz9vA==,
+        integrity: sha512-IxfVbRFVlV8V/yRaGzk0UVIcsKKHMSfYw66T/u4nTwlWteQePsxe//LjudR1AMX4tZW3WFCh3Zqa/sjlqpbURQ==,
       }
 
   foreground-child@3.3.1:
@@ -4668,10 +4681,10 @@ packages:
         integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==,
       }
 
-  lint-staged@16.3.1:
+  lint-staged@16.3.2:
     resolution:
       {
-        integrity: sha512-bqvvquXzFBAlSbluugR4KXAe4XnO/QZcKVszpkBtqLWa2KEiVy8n6Xp38OeUbv/gOJOX4Vo9u5pFt/ADvbm42Q==,
+        integrity: sha512-xKqhC2AeXLwiAHXguxBjuChoTTWFC6Pees0SHPwOpwlvI3BH7ZADFPddAdN3pgo3aiKgPUx/bxE78JfUnxQnlg==,
       }
     engines: { node: ">=20.17" }
     hasBin: true
@@ -4771,10 +4784,10 @@ packages:
       }
     engines: { bun: ">=1.0.0", deno: ">=1.30.0", node: ">=8.0.0" }
 
-  lucide-react@0.576.0:
+  lucide-react@0.577.0:
     resolution:
       {
-        integrity: sha512-koNxU14BXrxUfZQ9cUaP0ES1uyPZKYDjk31FQZB6dQ/x+tXk979sVAn9ppZ/pVeJJyOxVM8j1E+8QEuSc02Vug==,
+        integrity: sha512-4LjoFv2eEPwYDPg/CUdBJQSDfPyzXCRrVW1X7jrx/trgxnxkHFjnVZINbzvzxjN70dxychOfg+FTYwBiS3pQ5A==,
       }
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -4812,20 +4825,12 @@ packages:
       }
     engines: { node: ">= 14" }
 
-  mariadb@3.5.1:
+  mariadb@3.5.2:
     resolution:
       {
-        integrity: sha512-ObKf/e7jU8pmwa5wTs1UwhLMrQYRBDwXPndej2Dv/rvbqsokJYlymubsNtpakVfjI+hd0bG3U6tiuVunDYoLtA==,
+        integrity: sha512-9rztrI4nouxAY/82a+RlzzZ5ie2vxu2eYclkBvTy1ATXH1B9cnvZ0O71Pzsy/mlfDb5P3HhOg0JzQKkDRhctyA==,
       }
     engines: { node: ">= 18" }
-    peerDependencies:
-      "@types/geojson": ">=7946.0.0"
-      "@types/node": ">=18"
-    peerDependenciesMeta:
-      "@types/geojson":
-        optional: true
-      "@types/node":
-        optional: true
 
   mdn-data@2.12.2:
     resolution:
@@ -5115,10 +5120,10 @@ packages:
       }
     engines: { node: ^10 || ^12 || >=14 }
 
-  postcss@8.5.6:
+  postcss@8.5.8:
     resolution:
       {
-        integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==,
+        integrity: sha512-OW/rX8O/jXnm82Ey1k44pObPtdblfiuWnrd8X7GJ7emImCOstunGbXUpp7HdBrFQX6rJzn3sPT397Wp5aCwCHg==,
       }
     engines: { node: ^10 || ^12 || >=14 }
 
@@ -6141,32 +6146,32 @@ snapshots:
 
   "@chevrotain/utils@10.5.0": {}
 
-  "@commitlint/cli@20.4.2(@types/node@25.3.3)(typescript@5.9.3)":
+  "@commitlint/cli@20.4.3(@types/node@25.3.5)(typescript@5.9.3)":
     dependencies:
-      "@commitlint/format": 20.4.0
-      "@commitlint/lint": 20.4.2
-      "@commitlint/load": 20.4.0(@types/node@25.3.3)(typescript@5.9.3)
-      "@commitlint/read": 20.4.0
-      "@commitlint/types": 20.4.0
+      "@commitlint/format": 20.4.3
+      "@commitlint/lint": 20.4.3
+      "@commitlint/load": 20.4.3(@types/node@25.3.5)(typescript@5.9.3)
+      "@commitlint/read": 20.4.3
+      "@commitlint/types": 20.4.3
       tinyexec: 1.0.2
       yargs: 17.7.2
     transitivePeerDependencies:
       - "@types/node"
       - typescript
 
-  "@commitlint/config-conventional@20.4.2":
+  "@commitlint/config-conventional@20.4.3":
     dependencies:
-      "@commitlint/types": 20.4.0
-      conventional-changelog-conventionalcommits: 9.1.0
+      "@commitlint/types": 20.4.3
+      conventional-changelog-conventionalcommits: 9.3.0
 
-  "@commitlint/config-validator@20.4.0":
+  "@commitlint/config-validator@20.4.3":
     dependencies:
-      "@commitlint/types": 20.4.0
+      "@commitlint/types": 20.4.3
       ajv: 8.18.0
 
-  "@commitlint/ensure@20.4.1":
+  "@commitlint/ensure@20.4.3":
     dependencies:
-      "@commitlint/types": 20.4.0
+      "@commitlint/types": 20.4.3
       lodash.camelcase: 4.3.0
       lodash.kebabcase: 4.1.1
       lodash.snakecase: 4.1.1
@@ -6175,31 +6180,31 @@ snapshots:
 
   "@commitlint/execute-rule@20.0.0": {}
 
-  "@commitlint/format@20.4.0":
+  "@commitlint/format@20.4.3":
     dependencies:
-      "@commitlint/types": 20.4.0
+      "@commitlint/types": 20.4.3
       picocolors: 1.1.1
 
-  "@commitlint/is-ignored@20.4.1":
+  "@commitlint/is-ignored@20.4.3":
     dependencies:
-      "@commitlint/types": 20.4.0
+      "@commitlint/types": 20.4.3
       semver: 7.7.4
 
-  "@commitlint/lint@20.4.2":
+  "@commitlint/lint@20.4.3":
     dependencies:
-      "@commitlint/is-ignored": 20.4.1
-      "@commitlint/parse": 20.4.1
-      "@commitlint/rules": 20.4.2
-      "@commitlint/types": 20.4.0
+      "@commitlint/is-ignored": 20.4.3
+      "@commitlint/parse": 20.4.3
+      "@commitlint/rules": 20.4.3
+      "@commitlint/types": 20.4.3
 
-  "@commitlint/load@20.4.0(@types/node@25.3.3)(typescript@5.9.3)":
+  "@commitlint/load@20.4.3(@types/node@25.3.5)(typescript@5.9.3)":
     dependencies:
-      "@commitlint/config-validator": 20.4.0
+      "@commitlint/config-validator": 20.4.3
       "@commitlint/execute-rule": 20.0.0
-      "@commitlint/resolve-extends": 20.4.0
-      "@commitlint/types": 20.4.0
-      cosmiconfig: 9.0.0(typescript@5.9.3)
-      cosmiconfig-typescript-loader: 6.2.0(@types/node@25.3.3)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3)
+      "@commitlint/resolve-extends": 20.4.3
+      "@commitlint/types": 20.4.3
+      cosmiconfig: 9.0.1(typescript@5.9.3)
+      cosmiconfig-typescript-loader: 6.2.0(@types/node@25.3.5)(cosmiconfig@9.0.1(typescript@5.9.3))(typescript@5.9.3)
       is-plain-obj: 4.1.0
       lodash.mergewith: 4.6.2
       picocolors: 1.1.1
@@ -6207,47 +6212,47 @@ snapshots:
       - "@types/node"
       - typescript
 
-  "@commitlint/message@20.4.0": {}
+  "@commitlint/message@20.4.3": {}
 
-  "@commitlint/parse@20.4.1":
+  "@commitlint/parse@20.4.3":
     dependencies:
-      "@commitlint/types": 20.4.0
-      conventional-changelog-angular: 8.1.0
-      conventional-commits-parser: 6.2.1
+      "@commitlint/types": 20.4.3
+      conventional-changelog-angular: 8.3.0
+      conventional-commits-parser: 6.3.0
 
-  "@commitlint/read@20.4.0":
+  "@commitlint/read@20.4.3":
     dependencies:
-      "@commitlint/top-level": 20.4.0
-      "@commitlint/types": 20.4.0
+      "@commitlint/top-level": 20.4.3
+      "@commitlint/types": 20.4.3
       git-raw-commits: 4.0.0
       minimist: 1.2.8
       tinyexec: 1.0.2
 
-  "@commitlint/resolve-extends@20.4.0":
+  "@commitlint/resolve-extends@20.4.3":
     dependencies:
-      "@commitlint/config-validator": 20.4.0
-      "@commitlint/types": 20.4.0
+      "@commitlint/config-validator": 20.4.3
+      "@commitlint/types": 20.4.3
       global-directory: 4.0.1
       import-meta-resolve: 4.2.0
       lodash.mergewith: 4.6.2
       resolve-from: 5.0.0
 
-  "@commitlint/rules@20.4.2":
+  "@commitlint/rules@20.4.3":
     dependencies:
-      "@commitlint/ensure": 20.4.1
-      "@commitlint/message": 20.4.0
+      "@commitlint/ensure": 20.4.3
+      "@commitlint/message": 20.4.3
       "@commitlint/to-lines": 20.0.0
-      "@commitlint/types": 20.4.0
+      "@commitlint/types": 20.4.3
 
   "@commitlint/to-lines@20.0.0": {}
 
-  "@commitlint/top-level@20.4.0":
+  "@commitlint/top-level@20.4.3":
     dependencies:
       escalade: 3.2.0
 
-  "@commitlint/types@20.4.0":
+  "@commitlint/types@20.4.3":
     dependencies:
-      conventional-commits-parser: 6.2.1
+      conventional-commits-parser: 6.3.0
       picocolors: 1.1.1
 
   "@csstools/color-helpers@6.0.2": {}
@@ -6365,38 +6370,38 @@ snapshots:
   "@esbuild/win32-x64@0.27.2":
     optional: true
 
-  "@eslint-community/eslint-utils@4.9.1(eslint@10.0.2(jiti@2.6.1))":
+  "@eslint-community/eslint-utils@4.9.1(eslint@10.0.3(jiti@2.6.1))":
     dependencies:
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
       eslint-visitor-keys: 3.4.3
 
   "@eslint-community/regexpp@4.12.2": {}
 
-  "@eslint/config-array@0.23.2":
+  "@eslint/config-array@0.23.3":
     dependencies:
-      "@eslint/object-schema": 3.0.2
+      "@eslint/object-schema": 3.0.3
       debug: 4.4.3
       minimatch: 10.2.4
     transitivePeerDependencies:
       - supports-color
 
-  "@eslint/config-helpers@0.5.2":
+  "@eslint/config-helpers@0.5.3":
     dependencies:
-      "@eslint/core": 1.1.0
+      "@eslint/core": 1.1.1
 
-  "@eslint/core@1.1.0":
+  "@eslint/core@1.1.1":
     dependencies:
       "@types/json-schema": 7.0.15
 
-  "@eslint/js@10.0.1(eslint@10.0.2(jiti@2.6.1))":
+  "@eslint/js@10.0.1(eslint@10.0.3(jiti@2.6.1))":
     optionalDependencies:
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
 
-  "@eslint/object-schema@3.0.2": {}
+  "@eslint/object-schema@3.0.3": {}
 
-  "@eslint/plugin-kit@0.6.0":
+  "@eslint/plugin-kit@0.6.1":
     dependencies:
-      "@eslint/core": 1.1.0
+      "@eslint/core": 1.1.1
       levn: 0.4.1
 
   "@exodus/bytes@1.14.1": {}
@@ -6655,7 +6660,7 @@ snapshots:
 
   "@rbxts/t@3.2.1": {}
 
-  "@rbxts/types@1.0.909": {}
+  "@rbxts/types@1.0.910": {}
 
   "@roblox-ts/luau-ast@2.0.0": {}
 
@@ -6746,6 +6751,8 @@ snapshots:
   "@rollup/rollup-win32-x64-msvc@4.59.0":
     optional: true
 
+  "@simple-libs/stream-utils@1.2.0": {}
+
   "@standard-schema/spec@1.1.0": {}
 
   "@swc/helpers@0.5.15":
@@ -6818,7 +6825,7 @@ snapshots:
       "@alloc/quick-lru": 5.2.0
       "@tailwindcss/node": 4.2.1
       "@tailwindcss/oxide": 4.2.1
-      postcss: 8.5.6
+      postcss: 8.5.8
       tailwindcss: 4.2.1
 
   "@testing-library/dom@10.4.1":
@@ -6880,11 +6887,15 @@ snapshots:
 
   "@types/json-schema@7.0.15": {}
 
-  "@types/node@24.11.0":
+  "@types/node@24.12.0":
     dependencies:
       undici-types: 7.16.0
 
-  "@types/node@25.3.3":
+  "@types/node@25.3.5":
+    dependencies:
+      undici-types: 7.18.2
+
+  "@types/node@25.4.0":
     dependencies:
       undici-types: 7.18.2
 
@@ -6896,15 +6907,15 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  "@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)":
+  "@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)":
     dependencies:
       "@eslint-community/regexpp": 4.12.2
-      "@typescript-eslint/parser": 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+      "@typescript-eslint/parser": 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       "@typescript-eslint/scope-manager": 8.56.1
-      "@typescript-eslint/type-utils": 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
-      "@typescript-eslint/utils": 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+      "@typescript-eslint/type-utils": 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
+      "@typescript-eslint/utils": 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       "@typescript-eslint/visitor-keys": 8.56.1
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
       ignore: 7.0.5
       natural-compare: 1.4.0
       ts-api-utils: 2.4.0(typescript@5.9.3)
@@ -6912,14 +6923,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  "@typescript-eslint/parser@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)":
+  "@typescript-eslint/parser@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)":
     dependencies:
       "@typescript-eslint/scope-manager": 8.56.1
       "@typescript-eslint/types": 8.56.1
       "@typescript-eslint/typescript-estree": 8.56.1(typescript@5.9.3)
       "@typescript-eslint/visitor-keys": 8.56.1
       debug: 4.4.3
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -6942,13 +6953,13 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
-  "@typescript-eslint/type-utils@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)":
+  "@typescript-eslint/type-utils@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)":
     dependencies:
       "@typescript-eslint/types": 8.56.1
       "@typescript-eslint/typescript-estree": 8.56.1(typescript@5.9.3)
-      "@typescript-eslint/utils": 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+      "@typescript-eslint/utils": 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       debug: 4.4.3
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
       ts-api-utils: 2.4.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -6971,13 +6982,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  "@typescript-eslint/utils@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)":
+  "@typescript-eslint/utils@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)":
     dependencies:
-      "@eslint-community/eslint-utils": 4.9.1(eslint@10.0.2(jiti@2.6.1))
+      "@eslint-community/eslint-utils": 4.9.1(eslint@10.0.3(jiti@2.6.1))
       "@typescript-eslint/scope-manager": 8.56.1
       "@typescript-eslint/types": 8.56.1
       "@typescript-eslint/typescript-estree": 8.56.1(typescript@5.9.3)
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -6987,7 +6998,7 @@ snapshots:
       "@typescript-eslint/types": 8.56.1
       eslint-visitor-keys: 5.0.1
 
-  "@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
+  "@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
     dependencies:
       "@babel/core": 7.29.0
       "@babel/plugin-transform-react-jsx-self": 7.27.1(@babel/core@7.29.0)
@@ -6995,11 +7006,11 @@ snapshots:
       "@rolldown/pluginutils": 1.0.0-rc.3
       "@types/babel__core": 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
 
-  "@vitest/coverage-v8@4.0.18(vitest@4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
+  "@vitest/coverage-v8@4.0.18(vitest@4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
     dependencies:
       "@bcoe/v8-coverage": 1.0.2
       "@vitest/utils": 4.0.18
@@ -7011,7 +7022,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vitest: 4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   "@vitest/expect@4.0.18":
     dependencies:
@@ -7022,13 +7033,21 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.0.3
 
-  "@vitest/mocker@4.0.18(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
+  "@vitest/mocker@4.0.18(vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
     dependencies:
       "@vitest/spy": 4.0.18
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+
+  "@vitest/mocker@4.0.18(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))":
+    dependencies:
+      "@vitest/spy": 4.0.18
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      vite: 7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   "@vitest/pretty-format@4.0.18":
     dependencies:
@@ -7111,13 +7130,13 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 9.0.1
 
-  autoprefixer@10.4.27(postcss@8.5.6):
+  autoprefixer@10.4.27(postcss@8.5.8):
     dependencies:
       browserslist: 4.28.1
       caniuse-lite: 1.0.30001775
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.6
+      postcss: 8.5.8
       postcss-value-parser: 4.2.0
 
   aws-ssl-profiles@1.1.2: {}
@@ -7246,28 +7265,29 @@ snapshots:
 
   consola@3.4.2: {}
 
-  conventional-changelog-angular@8.1.0:
+  conventional-changelog-angular@8.3.0:
     dependencies:
       compare-func: 2.0.0
 
-  conventional-changelog-conventionalcommits@9.1.0:
+  conventional-changelog-conventionalcommits@9.3.0:
     dependencies:
       compare-func: 2.0.0
 
-  conventional-commits-parser@6.2.1:
+  conventional-commits-parser@6.3.0:
     dependencies:
+      "@simple-libs/stream-utils": 1.2.0
       meow: 13.2.0
 
   convert-source-map@2.0.0: {}
 
-  cosmiconfig-typescript-loader@6.2.0(@types/node@25.3.3)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3):
+  cosmiconfig-typescript-loader@6.2.0(@types/node@25.3.5)(cosmiconfig@9.0.1(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
-      "@types/node": 25.3.3
-      cosmiconfig: 9.0.0(typescript@5.9.3)
+      "@types/node": 25.3.5
+      cosmiconfig: 9.0.1(typescript@5.9.3)
       jiti: 2.6.1
       typescript: 5.9.3
 
-  cosmiconfig@9.0.0(typescript@5.9.3):
+  cosmiconfig@9.0.1(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
@@ -7400,11 +7420,11 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-config-prettier@10.1.8(eslint@10.0.2(jiti@2.6.1)):
+  eslint-config-prettier@10.1.8(eslint@10.0.3(jiti@2.6.1)):
     dependencies:
-      eslint: 10.0.2(jiti@2.6.1)
+      eslint: 10.0.3(jiti@2.6.1)
 
-  eslint-scope@9.1.1:
+  eslint-scope@9.1.2:
     dependencies:
       "@types/esrecurse": 4.3.1
       "@types/estree": 1.0.8
@@ -7415,14 +7435,14 @@ snapshots:
 
   eslint-visitor-keys@5.0.1: {}
 
-  eslint@10.0.2(jiti@2.6.1):
+  eslint@10.0.3(jiti@2.6.1):
     dependencies:
-      "@eslint-community/eslint-utils": 4.9.1(eslint@10.0.2(jiti@2.6.1))
+      "@eslint-community/eslint-utils": 4.9.1(eslint@10.0.3(jiti@2.6.1))
       "@eslint-community/regexpp": 4.12.2
-      "@eslint/config-array": 0.23.2
-      "@eslint/config-helpers": 0.5.2
-      "@eslint/core": 1.1.0
-      "@eslint/plugin-kit": 0.6.0
+      "@eslint/config-array": 0.23.3
+      "@eslint/config-helpers": 0.5.3
+      "@eslint/core": 1.1.1
+      "@eslint/plugin-kit": 0.6.1
       "@humanfs/node": 0.16.7
       "@humanwhocodes/module-importer": 1.0.1
       "@humanwhocodes/retry": 0.4.3
@@ -7431,9 +7451,9 @@ snapshots:
       cross-spawn: 7.0.6
       debug: 4.4.3
       escape-string-regexp: 4.0.0
-      eslint-scope: 9.1.1
+      eslint-scope: 9.1.2
       eslint-visitor-keys: 5.0.1
-      espree: 11.1.1
+      espree: 11.2.0
       esquery: 1.7.0
       esutils: 2.0.3
       fast-deep-equal: 3.1.3
@@ -7452,7 +7472,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  espree@11.1.1:
+  espree@11.2.0:
     dependencies:
       acorn: 8.16.0
       acorn-jsx: 5.3.2(acorn@8.16.0)
@@ -7511,10 +7531,10 @@ snapshots:
 
   flat-cache@4.0.1:
     dependencies:
-      flatted: 3.3.4
+      flatted: 3.4.1
       keyv: 4.5.4
 
-  flatted@3.3.4: {}
+  flatted@3.4.1: {}
 
   foreground-child@3.3.1:
     dependencies:
@@ -7810,7 +7830,7 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  lint-staged@16.3.1:
+  lint-staged@16.3.2:
     dependencies:
       commander: 14.0.3
       listr2: 9.0.5
@@ -7866,7 +7886,7 @@ snapshots:
 
   lru.min@1.1.4: {}
 
-  lucide-react@0.576.0(react@19.2.4):
+  lucide-react@0.577.0(react@19.2.4):
     dependencies:
       react: 19.2.4
 
@@ -7889,19 +7909,18 @@ snapshots:
   mariadb@3.4.5:
     dependencies:
       "@types/geojson": 7946.0.16
-      "@types/node": 24.11.0
+      "@types/node": 24.12.0
       denque: 2.1.0
       iconv-lite: 0.6.3
       lru-cache: 10.4.3
 
-  mariadb@3.5.1(@types/geojson@7946.0.16)(@types/node@25.3.3):
+  mariadb@3.5.2:
     dependencies:
+      "@types/geojson": 7946.0.16
+      "@types/node": 25.4.0
       denque: 2.1.0
       iconv-lite: 0.7.2
       lru-cache: 10.4.3
-    optionalDependencies:
-      "@types/geojson": 7946.0.16
-      "@types/node": 25.3.3
 
   mdn-data@2.12.2: {}
 
@@ -8058,7 +8077,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postcss@8.5.6:
+  postcss@8.5.8:
     dependencies:
       nanoid: 3.3.11
       picocolors: 1.1.1
@@ -8379,13 +8398,13 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
 
-  typescript-eslint@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3):
+  typescript-eslint@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3):
     dependencies:
-      "@typescript-eslint/eslint-plugin": 8.56.1(@typescript-eslint/parser@8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
-      "@typescript-eslint/parser": 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+      "@typescript-eslint/eslint-plugin": 8.56.1(@typescript-eslint/parser@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
+      "@typescript-eslint/parser": 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
       "@typescript-eslint/typescript-estree": 8.56.1(typescript@5.9.3)
-      "@typescript-eslint/utils": 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
-      eslint: 10.0.2(jiti@2.6.1)
+      "@typescript-eslint/utils": 8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 10.0.3(jiti@2.6.1)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -8416,26 +8435,42 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
-  vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
+  vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
-      postcss: 8.5.6
+      postcss: 8.5.8
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      "@types/node": 25.3.3
+      "@types/node": 25.3.5
       fsevents: 2.3.3
       jiti: 2.6.1
       lightningcss: 1.31.1
       tsx: 4.21.0
       yaml: 2.8.2
 
-  vitest@4.0.18(@types/node@25.3.3)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
+  vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
+    dependencies:
+      esbuild: 0.27.2
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+      postcss: 8.5.8
+      rollup: 4.59.0
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      "@types/node": 25.4.0
+      fsevents: 2.3.3
+      jiti: 2.6.1
+      lightningcss: 1.31.1
+      tsx: 4.21.0
+      yaml: 2.8.2
+
+  vitest@4.0.18(@types/node@25.3.5)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       "@vitest/expect": 4.0.18
-      "@vitest/mocker": 4.0.18(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+      "@vitest/mocker": 4.0.18(vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
       "@vitest/pretty-format": 4.0.18
       "@vitest/runner": 4.0.18
       "@vitest/snapshot": 4.0.18
@@ -8452,10 +8487,48 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      "@types/node": 25.3.3
+      "@types/node": 25.3.5
+      jsdom: 28.1.0
+    transitivePeerDependencies:
+      - jiti
+      - less
+      - lightningcss
+      - msw
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - yaml
+
+  vitest@4.0.18(@types/node@25.4.0)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
+    dependencies:
+      "@vitest/expect": 4.0.18
+      "@vitest/mocker": 4.0.18(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
+      "@vitest/pretty-format": 4.0.18
+      "@vitest/runner": 4.0.18
+      "@vitest/snapshot": 4.0.18
+      "@vitest/spy": 4.0.18
+      "@vitest/utils": 4.0.18
+      es-module-lexer: 1.7.0
+      expect-type: 1.3.0
+      magic-string: 0.30.21
+      obug: 2.1.1
+      pathe: 2.0.3
+      picomatch: 4.0.3
+      std-env: 3.10.0
+      tinybench: 2.9.0
+      tinyexec: 1.0.2
+      tinyglobby: 0.2.15
+      tinyrainbow: 3.0.3
+      vite: 7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      "@types/node": 25.4.0
       jsdom: 28.1.0
     transitivePeerDependencies:
       - jiti
