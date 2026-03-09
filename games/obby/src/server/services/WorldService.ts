@@ -79,7 +79,7 @@ function teleportPlayer(player: Player, position: Vector3): void {
 
 /**
  * Find the checkpoint-0 position for a given stage in a world.
- * Falls back to the StartLine, then the world's first BasePart.
+ * Falls back to the StartLine, then the first BasePart descendant.
  */
 function findWorldSpawnPosition(worldId: string, stageNumber: number): Vector3 | undefined {
   const worldsFolder = Workspace.FindFirstChild("Worlds") as Folder | undefined;
@@ -107,6 +107,13 @@ function findWorldSpawnPosition(worldId: string, stageNumber: number): Vector3 |
   const startLine = worldFolder.FindFirstChild("StartLine") as BasePart | undefined;
   if (startLine) {
     return new Vector3(startLine.Position.X, startLine.Position.Y + 3, startLine.Position.Z);
+  }
+
+  // Last resort: first BasePart descendant in the world folder
+  for (const desc of worldFolder.GetDescendants()) {
+    if (desc.IsA("BasePart")) {
+      return new Vector3(desc.Position.X, desc.Position.Y + 3, desc.Position.Z);
+    }
   }
 
   return undefined;

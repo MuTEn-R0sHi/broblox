@@ -37,9 +37,21 @@ function parseRespawnRequestPayload(payload: unknown): { toCheckpoint?: number }
   return { toCheckpoint: raw.toCheckpoint };
 }
 
-// Helper to get checkpoint key
-function getCheckpointKey(stageNumber: number, checkpointIndex: number): string {
-  return `${stageNumber}-${checkpointIndex}`;
+// Helper to get checkpoint key (scoped by worldId)
+function getCheckpointKey(worldId: string, stageNumber: number, checkpointIndex: number): string {
+  return `${worldId}:${stageNumber}-${checkpointIndex}`;
+}
+
+// Determine worldId from a part's ancestor chain (finds Worlds/* parent)
+function getWorldIdFromInstance(inst: Instance): string | undefined {
+  let current: Instance | undefined = inst.Parent;
+  while (current !== undefined) {
+    if (current.Parent !== undefined && current.Parent.Name === "Worlds") {
+      return current.Name.lower();
+    }
+    current = current.Parent;
+  }
+  return undefined;
 }
 
 // Raycast downward from above the checkpoint to find the actual platform surface,
@@ -72,7 +84,11 @@ function parseCheckpointPart(part: BasePart): CheckpointData | undefined {
     return undefined;
   }
 
+  const worldId = getWorldIdFromInstance(part);
+  if (!worldId) return undefined;
+
   return {
+    worldId,
     stageNumber,
     checkpointIndex,
     position: part.Position,
@@ -81,13 +97,21 @@ function parseCheckpointPart(part: BasePart): CheckpointData | undefined {
 }
 
 export const CheckpointService: Service & {
-  getCheckpoint(stageNumber: number, checkpointIndex: number): CheckpointData | undefined;
+  getCheckpoint(
+    worldId: string,
+    stageNumber: number,
+    checkpointIndex: number
+  ): CheckpointData | undefined;
   touchCheckpoint(player: Player, stageNumber: number, checkpointIndex: number): void;
   respawnPlayer(player: Player): void;
   setupCoins(): void;
 } = {
-  getCheckpoint(stageNumber: number, checkpointIndex: number): CheckpointData | undefined {
-    return checkpoints.get(getCheckpointKey(stageNumber, checkpointIndex));
+  getCheckpoint(
+    worldId: string,
+    stageNumber: number,
+    checkpointIndex: number
+  ): CheckpointData | undefined {
+    return checkpoints.get(getCheckpointKey(worldId, stageNumber, checkpointIndex));
   },
 
   touchCheckpoint(player: Player, stageNumber: number, checkpointIndex: number): void {
@@ -131,7 +155,7 @@ export const CheckpointService: Service & {
     }
 
     // Validate checkpoint exists
-    const checkpoint = checkpoints.get(getCheckpointKey(stageNumber, checkpointIndex));
+    const checkpoint = checkpoints.get(getCheckpointKey(worldId, stageNumber, checkpointIndex));
     if (!checkpoint) {
       logger.warn(`Invalid checkpoint: stage ${stageNumber}, index ${checkpointIndex}`);
       return;
@@ -191,7 +215,7 @@ export const CheckpointService: Service & {
     const worldProgress = DataService.getWorldProgress(player, worldId);
     const playerStage = worldProgress?.currentStage ?? 1;
     const playerCheckpoint = worldProgress?.currentCheckpoint ?? 0;
-    const checkpointKey = getCheckpointKey(playerStage, playerCheckpoint);
+    const checkpointKey = getCheckpointKey(worldId, playerStage, playerCheckpoint);
     const checkpoint = checkpoints.get(checkpointKey);
 
     logger.info(
@@ -208,7 +232,7 @@ export const CheckpointService: Service & {
       logger.info(`Respawned at adjusted position: ${spawnPos}`);
     } else {
       // Respawn at stage start (checkpoint 0)
-      const stageStart = checkpoints.get(getCheckpointKey(playerStage, 0));
+      const stageStart = checkpoints.get(getCheckpointKey(worldId, playerStage, 0));
       if (stageStart) {
         const spawnPos = findSpawnPosition(stageStart, character);
         const cf = new CFrame(spawnPos).mul(CFrame.Angles(0, math.rad(stageStart.rotation), 0));
@@ -322,7 +346,7 @@ export const CheckpointService: Service & {
         continue;
       }
 
-      const key = getCheckpointKey(data.stageNumber, data.checkpointIndex);
+      const key = getCheckpointKey(data.worldId, data.stageNumber, data.checkpointIndex);
       checkpoints.set(key, data);
       setupCheckpoint(part, data);
       logger.debug(`Loaded checkpoint: stage ${data.stageNumber}, index ${data.checkpointIndex}`);
@@ -342,7 +366,7 @@ export const CheckpointService: Service & {
           const data = parseCheckpointPart(part);
           if (!data) continue;
 
-          const key = getCheckpointKey(data.stageNumber, data.checkpointIndex);
+          const key = getCheckpointKey(data.worldId, data.stageNumber, data.checkpointIndex);
           if (checkpoints.has(key)) continue; // Already loaded
 
           checkpoints.set(key, data);
@@ -477,8 +501,9 @@ export const CheckpointService: Service & {
   setupCoins(): void {
     // collectedCoins is module-level so it can be cleaned in PlayerRemoving
     const setupCoin = (coin: BasePart, value: number) => {
-      // Use position as unique identifier since GetDebugId isn't available
-      const coinId = `${coin.Name}-${math.floor(coin.Position.X)}-${math.floor(coin.Position.Y)}-${math.floor(coin.Position.Z)}`;
+      // Scope coin key by worldId + position to prevent cross-world collisions
+      const coinWorldId = getWorldIdFromInstance(coin) ?? "global";
+      const coinId = `${coinWorldId}:${coin.Name}-${math.floor(coin.Position.X)}-${math.floor(coin.Position.Y)}-${math.floor(coin.Position.Z)}`;
 
       logger.info(`Setting up coin ${coin.Name} at ${coin.Position} with value ${value}`);
 

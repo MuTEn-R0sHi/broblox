@@ -37,6 +37,8 @@ export interface StageProgress {
 // ============================================================================
 
 export interface CheckpointData {
+  /** World this checkpoint belongs to */
+  worldId: string;
   /** Stage this checkpoint belongs to */
   stageNumber: number;
   /** Checkpoint index within stage */

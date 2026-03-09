@@ -15,6 +15,7 @@ import {
   clearDeathlessStreaks,
 } from "./DeathlessStreakState";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { movementStateManager } from "./MovementValidationService";
 import { getPlayerWorldId, setPlayerWorld } from "./PlayerWorldState";
 import { getProgression } from "./ProgressionService";
 import { getQuests } from "./QuestService";
@@ -25,8 +26,29 @@ import { getActiveEvents } from "./EventService";
 
 const logger = createLogger("StageService");
 
-// Module-level state
-const stages = new Map<number, StageConfig>();
+// Module-level state — stages keyed by worldId → stageNumber
+const stages = new Map<string, Map<number, StageConfig>>();
+
+function getWorldStages(worldId: string): Map<number, StageConfig> {
+  let worldStages = stages.get(worldId);
+  if (!worldStages) {
+    worldStages = new Map();
+    stages.set(worldId, worldStages);
+  }
+  return worldStages;
+}
+
+// Determine worldId from a part's ancestor chain (finds Worlds/* parent)
+function getWorldIdFromInstance(inst: Instance): string | undefined {
+  let current: Instance | undefined = inst.Parent;
+  while (current !== undefined) {
+    if (current.Parent !== undefined && current.Parent.Name === "Worlds") {
+      return current.Name.lower();
+    }
+    current = current.Parent;
+  }
+  return undefined;
+}
 const lastStageCompletion = new Map<string, number>(); // "playerId-stageNumber" -> timestamp
 // Cooldown between stage completions (seconds)
 const STAGE_COMPLETION_COOLDOWN = 2;
@@ -54,16 +76,16 @@ function getStageNumber(part: BasePart): number | undefined {
 }
 
 export const StageService: Service & {
-  getStage(stageNumber: number): StageConfig | undefined;
-  getStageCount(): number;
+  getStage(worldId: string, stageNumber: number): StageConfig | undefined;
+  getStageCount(worldId: string): number;
   completeStage(player: Player, stageNumber: number): void;
 } = {
-  getStage(stageNumber: number): StageConfig | undefined {
-    return stages.get(stageNumber);
+  getStage(worldId: string, stageNumber: number): StageConfig | undefined {
+    return stages.get(worldId)?.get(stageNumber);
   },
 
-  getStageCount(): number {
-    return mapSize(stages);
+  getStageCount(worldId: string): number {
+    return mapSize(stages.get(worldId) ?? new Map());
   },
 
   completeStage(player: Player, stageNumber: number): void {
@@ -78,16 +100,17 @@ export const StageService: Service & {
       return;
     }
 
-    const stage = stages.get(stageNumber);
-    if (!stage) {
-      logger.warn(`Invalid stage number: ${stageNumber}`);
-      return;
-    }
-
     // Get player's active world
     const worldId = getPlayerWorldId(player.UserId);
     if (!worldId) {
       logger.debug(`Player ${player.Name} tried to complete stage but is not in a world`);
+      return;
+    }
+
+    const worldStages = stages.get(worldId);
+    const stage = worldStages?.get(stageNumber);
+    if (!stage) {
+      logger.warn(`Invalid stage number: ${stageNumber} for world ${worldId}`);
       return;
     }
 
@@ -101,7 +124,7 @@ export const StageService: Service & {
     }
 
     // Check if this is the final stage (longer cooldown applies)
-    const isLastStage = !stages.has(stageNumber + 1);
+    const isLastStage = !worldStages?.has(stageNumber + 1);
     if (isLastStage) {
       const timeSinceLastCompletion = now - lastCompletion;
       if (timeSinceLastCompletion < OBBY_COMPLETION_COOLDOWN) {
@@ -196,7 +219,7 @@ export const StageService: Service & {
 
     // Advance to next stage
     const nextStage = stageNumber + 1;
-    if (stages.has(nextStage)) {
+    if (worldStages?.has(nextStage)) {
       DataService.setWorldStage(player, worldId, nextStage, 0);
 
       // Reset stage timer for the new stage
@@ -272,6 +295,7 @@ export const StageService: Service & {
               : new Vector3(0, 10, 0);
             hrp.AssemblyLinearVelocity = Vector3.zero;
             hrp.CFrame = new CFrame(spawnPos);
+            movementStateManager.notifyTeleport(player.UserId, spawnPos);
           }
         }
       });
@@ -293,6 +317,12 @@ export const StageService: Service & {
         continue;
       }
 
+      const worldId = getWorldIdFromInstance(part);
+      if (!worldId) continue;
+
+      const worldStages = getWorldStages(worldId);
+      if (worldStages.has(stageNumber)) continue;
+
       // Get stage config from attributes
       const config: StageConfig = {
         stageNumber,
@@ -303,48 +333,59 @@ export const StageService: Service & {
         hasSecret: (part.GetAttribute("HasSecret") as boolean) ?? false,
       };
 
-      stages.set(stageNumber, config);
+      worldStages.set(stageNumber, config);
       CollectionService.AddTag(part, OBBY_CONSTANTS.STAGE_TAG);
-      logger.debug(`Loaded stage ${stageNumber}: ${config.displayName}`);
+      logger.debug(`Loaded stage ${stageNumber} for world ${worldId}: ${config.displayName}`);
     }
 
-    // Scan Workspace.Worlds.*.Stages folders for parts with StageNumber attribute
+    // Scan Workspace.Worlds.*.Stages folders — read metadata from the stage Model
     const worldsFolder = Workspace.FindFirstChild("Worlds") as Folder | undefined;
     if (worldsFolder) {
       for (const worldFolder of worldsFolder.GetChildren()) {
+        const worldId = worldFolder.Name.lower();
+        const worldStages = getWorldStages(worldId);
         const stagesSubfolder = worldFolder.FindFirstChild("Stages") as Folder | undefined;
         if (!stagesSubfolder) continue;
         for (const model of stagesSubfolder.GetChildren()) {
+          // Read StageNumber from the model's own attributes (not descendant parts)
+          const modelStageNumber = model.GetAttribute("StageNumber");
+          if (!typeIs(modelStageNumber, "number")) continue;
+          if (worldStages.has(modelStageNumber)) continue;
+
+          const config: StageConfig = {
+            stageNumber: modelStageNumber,
+            displayName:
+              (model.GetAttribute("DisplayName") as string) ?? `Stage ${modelStageNumber}`,
+            difficulty: (model.GetAttribute("Difficulty") as StageConfig["difficulty"]) ?? "easy",
+            coinReward:
+              (model.GetAttribute("CoinReward") as number) ?? OBBY_CONSTANTS.DEFAULT_STAGE_COINS,
+            hasSecret: (model.GetAttribute("HasSecret") as boolean) ?? false,
+          };
+
+          worldStages.set(modelStageNumber, config);
+          // Tag child parts that have StageNumber for CollectionService discovery
           for (const part of model.GetDescendants()) {
-            if (!part.IsA("BasePart")) continue;
-
-            const stageNumber = getStageNumber(part);
-            if (stageNumber === undefined) continue;
-            if (stages.has(stageNumber)) continue; // Already loaded
-
-            const config: StageConfig = {
-              stageNumber,
-              displayName: (part.GetAttribute("DisplayName") as string) ?? `Stage ${stageNumber}`,
-              difficulty: (part.GetAttribute("Difficulty") as StageConfig["difficulty"]) ?? "easy",
-              coinReward:
-                (part.GetAttribute("CoinReward") as number) ?? OBBY_CONSTANTS.DEFAULT_STAGE_COINS,
-              hasSecret: (part.GetAttribute("HasSecret") as boolean) ?? false,
-            };
-
-            stages.set(stageNumber, config);
-            CollectionService.AddTag(part, OBBY_CONSTANTS.STAGE_TAG);
-            logger.debug(`Loaded stage ${stageNumber} from folder: ${config.displayName}`);
+            if (part.IsA("BasePart") && part.GetAttribute("StageNumber") !== undefined) {
+              CollectionService.AddTag(part, OBBY_CONSTANTS.STAGE_TAG);
+            }
           }
+          logger.debug(
+            `Loaded stage ${modelStageNumber} for world ${worldId} from model: ${config.displayName}`
+          );
         }
       }
     }
 
-    logger.info(`Loaded ${mapSize(stages)} stages`);
+    let totalStages = 0;
+    stages.forEach((ws) => (totalStages += mapSize(ws)));
+    logger.info(`Loaded ${totalStages} stages across ${mapSize(stages)} worlds`);
 
     // Clean up per-player cooldown entries when a player leaves
     PlayerLifecycleService.onPlayerRemoving((player) => {
-      stages.forEach((_, stageNumber) => {
-        lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
+      stages.forEach((worldStages) => {
+        worldStages.forEach((_, stageNumber) => {
+          lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
+        });
       });
       deleteDeathlessStreak(player.UserId);
     });
@@ -409,6 +450,7 @@ export const StageService: Service & {
   },
 
   onDestroy() {
+    stages.forEach((ws) => ws.clear());
     stages.clear();
     lastStageCompletion.clear();
     clearDeathlessStreaks();
