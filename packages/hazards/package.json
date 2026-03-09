@@ -1,0 +1,40 @@
+{
+  "name": "@broblox/hazards",
+  "version": "0.1.0",
+  "description": "Hazard system with timed traps, damage zones, and crumbling platforms for Roblox games",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "roblox",
+    "roblox-ts",
+    "hazards",
+    "traps",
+    "damage"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@broblox/testing": "workspace:*",
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.910",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@broblox/core": "workspace:*",
+    "@broblox/shared-types": "workspace:*"
+  }
+}
