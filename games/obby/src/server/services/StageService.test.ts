@@ -33,6 +33,31 @@ describe("StageService", () => {
   beforeEach(() => {
     vi.resetModules();
 
+    // Stub Roblox value types needed by world exit teleportation
+    const g = globalThis as Record<string, unknown>;
+    g.Vector3 = Object.assign(
+      class MockVector3 {
+        X: number;
+        Y: number;
+        Z: number;
+        constructor(x = 0, y = 0, z = 0) {
+          this.X = x;
+          this.Y = y;
+          this.Z = z;
+        }
+      },
+      { zero: { X: 0, Y: 0, Z: 0 } }
+    );
+    g.CFrame = Object.assign(
+      class MockCFrame {
+        constructor(public pos?: unknown) {}
+        mul() {
+          return new (g.CFrame as new () => unknown)();
+        }
+      },
+      { Angles: () => new (g.CFrame as new () => unknown)() }
+    );
+
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
 
     mockRegistry = {
@@ -131,6 +156,14 @@ describe("StageService", () => {
     }));
     vi.doMock("./EventService", () => ({ getActiveEvents: mockGetActiveEvents }));
     vi.doMock("./BattlePassService", () => ({ getBattlePassStore: mockGetBattlePassStore }));
+
+    // By default, player is in the "grasslands" world
+    vi.doMock("./PlayerWorldState", () => ({
+      getPlayerWorldId: vi.fn(() => "grasslands"),
+      setPlayerWorld: vi.fn(),
+      deletePlayerWorld: vi.fn(),
+      clearPlayerWorlds: vi.fn(),
+    }));
   });
 
   async function loadStageService() {
@@ -397,7 +430,7 @@ describe("StageService", () => {
       expect(mockDataService.setWorldBestRunTime).not.toHaveBeenCalled();
     });
 
-    it("task.delay respawns player after full obby completion", async () => {
+    it("task.delay exits world and fires WorldChanged after full obby completion", async () => {
       const stagePart = makeStagePartMock(1);
       mockCollectionService.GetTagged.mockImplementation((tag: string) => {
         if (tag === "ObbyStage") return [stagePart];
@@ -421,7 +454,13 @@ describe("StageService", () => {
 
       expect(delayCb).toBeDefined();
       delayCb!();
-      expect(mockCheckpointService.respawnPlayer).toHaveBeenCalled();
+
+      // Should fire WorldChanged with undefined worldId (back to hub)
+      expect(mockRegistry.fireClient).toHaveBeenCalledWith(
+        "WorldChanged",
+        expect.anything(),
+        expect.objectContaining({ worldId: undefined, worldName: undefined })
+      );
 
       g.task.delay = origDelay;
     });
@@ -494,7 +533,7 @@ describe("StageService", () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("missing StageNumber"));
     });
 
-    it("loads stages from Workspace.Stages folder", async () => {
+    it("loads stages from Workspace.Worlds.*.Stages folder", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
 
       const stagePart = {
@@ -506,9 +545,17 @@ describe("StageService", () => {
         }),
       };
       const stageModel = { GetDescendants: vi.fn(() => [stagePart]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
@@ -663,7 +710,7 @@ describe("StageService", () => {
       expect(mockDataService.addCoins).toHaveBeenCalledTimes(2);
     });
 
-    it("sets up end zones from Stages folder by name pattern", async () => {
+    it("sets up end zones from Worlds folder by name pattern", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
 
       const endPlatform = {
@@ -677,9 +724,17 @@ describe("StageService", () => {
         Touched: { Connect: vi.fn() },
       };
       const stageModel = { GetDescendants: vi.fn(() => [endPlatform]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
@@ -705,9 +760,17 @@ describe("StageService", () => {
         Touched: { Connect: vi.fn() },
       };
       const stageModel = { GetDescendants: vi.fn(() => [endZone]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 

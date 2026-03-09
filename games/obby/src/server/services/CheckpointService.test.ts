@@ -142,6 +142,14 @@ describe("CheckpointService", () => {
       })),
     }));
     vi.doMock("./DeathlessStreakState", () => ({ resetDeathlessStreak: vi.fn() }));
+
+    // By default, player is in the "grasslands" world
+    vi.doMock("./PlayerWorldState", () => ({
+      getPlayerWorldId: vi.fn(() => "grasslands"),
+      setPlayerWorld: vi.fn(),
+      deletePlayerWorld: vi.fn(),
+      clearPlayerWorlds: vi.fn(),
+    }));
   });
 
   async function loadCheckpointService() {
@@ -485,7 +493,7 @@ describe("CheckpointService", () => {
       );
     });
 
-    it("loads checkpoints from Workspace.Checkpoints folder", async () => {
+    it("loads checkpoints from Workspace.Worlds.*.Checkpoints folder", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
 
       const folderPart = {
@@ -500,11 +508,18 @@ describe("CheckpointService", () => {
         Orientation: { Y: 0 },
         Touched: { Connect: vi.fn() },
       };
-      const checkpointsFolder = {
+      const checkpointsSubfolder = {
         GetChildren: vi.fn(() => [folderPart]),
       };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Checkpoints") return checkpointsSubfolder;
+          return undefined;
+        }),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Checkpoints") return checkpointsFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
@@ -563,7 +578,7 @@ describe("CheckpointService", () => {
       expect(coinPart.Touched.Connect).toHaveBeenCalled();
     });
 
-    it("scans Stages folder for coins with CoinValue attribute", async () => {
+    it("scans Worlds/*/Stages folders for coins with CoinValue attribute", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
 
       const coinPart = {
@@ -580,11 +595,19 @@ describe("CheckpointService", () => {
       const stageModel = {
         GetDescendants: vi.fn(() => [coinPart]),
       };
-      const stagesFolder = {
+      const stagesSubfolder = {
         GetChildren: vi.fn(() => [stageModel]),
       };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        Name: "Grasslands",
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
@@ -595,7 +618,7 @@ describe("CheckpointService", () => {
       expect(coinPart.Touched.Connect).toHaveBeenCalled();
     });
 
-    it("warns when Stages folder not found", async () => {
+    it("warns when Worlds folder not found", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
       mockWorkspace.FindFirstChild.mockReturnValue(undefined);
 
@@ -603,7 +626,7 @@ describe("CheckpointService", () => {
       svc.setupCoins();
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Stages folder not found")
+        expect.stringContaining("Worlds folder not found")
       );
     });
   });
@@ -852,11 +875,18 @@ describe("CheckpointService", () => {
       const stageModel = {
         GetDescendants: vi.fn(() => [killZonePart]),
       };
-      const stagesFolder = {
+      const stagesSubfolder = {
         GetChildren: vi.fn(() => [stageModel]),
       };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
       mockCollectionService.GetTagged.mockReturnValue([]);
@@ -894,9 +924,16 @@ describe("CheckpointService", () => {
         Touched: { Connect: vi.fn() },
       };
       const stageModel = { GetDescendants: vi.fn(() => [killZonePart]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
       mockCollectionService.GetTagged.mockReturnValue([]);
@@ -1123,9 +1160,16 @@ describe("CheckpointService", () => {
         Touched: { Connect: vi.fn() },
       };
       const stageModel = { GetDescendants: vi.fn(() => [killPart]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
       mockCollectionService.GetTagged.mockReturnValue([]);
@@ -1147,9 +1191,16 @@ describe("CheckpointService", () => {
           Touched: { Connect: vi.fn() },
         };
         const stageModel = { GetDescendants: vi.fn(() => [killPart]) };
-        const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+        const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+        const worldFolder = {
+          FindFirstChild: vi.fn((n2: string) => {
+            if (n2 === "Stages") return stagesSubfolder;
+            return undefined;
+          }),
+        };
+        const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
         mockWorkspace.FindFirstChild.mockImplementation((n: string) => {
-          if (n === "Stages") return stagesFolder;
+          if (n === "Worlds") return worldsFolder;
           return undefined;
         });
         mockCollectionService.GetTagged.mockReturnValue([]);
@@ -1175,9 +1226,16 @@ describe("CheckpointService", () => {
         Touched: { Connect: vi.fn() },
       };
       const stageModel = { GetDescendants: vi.fn(() => [killZonePart]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
       mockCollectionService.GetTagged.mockReturnValue([]);

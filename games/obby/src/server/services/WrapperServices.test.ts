@@ -394,7 +394,7 @@ describe("TutorialService (obby)", () => {
 describe("WorldService (obby)", () => {
   let capturedConfig: Record<string, unknown> | undefined;
   let mockHandle: Record<string, unknown> & {
-    Service: { name: string };
+    Service: { onInit?: () => void; onStart?: () => void; onDestroy?: () => void };
     getWorldManager: ReturnType<typeof vi.fn>;
   };
 
@@ -402,7 +402,7 @@ describe("WorldService (obby)", () => {
     vi.resetModules();
     capturedConfig = undefined;
     mockHandle = {
-      Service: { name: "WorldService" },
+      Service: { onInit: vi.fn(), onStart: vi.fn(), onDestroy: vi.fn() },
       getWorldManager: vi.fn(() => "world-manager"),
     };
 
@@ -412,11 +412,47 @@ describe("WorldService (obby)", () => {
         return mockHandle;
       }),
     }));
+
+    vi.doMock("@broblox/core", () => ({
+      createLogger: () => ({
+        info: vi.fn(),
+        warn: vi.fn(),
+        debug: vi.fn(),
+        error: vi.fn(),
+      }),
+      Service: {},
+    }));
+    vi.doMock("@rbxts/services", () => ({
+      CollectionService: { GetTagged: vi.fn(() => []) },
+      Players: { GetPlayers: vi.fn(() => []) },
+      Workspace: { FindFirstChild: vi.fn(() => undefined) },
+    }));
+    vi.doMock("shared/worldConfigs", () => ({
+      getWorldConfig: vi.fn(() => undefined),
+    }));
+    vi.doMock("./DataService", () => ({ DataService: {} }));
+    vi.doMock("./RemoteService", () => ({
+      RemoteService: { getRegistry: () => ({ onEvent: vi.fn(), fireClient: vi.fn() }) },
+    }));
+    vi.doMock("./PlayerLifecycleService", () => ({
+      PlayerLifecycleService: { onPlayerRemoving: vi.fn() },
+    }));
+    vi.doMock("./MovementValidationService", () => ({
+      MovementValidationService: { name: "MovementValidationService" },
+      movementStateManager: { notifyTeleport: vi.fn() },
+    }));
+    vi.doMock("./PlayerWorldState", () => ({
+      getPlayerWorldId: vi.fn(),
+      setPlayerWorld: vi.fn(),
+      deletePlayerWorld: vi.fn(),
+      clearPlayerWorlds: vi.fn(),
+    }));
   });
 
   it("exports WorldService and getWorldManager", async () => {
     const mod = await import("./WorldService");
-    expect(mod.WorldService).toBe(mockHandle.Service);
+    expect(mod.WorldService).toBeDefined();
+    expect(typeof mod.WorldService.onInit).toBe("function");
     expect(typeof mod.getWorldManager).toBe("function");
   });
 
@@ -482,6 +518,8 @@ describe("MovementValidationService (obby)", () => {
 
   beforeEach(() => {
     vi.resetModules();
+    // Clear any leftover vi.doMock for this module from other describe blocks
+    vi.doUnmock("./MovementValidationService");
     capturedConfig = undefined;
     mockHandle = {
       Service: { name: "MovementValidationService" },

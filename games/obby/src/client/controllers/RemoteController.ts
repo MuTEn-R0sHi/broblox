@@ -22,6 +22,7 @@ import type {
   TrainingCompletePayload,
   StaminaSyncPayload,
   AttributeType,
+  WorldChangedPayload,
 } from "shared/types";
 import type {
   CheckpointReachedEvent,
@@ -55,6 +56,7 @@ type EventEndedCallback = (data: EventActivePayload) => void;
 type AttributeSyncCallback = (data: AttributeSyncPayload) => void;
 type TrainingCompleteCallback = (data: TrainingCompletePayload) => void;
 type StaminaSyncCallback = (data: StaminaSyncPayload) => void;
+type WorldChangedCallback = (data: WorldChangedPayload) => void;
 
 // ============================================================================
 // Module state
@@ -77,6 +79,7 @@ const eventEndedCallbacks: EventEndedCallback[] = [];
 const attributeSyncCallbacks: AttributeSyncCallback[] = [];
 const trainingCompleteCallbacks: TrainingCompleteCallback[] = [];
 const staminaSyncCallbacks: StaminaSyncCallback[] = [];
+const worldChangedCallbacks: WorldChangedCallback[] = [];
 
 // ============================================================================
 // Controller
@@ -92,6 +95,8 @@ export const RemoteController: Controller & {
   unequipCosmetic(slot: string): void;
   claimBattlePassReward(rewardId: string): void;
   requestTraining(stationType: AttributeType): void;
+  requestEnterWorld(worldId: string): void;
+  requestExitWorld(): void;
 
   // Invoke methods (Client → Server functions, yields)
   getFullPlayerData(): FullPlayerDataPayload | undefined;
@@ -115,6 +120,7 @@ export const RemoteController: Controller & {
   onAttributeSync(callback: AttributeSyncCallback): void;
   onTrainingComplete(callback: TrainingCompleteCallback): void;
   onStaminaSync(callback: StaminaSyncCallback): void;
+  onWorldChanged(callback: WorldChangedCallback): void;
 } = {
   onInit() {
     logger.info("RemoteController initializing...");
@@ -227,6 +233,13 @@ export const RemoteController: Controller & {
       }
     });
 
+    registry.onEvent("WorldChanged", (data) => {
+      logger.info(`World changed: ${data.worldId ?? "hub"}`);
+      for (const cb of worldChangedCallbacks) {
+        cb(data);
+      }
+    });
+
     logger.info("RemoteController initialized.");
   },
 
@@ -268,6 +281,14 @@ export const RemoteController: Controller & {
 
   requestTraining(stationType: AttributeType): void {
     registry.fire("RequestTraining", { stationType });
+  },
+
+  requestEnterWorld(worldId: string): void {
+    registry.fire("RequestEnterWorld", { worldId });
+  },
+
+  requestExitWorld(): void {
+    registry.fire("RequestExitWorld", undefined as unknown as void);
   },
 
   // ── Invoke methods (Client → Server functions, yields) ──────────────
@@ -370,5 +391,9 @@ export const RemoteController: Controller & {
 
   onStaminaSync(callback: StaminaSyncCallback): void {
     staminaSyncCallbacks.push(callback);
+  },
+
+  onWorldChanged(callback: WorldChangedCallback): void {
+    worldChangedCallbacks.push(callback);
   },
 };

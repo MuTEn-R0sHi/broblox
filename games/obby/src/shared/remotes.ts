@@ -29,6 +29,8 @@ import type {
   TrainingRequestPayload,
   StaminaSyncPayload,
   PlayerAttributes,
+  WorldChangedPayload,
+  EnterWorldRequestPayload,
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -237,6 +239,38 @@ export const ObbyRemotes = {
    */
   StaminaSync: defineClientEvent<StaminaSyncPayload>("StaminaSync", {
     description: "Server syncs stamina state to client",
+  }),
+
+  // ========================================================================
+  // World System
+  // ========================================================================
+
+  /**
+   * Client → Server: Request to enter a world via portal.
+   */
+  RequestEnterWorld: defineServerEvent<EnterWorldRequestPayload>("RequestEnterWorld", {
+    rateLimit: { windowMs: 2000, maxRequests: 2 },
+    description: "Client requests to enter a world",
+    validate: (v): v is EnterWorldRequestPayload => {
+      if (typeOf(v) !== "table") return false;
+      const p = v as Record<string, unknown>;
+      return typeOf(p["worldId"]) === "string";
+    },
+  }),
+
+  /**
+   * Client → Server: Request to exit current world (return to hub).
+   */
+  RequestExitWorld: defineServerEvent<void>("RequestExitWorld", {
+    rateLimit: { windowMs: 2000, maxRequests: 2 },
+    description: "Client requests to exit current world",
+  }),
+
+  /**
+   * Server → Client: Player's active world changed.
+   */
+  WorldChanged: defineClientEvent<WorldChangedPayload>("WorldChanged", {
+    description: "Server notifies client that the player's active world changed",
   }),
 
   // ========================================================================

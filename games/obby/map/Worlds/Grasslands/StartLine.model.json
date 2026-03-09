@@ -1,0 +1,17 @@
+{
+  "className": "Part",
+  "attributes": {
+    "StartLine": true
+  },
+  "properties": {
+    "Name": "StartLine",
+    "Anchored": true,
+    "CanCollide": false,
+    "CanTouch": true,
+    "Size": [20, 8, 1],
+    "Position": [0, 5, -5],
+    "Material": "Neon",
+    "Color": [0.2, 0.8, 0.3],
+    "Transparency": 0.6
+  }
+}

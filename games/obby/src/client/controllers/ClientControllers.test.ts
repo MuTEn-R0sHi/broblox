@@ -173,8 +173,11 @@ describe("UIController (obby client)", () => {
         onAttributeSync: vi.fn(),
         onTrainingComplete: vi.fn(),
         onStaminaSync: vi.fn(),
+        onWorldChanged: vi.fn(),
         requestLeaderboardRefresh: vi.fn(),
         requestTraining: vi.fn(),
+        requestEnterWorld: vi.fn(),
+        requestExitWorld: vi.fn(),
       },
     }));
   });
@@ -201,6 +204,7 @@ describe("UIController (obby client)", () => {
     expect(RemoteController.onStage).toHaveBeenCalled();
     expect(RemoteController.onDataSync).toHaveBeenCalled();
     expect(RemoteController.onLeaderboard).toHaveBeenCalled();
+    expect(RemoteController.onWorldChanged).toHaveBeenCalled();
   });
 });
 

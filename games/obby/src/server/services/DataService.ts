@@ -350,22 +350,18 @@ export const DataService: Service & {
         return;
       }
 
-      // Obby-specific init: stamp activity time, ensure grasslands world, start timers.
+      // Obby-specific init: stamp activity time, ensure grasslands world.
+      // Timers are NOT started here — WorldService starts them when the player enters a world.
       session.data.lastPlayedAt = os.time();
       DataService.ensureWorldProgress(player, "grasslands");
       session.markDirty();
       dataHandle.getStore().markDirty(player);
 
-      DataService.startRunTimer(player);
-      DataService.startStageTimer(player);
-
-      const grasslands = session.data.worlds["grasslands"];
-
-      // Initial HUD sync.
+      // Initial HUD sync (player starts in hub — no active world).
       RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
         coins: session.data.coins,
-        currentStage: grasslands?.currentStage ?? 1,
-        currentCheckpoint: grasslands?.currentCheckpoint ?? 0,
+        currentStage: 1,
+        currentCheckpoint: 0,
         attributes: session.data.attributes,
       });
     });

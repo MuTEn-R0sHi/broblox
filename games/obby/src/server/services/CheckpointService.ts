@@ -12,6 +12,7 @@ import { RemoteService } from "./RemoteService";
 import { movementStateManager } from "./MovementValidationService";
 import { getQuests } from "./QuestService";
 import { resetDeathlessStreak } from "./DeathlessStreakState";
+import { getPlayerWorldId } from "./PlayerWorldState";
 
 const logger = createLogger("CheckpointService");
 
@@ -104,11 +105,15 @@ export const CheckpointService: Service & {
     }
     lastCheckpointTouch.set(player.UserId, now);
 
+    // Player must be in a world to touch checkpoints
+    const worldId = getPlayerWorldId(player.UserId);
+    if (!worldId) return;
+
     logger.debug(
-      `Checkpoint touch: player=${player.Name}, stage=${stageNumber}, cp=${checkpointIndex}, current=${DataService.getWorldProgress(player, "grasslands")?.currentCheckpoint ?? 0}`
+      `Checkpoint touch: player=${player.Name}, stage=${stageNumber}, cp=${checkpointIndex}, current=${DataService.getWorldProgress(player, worldId)?.currentCheckpoint ?? 0}`
     );
 
-    const worldProgress = DataService.getWorldProgress(player, "grasslands");
+    const worldProgress = DataService.getWorldProgress(player, worldId);
     const playerStage = worldProgress?.currentStage ?? 1;
     const playerCheckpoint = worldProgress?.currentCheckpoint ?? 0;
 
@@ -136,7 +141,7 @@ export const CheckpointService: Service & {
     const isNew = checkpointIndex > playerCheckpoint;
 
     // Update player data
-    DataService.setWorldStage(player, "grasslands", playerStage, checkpointIndex);
+    DataService.setWorldStage(player, worldId, playerStage, checkpointIndex);
 
     if (isNew) {
       logger.info(
@@ -176,7 +181,14 @@ export const CheckpointService: Service & {
     }
 
     // Find the checkpoint to respawn at
-    const worldProgress = DataService.getWorldProgress(player, "grasslands");
+    // Player must be in a world to respawn at a checkpoint
+    const worldId = getPlayerWorldId(player.UserId);
+    if (!worldId) {
+      logger.debug(`Player ${player.Name} is in hub, skipping checkpoint respawn`);
+      return;
+    }
+
+    const worldProgress = DataService.getWorldProgress(player, worldId);
     const playerStage = worldProgress?.currentStage ?? 1;
     const playerCheckpoint = worldProgress?.currentCheckpoint ?? 0;
     const checkpointKey = getCheckpointKey(playerStage, playerCheckpoint);
@@ -247,10 +259,17 @@ export const CheckpointService: Service & {
       if (parsed.toCheckpoint !== undefined) {
         // Only allow respawning to already-reached checkpoints (including 0 = stage start).
         const target = math.floor(parsed.toCheckpoint);
-        const worldProgress = DataService.getWorldProgress(player, "grasslands");
+        const respawnWorldId = getPlayerWorldId(player.UserId);
+        if (!respawnWorldId) return;
+        const worldProgress = DataService.getWorldProgress(player, respawnWorldId);
         const currentCP = worldProgress?.currentCheckpoint ?? 0;
         if (target >= 0 && target <= currentCP) {
-          DataService.setWorldStage(player, "grasslands", worldProgress?.currentStage ?? 1, target);
+          DataService.setWorldStage(
+            player,
+            respawnWorldId,
+            worldProgress?.currentStage ?? 1,
+            target
+          );
         }
       }
 
@@ -309,24 +328,30 @@ export const CheckpointService: Service & {
       logger.debug(`Loaded checkpoint: stage ${data.stageNumber}, index ${data.checkpointIndex}`);
     }
 
-    // Also scan Workspace.Checkpoints folder for parts with checkpoint attributes
-    const checkpointsFolder = Workspace.FindFirstChild("Checkpoints") as Folder | undefined;
-    if (checkpointsFolder) {
-      for (const part of checkpointsFolder.GetChildren()) {
-        if (!part.IsA("BasePart")) continue;
+    // Scan Workspace.Worlds.*.Checkpoints folders for parts with checkpoint attributes
+    const worldsFolder = Workspace.FindFirstChild("Worlds") as Folder | undefined;
+    if (worldsFolder) {
+      for (const worldFolder of worldsFolder.GetChildren()) {
+        const checkpointsSubfolder = worldFolder.FindFirstChild("Checkpoints") as
+          | Folder
+          | undefined;
+        if (!checkpointsSubfolder) continue;
+        for (const part of checkpointsSubfolder.GetChildren()) {
+          if (!part.IsA("BasePart")) continue;
 
-        const data = parseCheckpointPart(part);
-        if (!data) continue;
+          const data = parseCheckpointPart(part);
+          if (!data) continue;
 
-        const key = getCheckpointKey(data.stageNumber, data.checkpointIndex);
-        if (checkpoints.has(key)) continue; // Already loaded
+          const key = getCheckpointKey(data.stageNumber, data.checkpointIndex);
+          if (checkpoints.has(key)) continue; // Already loaded
 
-        checkpoints.set(key, data);
-        CollectionService.AddTag(part, OBBY_CONSTANTS.CHECKPOINT_TAG);
-        setupCheckpoint(part, data);
-        logger.debug(
-          `Loaded checkpoint from folder: stage ${data.stageNumber}, index ${data.checkpointIndex}`
-        );
+          checkpoints.set(key, data);
+          CollectionService.AddTag(part, OBBY_CONSTANTS.CHECKPOINT_TAG);
+          setupCheckpoint(part, data);
+          logger.debug(
+            `Loaded checkpoint from folder: stage ${data.stageNumber}, index ${data.checkpointIndex}`
+          );
+        }
       }
     }
 
@@ -413,27 +438,29 @@ export const CheckpointService: Service & {
       setupKillZone(zone);
     }
 
-    // Also scan Stages folder for kill zones (parts with KillZone attribute only)
-    const stagesFolder = Workspace.FindFirstChild("Stages") as Folder | undefined;
-    if (stagesFolder) {
-      for (const model of stagesFolder.GetChildren()) {
-        for (const part of model.GetDescendants()) {
-          if (!part.IsA("BasePart")) continue;
+    // Scan Worlds/*/Stages folders for kill zones (parts with KillZone attribute only)
+    if (worldsFolder) {
+      for (const worldFolder of worldsFolder.GetChildren()) {
+        const stagesSubfolder = worldFolder.FindFirstChild("Stages") as Folder | undefined;
+        if (!stagesSubfolder) continue;
+        for (const model of stagesSubfolder.GetChildren()) {
+          for (const part of model.GetDescendants()) {
+            if (!part.IsA("BasePart")) continue;
 
-          const hasKillAttr = part.GetAttribute("KillZone") === true;
-          const lowerName = part.Name.lower();
-          // Only match exact names or attribute - string.find returns LuaTuple, not comparable to undefined
-          const isKillZone =
-            hasKillAttr ||
-            lowerName === "killzone" ||
-            lowerName === "lava" ||
-            lowerName === "kill" ||
-            lowerName === "killbrick";
+            const hasKillAttr = part.GetAttribute("KillZone") === true;
+            const lowerName = part.Name.lower();
+            const isKillZone =
+              hasKillAttr ||
+              lowerName === "killzone" ||
+              lowerName === "lava" ||
+              lowerName === "kill" ||
+              lowerName === "killbrick";
 
-          if (isKillZone && !CollectionService.HasTag(part, OBBY_CONSTANTS.KILL_ZONE_TAG)) {
-            CollectionService.AddTag(part, OBBY_CONSTANTS.KILL_ZONE_TAG);
-            setupKillZone(part);
-            logger.debug(`Setup kill zone: ${part.Name}`);
+            if (isKillZone && !CollectionService.HasTag(part, OBBY_CONSTANTS.KILL_ZONE_TAG)) {
+              CollectionService.AddTag(part, OBBY_CONSTANTS.KILL_ZONE_TAG);
+              setupKillZone(part);
+              logger.debug(`Setup kill zone: ${part.Name}`);
+            }
           }
         }
       }
@@ -509,7 +536,8 @@ export const CheckpointService: Service & {
         // Sync updated data to client
         const updatedData = DataService.getData(player);
         if (updatedData) {
-          const world = updatedData.worlds["grasslands"];
+          const coinWorldId = getPlayerWorldId(player.UserId);
+          const world = coinWorldId ? updatedData.worlds[coinWorldId] : undefined;
           RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
             coins: updatedData.coins,
             currentStage: world?.currentStage ?? 1,
@@ -527,26 +555,29 @@ export const CheckpointService: Service & {
       setupCoin(coin, value);
     }
 
-    // Scan Stages folder for coins (parts with CoinValue attribute only)
-    const stagesFolder = Workspace.FindFirstChild("Stages") as Folder | undefined;
-    if (stagesFolder) {
-      logger.info(`Scanning Stages folder for coins...`);
-      for (const model of stagesFolder.GetChildren()) {
-        for (const part of model.GetDescendants()) {
-          if (!part.IsA("BasePart")) continue;
+    // Scan Worlds/*/Stages folders for coins (parts with CoinValue attribute only)
+    const coinWorldsFolder = Workspace.FindFirstChild("Worlds") as Folder | undefined;
+    if (coinWorldsFolder) {
+      for (const worldFolder of coinWorldsFolder.GetChildren()) {
+        const stagesSubfolder = worldFolder.FindFirstChild("Stages") as Folder | undefined;
+        if (!stagesSubfolder) continue;
+        logger.info(`Scanning ${worldFolder.Name}/Stages for coins...`);
+        for (const model of stagesSubfolder.GetChildren()) {
+          for (const part of model.GetDescendants()) {
+            if (!part.IsA("BasePart")) continue;
 
-          const coinValue = part.GetAttribute("CoinValue") as number | undefined;
-          // Only use CoinValue attribute for detection
-          const isCoin = coinValue !== undefined;
+            const coinValue = part.GetAttribute("CoinValue") as number | undefined;
+            const isCoin = coinValue !== undefined;
 
-          if (isCoin && !CollectionService.HasTag(part, OBBY_CONSTANTS.COIN_TAG)) {
-            CollectionService.AddTag(part, OBBY_CONSTANTS.COIN_TAG);
-            setupCoin(part, coinValue ?? 1);
+            if (isCoin && !CollectionService.HasTag(part, OBBY_CONSTANTS.COIN_TAG)) {
+              CollectionService.AddTag(part, OBBY_CONSTANTS.COIN_TAG);
+              setupCoin(part, coinValue ?? 1);
+            }
           }
         }
       }
     } else {
-      logger.warn(`Stages folder not found!`);
+      logger.warn(`Worlds folder not found!`);
     }
 
     logger.info(
