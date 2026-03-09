@@ -287,6 +287,17 @@ export const HudController: Controller = {
       }
     });
 
+    RemoteController.onHazardDamage((data) => {
+      if (hudGui) {
+        showFloatingNotification(
+          hudGui,
+          `🔥 Hazard! -${data.damage} HP`,
+          new Color3(1, 0.3, 0.1),
+          1.5
+        );
+      }
+    });
+
     // ── Keybind: Escape closes active modal ─────────────────────────
 
     onAction("menu", (_action, state) => {

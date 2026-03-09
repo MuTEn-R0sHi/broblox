@@ -170,7 +170,7 @@ export interface PlayerDeathEvent {
   playerId: number;
   stageNumber: number;
   position: Vector3;
-  cause: "fall" | "killbrick" | "reset" | "unknown";
+  cause: "fall" | "killbrick" | "hazard" | "reset" | "unknown";
 }
 
 export interface ObbyCompletedEvent {
@@ -275,6 +275,22 @@ export interface WorldChangedPayload {
 /** Client → Server: Request to enter a world */
 export interface EnterWorldRequestPayload {
   worldId: string;
+}
+
+// ============================================================================
+// Hazard Types
+// ============================================================================
+
+/** Server → Client: A hazard instance toggled state (active/inactive). */
+export interface HazardTogglePayload {
+  instanceKey: string;
+  active: boolean;
+}
+
+/** Server → Client: Player took hazard damage. */
+export interface HazardDamagePayload {
+  hazardId: string;
+  damage: number;
 }
 
 // ============================================================================

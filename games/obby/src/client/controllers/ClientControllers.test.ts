@@ -96,6 +96,36 @@ describe("RemoteController (obby client)", () => {
     }
   });
 
+  it("subscribes to hazard events (HazardToggle, HazardDamage)", async () => {
+    const mod = await import("./RemoteController");
+    mod.RemoteController.onInit!();
+
+    expect(onEventHandlers.has("HazardToggle")).toBe(true);
+    expect(onEventHandlers.has("HazardDamage")).toBe(true);
+  });
+
+  it("fires onHazardToggle callbacks", async () => {
+    const mod = await import("./RemoteController");
+    mod.RemoteController.onInit!();
+
+    const cb = vi.fn();
+    mod.RemoteController.onHazardToggle(cb);
+
+    onEventHandlers.get("HazardToggle")!({ instanceKey: "fire_jet_1", active: true });
+    expect(cb).toHaveBeenCalledWith({ instanceKey: "fire_jet_1", active: true });
+  });
+
+  it("fires onHazardDamage callbacks", async () => {
+    const mod = await import("./RemoteController");
+    mod.RemoteController.onInit!();
+
+    const cb = vi.fn();
+    mod.RemoteController.onHazardDamage(cb);
+
+    onEventHandlers.get("HazardDamage")!({ hazardId: "lava_floor", damage: 100 });
+    expect(cb).toHaveBeenCalledWith({ hazardId: "lava_floor", damage: 100 });
+  });
+
   it("fires onCheckpoint callbacks", async () => {
     const mod = await import("./RemoteController");
     mod.RemoteController.onInit!();
@@ -495,6 +525,7 @@ describe("HudController (obby client)", () => {
         onAchievementCompleted: vi.fn(),
         onEventStarted: vi.fn(),
         onEventEnded: vi.fn(),
+        onHazardDamage: vi.fn(),
       },
     }));
 
@@ -529,6 +560,7 @@ describe("HudController (obby client)", () => {
     expect(RemoteController.onAchievementCompleted).toHaveBeenCalled();
     expect(RemoteController.onEventStarted).toHaveBeenCalled();
     expect(RemoteController.onEventEnded).toHaveBeenCalled();
+    expect(RemoteController.onHazardDamage).toHaveBeenCalled();
   });
 
   it("registers menu action for Escape keybind via @broblox/input", async () => {

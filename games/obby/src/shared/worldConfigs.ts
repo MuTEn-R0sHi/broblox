@@ -17,8 +17,21 @@ export const WORLD_CONFIGS: Record<string, WorldConfig> = {
     stageCount: 6,
     coinMultiplier: 1.0,
   },
+  lava_caves: {
+    id: "lava_caves",
+    displayName: "Lava Caves",
+    description: "A scorching underground cavern filled with lava and fire traps.",
+    difficulty: "medium",
+    unlockRequirements: {
+      speed: 15,
+      jump: 40,
+      stamina: 10,
+      worldsCompleted: ["grasslands"],
+    },
+    stageCount: 8,
+    coinMultiplier: 1.5,
+  },
   // Future worlds:
-  // lava_caves: { ... unlockRequirements: { speed: 15, jump: 40, stamina: 10 } },
   // sky_kingdom: { ... unlockRequirements: { speed: 20, jump: 55, stamina: 18 } },
 };
 

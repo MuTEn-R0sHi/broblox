@@ -33,6 +33,8 @@ import type {
   CodeRedeemResultPayload,
   EquipmentSyncPayload,
   BuyGearResultPayload,
+  HazardTogglePayload,
+  HazardDamagePayload,
 } from "shared/types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -60,6 +62,8 @@ type TrainingCompleteCallback = (data: TrainingCompletePayload) => void;
 type StaminaSyncCallback = (data: StaminaSyncPayload) => void;
 type WorldChangedCallback = (data: WorldChangedPayload) => void;
 type EquipmentSyncCallback = (data: EquipmentSyncPayload) => void;
+type HazardToggleCallback = (data: HazardTogglePayload) => void;
+type HazardDamageCallback = (data: HazardDamagePayload) => void;
 
 // ============================================================================
 // Module state
@@ -84,6 +88,8 @@ const trainingCompleteCallbacks: TrainingCompleteCallback[] = [];
 const staminaSyncCallbacks: StaminaSyncCallback[] = [];
 const worldChangedCallbacks: WorldChangedCallback[] = [];
 const equipmentSyncCallbacks: EquipmentSyncCallback[] = [];
+const hazardToggleCallbacks: HazardToggleCallback[] = [];
+const hazardDamageCallbacks: HazardDamageCallback[] = [];
 
 // ============================================================================
 // Controller
@@ -129,6 +135,8 @@ export const RemoteController: Controller & {
   onStaminaSync(callback: StaminaSyncCallback): void;
   onWorldChanged(callback: WorldChangedCallback): void;
   onEquipmentSync(callback: EquipmentSyncCallback): void;
+  onHazardToggle(callback: HazardToggleCallback): void;
+  onHazardDamage(callback: HazardDamageCallback): void;
 } = {
   onInit() {
     logger.info("RemoteController initializing...");
@@ -251,6 +259,20 @@ export const RemoteController: Controller & {
     registry.onEvent("EquipmentSync", (data) => {
       logger.debug("Equipment sync received");
       for (const cb of equipmentSyncCallbacks) {
+        cb(data);
+      }
+    });
+
+    registry.onEvent("HazardToggle", (data) => {
+      logger.debug(`Hazard toggle: ${data.instanceKey} active=${data.active}`);
+      for (const cb of hazardToggleCallbacks) {
+        cb(data);
+      }
+    });
+
+    registry.onEvent("HazardDamage", (data) => {
+      logger.debug(`Hazard damage: ${data.hazardId} dmg=${data.damage}`);
+      for (const cb of hazardDamageCallbacks) {
         cb(data);
       }
     });
@@ -431,5 +453,13 @@ export const RemoteController: Controller & {
 
   onEquipmentSync(callback: EquipmentSyncCallback): void {
     equipmentSyncCallbacks.push(callback);
+  },
+
+  onHazardToggle(callback: HazardToggleCallback): void {
+    hazardToggleCallbacks.push(callback);
+  },
+
+  onHazardDamage(callback: HazardDamageCallback): void {
+    hazardDamageCallbacks.push(callback);
   },
 };
