@@ -223,6 +223,22 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Weather transitions with visual and gameplay effects.
   - Seasonal system driving weather probability tables.
 
+## Phase 5d packages
+
+- `equipment`
+  - Reusable gear & equipment slot system.
+  - `GearRegistry` for static gear definitions with rarity tiers and stat modifiers.
+  - `EquipmentStore` for per-player equip/unequip with configurable slot limits.
+  - Stat bonus aggregation: sum modifiers from all equipped items.
+  - `createEquipmentService` factory with lifecycle hooks.
+
+- `hazards`
+  - Environmental hazard system for lava, fire jets, spikes, poison, crumbling platforms.
+  - `HazardRegistry` for definition lookup by ID or CollectionService tag.
+  - `HazardManager` tracks per-instance state, timed toggles, and per-player immunity.
+  - Pure-logic: all effects via callbacks (`onDamage`, `onKill`, `onToggle`).
+  - `createHazardService` factory with lifecycle hooks.
+
 ## Game folder expectations
 
 A game should only provide:

@@ -1,7 +1,7 @@
 # Roadmap
 
-> **Last updated:** 2026-02-26
-> **Status:** Phases 0–5c complete · Both games private · 0 public players
+> **Last updated:** 2026-03-10
+> **Status:** Phases 0–5d complete · Both games private · 0 public players
 
 This is the single source of truth for BroBlox project planning. Raw brainstorming lives in [Ideas](ideas.md).
 
@@ -9,7 +9,7 @@ This is the single source of truth for BroBlox project planning. Raw brainstormi
 
 ## Where we are today
 
-The platform is **feature-complete through Phase 5c** — 33 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (3,100+ tests), and deployed.
+The platform is **feature-complete through Phase 5d** — 35 packages, 2 games, a dashboard, and a website. All infrastructure is built, tested (3,370+ tests), and deployed.
 
 **But nobody has played the games yet.**
 
@@ -22,11 +22,11 @@ Both games are deployed to Roblox across 3 environments (dev/staging/prod) — a
 | `apps/dashboard`  | Live on Vercel (internal)                             |
 | `apps/website`    | Live at broblox-games.com                             |
 | CI/CD pipeline    | Green — build, test, lint, publish, promote, rollback |
-| Test coverage     | 3,100+ tests across 150+ test files                   |
+| Test coverage     | 3,370+ tests across 145+ test files                   |
 
 ### What's built (do not re-build)
 
-- **33 `@broblox/*` packages** — core, net, combat, matchmaking, moderation, movement, data, config, analytics, notifications, leaderboards, codes, events, inventory, progression, quests, rewards, pets, gacha, cosmetics, battle-pass, marketplace, localization, audio, tutorial, world-systems, ui, input, security, observability, shared-types, constants, testing
+- **35 `@broblox/*` packages** — core, net, combat, matchmaking, moderation, movement, data, config, analytics, notifications, leaderboards, codes, events, inventory, progression, quests, rewards, pets, gacha, cosmetics, battle-pass, marketplace, localization, audio, tutorial, world-systems, ui, input, security, observability, shared-types, constants, equipment, hazards, testing
 - **2 games** (test-park + obby) — fully integrated with all packages
 - **Dashboard v2** — RBAC, audit, bans, flags, match history, news CMS, moderation
 - **Website v1** — homepage, games listing, per-game detail + wiki, rankings, news
@@ -139,6 +139,10 @@ Pets (hatching, leveling, evolution), gacha (loot tables, pity), cosmetics, batt
 
 Localization, audio, tutorial/FTUE, world systems (day/night, weather, seasons).
 
+### Phase 5d — Obby RPG Systems ✅
+
+Equipment (gear registry, equip/unequip, stat modifiers), hazards (environmental hazards with timed toggles, immunity, damage callbacks). Obby game integration: Lava Caves world config, HazardService with Humanoid damage + CollectionService scanning + Heartbeat updates.
+
 ---
 
 ## Milestone mapping
@@ -154,6 +158,7 @@ Localization, audio, tutorial/FTUE, world systems (day/night, weather, seasons).
 | 5a    | `inventory`, `progression`, `quests`, `rewards`                                                          |
 | 5b    | `pets`, `gacha`, `cosmetics`, `battle-pass`, `marketplace`                                               |
 | 5c    | `localization`, `audio`, `tutorial`, `world-systems`                                                     |
+| 5d    | `equipment`, `hazards`                                                                                   |
 
 ### Games + apps
 

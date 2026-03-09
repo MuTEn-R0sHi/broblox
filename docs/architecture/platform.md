@@ -40,9 +40,11 @@ A reusable set of packages and conventions that every game uses.
 | `tutorial`            | FTUE framework, guided onboarding, step persistence             | 5c    |
 | `world-systems`       | Day/night cycle, weather, seasons                               | 5c    |
 | `marketplace`         | MonetizationService: developer products, game passes, receipts  | 5b    |
+| `equipment`           | Gear registry, equip/unequip slots, stat modifiers              | 5d    |
+| `hazards`             | Environmental hazards — registry, manager, timed toggles        | 5d    |
 | `testing`             | Test utilities and Roblox API mocks for vitest                  | —     |
 
-**32 packages** across 7 implementation phases, plus `testing` (dev-only) = **33 total**.
+**34 packages** across 8 implementation phases, plus `testing` (dev-only) = **35 total**.
 
 ### Planned Packages (Roadmap)
 

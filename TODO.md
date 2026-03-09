@@ -9,11 +9,11 @@
 
 | Metric             | Current Value          |
 | ------------------ | ---------------------- |
-| Packages           | 33                     |
+| Packages           | 35                     |
 | Games              | 2 (test-park, obby)    |
 | Web apps           | 2 (dashboard, website) |
-| Test suites        | 150+                   |
-| Individual tests   | 3,149+                 |
+| Test suites        | 145+                   |
+| Individual tests   | 3,372+                 |
 | Line coverage      | 88.40%                 |
 | Branch coverage    | 80.26%                 |
 | `@planned` markers | 6 (matchmaking only)   |

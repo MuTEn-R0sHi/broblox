@@ -45,6 +45,7 @@ nav:
       - Future phases: roadmap/future-phases.md
       - Phase 1 (Platform MVP): roadmap/phase-1-platform-mvp.md
       - Phase 2 (PvP Alpha): roadmap/phase-2-pvp-alpha.md
+      - Obby Next Steps: roadmap/next-steps-obby.md
       - Ideas (Brainstorm): roadmap/ideas.md
   - Getting started:
       - Overview: getting-started/overview.md
@@ -86,6 +87,8 @@ nav:
       - RBAC & audit: dashboard/rbac-and-audit.md
       - Tech stack: dashboard/tech-stack.md
       - Website: dashboard/website.md
+  - Design:
+      - Obby RPG Redesign: design/obby-rpg-redesign.md
   - Modules:
       - Template: modules/module-template.md
       - Analytics: modules/analytics.md
@@ -99,8 +102,10 @@ nav:
       - Cosmetics: modules/cosmetics.md
       # daily-rewards.md is a redirect stub — entry removed from nav
       - Data: modules/data.md
+      - Equipment: modules/equipment.md
       - Events: modules/events.md
       - Gacha: modules/gacha.md
+      - Hazards: modules/hazards.md
       - Input: modules/input.md
       - Inventory: modules/inventory.md
       - Leaderboards: modules/leaderboards.md
