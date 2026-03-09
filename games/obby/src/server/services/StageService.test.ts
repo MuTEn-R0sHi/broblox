@@ -33,6 +33,31 @@ describe("StageService", () => {
   beforeEach(() => {
     vi.resetModules();
 
+    // Stub Roblox value types needed by world exit teleportation
+    const g = globalThis as Record<string, unknown>;
+    g.Vector3 = Object.assign(
+      class MockVector3 {
+        X: number;
+        Y: number;
+        Z: number;
+        constructor(x = 0, y = 0, z = 0) {
+          this.X = x;
+          this.Y = y;
+          this.Z = z;
+        }
+      },
+      { zero: { X: 0, Y: 0, Z: 0 } }
+    );
+    g.CFrame = Object.assign(
+      class MockCFrame {
+        constructor(public pos?: unknown) {}
+        mul() {
+          return new (g.CFrame as new () => unknown)();
+        }
+      },
+      { Angles: () => new (g.CFrame as new () => unknown)() }
+    );
+
     mockLogger = { info: vi.fn(), warn: vi.fn(), debug: vi.fn(), error: vi.fn() };
 
     mockRegistry = {
@@ -131,6 +156,18 @@ describe("StageService", () => {
     }));
     vi.doMock("./EventService", () => ({ getActiveEvents: mockGetActiveEvents }));
     vi.doMock("./BattlePassService", () => ({ getBattlePassStore: mockGetBattlePassStore }));
+
+    vi.doMock("./MovementValidationService", () => ({
+      movementStateManager: { notifyTeleport: vi.fn() },
+    }));
+
+    // By default, player is in the "grasslands" world
+    vi.doMock("./PlayerWorldState", () => ({
+      getPlayerWorldId: vi.fn(() => "grasslands"),
+      setPlayerWorld: vi.fn(),
+      deletePlayerWorld: vi.fn(),
+      clearPlayerWorlds: vi.fn(),
+    }));
   });
 
   async function loadStageService() {
@@ -138,11 +175,18 @@ describe("StageService", () => {
     return mod.StageService;
   }
 
+  // Shared parent chain so getWorldIdFromInstance resolves "grasslands"
+  const mockWorldsFolder = { Name: "Worlds", Parent: { Name: "Workspace" } };
+  const mockGrasslandsFolder = { Name: "Grasslands", Parent: mockWorldsFolder };
+  const mockStagesParent = { Name: "Stages", Parent: mockGrasslandsFolder };
+
   /** Populate the internal `stages` map by mocking CollectionService and calling onInit */
   function makeStagePartMock(stageNumber: number, attrs: Record<string, unknown> = {}) {
+    const stageModel = { Name: `Stage${stageNumber}`, Parent: mockStagesParent };
     return {
       IsA: () => true,
       Name: `Stage${stageNumber}`,
+      Parent: stageModel,
       GetAttribute: vi.fn((attr: string) => {
         if (attr === "StageNumber") return stageNumber;
         if (attr === "DisplayName") return attrs.DisplayName ?? `Stage ${stageNumber}`;
@@ -162,8 +206,8 @@ describe("StageService", () => {
     it("returns undefined when no stages loaded", async () => {
       const svc = await loadStageService();
 
-      expect(svc.getStage(1)).toBeUndefined();
-      expect(svc.getStageCount()).toBe(0);
+      expect(svc.getStage("grasslands", 1)).toBeUndefined();
+      expect(svc.getStageCount("grasslands")).toBe(0);
     });
 
     it("returns stage config after onInit loads stages", async () => {
@@ -176,10 +220,10 @@ describe("StageService", () => {
       const svc = await loadStageService();
       svc.onInit!();
 
-      expect(svc.getStage(1)).toBeDefined();
-      expect(svc.getStage(1)!.stageNumber).toBe(1);
-      expect(svc.getStage(1)!.coinReward).toBe(20);
-      expect(svc.getStageCount()).toBe(1);
+      expect(svc.getStage("grasslands", 1)).toBeDefined();
+      expect(svc.getStage("grasslands", 1)!.stageNumber).toBe(1);
+      expect(svc.getStage("grasslands", 1)!.coinReward).toBe(20);
+      expect(svc.getStageCount("grasslands")).toBe(1);
     });
   });
 
@@ -397,7 +441,7 @@ describe("StageService", () => {
       expect(mockDataService.setWorldBestRunTime).not.toHaveBeenCalled();
     });
 
-    it("task.delay respawns player after full obby completion", async () => {
+    it("task.delay exits world and fires WorldChanged after full obby completion", async () => {
       const stagePart = makeStagePartMock(1);
       mockCollectionService.GetTagged.mockImplementation((tag: string) => {
         if (tag === "ObbyStage") return [stagePart];
@@ -421,7 +465,13 @@ describe("StageService", () => {
 
       expect(delayCb).toBeDefined();
       delayCb!();
-      expect(mockCheckpointService.respawnPlayer).toHaveBeenCalled();
+
+      // Should fire WorldChanged with undefined worldId (back to hub)
+      expect(mockRegistry.fireClient).toHaveBeenCalledWith(
+        "WorldChanged",
+        expect.anything(),
+        expect.objectContaining({ worldId: undefined, worldName: undefined })
+      );
 
       g.task.delay = origDelay;
     });
@@ -458,10 +508,10 @@ describe("StageService", () => {
       const svc = await loadStageService();
       svc.onInit!();
 
-      expect(svc.getStageCount()).toBe(3);
-      expect(svc.getStage(1)).toBeDefined();
-      expect(svc.getStage(2)).toBeDefined();
-      expect(svc.getStage(3)).toBeDefined();
+      expect(svc.getStageCount("grasslands")).toBe(3);
+      expect(svc.getStage("grasslands", 1)).toBeDefined();
+      expect(svc.getStage("grasslands", 2)).toBeDefined();
+      expect(svc.getStage("grasslands", 3)).toBeDefined();
     });
 
     it("skips non-BasePart entries", async () => {
@@ -474,7 +524,7 @@ describe("StageService", () => {
       const svc = await loadStageService();
       svc.onInit!();
 
-      expect(svc.getStageCount()).toBe(0);
+      expect(svc.getStageCount("grasslands")).toBe(0);
     });
 
     it("warns on parts missing StageNumber", async () => {
@@ -494,7 +544,7 @@ describe("StageService", () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining("missing StageNumber"));
     });
 
-    it("loads stages from Workspace.Stages folder", async () => {
+    it("loads stages from Workspace.Worlds.*.Stages folder", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
 
       const stagePart = {
@@ -505,17 +555,39 @@ describe("StageService", () => {
           return undefined;
         }),
       };
-      const stageModel = { GetDescendants: vi.fn(() => [stagePart]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stageModel = {
+        Name: "Stage1",
+        GetAttribute: vi.fn((attr: string) => {
+          if (attr === "StageNumber") return 1;
+          if (attr === "DisplayName") return "Test Stage";
+          if (attr === "Difficulty") return "easy";
+          if (attr === "CoinReward") return 15;
+          return undefined;
+        }),
+        GetDescendants: vi.fn(() => [stagePart]),
+      };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        Name: "Grasslands",
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
       const svc = await loadStageService();
       svc.onInit!();
 
-      expect(svc.getStage(1)).toBeDefined();
+      const stage = svc.getStage("grasslands", 1);
+      expect(stage).toBeDefined();
+      expect(stage!.displayName).toBe("Test Stage");
+      expect(stage!.coinReward).toBe(15);
     });
 
     it("sets up end zone touch detection", async () => {
@@ -663,7 +735,7 @@ describe("StageService", () => {
       expect(mockDataService.addCoins).toHaveBeenCalledTimes(2);
     });
 
-    it("sets up end zones from Stages folder by name pattern", async () => {
+    it("sets up end zones from Worlds folder by name pattern", async () => {
       mockCollectionService.GetTagged.mockReturnValue([]);
 
       const endPlatform = {
@@ -676,10 +748,23 @@ describe("StageService", () => {
         Position: { X: 0, Y: 0, Z: 0 },
         Touched: { Connect: vi.fn() },
       };
-      const stageModel = { GetDescendants: vi.fn(() => [endPlatform]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stageModel = {
+        Name: "Stage1",
+        GetAttribute: vi.fn(() => undefined),
+        GetDescendants: vi.fn(() => [endPlatform]),
+      };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        Name: "Grasslands",
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
@@ -704,10 +789,23 @@ describe("StageService", () => {
         Position: { X: 0, Y: 0, Z: 0 },
         Touched: { Connect: vi.fn() },
       };
-      const stageModel = { GetDescendants: vi.fn(() => [endZone]) };
-      const stagesFolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const stageModel = {
+        Name: "Stage1",
+        GetAttribute: vi.fn(() => undefined),
+        GetDescendants: vi.fn(() => [endZone]),
+      };
+      const stagesSubfolder = { GetChildren: vi.fn(() => [stageModel]) };
+      const worldFolder = {
+        Name: "Grasslands",
+        FindFirstChild: vi.fn((name: string) => {
+          if (name === "Stages") return stagesSubfolder;
+          return undefined;
+        }),
+        GetChildren: vi.fn(() => [stageModel]),
+      };
+      const worldsFolder = { GetChildren: vi.fn(() => [worldFolder]) };
       mockWorkspace.FindFirstChild.mockImplementation((name: string) => {
-        if (name === "Stages") return stagesFolder;
+        if (name === "Worlds") return worldsFolder;
         return undefined;
       });
 
@@ -731,10 +829,10 @@ describe("StageService", () => {
 
       const svc = await loadStageService();
       svc.onInit!();
-      expect(svc.getStageCount()).toBe(1);
+      expect(svc.getStageCount("grasslands")).toBe(1);
 
       svc.onDestroy!();
-      expect(svc.getStageCount()).toBe(0);
+      expect(svc.getStageCount("grasslands")).toBe(0);
     });
   });
 

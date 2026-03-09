@@ -14,8 +14,9 @@ import {
   deleteDeathlessStreak,
   clearDeathlessStreaks,
 } from "./DeathlessStreakState";
-import { CheckpointService } from "./CheckpointService";
 import { PlayerLifecycleService } from "./PlayerLifecycleService";
+import { movementStateManager } from "./MovementValidationService";
+import { getPlayerWorldId, setPlayerWorld } from "./PlayerWorldState";
 import { getProgression } from "./ProgressionService";
 import { getQuests } from "./QuestService";
 import { getAchievements } from "./RewardsService";
@@ -25,8 +26,29 @@ import { getActiveEvents } from "./EventService";
 
 const logger = createLogger("StageService");
 
-// Module-level state
-const stages = new Map<number, StageConfig>();
+// Module-level state — stages keyed by worldId → stageNumber
+const stages = new Map<string, Map<number, StageConfig>>();
+
+function getWorldStages(worldId: string): Map<number, StageConfig> {
+  let worldStages = stages.get(worldId);
+  if (!worldStages) {
+    worldStages = new Map();
+    stages.set(worldId, worldStages);
+  }
+  return worldStages;
+}
+
+// Determine worldId from a part's ancestor chain (finds Worlds/* parent)
+function getWorldIdFromInstance(inst: Instance): string | undefined {
+  let current: Instance | undefined = inst.Parent;
+  while (current !== undefined) {
+    if (current.Parent !== undefined && current.Parent.Name === "Worlds") {
+      return current.Name.lower();
+    }
+    current = current.Parent;
+  }
+  return undefined;
+}
 const lastStageCompletion = new Map<string, number>(); // "playerId-stageNumber" -> timestamp
 // Cooldown between stage completions (seconds)
 const STAGE_COMPLETION_COOLDOWN = 2;
@@ -54,16 +76,16 @@ function getStageNumber(part: BasePart): number | undefined {
 }
 
 export const StageService: Service & {
-  getStage(stageNumber: number): StageConfig | undefined;
-  getStageCount(): number;
+  getStage(worldId: string, stageNumber: number): StageConfig | undefined;
+  getStageCount(worldId: string): number;
   completeStage(player: Player, stageNumber: number): void;
 } = {
-  getStage(stageNumber: number): StageConfig | undefined {
-    return stages.get(stageNumber);
+  getStage(worldId: string, stageNumber: number): StageConfig | undefined {
+    return stages.get(worldId)?.get(stageNumber);
   },
 
-  getStageCount(): number {
-    return mapSize(stages);
+  getStageCount(worldId: string): number {
+    return mapSize(stages.get(worldId) ?? new Map());
   },
 
   completeStage(player: Player, stageNumber: number): void {
@@ -78,14 +100,22 @@ export const StageService: Service & {
       return;
     }
 
-    const stage = stages.get(stageNumber);
+    // Get player's active world
+    const worldId = getPlayerWorldId(player.UserId);
+    if (!worldId) {
+      logger.debug(`Player ${player.Name} tried to complete stage but is not in a world`);
+      return;
+    }
+
+    const worldStages = stages.get(worldId);
+    const stage = worldStages?.get(stageNumber);
     if (!stage) {
-      logger.warn(`Invalid stage number: ${stageNumber}`);
+      logger.warn(`Invalid stage number: ${stageNumber} for world ${worldId}`);
       return;
     }
 
     // Check if this is the current stage
-    const worldProgress = DataService.getWorldProgress(player, "grasslands");
+    const worldProgress = DataService.getWorldProgress(player, worldId);
     if (!worldProgress || worldProgress.currentStage !== stageNumber) {
       logger.debug(
         `Player ${player.Name} tried to complete stage ${stageNumber} but is on stage ${worldProgress?.currentStage ?? "?"}`
@@ -94,7 +124,7 @@ export const StageService: Service & {
     }
 
     // Check if this is the final stage (longer cooldown applies)
-    const isLastStage = !stages.has(stageNumber + 1);
+    const isLastStage = !worldStages?.has(stageNumber + 1);
     if (isLastStage) {
       const timeSinceLastCompletion = now - lastCompletion;
       if (timeSinceLastCompletion < OBBY_COMPLETION_COOLDOWN) {
@@ -114,7 +144,7 @@ export const StageService: Service & {
     const isNewBest = priorBest === undefined || completionTime < priorBest;
 
     // Update stage progress
-    DataService.updateStageProgress(player, "grasslands", stageNumber, {
+    DataService.updateStageProgress(player, worldId, stageNumber, {
       completions: 1,
       bestTime: isNewBest ? completionTime : undefined,
     });
@@ -189,8 +219,8 @@ export const StageService: Service & {
 
     // Advance to next stage
     const nextStage = stageNumber + 1;
-    if (stages.has(nextStage)) {
-      DataService.setWorldStage(player, "grasslands", nextStage, 0);
+    if (worldStages?.has(nextStage)) {
+      DataService.setWorldStage(player, worldId, nextStage, 0);
 
       // Reset stage timer for the new stage
       DataService.startStageTimer(player);
@@ -201,7 +231,7 @@ export const StageService: Service & {
       // Sync current HUD state (coins/stage/checkpoint).
       const updated = DataService.getData(player);
       if (updated) {
-        const world = updated.worlds["grasslands"];
+        const world = updated.worlds[worldId];
         RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
           coins: updated.coins,
           currentStage: world?.currentStage ?? 1,
@@ -211,19 +241,19 @@ export const StageService: Service & {
     } else {
       // Full run completion time
       const totalTime = DataService.getRunElapsedSeconds(player) ?? 0;
-      const worldProgress = DataService.getWorldProgress(player, "grasslands");
-      const priorRunBest = worldProgress?.bestFullRunTime;
+      const wpFinal = DataService.getWorldProgress(player, worldId);
+      const priorRunBest = wpFinal?.bestFullRunTime;
       const isNewRunBest = priorRunBest === undefined || totalTime < priorRunBest;
 
-      // Game completed! Reset to start for another run
-      DataService.incrementWorldCompletions(player, "grasslands");
+      // World completed! Reset to stage 1 for next run
+      DataService.incrementWorldCompletions(player, worldId);
       DataService.updateData(player, {
         totalCompletions: data.totalCompletions + 1,
       });
-      DataService.setWorldStage(player, "grasslands", 1, 0);
+      DataService.setWorldStage(player, worldId, 1, 0);
 
       if (isNewRunBest) {
-        DataService.setWorldBestRunTime(player, "grasslands", totalTime);
+        DataService.setWorldBestRunTime(player, worldId, totalTime);
       }
 
       // New run starts now
@@ -231,14 +261,14 @@ export const StageService: Service & {
       DataService.startStageTimer(player);
 
       RemoteService.getRegistry().fireClient("StageCompleted", player, completedEvent);
-      logger.info(`Player ${player.Name} completed the entire obby!`);
+      logger.info(`Player ${player.Name} completed world: ${worldId}`);
 
       // Advance analytics funnel — full obby completion
       funnel.advanceStep("progression", player.UserId, "obby_complete");
 
       const updated = DataService.getData(player);
       if (updated) {
-        const world = updated.worlds["grasslands"];
+        const world = updated.worlds[worldId];
         RemoteService.getRegistry().fireClient("PlayerDataSync", player, {
           coins: updated.coins,
           currentStage: world?.currentStage ?? 1,
@@ -246,9 +276,28 @@ export const StageService: Service & {
         });
       }
 
-      // Teleport player back to start after a short delay
+      // Return player to hub after a short delay
       task.delay(1.5, () => {
-        CheckpointService.respawnPlayer(player);
+        setPlayerWorld(player.UserId, undefined);
+        RemoteService.getRegistry().fireClient("WorldChanged", player, {
+          worldId: undefined,
+          worldName: undefined,
+        });
+        // Teleport to hub spawn
+        const character = player.Character;
+        if (character) {
+          const hrp = character.FindFirstChild("HumanoidRootPart") as BasePart | undefined;
+          if (hrp) {
+            const hubFolder = Workspace.FindFirstChild("Hub") as Folder | undefined;
+            const hubSpawn = hubFolder?.FindFirstChild("HubSpawn") as BasePart | undefined;
+            const spawnPos = hubSpawn
+              ? new Vector3(hubSpawn.Position.X, hubSpawn.Position.Y + 3, hubSpawn.Position.Z)
+              : new Vector3(0, 10, 0);
+            hrp.AssemblyLinearVelocity = Vector3.zero;
+            hrp.CFrame = new CFrame(spawnPos);
+            movementStateManager.notifyTeleport(player.UserId, spawnPos);
+          }
+        }
       });
     }
   },
@@ -268,6 +317,12 @@ export const StageService: Service & {
         continue;
       }
 
+      const worldId = getWorldIdFromInstance(part);
+      if (!worldId) continue;
+
+      const worldStages = getWorldStages(worldId);
+      if (worldStages.has(stageNumber)) continue;
+
       // Get stage config from attributes
       const config: StageConfig = {
         stageNumber,
@@ -278,44 +333,59 @@ export const StageService: Service & {
         hasSecret: (part.GetAttribute("HasSecret") as boolean) ?? false,
       };
 
-      stages.set(stageNumber, config);
+      worldStages.set(stageNumber, config);
       CollectionService.AddTag(part, OBBY_CONSTANTS.STAGE_TAG);
-      logger.debug(`Loaded stage ${stageNumber}: ${config.displayName}`);
+      logger.debug(`Loaded stage ${stageNumber} for world ${worldId}: ${config.displayName}`);
     }
 
-    // Also scan Workspace.Stages folder for parts with StageNumber attribute
-    const stagesFolder = Workspace.FindFirstChild("Stages") as Folder | undefined;
-    if (stagesFolder) {
-      for (const model of stagesFolder.GetChildren()) {
-        for (const part of model.GetDescendants()) {
-          if (!part.IsA("BasePart")) continue;
-
-          const stageNumber = getStageNumber(part);
-          if (stageNumber === undefined) continue;
-          if (stages.has(stageNumber)) continue; // Already loaded
+    // Scan Workspace.Worlds.*.Stages folders — read metadata from the stage Model
+    const worldsFolder = Workspace.FindFirstChild("Worlds") as Folder | undefined;
+    if (worldsFolder) {
+      for (const worldFolder of worldsFolder.GetChildren()) {
+        const worldId = worldFolder.Name.lower();
+        const worldStages = getWorldStages(worldId);
+        const stagesSubfolder = worldFolder.FindFirstChild("Stages") as Folder | undefined;
+        if (!stagesSubfolder) continue;
+        for (const model of stagesSubfolder.GetChildren()) {
+          // Read StageNumber from the model's own attributes (not descendant parts)
+          const modelStageNumber = model.GetAttribute("StageNumber");
+          if (!typeIs(modelStageNumber, "number")) continue;
+          if (worldStages.has(modelStageNumber)) continue;
 
           const config: StageConfig = {
-            stageNumber,
-            displayName: (part.GetAttribute("DisplayName") as string) ?? `Stage ${stageNumber}`,
-            difficulty: (part.GetAttribute("Difficulty") as StageConfig["difficulty"]) ?? "easy",
+            stageNumber: modelStageNumber,
+            displayName:
+              (model.GetAttribute("DisplayName") as string) ?? `Stage ${modelStageNumber}`,
+            difficulty: (model.GetAttribute("Difficulty") as StageConfig["difficulty"]) ?? "easy",
             coinReward:
-              (part.GetAttribute("CoinReward") as number) ?? OBBY_CONSTANTS.DEFAULT_STAGE_COINS,
-            hasSecret: (part.GetAttribute("HasSecret") as boolean) ?? false,
+              (model.GetAttribute("CoinReward") as number) ?? OBBY_CONSTANTS.DEFAULT_STAGE_COINS,
+            hasSecret: (model.GetAttribute("HasSecret") as boolean) ?? false,
           };
 
-          stages.set(stageNumber, config);
-          CollectionService.AddTag(part, OBBY_CONSTANTS.STAGE_TAG);
-          logger.debug(`Loaded stage ${stageNumber} from folder: ${config.displayName}`);
+          worldStages.set(modelStageNumber, config);
+          // Tag child parts that have StageNumber for CollectionService discovery
+          for (const part of model.GetDescendants()) {
+            if (part.IsA("BasePart") && part.GetAttribute("StageNumber") !== undefined) {
+              CollectionService.AddTag(part, OBBY_CONSTANTS.STAGE_TAG);
+            }
+          }
+          logger.debug(
+            `Loaded stage ${modelStageNumber} for world ${worldId} from model: ${config.displayName}`
+          );
         }
       }
     }
 
-    logger.info(`Loaded ${mapSize(stages)} stages`);
+    let totalStages = 0;
+    stages.forEach((ws) => (totalStages += mapSize(ws)));
+    logger.info(`Loaded ${totalStages} stages across ${mapSize(stages)} worlds`);
 
     // Clean up per-player cooldown entries when a player leaves
     PlayerLifecycleService.onPlayerRemoving((player) => {
-      stages.forEach((_, stageNumber) => {
-        lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
+      stages.forEach((worldStages) => {
+        worldStages.forEach((_, stageNumber) => {
+          lastStageCompletion.delete(getCompletionKey(player.UserId, stageNumber));
+        });
       });
       deleteDeathlessStreak(player.UserId);
     });
@@ -347,25 +417,31 @@ export const StageService: Service & {
       setupEndZone(zone, stageNumber);
     }
 
-    // Also scan Stages folder for parts named "EndPlatform" or "EndZone"
-    if (stagesFolder) {
-      for (const model of stagesFolder.GetChildren()) {
-        for (const part of model.GetDescendants()) {
-          if (!part.IsA("BasePart")) continue;
+    // Also scan Worlds/*/Stages folders for parts named "EndPlatform" or "EndZone"
+    if (worldsFolder) {
+      for (const worldFolder of worldsFolder.GetChildren()) {
+        const stagesSubfolder = worldFolder.FindFirstChild("Stages") as Folder | undefined;
+        if (!stagesSubfolder) continue;
+        for (const model of stagesSubfolder.GetChildren()) {
+          for (const part of model.GetDescendants()) {
+            if (!part.IsA("BasePart")) continue;
 
-          // Check if this is an end zone by exact name match
-          const lowerName = part.Name.lower();
-          const isEndZone =
-            lowerName === "endplatform" || lowerName === "endzone" || lowerName.sub(1, 3) === "end";
-          const stageNumber = getStageNumber(part);
+            // Check if this is an end zone by exact name match
+            const lowerName = part.Name.lower();
+            const isEndZone =
+              lowerName === "endplatform" ||
+              lowerName === "endzone" ||
+              lowerName.sub(1, 3) === "end";
+            const stageNumber = getStageNumber(part);
 
-          if (isEndZone && stageNumber !== undefined) {
-            if (!CollectionService.HasTag(part, OBBY_CONSTANTS.END_ZONE_TAG)) {
-              CollectionService.AddTag(part, OBBY_CONSTANTS.END_ZONE_TAG);
-              setupEndZone(part, stageNumber);
-              logger.info(
-                `Setup end zone for stage ${stageNumber}: ${part.Name} at position ${part.Position}`
-              );
+            if (isEndZone && stageNumber !== undefined) {
+              if (!CollectionService.HasTag(part, OBBY_CONSTANTS.END_ZONE_TAG)) {
+                CollectionService.AddTag(part, OBBY_CONSTANTS.END_ZONE_TAG);
+                setupEndZone(part, stageNumber);
+                logger.info(
+                  `Setup end zone for stage ${stageNumber}: ${part.Name} at position ${part.Position}`
+                );
+              }
             }
           }
         }
@@ -374,6 +450,7 @@ export const StageService: Service & {
   },
 
   onDestroy() {
+    stages.forEach((ws) => ws.clear());
     stages.clear();
     lastStageCompletion.clear();
     clearDeathlessStreaks();

@@ -37,6 +37,8 @@ export interface StageProgress {
 // ============================================================================
 
 export interface CheckpointData {
+  /** World this checkpoint belongs to */
+  worldId: string;
   /** Stage this checkpoint belongs to */
   stageNumber: number;
   /** Checkpoint index within stage */
@@ -240,6 +242,37 @@ export interface StaminaSyncPayload {
   current: number;
   max: number;
   exhausted: boolean;
+}
+
+// ============================================================================
+// World System Types
+// ============================================================================
+
+/** World configuration */
+export interface WorldConfig {
+  id: string;
+  displayName: string;
+  description: string;
+  difficulty: "easy" | "medium" | "hard" | "extreme";
+  unlockRequirements: {
+    speed: number;
+    jump: number;
+    stamina: number;
+    worldsCompleted?: string[];
+  };
+  stageCount: number;
+  coinMultiplier: number;
+}
+
+/** Server → Client: Player's active world changed */
+export interface WorldChangedPayload {
+  worldId: string | undefined;
+  worldName: string | undefined;
+}
+
+/** Client → Server: Request to enter a world */
+export interface EnterWorldRequestPayload {
+  worldId: string;
 }
 
 // ============================================================================

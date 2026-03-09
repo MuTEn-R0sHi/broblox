@@ -59,6 +59,7 @@ app
   .register(StaminaService)
   .register(TrainingService)
   .register(MarketplaceService)
+  .register(WorldService)
   .register(StageService)
   .register(CheckpointService)
   .register(LeaderboardService)
@@ -79,7 +80,6 @@ app
   .register(LocalizationService)
   .register(AudioService)
   .register(TutorialService)
-  .register(WorldService)
   .register(EventService)
   .register(PlayerActionService);
 

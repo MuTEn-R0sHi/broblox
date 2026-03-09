@@ -35,11 +35,14 @@ let staminaBarFill: Frame | undefined;
 let speedValueLabel: TextLabel | undefined;
 let jumpValueLabel: TextLabel | undefined;
 let staminaValueLabel: TextLabel | undefined;
+let exitWorldButton: TextButton | undefined;
 
 // State
 let currentStage = 1;
 let coins = 0;
 let stageStartTime = os.clock();
+let inWorld = false;
+let currentWorldName: string | undefined;
 let leaderboardRefreshCoolingDown = false;
 let leaderboardRefreshPending = false;
 let leaderboardRefreshNonce = 0;
@@ -123,7 +126,7 @@ function onCheckpointReached(event: CheckpointReachedEvent): void {
 
   currentStage = event.stageNumber;
   if (stageLabel) {
-    stageLabel.Text = `Stage ${currentStage}`;
+    stageLabel.Text = inWorld ? `${currentWorldName ?? "World"} — Stage ${currentStage}` : "Hub";
   }
 
   stageStartTime = os.clock();
@@ -163,7 +166,7 @@ function onDataSync(data: {
   updateCoinsDisplay();
 
   if (stageLabel) {
-    stageLabel.Text = `Stage ${currentStage}`;
+    stageLabel.Text = inWorld ? `${currentWorldName ?? "World"} — Stage ${currentStage}` : "Hub";
   }
 
   if (coinDelta > 0) {
@@ -304,9 +307,13 @@ function onLeaderboardRefreshStatus(status: LeaderboardRefreshStatusPayload): vo
 
 function timerLoop(): void {
   while (mainGui?.Parent) {
-    const elapsed = os.clock() - stageStartTime;
-    if (timerLabel) {
-      timerLabel.Text = string.format("%.2fs", elapsed);
+    if (inWorld) {
+      const elapsed = os.clock() - stageStartTime;
+      if (timerLabel) {
+        timerLabel.Text = string.format("%.2fs", elapsed);
+      }
+    } else if (timerLabel) {
+      timerLabel.Text = "--";
     }
     task.wait(0.05);
   }
@@ -338,7 +345,7 @@ function createUI(playerGui: PlayerGui): void {
   stageLabel.TextSize = 24;
   stageLabel.TextXAlignment = Enum.TextXAlignment.Left;
   stageLabel.Font = Enum.Font.GothamBold;
-  stageLabel.Text = `Stage ${currentStage}`;
+  stageLabel.Text = "Hub";
   stageLabel.Parent = topBar;
 
   // Timer label
@@ -586,6 +593,28 @@ function createUI(playerGui: PlayerGui): void {
   lbLayout.SortOrder = Enum.SortOrder.LayoutOrder;
   lbLayout.Padding = new UDim(0, 4);
   lbLayout.Parent = leaderboardList;
+
+  // "Return to Hub" button — visible only when in a world
+  exitWorldButton = new Instance("TextButton");
+  exitWorldButton.Name = "ExitWorldButton";
+  exitWorldButton.Size = new UDim2(0, 140, 0, 36);
+  exitWorldButton.Position = new UDim2(0.5, -70, 0, 56);
+  exitWorldButton.BackgroundColor3 = new Color3(0.8, 0.2, 0.2);
+  exitWorldButton.BackgroundTransparency = 0.15;
+  exitWorldButton.TextColor3 = new Color3(1, 1, 1);
+  exitWorldButton.TextSize = 16;
+  exitWorldButton.Font = Enum.Font.GothamBold;
+  exitWorldButton.Text = "Return to Hub";
+  exitWorldButton.Visible = false;
+  exitWorldButton.Parent = mainGui;
+
+  const exitCorner = new Instance("UICorner");
+  exitCorner.CornerRadius = new UDim(0, 6);
+  exitCorner.Parent = exitWorldButton;
+
+  exitWorldButton.MouseButton1Click.Connect(() => {
+    RemoteController.requestExitWorld();
+  });
 }
 
 export const UIController: Controller = {
@@ -622,6 +651,26 @@ export const UIController: Controller = {
       currentStamina = data.current;
       maxStamina = data.max;
       updateStaminaBar();
+    });
+
+    RemoteController.onWorldChanged((data) => {
+      inWorld = data.worldId !== undefined;
+      currentWorldName = data.worldName;
+
+      if (inWorld) {
+        stageStartTime = os.clock();
+        if (stageLabel) {
+          stageLabel.Text = `${currentWorldName ?? "World"} — Stage ${currentStage}`;
+        }
+      } else {
+        if (stageLabel) {
+          stageLabel.Text = "Hub";
+        }
+      }
+
+      if (exitWorldButton) {
+        exitWorldButton.Visible = inWorld;
+      }
     });
 
     // Start timer update loop

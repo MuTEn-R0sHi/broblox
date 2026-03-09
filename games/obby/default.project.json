@@ -296,11 +296,8 @@
       "Hub": {
         "$path": "map/Hub"
       },
-      "Stages": {
-        "$path": "map/Stages"
-      },
-      "Checkpoints": {
-        "$path": "map/Checkpoints"
+      "Worlds": {
+        "$path": "map/Worlds"
       },
       "Spawn": {
         "$path": "map/Spawn.model.json"
