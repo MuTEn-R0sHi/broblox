@@ -228,7 +228,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
 - `equipment`
   - Reusable gear & equipment slot system.
   - `GearRegistry` for static gear definitions with rarity tiers and stat modifiers.
-  - `EquipmentStore` for per-player equip/unequip with configurable slot limits.
+  - `EquipmentStore` for per-player equip/unequip — one gear per named slot (slots are game-defined).
   - Stat bonus aggregation: sum modifiers from all equipped items.
   - `createEquipmentService` factory with lifecycle hooks.
 

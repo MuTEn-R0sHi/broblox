@@ -12,45 +12,52 @@ Reusable gear & equipment slot system — registry, equip/unequip, stat modifier
 ## Core rules
 
 - Gear definitions are registered once in a `GearRegistry`; shared across all players.
-- Each player has an `EquipmentStore` with configurable slot limits (default: 8 slots).
-- Equip operations validate ownership, slot capacity, and duplicate prevention.
+- Each player has an `EquipmentStore` — one gear per slot; slots are game-defined strings (e.g. `"feet"`, `"back"`, `"body"`).
+- Equip operations validate ownership, slot match, level requirements, and duplicate prevention.
 - Stat modifiers are summed at query time — no mutation of base player attributes.
 
 ## Data model
 
-- `GearDefinition` — static gear template: `id`, `displayName`, `description`, `rarity`, `statModifiers`, `tags`, `maxStack`.
-- `StatModifier` — `{ stat: string; value: number }` — additive bonus applied when gear is equipped.
-- `GearRarity` — `"common" | "uncommon" | "rare" | "epic" | "legendary"`.
-- `EquipmentData` — per-player state: `equipped` array of gear IDs, `maxSlots`.
-- `EquipmentResult` — operation result: `{ status: EquipmentResultStatus; message?: string }`.
+- `GearDefinition` — static gear template: `id`, `name`, `description?`, `rarity`, `slot`, `modifiers`, `levelRequirement?`, `price?`, `tags?`.
+- `StatModifier` — `{ stat: string; flat: number }` — additive bonus applied when gear is equipped.
+- `GearRarity` — `"common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic"`.
+- `EquipmentData` — per-player serializable state: `{ equipped: Record<string, string>, ownedGear: string[] }` (slot → gearId map + owned list).
+- `EquipmentResult` — operation result: `{ ok: boolean; status: EquipmentResultStatus }`.
 
 ## Public API
 
 ### GearRegistry
 
-| Method           | Description                       |
-| ---------------- | --------------------------------- |
-| `register(def)`  | Register a gear definition        |
-| `get(id)`        | Retrieve a definition by ID       |
-| `getAll()`       | Get all registered definitions    |
-| `getByRarity(r)` | Filter definitions by rarity tier |
-| `getByTag(tag)`  | Filter definitions by tag         |
-| `has(id)`        | Check if a gear ID is registered  |
-| `count()`        | Total registered definitions      |
+| Method              | Description                      |
+| ------------------- | -------------------------------- |
+| `register(def)`     | Register a gear definition       |
+| `registerAll(defs)` | Register an array of definitions |
+| `get(id)`           | Retrieve a definition by ID      |
+| `getAll()`          | Get all registered definitions   |
+| `getBySlot(slot)`   | Filter definitions by slot       |
+| `has(id)`           | Check if a gear ID is registered |
+| `count()`           | Total registered definitions     |
 
-### EquipmentStore
+### EquipmentStore (per-player)
 
-| Method                         | Description                                    |
-| ------------------------------ | ---------------------------------------------- |
-| `equip(playerId, gearId)`      | Equip a gear item (validates registry + slots) |
-| `unequip(playerId, gearId)`    | Remove a gear item from equipped slots         |
-| `getEquipped(playerId)`        | Get all equipped gear IDs for a player         |
-| `isEquipped(playerId, id)`     | Check if a specific gear is equipped           |
-| `getStatBonuses(playerId)`     | Sum all stat modifiers from equipped gear      |
-| `getStatBonus(playerId, stat)` | Sum modifiers for a specific stat              |
-| `clearEquipment(playerId)`     | Unequip all gear                               |
-| `initPlayer(playerId)`         | Initialize player equipment state              |
-| `cleanupPlayer(playerId)`      | Remove player state on disconnect              |
+Constructed with `(playerId, registry)`. One instance per player, managed by the factory.
+
+| Method                       | Description                                              |
+| ---------------------------- | -------------------------------------------------------- |
+| `loadFrom(data)`             | Hydrate from serialized `EquipmentData`                  |
+| `serialize()`                | Export current state as `EquipmentData`                  |
+| `grantGear(gearId)`          | Grant ownership of a gear item                           |
+| `ownsGear(gearId)`           | Check if player owns a gear item                         |
+| `getOwnedGear()`             | Get all owned gear IDs                                   |
+| `equip(gearId, level?)`      | Equip a gear item (validates ownership, slot, level req) |
+| `unequip(slot)`              | Remove gear from a slot                                  |
+| `getEquipped(slot)`          | Get gear ID equipped in a slot                           |
+| `getAllEquipped()`           | Get all equipped gear as `Record<string, string>`        |
+| `computeBonuses()`           | Sum all stat modifiers from equipped gear                |
+| `getStatBonus(stat)`         | Sum modifiers for a specific stat                        |
+| `getGearModifiers(gearId)`   | Get modifiers for a specific gear item                   |
+| `onEquipChanged(cb)`         | Subscribe to equip/unequip events                        |
+| `isDirty()` / `clearDirty()` | Track unsaved changes                                    |
 
 ### Factory
 
@@ -58,41 +65,43 @@ Reusable gear & equipment slot system — registry, equip/unequip, stat modifier
 import { createEquipmentService } from "@broblox/equipment";
 
 const handle = createEquipmentService({
-  definitions: [
+  gear: [
     {
       id: "speed_boots",
-      displayName: "Speed Boots",
+      name: "Speed Boots",
       rarity: "common",
-      statModifiers: [{ stat: "speed", value: 2 }],
-      tags: ["feet"],
+      slot: "feet",
+      modifiers: [{ stat: "speed", flat: 2 }],
+      tags: ["speed"],
     },
     {
       id: "rocket_pack",
-      displayName: "Rocket Pack",
+      name: "Rocket Pack",
       rarity: "rare",
-      statModifiers: [{ stat: "jump", value: 5 }],
-      tags: ["back"],
+      slot: "back",
+      modifiers: [{ stat: "jump", flat: 5 }],
+      tags: ["jump"],
     },
   ],
-  maxSlots: 8,
-  onEquip: (playerId, gearId) => {
-    /* apply visuals */
-  },
-  onUnequip: (playerId, gearId) => {
-    /* remove visuals */
-  },
+  onPlayerAdded: (cb) => PlayerLifecycleService.onPlayerAdded(cb),
   onPlayerRemoving: (cb) => PlayerLifecycleService.onPlayerRemoving(cb),
 });
+
+// handle.getGearRegistry()          → shared GearRegistry
+// handle.getEquipmentStore(playerId) → per-player EquipmentStore
+// handle.initPlayer(playerId)        → create store for player
+// handle.cleanupPlayer(playerId)     → remove store on disconnect
 ```
 
 ## Config
 
-| Key        | Default | Description                            |
-| ---------- | ------- | -------------------------------------- |
-| `maxSlots` | `8`     | Maximum equipped gear slots per player |
+| Key                | Required | Description                                     |
+| ------------------ | -------- | ----------------------------------------------- |
+| `gear`             | Yes      | Array of `GearDefinition` to register           |
+| `onPlayerAdded`    | No       | Callback to wire player join → `initPlayer`     |
+| `onPlayerRemoving` | No       | Callback to wire player leave → `cleanupPlayer` |
 
 ## Observability
 
-- `GearEquipEvent` — player equipped a gear item (playerId, gearId)
-- `GearUnequipEvent` — player unequipped a gear item
-- `EquipRejectedEvent` — equip failed (slot full, not registered, already equipped)
+- `GearEquipEvent` — player equipped/unequipped a gear item (`playerId`, `gearId`, `slot`, `equipped`, `timestamp`)
+- Subscribe via `store.onEquipChanged(callback)`

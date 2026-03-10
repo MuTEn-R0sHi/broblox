@@ -829,12 +829,11 @@ Player clicks "Equip" on item in inventory
 
 ### Next Up
 
-| Component                     | Priority | Notes                                                                                         |
-| ----------------------------- | -------- | --------------------------------------------------------------------------------------------- |
-| **Obby: Dynamic obstacles**   | High     | ObstacleService — moving/rotating/animated platforms, timed sequences, per-world configs (§8) |
-| **Obby: Sky Kingdom world**   | High     | Third world: wind gusts, disappearing platforms, higher stat requirements (§10.3)             |
-| **Hub map buildout**          | Medium   | Roblox Studio work: training stations, shop area, world portals, visual polish (§6)           |
-| **Obby: Client shop UI**      | Medium   | Shop GUI showing gear catalog, prices, level reqs, owned/equipped state                       |
-| **Obby: Client equipment UI** | Medium   | Equipment GUI showing inventory, equip/unequip, stat previews                                 |
-| **Obby: Consumable items**    | Low      | Speed potions, jump boosts, shield — via InventoryService (§3 consumables)                    |
-| **PvP racing**                | Low      | Race challenges between players through worlds (§13 open question)                            |
+| Component                   | Priority | Notes                                                                                         |
+| --------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| **Obby: Dynamic obstacles** | High     | ObstacleService — moving/rotating/animated platforms, timed sequences, per-world configs (§8) |
+| **Obby: Sky Kingdom world** | High     | Third world: wind gusts, disappearing platforms, higher stat requirements (§10.3)             |
+| **Obby: Client UI polish**  | Medium   | Equipment screen exists; needs stat preview, rarity colors, tooltip details                   |
+| **Hub map buildout**        | Medium   | Roblox Studio work: training stations, shop area, world portals, visual polish (§6)           |
+| **Obby: Consumable items**  | Low      | Speed potions, jump boosts, shield — via InventoryService (§3 consumables)                    |
+| **PvP racing**              | Low      | Race challenges between players through worlds (§13 open question)                            |

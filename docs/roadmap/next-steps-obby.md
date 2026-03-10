@@ -10,25 +10,25 @@ See [Obby RPG Redesign](../design/obby-rpg-redesign.md) for the full design doc.
 
 The obby has a surprisingly complete RPG loop:
 
-| System               | Status   | Notes                                                                |
-| -------------------- | -------- | -------------------------------------------------------------------- |
-| Attributes           | **Done** | Speed, jump, stamina. Base + gear bonuses. Applied to Humanoid.      |
-| Training             | **Done** | Training stations increase base attributes. 178-line service.        |
-| Stamina              | **Done** | Sprint stamina with drain/regen. 167-line service.                   |
-| Equipment            | **Done** | 12 gear items across 5 slots. `@broblox/equipment` factory wired.    |
-| Gear Shop            | **Done** | `BuyGear` remote: coin check, level check, deduct, grant, sync.      |
-| Coin Economy         | **Done** | Stage coins (per-world multiplier), marketplace products, rewards.   |
-| Hazards              | **Done** | 6 hazard types, Humanoid damage, `@broblox/hazards` factory wired.   |
-| Worlds               | **Done** | Grasslands (easy) + Lava Caves (medium). Config-driven via registry. |
-| Stages / Checkpoints | **Done** | 458-line StageService + CheckpointService with CollectionService.    |
-| Timers               | **Done** | Stage timer + run timer + best-time tracking in DataService.         |
-| World Progression    | **Done** | 320-line WorldService with portals, unlock requirements, tracking.   |
-| Progression / XP     | **Done** | ProgressionService with levels, XP, prestige.                        |
-| Quests               | **Done** | QuestService integrated.                                             |
-| Battle Pass          | **Done** | BattlePassService with claim rewards flow.                           |
-| Rewards              | **Done** | RewardFulfillment: coins, XP, items, cosmetics dispatch.             |
-| Data Persistence     | **Done** | DataService with full save/load, migration, equipment state.         |
-| Client Controllers   | **Done** | HudController, RemoteController for hazards. EquipmentSync remote.   |
+| System               | Status   | Notes                                                                                              |
+| -------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| Attributes           | **Done** | Speed, jump, stamina. Base + gear bonuses. Applied to Humanoid.                                    |
+| Training             | **Done** | Training stations increase base attributes. 178-line service.                                      |
+| Stamina              | **Done** | Sprint stamina with drain/regen. 167-line service.                                                 |
+| Equipment            | **Done** | 12 gear items across 5 slots. `@broblox/equipment` factory wired.                                  |
+| Gear Shop            | **Done** | `BuyGear` remote + client Equipment screen with buy/equip/unequip.                                 |
+| Coin Economy         | **Done** | Stage coins (per-world multiplier), marketplace products, rewards.                                 |
+| Hazards              | **Done** | 6 hazard types, Humanoid damage, `@broblox/hazards` factory wired.                                 |
+| Worlds               | **Done** | Grasslands (easy) + Lava Caves (medium). Config-driven via registry.                               |
+| Stages / Checkpoints | **Done** | 458-line StageService + CheckpointService with CollectionService.                                  |
+| Timers               | **Done** | Stage timer + run timer + best-time tracking in DataService.                                       |
+| World Progression    | **Done** | 320-line WorldService with portals, unlock requirements, tracking.                                 |
+| Progression / XP     | **Done** | ProgressionService with levels, XP, prestige.                                                      |
+| Quests               | **Done** | QuestService integrated.                                                                           |
+| Battle Pass          | **Done** | BattlePassService with claim rewards flow.                                                         |
+| Rewards              | **Done** | RewardFulfillment: coins, XP, items, cosmetics dispatch.                                           |
+| Data Persistence     | **Done** | DataService with full save/load, migration, equipment state.                                       |
+| Client Controllers   | **Done** | HudController, RemoteController for hazards. EquipmentSync + Equipment screen + "Gear" HUD button. |
 
 ---
 
@@ -60,29 +60,16 @@ Third world with unique mechanics:
 
 **Scope:** worldConfig entry + 2-3 new hazard definitions + Roblox Studio map.
 
-### 3. Client Shop UI (Medium Priority)
+### 3. Client UI Polish (Medium Priority)
 
-`BuyGear` server remote exists but there's no client GUI yet. Need:
+The equipment screen already exists in `ScreenController` (`createEquipmentScreen`) with buy, equip, and unequip wired through `RemoteController`. HUD sidebar has a "Gear" button. Remaining work:
 
-- Shop screen showing all 12 gear items in a grid
-- Price, rarity, level requirement, owned/equipped badges
-- Buy button (fires `BuyGear` remote)
-- Coin balance display
+- **Stat preview** — show before/after comparison when hovering gear
+- **Visual polish** — rarity color coding, slot headers, coin balance styling
+- **Tooltip details** — expanded descriptions, modifier breakdowns
+- **Empty-state guidance** — "Visit training stations to earn coins" when player has 0 coins
 
-**Scope:** React (roact-hooked) component + ShopController on client.
-
-### 4. Client Equipment UI (Medium Priority)
-
-`EquipmentSync` remote fires to client but no inventory GUI exists. Need:
-
-- Equipment screen showing owned gear
-- Equip/unequip per slot
-- Stat preview (before/after comparison)
-- Slot visualization (feet, back, body, accessory1, accessory2)
-
-**Scope:** React component + EquipmentController on client.
-
-### 5. Hub Map Polish (Medium Priority, Roblox Studio)
+### 4. Hub Map Polish (Medium Priority, Roblox Studio)
 
 Physical world building:
 
@@ -91,7 +78,7 @@ Physical world building:
 - World portal visual effects
 - Signage / wayfinding for new players
 
-### 6. Consumable Items (Low Priority)
+### 5. Consumable Items (Low Priority)
 
 Design doc §3 mentions consumables not yet implemented:
 
@@ -100,7 +87,7 @@ Design doc §3 mentions consumables not yet implemented:
 - Shield (temporary hazard immunity)
 - Uses InventoryService for stack management
 
-### 7. PvP Racing (Low Priority, Post-Launch)
+### 6. PvP Racing (Low Priority, Post-Launch)
 
 Design doc §13 lists this as an open question. Timer system exists, so the foundation is there.
 
@@ -117,8 +104,8 @@ Design doc §13 lists this as an open question. Timer system exists, so the foun
 5. Define 2-3 Sky Kingdom hazard variants
 6. Tests for all new code
 
-**Following session — Client UI:**
+**Following session — Client UI polish + Hub map:**
 
-1. Shop UI component
-2. Equipment UI component
-3. Wire to existing remotes (BuyGear, EquipmentSync)
+1. Stat preview on Equipment screen (before/after comparison)
+2. Rarity color coding and visual polish
+3. Hub map Studio work (training stations, shop area, portals)

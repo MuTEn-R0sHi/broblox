@@ -13,10 +13,10 @@ Notes:
 
 ### Added
 
-- **@broblox/equipment package** — Reusable gear & equipment slot system. `GearRegistry` for static definitions with rarity tiers (Common → Legendary) and stat modifiers. `EquipmentStore` for per-player equip/unequip with configurable slot limits. `createEquipmentService` factory. 54 tests across 4 suites.
+- **@broblox/equipment package** — Reusable gear & equipment slot system. `GearRegistry` for static definitions with rarity tiers (Common → Mythic) and stat modifiers. `EquipmentStore` for per-player equip/unequip — one gear per named slot. `createEquipmentService` factory. 54 tests across 4 suites.
 - **@broblox/hazards package** — Pure-logic environmental hazard system. `HazardRegistry` for definition lookup by ID or CollectionService tag. `HazardManager` tracks per-instance state (5 behaviours: instant_kill, damage_zone, timed_burst, crumbling, contact_damage), timed toggles, and per-player immunity windows. `createHazardService` factory. 37 tests across 3 suites.
 - **Obby: HazardService** — 6 hazard definitions (lava floor, fire jet, poison zone, crumbling platform, spike trap, hot surface). Humanoid damage via `TakeDamage()`, death tracking via `DataService.incrementDeaths()`, `CollectionService` tag scanning, `RunService.Heartbeat` → `manager.update(dt)`, `HazardToggle`/`HazardDamage` remotes. 16 integration tests.
-- **Obby: Lava Caves world** — New `lava_caves` world config (unlock: speed 18, jump 45), shared types and remote events for hazards, client-side HudController (damage flash) and RemoteController (hazard event listeners).
+- **Obby: Lava Caves world** — New `lava_caves` world config (unlock: speed 15, jump 40, stamina 10, requires grasslands completion), shared types and remote events for hazards, client-side HudController (damage flash) and RemoteController (hazard event listeners).
 - **@broblox/marketplace package (ADR-0008)** — Roblox `MarketplaceService` wrapper for developer products, game passes, and idempotent purchase receipt validation. Includes `DeveloperProductRegistry`, `GamePassCache` (TTL-based ownership cache), `PurchaseValidator` (deduplicates on `PurchaseId`), and `createMarketplaceService` factory. 47 tests across 5 suites.
 - **ADR-0008** — Architecture decision record for marketplace / MonetizationService wrapper.
 - **Scope rename** — all internal packages renamed from `@rbx/*` to `@broblox/*` for branding consistency (491 files, zero external impact since all packages are private).
