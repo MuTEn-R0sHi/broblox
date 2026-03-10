@@ -1,8 +1,8 @@
 # Obby RPG Redesign — Game Design Document
 
-> **Status:** Draft  
+> **Status:** In Progress  
 > **Author:** Copilot + roshi  
-> **Date:** 2026-03-08
+> **Date:** 2026-03-08 (updated 2026-03-10)
 
 ---
 
@@ -804,3 +804,36 @@ Player clicks "Equip" on item in inventory
 | Training engagement     | 60% of players train | Analytics: training_rep event    |
 | Shop conversion         | 25% buy ≥1 item      | Analytics: shop_purchase event   |
 | Average coins earned    | 200+ per session     | Analytics: coin_earned sum       |
+
+---
+
+## 15. Implementation Status
+
+> Updated: 2026-03-10
+
+### Completed (PRs merged to main)
+
+| Component                           | PR      | What shipped                                                                                                                                                                                                                               |
+| ----------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`@broblox/equipment` package**    | #176    | GearRegistry, EquipmentStore, createEquipmentService factory. 54 tests.                                                                                                                                                                    |
+| **`@broblox/hazards` package**      | #177    | HazardRegistry, HazardManager (5 behaviours), createHazardService factory. 37 tests.                                                                                                                                                       |
+| **Obby: HazardService**             | #177    | 6 hazard definitions (lava, fire jet, poison, crumble, spike, hot surface). Real Humanoid damage, DataService.incrementDeaths, CollectionService tag scanning, Heartbeat updates, HazardToggle/HazardDamage remotes. 16 integration tests. |
+| **Obby: Lava Caves world config**   | #177    | `lava_caves` added to worldConfigs with unlock requirements (speed 15, jump 40, stamina 10, worldsCompleted: grasslands).                                                                                                                  |
+| **Obby: Client hazard controllers** | #177    | HudController (hazard damage screen flash), RemoteController (HazardToggle/HazardDamage listeners).                                                                                                                                        |
+| **Obby: Shared types & remotes**    | #177    | HazardTogglePayload, HazardDamagePayload types. HazardToggle, HazardDamage remote event definitions.                                                                                                                                       |
+| **Obby: EquipmentService**          | earlier | 12-item gear catalog (5 slots: feet, back, body, accessory1, accessory2). createEquipmentService factory wired with DataService persistence. 215 lines, full test suite.                                                                   |
+| **Obby: AttributeService**          | earlier | `getEffective()` computes base attributes + gear bonuses via `getEquipmentStore`. Applies WalkSpeed/JumpPower to Humanoid. Syncs to client.                                                                                                |
+| **Obby: BuyGear (shop)**            | earlier | PlayerActionService `BuyGear` remote: coin check, level requirement check, coin deduction, gear grant, EquipmentSync to client.                                                                                                            |
+| **Obby: Coin economy**              | earlier | DataService.addCoins, StageService per-stage coin rewards (coinMultiplier per world), MarketplaceService coin products, RewardFulfillment coin grants.                                                                                     |
+| **Obby: Timer system**              | earlier | DataService startStageTimer/startRunTimer/bestTime tracking. CheckpointService integrates stage and run timers.                                                                                                                            |
+
+### Next Up
+
+| Component                   | Priority | Notes                                                                                         |
+| --------------------------- | -------- | --------------------------------------------------------------------------------------------- |
+| **Obby: Dynamic obstacles** | High     | ObstacleService — moving/rotating/animated platforms, timed sequences, per-world configs (§8) |
+| **Obby: Sky Kingdom world** | High     | Third world: wind gusts, disappearing platforms, higher stat requirements (§10.3)             |
+| **Obby: Client UI polish**  | Medium   | Equipment screen exists; needs stat preview, rarity colors, tooltip details                   |
+| **Hub map buildout**        | Medium   | Roblox Studio work: training stations, shop area, world portals, visual polish (§6)           |
+| **Obby: Consumable items**  | Low      | Speed potions, jump boosts, shield — via InventoryService (§3 consumables)                    |
+| **PvP racing**              | Low      | Race challenges between players through worlds (§13 open question)                            |
