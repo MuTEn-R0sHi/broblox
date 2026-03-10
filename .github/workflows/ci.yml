@@ -2,6 +2,8 @@ name: CI
 
 "on":
   pull_request:
+  push:
+    branches: [main]
     paths-ignore:
       - "docs/**"
       - "site/**"
@@ -9,14 +11,35 @@ name: CI
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - "ideas/**"
-  push:
-    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
+  # ── Path filter ──────────────────────────────────────────────────────
+  # Determine whether the full build is needed. Docs-only PRs skip it.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      needs_build: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            src:
+              - '**'
+              - '!docs/**'
+              - '!site/**'
+              - '!*.md'
+              - '!mkdocs.yml'
+              - '!requirements-docs.txt'
+              - '!ideas/**'
+
   build:
+    needs: changes
+    if: needs.changes.outputs.needs_build == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -81,3 +104,19 @@ jobs:
 
       - name: Build obby game
         run: pnpm run build:obby
+
+  # ── Gate job ─────────────────────────────────────────────────────────
+  # Always runs. Succeeds if build was skipped (docs-only) or passed.
+  # Set this as the required status check in branch protection.
+  ci-ok:
+    if: always()
+    needs: [changes, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check result
+        run: |
+          if [[ "${{ needs.build.result }}" == "failure" || "${{ needs.build.result }}" == "cancelled" ]]; then
+            echo "Build failed or was cancelled"
+            exit 1
+          fi
+          echo "CI passed (build: ${{ needs.build.result }})"
