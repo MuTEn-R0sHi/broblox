@@ -1,43 +1,45 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextRequest } from "next/server";
-
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
-
-const cookieStore = new Map<string, { value: string }>();
-
-vi.mock("next/headers", () => ({
-  cookies: () =>
-    Promise.resolve({
-      get: (name: string) => cookieStore.get(name),
-      set: (name: string, value: string) => {
-        cookieStore.set(name, { value });
-      },
-    }),
-}));
-
-import { getCsrfToken, validateCsrf } from "./csrf";
+import { describe, it, expect } from "vitest";
+import { NextRequest, NextResponse } from "next/server";
+import { ensureCsrfCookie, CSRF_COOKIE_NAME, validateCsrf } from "./csrf";
 
 // ---------------------------------------------------------------------------
 
-beforeEach(() => {
-  cookieStore.clear();
-});
+describe("ensureCsrfCookie", () => {
+  it("sets a 64-char hex token cookie when none exists", () => {
+    const request = new NextRequest("http://localhost:3000/");
+    const response = NextResponse.next();
 
-describe("getCsrfToken", () => {
-  it("generates a token and stores it in a cookie", async () => {
-    const token = await getCsrfToken();
-    expect(token).toHaveLength(64); // 32 bytes = 64 hex chars
-    expect(cookieStore.get("__broblox_csrf")?.value).toBe(token);
+    ensureCsrfCookie(request, response);
+
+    const cookie = response.cookies.get(CSRF_COOKIE_NAME);
+    expect(cookie).toBeDefined();
+    expect(cookie!.value).toHaveLength(64); // 32 bytes = 64 hex chars
   });
 
-  it("returns existing token if cookie already set", async () => {
-    const fakeToken = "ab".repeat(32);
-    cookieStore.set("__broblox_csrf", { value: fakeToken });
+  it("does not overwrite an existing valid cookie", () => {
+    const existing = "ab".repeat(32);
+    const request = new NextRequest("http://localhost:3000/", {
+      headers: { cookie: `${CSRF_COOKIE_NAME}=${existing}` },
+    });
+    const response = NextResponse.next();
 
-    const token = await getCsrfToken();
-    expect(token).toBe(fakeToken);
+    ensureCsrfCookie(request, response);
+
+    // Response should NOT have set a new cookie
+    expect(response.cookies.get(CSRF_COOKIE_NAME)).toBeUndefined();
+  });
+
+  it("sets a new cookie when existing cookie has wrong length", () => {
+    const request = new NextRequest("http://localhost:3000/", {
+      headers: { cookie: `${CSRF_COOKIE_NAME}=tooshort` },
+    });
+    const response = NextResponse.next();
+
+    ensureCsrfCookie(request, response);
+
+    const cookie = response.cookies.get(CSRF_COOKIE_NAME);
+    expect(cookie).toBeDefined();
+    expect(cookie!.value).toHaveLength(64);
   });
 });
 

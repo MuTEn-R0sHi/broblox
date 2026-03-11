@@ -8,44 +8,43 @@
  * accept mutations from the browser (not game servers — those use API keys).
  *
  * Usage:
- * - Call `setCsrfCookie()` in the dashboard layout to set the token cookie.
+ * - Call `ensureCsrfCookie(request, response)` in middleware to set the cookie.
  * - Call `validateCsrf(request)` in mutating API routes that are called from
  *   the browser (not game servers).
  */
 
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
-import { randomBytes, timingSafeEqual } from "crypto";
+import { NextRequest, NextResponse } from "next/server";
 
-const CSRF_COOKIE_NAME = "__broblox_csrf";
+export const CSRF_COOKIE_NAME = "__broblox_csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const TOKEN_BYTES = 32;
 
+/** Generate a hex token using the Web Crypto API (Edge-compatible). */
+function generateToken(): string {
+  const bytes = new Uint8Array(TOKEN_BYTES);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 /**
- * Get or generate a CSRF token and set it as a cookie.
+ * Ensure the response carries a CSRF cookie. Call from middleware only
+ * (Server Components / RSC cannot set cookies).
  *
  * The cookie is non-HttpOnly so client-side JS can read the value and send
  * it back as the `x-csrf-token` header (double-submit cookie pattern).
- * Returns the token value.
  */
-export async function getCsrfToken(): Promise<string> {
-  const cookieStore = await cookies();
-  const existing = cookieStore.get(CSRF_COOKIE_NAME);
+export function ensureCsrfCookie(request: NextRequest, response: NextResponse): void {
+  const existing = request.cookies.get(CSRF_COOKIE_NAME)?.value;
+  if (existing && existing.length === TOKEN_BYTES * 2) return;
 
-  if (existing?.value && existing.value.length === TOKEN_BYTES * 2) {
-    return existing.value;
-  }
-
-  const token = randomBytes(TOKEN_BYTES).toString("hex");
-  cookieStore.set(CSRF_COOKIE_NAME, token, {
+  const token = generateToken();
+  response.cookies.set(CSRF_COOKIE_NAME, token, {
     httpOnly: false, // must be readable by client JS for double-submit pattern
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24, // 24 hours
   });
-
-  return token;
 }
 
 /**
@@ -59,5 +58,11 @@ export function validateCsrf(request: NextRequest): boolean {
   if (!cookieToken || !headerToken) return false;
   if (cookieToken.length !== headerToken.length) return false;
 
-  return timingSafeEqual(Buffer.from(cookieToken), Buffer.from(headerToken));
+  // Constant-time comparison without Node crypto — compare char-by-char
+  // and accumulate mismatches so timing doesn't leak which position differs.
+  let mismatch = 0;
+  for (let i = 0; i < cookieToken.length; i++) {
+    mismatch |= cookieToken.charCodeAt(i) ^ headerToken.charCodeAt(i);
+  }
+  return mismatch === 0;
 }
