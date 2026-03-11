@@ -80,6 +80,34 @@ const OBBY_HAZARDS: HazardDefinition[] = [
     tickInterval: 0.5,
     tag: "HazardHotSurface",
   },
+
+  // ── Sky Kingdom Hazards ────────────────────────────────────────────
+  {
+    id: "wind_blast",
+    displayName: "Wind Blast",
+    behaviour: "contact_damage",
+    damage: 20,
+    cooldownDuration: 2,
+    tag: "HazardWindBlast",
+  },
+  {
+    id: "cloud_dissolve",
+    displayName: "Dissolving Cloud",
+    behaviour: "crumbling",
+    damage: 0,
+    activeDuration: 1.0,
+    cooldownDuration: 4,
+    tag: "HazardCloudDissolve",
+  },
+  {
+    id: "lightning_strike",
+    displayName: "Lightning Strike",
+    behaviour: "timed_burst",
+    damage: 40,
+    activeDuration: 0.5,
+    cooldownDuration: 4,
+    tag: "HazardLightning",
+  },
 ];
 
 // ============================================================================

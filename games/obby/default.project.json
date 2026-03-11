@@ -197,6 +197,12 @@
                 "$path": "node_modules/@broblox/hazards/out"
               }
             },
+            "obstacles": {
+              "$className": "Folder",
+              "out": {
+                "$path": "node_modules/@broblox/obstacles/out"
+              }
+            },
             "marketplace": {
               "$className": "Folder",
               "out": {

@@ -9,6 +9,7 @@ export { RemoteService } from "./RemoteService";
 export { DataService } from "./DataService";
 export { EquipmentService } from "./EquipmentService";
 export { HazardService } from "./HazardService";
+export { ObstacleService } from "./ObstacleService";
 export { StageService } from "./StageService";
 export { CheckpointService } from "./CheckpointService";
 export { LeaderboardService } from "./LeaderboardService";

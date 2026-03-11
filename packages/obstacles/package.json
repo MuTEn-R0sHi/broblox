@@ -1,0 +1,40 @@
+{
+  "name": "@broblox/obstacles",
+  "version": "0.1.0",
+  "description": "Dynamic obstacle system with moving platforms, rotating beams, and timed sequences for Roblox games",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "roblox",
+    "roblox-ts",
+    "obstacles",
+    "moving-platforms",
+    "dynamic"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@broblox/testing": "workspace:*",
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.910",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@broblox/core": "workspace:*",
+    "@broblox/shared-types": "workspace:*"
+  }
+}
