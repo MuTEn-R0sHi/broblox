@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
 import { ensureCsrfCookie, CSRF_COOKIE_NAME, validateCsrf } from "./csrf";
 

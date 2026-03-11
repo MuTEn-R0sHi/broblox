@@ -115,15 +115,16 @@ function isApiPath(pathname: string): boolean {
 
 export function middleware(request: NextRequest): NextResponse {
   const response = NextResponse.next();
+  const { pathname } = request.nextUrl;
 
-  // Set CSRF cookie if not already present (must happen in middleware
-  // because Server Components / RSC cannot modify cookies).
-  ensureCsrfCookie(request, response);
+  // Set CSRF cookie for browser pages only — skip API routes to avoid
+  // unnecessary Set-Cookie headers on high-QPS game-server endpoints.
+  if (!isApiPath(pathname)) {
+    ensureCsrfCookie(request, response);
+  }
 
   const rules = parseAllowlistEnv(process.env.DASHBOARD_ALLOWED_IPS);
   if (rules.length === 0) return response;
-
-  const { pathname } = request.nextUrl;
 
   // Never block the flags API; it's meant for game servers and already requires an API key.
   if (isFlagsApiPath(pathname)) return response;

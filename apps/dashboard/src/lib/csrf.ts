@@ -14,11 +14,17 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { randomBytes, timingSafeEqual } from "crypto";
 
 export const CSRF_COOKIE_NAME = "__broblox_csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const TOKEN_BYTES = 32;
+
+/** Generate a hex token using the Web Crypto API (Edge-compatible). */
+function generateToken(): string {
+  const bytes = new Uint8Array(TOKEN_BYTES);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 /**
  * Ensure the response carries a CSRF cookie. Call from middleware only
@@ -31,7 +37,7 @@ export function ensureCsrfCookie(request: NextRequest, response: NextResponse): 
   const existing = request.cookies.get(CSRF_COOKIE_NAME)?.value;
   if (existing && existing.length === TOKEN_BYTES * 2) return;
 
-  const token = randomBytes(TOKEN_BYTES).toString("hex");
+  const token = generateToken();
   response.cookies.set(CSRF_COOKIE_NAME, token, {
     httpOnly: false, // must be readable by client JS for double-submit pattern
     secure: process.env.NODE_ENV === "production",
@@ -52,5 +58,11 @@ export function validateCsrf(request: NextRequest): boolean {
   if (!cookieToken || !headerToken) return false;
   if (cookieToken.length !== headerToken.length) return false;
 
-  return timingSafeEqual(Buffer.from(cookieToken), Buffer.from(headerToken));
+  // Constant-time comparison without Node crypto — compare char-by-char
+  // and accumulate mismatches so timing doesn't leak which position differs.
+  let mismatch = 0;
+  for (let i = 0; i < cookieToken.length; i++) {
+    mismatch |= cookieToken.charCodeAt(i) ^ headerToken.charCodeAt(i);
+  }
+  return mismatch === 0;
 }
