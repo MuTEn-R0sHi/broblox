@@ -39,17 +39,17 @@ export default async function TelemetryPage() {
   let errorEventsToday = 0;
 
   try {
-    const [playerRows, serverRows, eventsCount, errorsCount] = await Promise.all([
-      prisma.telemetryEvent.findMany({
-        where: { playerId: { not: null }, ingestedAt: { gte: oneHourAgo } },
-        distinct: ["playerId"],
-        select: { playerId: true },
-      }),
-      prisma.telemetryEvent.findMany({
-        where: { serverId: { not: null }, ingestedAt: { gte: oneHourAgo } },
-        distinct: ["serverId"],
-        select: { serverId: true },
-      }),
+    const [playerCountResult, serverCountResult, eventsCount, errorsCount] = await Promise.all([
+      prisma.$queryRaw<[{ cnt: bigint }]>`
+        SELECT COUNT(DISTINCT playerId) AS cnt
+        FROM TelemetryEvent
+        WHERE playerId IS NOT NULL AND ingestedAt >= ${oneHourAgo}
+      `,
+      prisma.$queryRaw<[{ cnt: bigint }]>`
+        SELECT COUNT(DISTINCT serverId) AS cnt
+        FROM TelemetryEvent
+        WHERE serverId IS NOT NULL AND ingestedAt >= ${oneHourAgo}
+      `,
       prisma.telemetryEvent.count({
         where: { ingestedAt: { gte: oneDayAgo } },
       }),
@@ -57,8 +57,8 @@ export default async function TelemetryPage() {
         where: { level: "error", ingestedAt: { gte: oneDayAgo } },
       }),
     ]);
-    playerCount = playerRows.length;
-    serverCount = serverRows.length;
+    playerCount = Number(playerCountResult[0].cnt);
+    serverCount = Number(serverCountResult[0].cnt);
     totalEventsToday = eventsCount;
     errorEventsToday = errorsCount;
   } catch (error) {
