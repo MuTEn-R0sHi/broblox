@@ -27,17 +27,32 @@ export default async function DashboardPage() {
   let games: Array<{
     id: string;
     name: string;
-    universeIdDev: bigint | null;
-    universeIdStage: bigint | null;
-    universeIdProd: bigint | null;
+    hasDevUniverse: boolean;
+    hasStageUniverse: boolean;
+    hasProdUniverse: boolean;
     _count: { flags: number; matches: number; bans: number };
   }> = [];
   try {
-    games = await prisma.game.findMany({
+    const rawGames = await prisma.game.findMany({
       where: { isActive: true },
       orderBy: { name: "asc" },
-      include: { _count: { select: { flags: true, matches: true, bans: true } } },
+      select: {
+        id: true,
+        name: true,
+        universeIdDev: true,
+        universeIdStage: true,
+        universeIdProd: true,
+        _count: { select: { flags: true, matches: true, bans: true } },
+      },
     });
+    games = rawGames.map((g) => ({
+      id: g.id,
+      name: g.name,
+      hasDevUniverse: g.universeIdDev !== null,
+      hasStageUniverse: g.universeIdStage !== null,
+      hasProdUniverse: g.universeIdProd !== null,
+      _count: g._count,
+    }));
   } catch (error) {
     if (isMissingTableError(error)) {
       dbNotInitialized = true;
@@ -76,8 +91,8 @@ export default async function DashboardPage() {
     }
   }
 
-  let uniquePlayers: Array<{ playerId: bigint | null }> = [];
-  let activeServers: Array<{ serverId: string | null }> = [];
+  let uniquePlayerCount = 0;
+  let activeServerCount = 0;
   let recentEvents: Array<{
     id: string;
     category: string;
@@ -88,27 +103,40 @@ export default async function DashboardPage() {
   }> = [];
 
   try {
-    [uniquePlayers, recentEvents, activeServers] = await Promise.all([
-      prisma.telemetryEvent.groupBy({
-        by: ["playerId"],
+    const [playerRows, rawEvents, serverRows] = await Promise.all([
+      prisma.telemetryEvent.findMany({
+        distinct: ["playerId"],
         where: {
           playerId: { not: null },
           ingestedAt: { gte: oneHourAgo },
         },
+        select: { playerId: true },
       }),
       prisma.telemetryEvent.findMany({
         where: { level: { in: ["info", "warn", "error"] } },
         orderBy: { ingestedAt: "desc" },
         take: 5,
+        select: {
+          id: true,
+          category: true,
+          name: true,
+          level: true,
+          ingestedAt: true,
+          serverId: true,
+        },
       }),
-      prisma.telemetryEvent.groupBy({
-        by: ["serverId"],
+      prisma.telemetryEvent.findMany({
+        distinct: ["serverId"],
         where: {
           serverId: { not: null },
           ingestedAt: { gte: oneHourAgo },
         },
+        select: { serverId: true },
       }),
     ]);
+    uniquePlayerCount = playerRows.length;
+    recentEvents = rawEvents;
+    activeServerCount = serverRows.length;
   } catch (error) {
     if (isMissingTableError(error)) {
       dbNotInitialized = true;
@@ -138,13 +166,13 @@ export default async function DashboardPage() {
     },
     {
       name: "Active Players",
-      value: uniquePlayers.length.toString(),
+      value: uniquePlayerCount.toString(),
       description: "Last hour (all games)",
       icon: Users,
     },
     {
       name: "Active Servers",
-      value: activeServers.length.toString(),
+      value: activeServerCount.toString(),
       description: "Last hour (all games)",
       icon: Activity,
     },
@@ -206,9 +234,9 @@ export default async function DashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {games.map((game) => {
               const linkedEnvs = [
-                game.universeIdDev ? "dev" : null,
-                game.universeIdStage ? "stage" : null,
-                game.universeIdProd ? "prod" : null,
+                game.hasDevUniverse ? "dev" : null,
+                game.hasStageUniverse ? "stage" : null,
+                game.hasProdUniverse ? "prod" : null,
               ].filter(Boolean);
               return (
                 <Link key={game.id} href={`/dashboard/games/${game.id}`}>
