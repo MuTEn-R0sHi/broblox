@@ -39,14 +39,16 @@ export default async function TelemetryPage() {
   let errorEventsToday = 0;
 
   try {
-    const [players, servers, eventsCount, errorsCount] = await Promise.all([
-      prisma.telemetryEvent.groupBy({
-        by: ["playerId"],
+    const [playerRows, serverRows, eventsCount, errorsCount] = await Promise.all([
+      prisma.telemetryEvent.findMany({
         where: { playerId: { not: null }, ingestedAt: { gte: oneHourAgo } },
+        distinct: ["playerId"],
+        select: { playerId: true },
       }),
-      prisma.telemetryEvent.groupBy({
-        by: ["serverId"],
+      prisma.telemetryEvent.findMany({
         where: { serverId: { not: null }, ingestedAt: { gte: oneHourAgo } },
+        distinct: ["serverId"],
+        select: { serverId: true },
       }),
       prisma.telemetryEvent.count({
         where: { ingestedAt: { gte: oneDayAgo } },
@@ -55,8 +57,8 @@ export default async function TelemetryPage() {
         where: { level: "error", ingestedAt: { gte: oneDayAgo } },
       }),
     ]);
-    playerCount = players.length;
-    serverCount = servers.length;
+    playerCount = playerRows.length;
+    serverCount = serverRows.length;
     totalEventsToday = eventsCount;
     errorEventsToday = errorsCount;
   } catch (error) {
@@ -92,11 +94,25 @@ export default async function TelemetryPage() {
   }> = [];
   try {
     const rows = await prisma.telemetryEvent.findMany({
+      select: {
+        id: true,
+        category: true,
+        name: true,
+        level: true,
+        ingestedAt: true,
+        serverId: true,
+        playerId: true,
+      },
       orderBy: { ingestedAt: "desc" },
       take: 20,
     });
     recentEvents = rows.map((r) => ({
-      ...r,
+      id: r.id,
+      category: r.category,
+      name: r.name,
+      level: r.level,
+      ingestedAt: r.ingestedAt,
+      serverId: r.serverId,
       playerId: r.playerId?.toString() ?? null,
     }));
   } catch (error) {
