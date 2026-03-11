@@ -10,7 +10,7 @@
 
 import { createObstacleService } from "@broblox/obstacles";
 import type { ObstacleDefinition } from "@broblox/obstacles";
-import { CollectionService, Players, RunService } from "@rbxts/services";
+import { CollectionService, RunService } from "@rbxts/services";
 import { RemoteService } from "./RemoteService";
 
 // ============================================================================
@@ -97,22 +97,18 @@ const handle = createObstacleService({
   definitions: OBBY_OBSTACLES,
 
   onUpdate: (instanceKey: string, progress: number, active: boolean): void => {
-    for (const player of Players.GetPlayers()) {
-      RemoteService.getRegistry().fireClient("ObstacleUpdate", player, {
-        instanceKey,
-        progress,
-        active,
-      });
-    }
+    RemoteService.getRegistry().fireAllClients("ObstacleUpdate", {
+      instanceKey,
+      progress,
+      active,
+    });
   },
 
   onToggle: (instanceKey: string, active: boolean): void => {
-    for (const player of Players.GetPlayers()) {
-      RemoteService.getRegistry().fireClient("ObstacleToggle", player, {
-        instanceKey,
-        active,
-      });
-    }
+    RemoteService.getRegistry().fireAllClients("ObstacleToggle", {
+      instanceKey,
+      active,
+    });
   },
 });
 

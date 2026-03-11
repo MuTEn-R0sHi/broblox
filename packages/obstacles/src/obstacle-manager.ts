@@ -53,9 +53,10 @@ export function createObstacleManager(
     const speed = def.speed ?? 90; // degrees/sec
     // Progress represents normalised rotation [0, 1) where 1 = 360°
     state.progress += (speed / 360) * dt;
-    // Wrap around
-    if (state.progress >= 1) {
-      state.progress -= 1;
+    // Wrap around — use modulo so large deltas (server hitches) stay in [0, 1)
+    state.progress %= 1;
+    if (state.progress < 0) {
+      state.progress += 1;
     }
   }
 

@@ -35,22 +35,14 @@ vi.mock("@broblox/obstacles", () => ({
   }),
 }));
 
-const mockFireClient = vi.fn();
+const mockFireAllClients = vi.fn();
 vi.mock("./RemoteService", () => ({
   RemoteService: {
-    getRegistry: () => ({ fireClient: mockFireClient }),
+    getRegistry: () => ({ fireAllClients: mockFireAllClients }),
   },
 }));
 
-const mockPlayer = {
-  UserId: 1,
-  Name: "TestPlayer",
-};
-
 vi.mock("@rbxts/services", () => ({
-  Players: {
-    GetPlayers: vi.fn(() => [mockPlayer]),
-  },
   RunService: {
     Heartbeat: {
       Connect: vi.fn(() => ({ Disconnect: vi.fn() })),
@@ -67,7 +59,7 @@ beforeEach(() => {
   mockHandle.Service.onInit = undefined;
   mockHandle.Service.onStart = undefined;
   mockHandle.Service.onDestroy = undefined;
-  mockFireClient.mockClear();
+  mockFireAllClients.mockClear();
   vi.clearAllMocks();
 });
 
@@ -165,7 +157,7 @@ describe("ObstacleService (obby)", () => {
     ) => void;
     expect(onUpdate).toBeTypeOf("function");
     onUpdate("slow_platform::test", 0.5, true);
-    expect(mockFireClient).toHaveBeenCalledWith("ObstacleUpdate", mockPlayer, {
+    expect(mockFireAllClients).toHaveBeenCalledWith("ObstacleUpdate", {
       instanceKey: "slow_platform::test",
       progress: 0.5,
       active: true,
@@ -177,7 +169,7 @@ describe("ObstacleService (obby)", () => {
     const onToggle = capturedConfig!["onToggle"] as (key: string, active: boolean) => void;
     expect(onToggle).toBeTypeOf("function");
     onToggle("blink_platform::b1", false);
-    expect(mockFireClient).toHaveBeenCalledWith("ObstacleToggle", mockPlayer, {
+    expect(mockFireAllClients).toHaveBeenCalledWith("ObstacleToggle", {
       instanceKey: "blink_platform::b1",
       active: false,
     });

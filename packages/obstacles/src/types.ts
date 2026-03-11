@@ -68,11 +68,11 @@ export interface ObstacleInstanceState {
   definitionId: string;
 
   /**
-   * Normalised progress [0, 1] along the movement path.
-   * - For `moving_platform`: 0 = origin, 1 = destination. Ping-pongs.
-   * - For `rotating_beam`: cumulative rotation (wraps at 360).
-   * - For `timed_sequence`: phase timer progress.
-   * - For `conveyor`: unused (always 0).
+   * Progress value — semantics vary by behaviour:
+   * - `moving_platform`: normalised [0, 1]. 0 = origin, 1 = destination. Ping-pongs.
+   * - `rotating_beam`: normalised [0, 1). Fraction of a full 360° rotation, wraps via modulo.
+   * - `timed_sequence`: seconds elapsed within the current phase (active or cooldown).
+   * - `conveyor`: unused (always 0).
    */
   progress: number;
 
