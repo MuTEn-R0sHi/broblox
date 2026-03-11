@@ -4,8 +4,10 @@
  * Wires structured telemetry, metrics, and correlation context.
  * Uses the @broblox/observability package.
  *
- * When DASHBOARD_URL and DASHBOARD_API_KEY attributes are set on the place,
- * an HTTP sink is registered that batches events/metrics to the dashboard API.
+ * When DASHBOARD_URL and DASHBOARD_API_KEY StringValue instances exist under
+ * ServerStorage, an HTTP sink is registered that batches events/metrics to the
+ * dashboard API. ServerStorage is used because Roblox does not support
+ * environment variables; child StringValue objects act as server-side config.
  */
 
 import {
@@ -20,14 +22,14 @@ declare const game: {
   };
 };
 
-function getPlaceAttribute(name: string): string | undefined {
+function getServerStorageConfig(name: string): string | undefined {
   const store = game.GetService("ServerStorage");
   const tag = store.FindFirstChild(name);
   return tag?.Value;
 }
 
-const dashboardUrl = getPlaceAttribute("DASHBOARD_URL");
-const dashboardApiKey = getPlaceAttribute("DASHBOARD_API_KEY");
+const dashboardUrl = getServerStorageConfig("DASHBOARD_URL");
+const dashboardApiKey = getServerStorageConfig("DASHBOARD_API_KEY");
 
 const httpTelemetrySink =
   dashboardUrl && dashboardApiKey

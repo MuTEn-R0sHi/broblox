@@ -12,8 +12,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     redirect("/login");
   }
 
-  // Ensure a CSRF cookie is set for the session
-  const csrfToken = await getCsrfToken();
+  // Ensure a CSRF cookie is set for the session — the cookie itself is
+  // readable by client-side JS so it can be sent as a header (double-submit
+  // pattern). Validation compares the cookie value to the x-csrf-token header.
+  await getCsrfToken();
 
   return (
     <SessionProvider session={session}>
@@ -23,7 +25,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <div className="p-8">{children}</div>
         </main>
       </div>
-      <meta name="csrf-token" content={csrfToken} />
     </SessionProvider>
   );
 }

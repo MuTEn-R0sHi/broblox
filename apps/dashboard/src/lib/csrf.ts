@@ -22,8 +22,11 @@ const CSRF_HEADER_NAME = "x-csrf-token";
 const TOKEN_BYTES = 32;
 
 /**
- * Get or generate a CSRF token and set it as an HttpOnly cookie.
- * Returns the token value so it can be embedded in pages/meta tags.
+ * Get or generate a CSRF token and set it as a cookie.
+ *
+ * The cookie is non-HttpOnly so client-side JS can read the value and send
+ * it back as the `x-csrf-token` header (double-submit cookie pattern).
+ * Returns the token value.
  */
 export async function getCsrfToken(): Promise<string> {
   const cookieStore = await cookies();
@@ -35,7 +38,7 @@ export async function getCsrfToken(): Promise<string> {
 
   const token = randomBytes(TOKEN_BYTES).toString("hex");
   cookieStore.set(CSRF_COOKIE_NAME, token, {
-    httpOnly: true,
+    httpOnly: false, // must be readable by client JS for double-submit pattern
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",

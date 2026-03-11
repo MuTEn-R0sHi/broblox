@@ -272,36 +272,51 @@ async function checkRateLimitDistributed(
   try {
     const { prisma } = await import("./db");
     const now = Date.now();
-    const windowStart = now - windowMs;
+    const windowCutoff = now - windowMs;
 
-    // Upsert: if the bucket's window is stale, reset it; otherwise increment
-    const bucket = await prisma.rateLimitBucket.upsert({
+    // Look up the current bucket once, then decide whether to reset or increment
+    const existing = await prisma.rateLimitBucket.findUnique({
       where: { key },
-      create: {
-        key,
-        count: 1,
-        windowStart: BigInt(now),
-      },
-      update: {
-        count: {
-          increment: 1,
-        },
-      },
     });
 
-    // If the existing bucket's window has expired, reset it
-    if (Number(bucket.windowStart) < windowStart) {
-      await prisma.rateLimitBucket.update({
+    // No existing bucket: create a new window starting now with count = 1
+    if (!existing) {
+      const created = await prisma.rateLimitBucket.create({
+        data: {
+          key,
+          count: 1,
+          windowStart: BigInt(now),
+        },
+      });
+      return created.count <= maxRequests;
+    }
+
+    // Existing bucket found: check if the window has expired
+    const isStaleWindow = Number(existing.windowStart) < windowCutoff;
+
+    if (isStaleWindow) {
+      // Reset the window and start counting from 1
+      const reset = await prisma.rateLimitBucket.update({
         where: { key },
         data: {
           count: 1,
           windowStart: BigInt(now),
         },
       });
-      return true;
+      return reset.count <= maxRequests;
     }
 
-    return bucket.count <= maxRequests;
+    // Window is still active: increment the count within this window
+    const updated = await prisma.rateLimitBucket.update({
+      where: { key },
+      data: {
+        count: {
+          increment: 1,
+        },
+      },
+    });
+
+    return updated.count <= maxRequests;
   } catch {
     // Table doesn't exist or DB unavailable — fall back to in-memory
     return checkRateLimitLocal(key, maxRequests, windowMs);

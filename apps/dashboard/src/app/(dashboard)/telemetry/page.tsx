@@ -202,29 +202,33 @@ export default async function TelemetryPage() {
               <p className="text-sm text-muted-foreground">No events in the past 24 hours.</p>
             ) : (
               <div className="space-y-3">
-                {categoryBreakdown.map((cat) => {
+                {(() => {
                   const total = categoryBreakdown.reduce((s, c) => s + c._count._all, 0);
-                  const pct = total > 0 ? Math.round((cat._count._all / total) * 100) : 0;
-                  return (
-                    <div key={cat.category} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <Badge variant="outline">{cat.category}</Badge>
-                        <span className="text-sm text-muted-foreground truncate">
-                          {cat._count._all.toLocaleString()} events
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-24 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-cyan"
-                            style={{ width: `${pct}%` }}
-                          />
+                  return categoryBreakdown.map((cat) => {
+                    const pct = total > 0 ? Math.round((cat._count._all / total) * 100) : 0;
+                    return (
+                      <div key={cat.category} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Badge variant="outline">{cat.category}</Badge>
+                          <span className="text-sm text-muted-foreground truncate">
+                            {cat._count._all.toLocaleString()} events
+                          </span>
                         </div>
-                        <span className="text-xs text-muted-foreground w-8 text-right">{pct}%</span>
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-24 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-cyan"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-muted-foreground w-8 text-right">
+                            {pct}%
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  });
+                })()}
               </div>
             )}
           </CardContent>

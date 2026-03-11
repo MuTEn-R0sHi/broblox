@@ -65,7 +65,7 @@ export default async function SettingsPage() {
   let dbLatencyMs = 0;
   try {
     const start = Date.now();
-    await prisma.$queryRawUnsafe("SELECT 1");
+    await prisma.$queryRaw`SELECT 1`;
     dbLatencyMs = Date.now() - start;
     dbHealthy = true;
   } catch {
@@ -83,9 +83,7 @@ export default async function SettingsPage() {
       prisma.rateLimitBucket.count(),
     ]);
   } catch (error) {
-    if (!isMissingTableError(error)) {
-      // Swallow table-missing, rethrow others
-    }
+    if (!isMissingTableError(error)) throw error;
   }
 
   // Cron job definitions
