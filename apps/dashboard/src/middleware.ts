@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ensureCsrfCookie } from "@/lib/csrf";
 
 function getClientIp(request: NextRequest): string | null {
   // Prefer x-forwarded-for (Vercel/proxies). Use first entry.
@@ -113,16 +114,22 @@ function isApiPath(pathname: string): boolean {
 }
 
 export function middleware(request: NextRequest): NextResponse {
+  const response = NextResponse.next();
+
+  // Set CSRF cookie if not already present (must happen in middleware
+  // because Server Components / RSC cannot modify cookies).
+  ensureCsrfCookie(request, response);
+
   const rules = parseAllowlistEnv(process.env.DASHBOARD_ALLOWED_IPS);
-  if (rules.length === 0) return NextResponse.next();
+  if (rules.length === 0) return response;
 
   const { pathname } = request.nextUrl;
 
   // Never block the flags API; it's meant for game servers and already requires an API key.
-  if (isFlagsApiPath(pathname)) return NextResponse.next();
+  if (isFlagsApiPath(pathname)) return response;
 
   const clientIp = getClientIp(request);
-  if (clientIp && isIpAllowed(clientIp, rules)) return NextResponse.next();
+  if (clientIp && isIpAllowed(clientIp, rules)) return response;
 
   // If we can't determine the client IP, fail closed when allowlist is enabled.
   if (isApiPath(pathname)) {

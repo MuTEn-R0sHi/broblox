@@ -8,44 +8,37 @@
  * accept mutations from the browser (not game servers — those use API keys).
  *
  * Usage:
- * - Call `setCsrfCookie()` in the dashboard layout to set the token cookie.
+ * - Call `ensureCsrfCookie(request, response)` in middleware to set the cookie.
  * - Call `validateCsrf(request)` in mutating API routes that are called from
  *   the browser (not game servers).
  */
 
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { randomBytes, timingSafeEqual } from "crypto";
 
-const CSRF_COOKIE_NAME = "__broblox_csrf";
+export const CSRF_COOKIE_NAME = "__broblox_csrf";
 const CSRF_HEADER_NAME = "x-csrf-token";
 const TOKEN_BYTES = 32;
 
 /**
- * Get or generate a CSRF token and set it as a cookie.
+ * Ensure the response carries a CSRF cookie. Call from middleware only
+ * (Server Components / RSC cannot set cookies).
  *
  * The cookie is non-HttpOnly so client-side JS can read the value and send
  * it back as the `x-csrf-token` header (double-submit cookie pattern).
- * Returns the token value.
  */
-export async function getCsrfToken(): Promise<string> {
-  const cookieStore = await cookies();
-  const existing = cookieStore.get(CSRF_COOKIE_NAME);
-
-  if (existing?.value && existing.value.length === TOKEN_BYTES * 2) {
-    return existing.value;
-  }
+export function ensureCsrfCookie(request: NextRequest, response: NextResponse): void {
+  const existing = request.cookies.get(CSRF_COOKIE_NAME)?.value;
+  if (existing && existing.length === TOKEN_BYTES * 2) return;
 
   const token = randomBytes(TOKEN_BYTES).toString("hex");
-  cookieStore.set(CSRF_COOKIE_NAME, token, {
+  response.cookies.set(CSRF_COOKIE_NAME, token, {
     httpOnly: false, // must be readable by client JS for double-submit pattern
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24, // 24 hours
   });
-
-  return token;
 }
 
 /**
