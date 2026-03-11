@@ -64,14 +64,14 @@ export default async function TelemetryPage() {
   }
 
   // ── Category breakdown ──────────────────────────────────────────────
-  let categoryBreakdown: Array<{ category: string; _count: { _all: number } }> = [];
+  let categoryBreakdown: { category: string; _count: { _all: number } }[] = [];
   try {
-    categoryBreakdown = await prisma.telemetryEvent.groupBy({
+    const rows = await prisma.telemetryEvent.groupBy({
       by: ["category"],
       where: { ingestedAt: { gte: oneDayAgo } },
       _count: { _all: true },
-      orderBy: { _count: { _all: "desc" } },
     });
+    categoryBreakdown = rows.sort((a, b) => b._count._all - a._count._all);
   } catch (error) {
     if (!isMissingTableError(error)) throw error;
   }
@@ -96,23 +96,23 @@ export default async function TelemetryPage() {
   }
 
   // ── Recent metrics ──────────────────────────────────────────────────
-  let metricSummary: Array<{
+  let metricSummary: {
     name: string;
     _count: { _all: number };
     _avg: { value: number | null };
     _max: { value: number | null };
     _min: { value: number | null };
-  }> = [];
+  }[] = [];
   try {
-    metricSummary = await prisma.metricPoint.groupBy({
+    const rows = await prisma.metricPoint.groupBy({
       by: ["name"],
       where: { ingestedAt: { gte: oneDayAgo } },
       _count: { _all: true },
       _avg: { value: true },
       _max: { value: true },
       _min: { value: true },
-      orderBy: { _count: { _all: "desc" } },
     });
+    metricSummary = rows.sort((a, b) => b._count._all - a._count._all);
   } catch (error) {
     if (!isMissingTableError(error)) throw error;
   }
