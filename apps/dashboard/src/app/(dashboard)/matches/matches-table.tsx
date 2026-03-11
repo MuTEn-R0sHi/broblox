@@ -88,7 +88,7 @@ export function MatchesTable({ matches, currentPage, totalPages, totalCount }: M
   const goToPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
-    router.push(`/dashboard/matches?${params.toString()}`);
+    router.push(`/matches?${params.toString()}`);
   };
 
   if (matches.length === 0) {
@@ -157,7 +157,7 @@ export function MatchesTable({ matches, currentPage, totalPages, totalCount }: M
                   <TableCell>{formatDuration(match.durationSecs)}</TableCell>
                   <TableCell>{formatDate(match.startedAt)}</TableCell>
                   <TableCell>
-                    <Link href={`/dashboard/matches/${match.id}`}>
+                    <Link href={`/matches/${match.id}`}>
                       <Button variant="ghost" size="icon">
                         <Eye className="h-4 w-4" />
                       </Button>

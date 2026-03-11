@@ -63,7 +63,7 @@ export function AuditFilters({ users }: AuditFiltersProps) {
     if (newDetails) params.set("details", newDetails);
     if (newUser) params.set("user", newUser);
 
-    router.replace(`/dashboard/audit?${params.toString()}`);
+    router.replace(`/audit?${params.toString()}`);
   }
 
   function clearFilters() {

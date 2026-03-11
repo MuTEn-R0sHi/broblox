@@ -48,12 +48,12 @@ export function CreateBanForm() {
         // If the ban was created but the live-server propagation failed, still take the
         // operator to the ban page and show a warning banner there.
         if (result.id) {
-          router.push(`/dashboard/moderation/bans/${result.id}?sync=failed`);
+          router.push(`/moderation/bans/${result.id}?sync=failed`);
         } else {
           setError(result.error);
         }
       } else {
-        router.push(`/dashboard/moderation/bans/${result.id}`);
+        router.push(`/moderation/bans/${result.id}`);
       }
     } catch {
       setError("Failed to create ban");

@@ -70,7 +70,7 @@ export default async function AppealsPage({
         {["all", "PENDING", "APPROVED", "DENIED"].map((status) => (
           <Link
             key={status}
-            href={`/dashboard/moderation/appeals${status !== "all" ? `?status=${status}` : ""}`}
+            href={`/moderation/appeals${status !== "all" ? `?status=${status}` : ""}`}
           >
             <Button
               variant={
@@ -149,7 +149,7 @@ export default async function AppealsPage({
                       {formatDistanceToNow(appeal.createdAt, { addSuffix: true })}
                     </td>
                     <td className="p-4">
-                      <Link href={`/dashboard/moderation/appeals/${appeal.id}`}>
+                      <Link href={`/moderation/appeals/${appeal.id}`}>
                         <Button variant="outline" size="sm">
                           {appeal.status === "PENDING" ? "Review" : "View"}
                         </Button>

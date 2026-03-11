@@ -157,7 +157,7 @@ export default async function BansPage({ searchParams }: { searchParams: Promise
                   >
                     <td className="p-4">
                       <Link
-                        href={`/dashboard/moderation/bans/${ban.id}`}
+                        href={`/moderation/bans/${ban.id}`}
                         className="font-medium hover:underline"
                       >
                         {ban.playerName ?? `Player ${ban.playerId}`}

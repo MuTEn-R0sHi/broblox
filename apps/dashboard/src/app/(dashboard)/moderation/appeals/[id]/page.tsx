@@ -160,7 +160,7 @@ export default async function AppealDetailPage({ params }: { params: Promise<{ i
             )}
 
             <div className="pt-2">
-              <Link href={`/dashboard/moderation/bans/${appeal.ban.id}`}>
+              <Link href={`/moderation/bans/${appeal.ban.id}`}>
                 <Button variant="outline" size="sm">
                   View Full Ban Details
                 </Button>

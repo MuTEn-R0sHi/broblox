@@ -35,7 +35,7 @@ export function BanFilters() {
     if (newTarget) params.set("target", newTarget);
     if (newReason) params.set("reason", newReason);
 
-    router.push(`/dashboard/moderation/bans?${params.toString()}`);
+    router.push(`/moderation/bans?${params.toString()}`);
   }
 
   function clearFilters() {
