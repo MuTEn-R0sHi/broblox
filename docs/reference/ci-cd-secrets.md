@@ -178,6 +178,42 @@ The current publishing workflows rebuild from the provided git ref (commit SHA o
 5. **IP restrictions** - Consider restricting API keys to GitHub's IP ranges
 6. **Monitor usage** - Check Roblox Creator Hub for API key usage
 
+## Discord Notifications
+
+CI/CD workflows send notifications to a Discord channel for publish/promote outcomes.
+
+### Setup
+
+1. Create a webhook in your Discord server: **Server Settings → Integrations → Webhooks → New Webhook**
+2. Copy the webhook URL
+3. Add as a repository secret: **Settings → Secrets and variables → Actions → New repository secret**
+   - **Name**: `DISCORD_WEBHOOK_URL`
+   - **Value**: the webhook URL
+
+### Notification triggers
+
+- Publish to dev (success/failure)
+- Promotion to staging (approval requested, success/failure)
+- Promotion to production (approval requested, success/failure)
+
+## Build Artifacts
+
+`.rbxl` build artifacts are automatically uploaded during CI for audit and rollback purposes.
+
+- **Retention**: GitHub Actions default retention (90 days)
+- **Access**: Available on the workflow run summary under "Artifacts"
+- **Rollback**: Download a previous artifact and republish manually via the Promote workflow
+
+## PR Preview Deploys
+
+Pull requests automatically receive preview deployments:
+
+- **Docs site**: deployed via MkDocs build + preview URL comment on PR
+- **Website**: deployed via Vercel preview (automatic for `apps/website` changes)
+- **Dashboard**: deployed via Vercel preview (automatic for `apps/dashboard` changes)
+
+Path filtering ensures docs-only PRs skip unnecessary game build steps and vice versa.
+
 ## Quick Reference
 
 ### Environment Matrix

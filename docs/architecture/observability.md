@@ -50,11 +50,12 @@ emit({ category: "security", action: "invalid_payload", remote: "Intent_DoAction
 
 Review process: Manual review via Studio output or Roblox Developer Console.
 
-### Phase 2: Aggregation service
+### Phase 2: Aggregation service ✅
 
-- Events are batched and sent to an external endpoint (via HttpService)
-- Dashboard ingests and indexes events
-- Basic dashboards for security signals and match health
+- Events are batched and sent to the dashboard via HTTP sinks (`@broblox/observability`)
+- Dashboard `/api/telemetry` endpoint ingests and indexes events in MariaDB
+- `/telemetry` dashboard page: KPI cards (total events, unique players, categories, games), category breakdown, recent event stream with filters
+- Root dashboard page: game overview, recent activity feed, aggregated counts via `$queryRaw COUNT(DISTINCT ...)`
 
 ### Phase 3+: Full observability stack
 
@@ -96,8 +97,9 @@ Review process: Manual review via Studio output or Roblox Developer Console.
 
 ### Phase 2+ alerting
 
-- Integrate with Discord webhook for P0 alerts
+- Discord webhook notifications implemented for CI/CD events (publish success, promotion approval)
 - Dashboard shows alert history and acknowledgment
+- Integrate with Discord webhook for P0 game alerts (planned)
 
 ## Metrics to track (when available)
 

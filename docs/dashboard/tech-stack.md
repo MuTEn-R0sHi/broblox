@@ -254,7 +254,40 @@ end
 - RBAC enforced server-side (never trust client)
 - Audit logs are append-only (no UPDATE/DELETE in application code)
 - Sensitive actions require elevated roles
-- Rate limiting recommended for production
+- Distributed rate limiting protects against abuse (persists across cold starts via database-backed state)
+- CSRF protection via double-submit cookie pattern (see below)
+
+### CSRF Protection
+
+The dashboard uses an explicit double-submit cookie for CSRF protection on mutating browser-facing API routes.
+
+- **Token generation**: `ensureCsrfCookie(request, response)` runs in Edge middleware using the Web Crypto API (`crypto.getRandomValues`) for Edge runtime compatibility.
+- **Cookie scope**: Set on browser page requests only — API routes (`/api/*`) are skipped to avoid unnecessary `Set-Cookie` headers on high-QPS game-server endpoints.
+- **Validation**: Mutating API routes called from the browser call `validateCsrf(request)` to compare the cookie value against the `x-csrf-token` header using constant-time XOR comparison.
+- **Not in layout**: Cookies cannot be set during React Server Component render (Next.js restriction). The CSRF cookie is set exclusively in `middleware.ts`.
+
+### BigInt Serialization
+
+Prisma returns Roblox universe IDs, place IDs, and player IDs as `BigInt`. Next.js RSC protocol cannot JSON-serialize `BigInt` values — this causes `TypeError: Do not know how to serialize a BigInt` at runtime.
+
+Patterns used:
+
+- **Select + convert**: Use Prisma `select` to fetch only needed fields, then convert BigInt IDs to `string`, `boolean`, or `Number()` before passing to components.
+- **DB-side aggregation**: Use `$queryRaw` with `COUNT(DISTINCT ...)` instead of `findMany` + `distinct` + `.length` for counting unique values.
+
+### Rate Limiting
+
+Distributed rate limiting is implemented in `middleware.ts` and the rate‑limit library. Unlike the previous in-memory limiter, state persists across cold starts and is shared across Vercel serverless instances via the database.
+
+## Observability Integration
+
+The dashboard ingests telemetry events from game servers via the `/api/telemetry` endpoint. Events are sent by the `@broblox/observability` HTTP sink in configurable batches.
+
+The `/telemetry` dashboard page displays:
+
+- **KPI cards**: total events, unique players, unique categories, unique games
+- **Category breakdown**: event counts grouped by category
+- **Recent events stream**: filterable by environment, category, and level
 
 ## Future Enhancements
 
