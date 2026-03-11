@@ -88,7 +88,7 @@
               "className": "TextLabel",
               "properties": {
                 "BackgroundTransparency": 1,
-                "Text": "\ud83c\udfc3 STAMINA TRAINING",
+                "Text": "🏃 STAMINA TRAINING",
                 "TextColor3": [1, 1, 1],
                 "TextScaled": true,
                 "Font": "GothamBold"

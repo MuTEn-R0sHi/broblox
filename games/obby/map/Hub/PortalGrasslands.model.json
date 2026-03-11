@@ -74,7 +74,7 @@
               "className": "TextLabel",
               "properties": {
                 "BackgroundTransparency": 1,
-                "Text": "\ud83c\udf3f GRASSLANDS",
+                "Text": "🌿 GRASSLANDS",
                 "TextColor3": [1, 1, 1],
                 "TextScaled": true,
                 "Font": "GothamBold"
