@@ -114,6 +114,13 @@ jobs:
           cd ${{ steps.game.outputs.game_path }}
           rojo build default.project.json -o build.rbxl
 
+      - name: Upload .rbxl artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.game }}-${{ inputs.environment }}-${{ inputs.source_ref }}
+          path: ${{ steps.game.outputs.game_path }}/build.rbxl
+          retention-days: 90
+
       - name: Install rbxcloud CLI
         run: |
           RBXCLOUD_URL=$(curl -s https://api.github.com/repos/Sleitnick/rbxcloud/releases/latest | grep -o 'https://[^"]*linux\.zip')
@@ -139,7 +146,10 @@ jobs:
             --filename ${{ steps.game.outputs.game_path }}/build.rbxl
 
       - name: Create promotion record
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_DEPLOY_WEBHOOK_URL }}
         run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           echo "✅ Promotion Record"
           echo "==================="
           echo "Game: ${{ inputs.game }}"
@@ -147,5 +157,34 @@ jobs:
           echo "Target: ${{ inputs.environment }}"
           echo "Reason: ${{ inputs.reason }}"
           echo "Actor: ${{ github.actor }}"
-          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Timestamp: $TIMESTAMP"
           echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          if [ -n "$DISCORD_WEBHOOK_URL" ]; then
+            if [ "${{ inputs.environment }}" = "production" ]; then
+              COLOR=15158332  # red
+              TITLE="🚀 Deployed to Production"
+            else
+              COLOR=16776960  # yellow
+              TITLE="📦 Deployed to Staging"
+            fi
+
+            EMBED_JSON=$(cat <<EOF
+          {
+            "embeds": [{
+              "title": "$TITLE",
+              "color": $COLOR,
+              "fields": [
+                { "name": "Game", "value": "${{ inputs.game }}", "inline": true },
+                { "name": "Environment", "value": "${{ inputs.environment }}", "inline": true },
+                { "name": "Actor", "value": "${{ github.actor }}", "inline": true },
+                { "name": "Source", "value": "\`${{ inputs.source_ref }}\`", "inline": true },
+                { "name": "Reason", "value": "${{ inputs.reason }}" }
+              ],
+              "timestamp": "$TIMESTAMP"
+            }]
+          }
+          EOF
+            )
+            curl -sf -H "Content-Type: application/json" -d "$EMBED_JSON" "$DISCORD_WEBHOOK_URL" || echo "⚠️ Discord notification failed (non-fatal)"
+          fi

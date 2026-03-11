@@ -231,14 +231,9 @@ function ensureCleanupTimer() {
 }
 
 /**
- * Simple in-memory sliding-window rate limiter.
- * Returns `true` if the request is allowed, `false` if rate-limited.
- *
- * @param key - Unique key for the rate limit bucket (e.g. API key or IP).
- * @param maxRequests - Max requests per window (default 60).
- * @param windowMs - Window duration in ms (default 60_000).
+ * In-memory sliding-window rate limiter (per-instance fallback).
  */
-export function checkRateLimit(
+function checkRateLimitLocal(
   key: string,
   maxRequests = RATE_LIMIT_MAX_REQUESTS,
   windowMs = RATE_LIMIT_WINDOW_MS
@@ -263,6 +258,82 @@ export function checkRateLimit(
 
   entry.timestamps.push(now);
   return true; // allowed
+}
+
+/**
+ * Distributed rate limiter using the database.
+ * Falls back to in-memory when the table is not available.
+ */
+async function checkRateLimitDistributed(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): Promise<boolean> {
+  try {
+    const { prisma } = await import("./db");
+    const now = Date.now();
+    const windowStart = now - windowMs;
+
+    // Upsert: if the bucket's window is stale, reset it; otherwise increment
+    const bucket = await prisma.rateLimitBucket.upsert({
+      where: { key },
+      create: {
+        key,
+        count: 1,
+        windowStart: BigInt(now),
+      },
+      update: {
+        count: {
+          increment: 1,
+        },
+      },
+    });
+
+    // If the existing bucket's window has expired, reset it
+    if (Number(bucket.windowStart) < windowStart) {
+      await prisma.rateLimitBucket.update({
+        where: { key },
+        data: {
+          count: 1,
+          windowStart: BigInt(now),
+        },
+      });
+      return true;
+    }
+
+    return bucket.count <= maxRequests;
+  } catch {
+    // Table doesn't exist or DB unavailable — fall back to in-memory
+    return checkRateLimitLocal(key, maxRequests, windowMs);
+  }
+}
+
+/**
+ * Simple in-memory sliding-window rate limiter.
+ * Returns `true` if the request is allowed, `false` if rate-limited.
+ *
+ * @param key - Unique key for the rate limit bucket (e.g. API key or IP).
+ * @param maxRequests - Max requests per window (default 60).
+ * @param windowMs - Window duration in ms (default 60_000).
+ */
+export function checkRateLimit(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): boolean {
+  return checkRateLimitLocal(key, maxRequests, windowMs);
+}
+
+/**
+ * Distributed rate limiter (async). Uses database for cross-instance state,
+ * with automatic fallback to in-memory when the DB is unavailable.
+ */
+export async function checkRateLimitAsync(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): Promise<boolean> {
+  return checkRateLimitDistributed(key, maxRequests, windowMs);
 }
 
 /**

@@ -1,6 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Server, Key, Clock, Gamepad2, Shield, Globe, Database } from "lucide-react";
+import {
+  Server,
+  Key,
+  Clock,
+  Gamepad2,
+  Shield,
+  Globe,
+  Database,
+  Activity,
+  HardDrive,
+} from "lucide-react";
 import { requirePermission } from "@/lib/authorize";
 import { prisma } from "@/lib/db";
 
@@ -8,6 +18,15 @@ function maskSecret(value: string | undefined): string {
   if (!value) return "Not set";
   if (value.length <= 8) return "••••••••";
   return value.slice(0, 4) + "••••" + value.slice(-4);
+}
+
+function isMissingTableError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "P2021"
+  );
 }
 
 export default async function SettingsPage() {
@@ -39,6 +58,34 @@ export default async function SettingsPage() {
     games = await prisma.game.findMany({ orderBy: { name: "asc" } });
   } catch {
     // DB not initialised — show empty
+  }
+
+  // Database health check
+  let dbHealthy = false;
+  let dbLatencyMs = 0;
+  try {
+    const start = Date.now();
+    await prisma.$queryRawUnsafe("SELECT 1");
+    dbLatencyMs = Date.now() - start;
+    dbHealthy = true;
+  } catch {
+    // dbHealthy already false
+  }
+
+  // Telemetry & metrics storage stats
+  let telemetryCount = 0;
+  let metricCount = 0;
+  let rateLimitBucketCount = 0;
+  try {
+    [telemetryCount, metricCount, rateLimitBucketCount] = await Promise.all([
+      prisma.telemetryEvent.count(),
+      prisma.metricPoint.count(),
+      prisma.rateLimitBucket.count(),
+    ]);
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      // Swallow table-missing, rethrow others
+    }
   }
 
   // Cron job definitions
@@ -261,19 +308,59 @@ export default async function SettingsPage() {
             <Database className="h-5 w-5" />
             Database
           </CardTitle>
-          <CardDescription>Connection status</CardDescription>
+          <CardDescription>Connection status and health</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between rounded-lg border p-3">
-            <div>
-              <p className="text-sm font-medium">MySQL / MariaDB</p>
-              <p className="text-xs text-muted-foreground">
-                {process.env.DATABASE_URL ? maskSecret(process.env.DATABASE_URL) : "Not configured"}
-              </p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div>
+                <p className="text-sm font-medium">MySQL / MariaDB</p>
+                <p className="text-xs text-muted-foreground">
+                  {process.env.DATABASE_URL
+                    ? maskSecret(process.env.DATABASE_URL)
+                    : "Not configured"}
+                </p>
+              </div>
+              <Badge variant={dbHealthy ? "success" : "destructive"}>
+                {dbHealthy ? `Healthy (${dbLatencyMs}ms)` : "Unreachable"}
+              </Badge>
             </div>
-            <Badge variant={process.env.DATABASE_URL ? "success" : "destructive"}>
-              {process.env.DATABASE_URL ? "Connected" : "Missing"}
-            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Storage Stats */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HardDrive className="h-5 w-5" />
+            Storage Stats
+          </CardTitle>
+          <CardDescription>Row counts for observability and rate limiting tables</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-lg border p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Activity className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium">Telemetry Events</p>
+              </div>
+              <p className="text-2xl font-bold">{telemetryCount.toLocaleString()}</p>
+            </div>
+            <div className="rounded-lg border p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Activity className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium">Metric Points</p>
+              </div>
+              <p className="text-2xl font-bold">{metricCount.toLocaleString()}</p>
+            </div>
+            <div className="rounded-lg border p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Shield className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium">Rate Limit Buckets</p>
+              </div>
+              <p className="text-2xl font-bold">{rateLimitBucketCount.toLocaleString()}</p>
+            </div>
           </div>
         </CardContent>
       </Card>

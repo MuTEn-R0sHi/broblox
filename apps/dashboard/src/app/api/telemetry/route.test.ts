@@ -26,6 +26,7 @@ vi.mock("@/lib/authorize", () => ({
     return !!apiKey && !!expected && apiKey === expected;
   },
   checkRateLimit: () => true,
+  checkRateLimitAsync: () => Promise.resolve(true),
   getRateLimitKey: () => "test",
 }));
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { checkAuth, validateApiKey, checkRateLimit, getRateLimitKey } from "@/lib/authorize";
+import { checkAuth, validateApiKey, checkRateLimitAsync, getRateLimitKey } from "@/lib/authorize";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!checkRateLimit(getRateLimitKey(request))) {
+  if (!(await checkRateLimitAsync(getRateLimitKey(request)))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  if (!checkRateLimit(getRateLimitKey(request))) {
+  if (!(await checkRateLimitAsync(getRateLimitKey(request)))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 

@@ -1,0 +1,41 @@
+name: Website Preview (PR)
+
+"on":
+  pull_request:
+    paths:
+      - "apps/website/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build website
+        run: pnpm --filter @broblox/website run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-preview-pr-${{ github.event.pull_request.number }}
+          path: apps/website/.next/
+          retention-days: 7

@@ -61,8 +61,8 @@
 
 - [x] Wire `@broblox/observability` into both games (dependency exists, Rojo mapped, but zero imports)
 - [x] Emit structured telemetry events for key player actions (join, leave, purchase, death, stage complete)
-- [ ] Verify dashboard telemetry API ingestion receives events correctly
-- [ ] Set up a metrics dashboard view for basic KPIs (DAU, session length, retention)
+- [x] Verify dashboard telemetry API ingestion receives events correctly
+- [x] Set up a metrics dashboard view for basic KPIs (DAU, session length, retention)
 
 ---
 
@@ -103,18 +103,18 @@
 
 - [x] Add coverage upload to CI (Codecov) — protect the 96% baseline; added path filtering for docs-only PRs
 - [x] Wire `generate-error-catalog.mjs --check` into CI to prevent error code doc drift
-- [ ] Implement deploy notifications (currently `post_publish_notification` is just `echo`)
-- [ ] Upload `.rbxl` build artifacts in CI for audit/rollback
-- [ ] Add PR preview deploys for docs site and website
+- [x] Implement deploy notifications (currently `post_publish_notification` is just `echo`)
+- [x] Upload `.rbxl` build artifacts in CI for audit/rollback
+- [x] Add PR preview deploys for docs site and website
 
 ### Dashboard Hardening
 
-- [ ] Implement distributed rate limiting (current in-memory limiter resets on cold start, no cross-instance state)
+- [x] Implement distributed rate limiting (current in-memory limiter resets on cold start, no cross-instance state)
 - [x] Add Zod validation to server actions (API routes use Zod; server actions use manual `FormData` parsing)
-- [ ] Add explicit CSRF token mechanism (currently relies on Next.js Server Actions' implicit protections)
+- [x] Add explicit CSRF token mechanism (currently relies on Next.js Server Actions' implicit protections)
 - [x] Fix `@ts-expect-error` in `apps/dashboard/src/lib/auth.ts` — extended User & AdapterUser interfaces with `role`
 - [x] Add custom `error.tsx` and `not-found.tsx` pages to both Next.js apps
-- [ ] Build out the Settings page (file exists, minimal functionality)
+- [x] Build out the Settings page (file exists, minimal functionality)
 
 ---
 

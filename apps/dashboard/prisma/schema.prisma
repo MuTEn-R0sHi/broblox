@@ -533,3 +533,20 @@ model NewsPost {
   @@index([authorId])
   @@index([gameId])
 }
+
+// ============================================================================
+// Rate Limiting
+// ============================================================================
+
+model RateLimitBucket {
+  /// Rate-limit bucket identifier (e.g. "apikey:xxx" or "ip:1.2.3.4")
+  key         String   @id @db.VarChar(255)
+  /// Number of requests recorded in the current window
+  count       Int      @default(0)
+  /// Start of the current sliding window (epoch ms)
+  windowStart BigInt
+  /// Last update timestamp
+  updatedAt   DateTime @updatedAt
+
+  @@index([windowStart])
+}
