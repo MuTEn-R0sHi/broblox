@@ -49,7 +49,7 @@ export default async function GamesPage() {
           ].filter(Boolean);
 
           return (
-            <Link key={game.id} href={`/dashboard/games/${game.id}`}>
+            <Link key={game.id} href={`/games/${game.id}`}>
               <Card className="h-full transition-colors hover:border-primary/50 cursor-pointer">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">

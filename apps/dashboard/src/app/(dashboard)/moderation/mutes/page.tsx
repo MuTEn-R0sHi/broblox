@@ -182,7 +182,7 @@ export default async function MutesPage({ searchParams }: { searchParams: Promis
                     >
                       <td className="p-4">
                         <Link
-                          href={`/dashboard/moderation/mutes/${mute.id}`}
+                          href={`/moderation/mutes/${mute.id}`}
                           className="font-medium hover:underline"
                         >
                           {mute.playerName ?? `Player ${mute.playerId}`}
