@@ -79,7 +79,7 @@
               "className": "TextLabel",
               "properties": {
                 "BackgroundTransparency": 1,
-                "Text": "\ud83e\udd98 JUMP TRAINING",
+                "Text": "🦘 JUMP TRAINING",
                 "TextColor3": [1, 1, 1],
                 "TextScaled": true,
                 "Font": "GothamBold"
