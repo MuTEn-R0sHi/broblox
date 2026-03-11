@@ -35,7 +35,7 @@ export function MuteFilters() {
     if (newTarget) params.set("target", newTarget);
     if (newReason) params.set("reason", newReason);
 
-    router.push(`/dashboard/moderation/mutes?${params.toString()}`);
+    router.push(`/moderation/mutes?${params.toString()}`);
   }
 
   function clearFilters() {

@@ -55,7 +55,7 @@ export function MatchFilters({
     }
 
     startTransition(() => {
-      router.push(`/dashboard/matches?${params.toString()}`);
+      router.push(`/matches?${params.toString()}`);
     });
   };
 

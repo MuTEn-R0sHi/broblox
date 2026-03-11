@@ -238,7 +238,7 @@ export async function updateGame(
   });
 
   revalidatePath("/games");
-  revalidatePath(`/dashboard/games/${id}`);
+  revalidatePath(`/games/${id}`);
   return serializeGame(game);
 }
 
