@@ -103,15 +103,12 @@ export default async function DashboardPage() {
   }> = [];
 
   try {
-    const [playerRows, rawEvents, serverRows] = await Promise.all([
-      prisma.telemetryEvent.findMany({
-        distinct: ["playerId"],
-        where: {
-          playerId: { not: null },
-          ingestedAt: { gte: oneHourAgo },
-        },
-        select: { playerId: true },
-      }),
+    const [playerCountResult, rawEvents, serverCountResult] = await Promise.all([
+      prisma.$queryRaw<[{ cnt: bigint }]>`
+        SELECT COUNT(DISTINCT playerId) AS cnt
+        FROM TelemetryEvent
+        WHERE playerId IS NOT NULL AND ingestedAt >= ${oneHourAgo}
+      `,
       prisma.telemetryEvent.findMany({
         where: { level: { in: ["info", "warn", "error"] } },
         orderBy: { ingestedAt: "desc" },
@@ -125,18 +122,15 @@ export default async function DashboardPage() {
           serverId: true,
         },
       }),
-      prisma.telemetryEvent.findMany({
-        distinct: ["serverId"],
-        where: {
-          serverId: { not: null },
-          ingestedAt: { gte: oneHourAgo },
-        },
-        select: { serverId: true },
-      }),
+      prisma.$queryRaw<[{ cnt: bigint }]>`
+        SELECT COUNT(DISTINCT serverId) AS cnt
+        FROM TelemetryEvent
+        WHERE serverId IS NOT NULL AND ingestedAt >= ${oneHourAgo}
+      `,
     ]);
-    uniquePlayerCount = playerRows.length;
+    uniquePlayerCount = Number(playerCountResult[0].cnt);
     recentEvents = rawEvents;
-    activeServerCount = serverRows.length;
+    activeServerCount = Number(serverCountResult[0].cnt);
   } catch (error) {
     if (isMissingTableError(error)) {
       dbNotInitialized = true;
