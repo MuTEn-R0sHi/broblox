@@ -112,10 +112,10 @@ describe("HazardService (obby)", () => {
     expect(typeof mod.cleanupPlayerHazards).toBe("function");
   });
 
-  it("configures 6 hazard definitions", async () => {
+  it("configures 9 hazard definitions", async () => {
     await loadService();
     const definitions = capturedConfig!["definitions"] as Array<{ id: string }>;
-    expect(definitions).toHaveLength(6);
+    expect(definitions).toHaveLength(9);
     expect(definitions.map((d) => d.id)).toEqual([
       "lava_floor",
       "fire_jet",
@@ -123,6 +123,9 @@ describe("HazardService (obby)", () => {
       "crumble_platform",
       "spike_trap",
       "hot_surface",
+      "wind_blast",
+      "cloud_dissolve",
+      "lightning_strike",
     ]);
   });
 

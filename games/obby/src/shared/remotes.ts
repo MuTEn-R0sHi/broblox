@@ -38,6 +38,8 @@ import type {
   EquipmentSyncPayload,
   HazardTogglePayload,
   HazardDamagePayload,
+  ObstacleUpdatePayload,
+  ObstacleTogglePayload,
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
@@ -492,6 +494,22 @@ export const ObbyRemotes = {
    */
   HazardDamage: defineClientEvent<HazardDamagePayload>("HazardDamage", {
     description: "Server notifies player of hazard damage",
+  }),
+
+  // ── Obstacle Remotes ─────────────────────────────────────────────────
+
+  /**
+   * Server → Client: An obstacle instance's state updated (position, rotation, etc.).
+   */
+  ObstacleUpdate: defineClientEvent<ObstacleUpdatePayload>("ObstacleUpdate", {
+    description: "Server broadcasts obstacle state update",
+  }),
+
+  /**
+   * Server → Client: An obstacle instance toggled state (blink platform on/off).
+   */
+  ObstacleToggle: defineClientEvent<ObstacleTogglePayload>("ObstacleToggle", {
+    description: "Server notifies obstacle instance state change",
   }),
 } as const;
 

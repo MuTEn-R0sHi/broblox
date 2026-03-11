@@ -31,8 +31,21 @@ export const WORLD_CONFIGS: Record<string, WorldConfig> = {
     stageCount: 8,
     coinMultiplier: 1.5,
   },
-  // Future worlds:
-  // sky_kingdom: { ... unlockRequirements: { speed: 20, jump: 55, stamina: 18 } },
+  sky_kingdom: {
+    id: "sky_kingdom",
+    displayName: "Sky Kingdom",
+    description:
+      "A treacherous floating archipelago high above the clouds, battered by fierce winds.",
+    difficulty: "hard",
+    unlockRequirements: {
+      speed: 20,
+      jump: 55,
+      stamina: 18,
+      worldsCompleted: ["lava_caves"],
+    },
+    stageCount: 10,
+    coinMultiplier: 2.0,
+  },
 };
 
 export function getWorldConfig(worldId: string): WorldConfig | undefined {

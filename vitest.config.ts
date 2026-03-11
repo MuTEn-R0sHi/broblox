@@ -47,6 +47,7 @@ export default defineConfig({
       "@broblox/marketplace": resolve(__dirname, "packages/marketplace/src/index.ts"),
       "@broblox/equipment": resolve(__dirname, "packages/equipment/src/index.ts"),
       "@broblox/hazards": resolve(__dirname, "packages/hazards/src/index.ts"),
+      "@broblox/obstacles": resolve(__dirname, "packages/obstacles/src/index.ts"),
       "@broblox/testing": resolve(__dirname, "packages/testing/src/index.ts"),
       "@rbxts/t": resolve(__dirname, "packages/testing/src/t-mock.ts"),
 

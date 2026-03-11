@@ -294,6 +294,23 @@ export interface HazardDamagePayload {
 }
 
 // ============================================================================
+// Obstacle Types
+// ============================================================================
+
+/** Server → Client: An obstacle instance's state updated (position, rotation, etc.). */
+export interface ObstacleUpdatePayload {
+  instanceKey: string;
+  progress: number;
+  active: boolean;
+}
+
+/** Server → Client: An obstacle instance toggled state (blink platform on/off). */
+export interface ObstacleTogglePayload {
+  instanceKey: string;
+  active: boolean;
+}
+
+// ============================================================================
 // Constants
 // ============================================================================
 
