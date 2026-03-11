@@ -39,6 +39,8 @@ export type Permission =
   | "users:view"
   | "users:manage"
   | "users:roles"
+  // Telemetry
+  | "view:telemetry"
   // Settings
   | "settings:view"
   | "settings:edit"
@@ -50,13 +52,21 @@ export type Permission =
 
 /** Permission matrix - maps roles to their permissions */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  VIEWER: ["view:dashboard", "view:matches", "view:players", "view:flags", "news:view"],
+  VIEWER: [
+    "view:dashboard",
+    "view:matches",
+    "view:players",
+    "view:flags",
+    "view:telemetry",
+    "news:view",
+  ],
 
   SUPPORT: [
     "view:dashboard",
     "view:matches",
     "view:players",
     "view:flags",
+    "view:telemetry",
     "view:audit",
     "moderation:view",
   ],
@@ -66,6 +76,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:matches",
     "view:players",
     "view:flags",
+    "view:telemetry",
     "view:audit",
     "moderation:view",
     "moderation:mute",
@@ -82,6 +93,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:matches",
     "view:players",
     "view:flags",
+    "view:telemetry",
     "view:audit",
     "games:view",
     "games:create",
@@ -101,6 +113,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:matches",
     "view:players",
     "view:flags",
+    "view:telemetry",
     "view:audit",
     "games:view",
     "games:create",

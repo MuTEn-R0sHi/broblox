@@ -231,14 +231,9 @@ function ensureCleanupTimer() {
 }
 
 /**
- * Simple in-memory sliding-window rate limiter.
- * Returns `true` if the request is allowed, `false` if rate-limited.
- *
- * @param key - Unique key for the rate limit bucket (e.g. API key or IP).
- * @param maxRequests - Max requests per window (default 60).
- * @param windowMs - Window duration in ms (default 60_000).
+ * In-memory sliding-window rate limiter (per-instance fallback).
  */
-export function checkRateLimit(
+function checkRateLimitLocal(
   key: string,
   maxRequests = RATE_LIMIT_MAX_REQUESTS,
   windowMs = RATE_LIMIT_WINDOW_MS
@@ -263,6 +258,97 @@ export function checkRateLimit(
 
   entry.timestamps.push(now);
   return true; // allowed
+}
+
+/**
+ * Distributed rate limiter using the database.
+ * Falls back to in-memory when the table is not available.
+ */
+async function checkRateLimitDistributed(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): Promise<boolean> {
+  try {
+    const { prisma } = await import("./db");
+    const now = Date.now();
+    const windowCutoff = now - windowMs;
+
+    // Look up the current bucket once, then decide whether to reset or increment
+    const existing = await prisma.rateLimitBucket.findUnique({
+      where: { key },
+    });
+
+    // No existing bucket: create a new window starting now with count = 1
+    if (!existing) {
+      const created = await prisma.rateLimitBucket.create({
+        data: {
+          key,
+          count: 1,
+          windowStart: BigInt(now),
+        },
+      });
+      return created.count <= maxRequests;
+    }
+
+    // Existing bucket found: check if the window has expired
+    const isStaleWindow = Number(existing.windowStart) < windowCutoff;
+
+    if (isStaleWindow) {
+      // Reset the window and start counting from 1
+      const reset = await prisma.rateLimitBucket.update({
+        where: { key },
+        data: {
+          count: 1,
+          windowStart: BigInt(now),
+        },
+      });
+      return reset.count <= maxRequests;
+    }
+
+    // Window is still active: increment the count within this window
+    const updated = await prisma.rateLimitBucket.update({
+      where: { key },
+      data: {
+        count: {
+          increment: 1,
+        },
+      },
+    });
+
+    return updated.count <= maxRequests;
+  } catch {
+    // Table doesn't exist or DB unavailable — fall back to in-memory
+    return checkRateLimitLocal(key, maxRequests, windowMs);
+  }
+}
+
+/**
+ * Simple in-memory sliding-window rate limiter.
+ * Returns `true` if the request is allowed, `false` if rate-limited.
+ *
+ * @param key - Unique key for the rate limit bucket (e.g. API key or IP).
+ * @param maxRequests - Max requests per window (default 60).
+ * @param windowMs - Window duration in ms (default 60_000).
+ */
+export function checkRateLimit(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): boolean {
+  return checkRateLimitLocal(key, maxRequests, windowMs);
+}
+
+/**
+ * Distributed rate limiter (async). Uses database for cross-instance state,
+ * with automatic fallback to in-memory when the DB is unavailable.
+ */
+export async function checkRateLimitAsync(
+  key: string,
+  maxRequests = RATE_LIMIT_MAX_REQUESTS,
+  windowMs = RATE_LIMIT_WINDOW_MS
+): Promise<boolean> {
+  return checkRateLimitDistributed(key, maxRequests, windowMs);
 }
 
 /**

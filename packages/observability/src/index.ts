@@ -14,6 +14,8 @@ export * from "./context";
 export * from "./telemetry";
 export * from "./metrics";
 export * from "./span";
+export { HttpTelemetrySink, HttpMetricSink } from "./http-sink";
+export type { HttpSinkConfig } from "./http-sink";
 export { createObservabilityService } from "./create-observability-service";
 export type {
   ObservabilityServiceConfig,
