@@ -155,7 +155,7 @@ export default async function ModerationPage() {
                 {recentBans.map((ban) => (
                   <Link
                     key={ban.id}
-                    href={`/dashboard/moderation/bans/${ban.id}`}
+                    href={`/moderation/bans/${ban.id}`}
                     className="flex items-center justify-between py-2 hover:bg-zinc-800/50 rounded px-2 -mx-2"
                   >
                     <div className="min-w-0">
@@ -195,7 +195,7 @@ export default async function ModerationPage() {
                 {pendingAppeals.map((appeal) => (
                   <Link
                     key={appeal.id}
-                    href={`/dashboard/moderation/appeals/${appeal.id}`}
+                    href={`/moderation/appeals/${appeal.id}`}
                     className="flex items-center justify-between py-2 hover:bg-zinc-800/50 rounded px-2 -mx-2"
                   >
                     <div className="min-w-0">

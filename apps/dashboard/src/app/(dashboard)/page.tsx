@@ -233,7 +233,7 @@ export default async function DashboardPage() {
                 game.hasProdUniverse ? "prod" : null,
               ].filter(Boolean);
               return (
-                <Link key={game.id} href={`/dashboard/games/${game.id}`}>
+                <Link key={game.id} href={`/games/${game.id}`}>
                   <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between gap-2">

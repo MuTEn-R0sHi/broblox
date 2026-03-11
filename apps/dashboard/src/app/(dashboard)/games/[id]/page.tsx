@@ -195,7 +195,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
       {/* Quick links to scoped sections */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {canViewFlags && (
-          <Link href={`/dashboard/flags?gameId=${id}`}>
+          <Link href={`/flags?gameId=${id}`}>
             <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
@@ -212,7 +212,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
         )}
 
         {canViewMatches && (
-          <Link href={`/dashboard/matches?gameId=${id}`}>
+          <Link href={`/matches?gameId=${id}`}>
             <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
@@ -229,7 +229,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
         )}
 
         {canViewMod && (
-          <Link href={`/dashboard/moderation?gameId=${id}`}>
+          <Link href={`/moderation?gameId=${id}`}>
             <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
@@ -245,7 +245,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
           </Link>
         )}
 
-        <Link href={`/dashboard/players?gameId=${id}`}>
+        <Link href={`/players?gameId=${id}`}>
           <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
@@ -258,7 +258,7 @@ export default async function GameDetailPage({ params }: { params: Promise<{ id:
           </Card>
         </Link>
 
-        <Link href={`/dashboard/audit?gameId=${id}`}>
+        <Link href={`/audit?gameId=${id}`}>
           <Card className="h-full hover:border-primary/50 transition-colors cursor-pointer">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
