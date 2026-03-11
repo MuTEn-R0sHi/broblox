@@ -33,13 +33,13 @@ export default async function TelemetryPage() {
   let dbNotInitialized = false;
 
   // ── KPI queries ──────────────────────────────────────────────────────
-  let uniquePlayers: Array<{ playerId: bigint | null }> = [];
-  let activeServers: Array<{ serverId: string | null }> = [];
+  let playerCount = 0;
+  let serverCount = 0;
   let totalEventsToday = 0;
   let errorEventsToday = 0;
 
   try {
-    [uniquePlayers, activeServers, totalEventsToday, errorEventsToday] = await Promise.all([
+    const [players, servers, eventsCount, errorsCount] = await Promise.all([
       prisma.telemetryEvent.groupBy({
         by: ["playerId"],
         where: { playerId: { not: null }, ingestedAt: { gte: oneHourAgo } },
@@ -55,6 +55,10 @@ export default async function TelemetryPage() {
         where: { level: "error", ingestedAt: { gte: oneDayAgo } },
       }),
     ]);
+    playerCount = players.length;
+    serverCount = servers.length;
+    totalEventsToday = eventsCount;
+    errorEventsToday = errorsCount;
   } catch (error) {
     if (isMissingTableError(error)) {
       dbNotInitialized = true;
@@ -84,13 +88,17 @@ export default async function TelemetryPage() {
     level: string;
     ingestedAt: Date;
     serverId: string | null;
-    playerId: bigint | null;
+    playerId: string | null;
   }> = [];
   try {
-    recentEvents = await prisma.telemetryEvent.findMany({
+    const rows = await prisma.telemetryEvent.findMany({
       orderBy: { ingestedAt: "desc" },
       take: 20,
     });
+    recentEvents = rows.map((r) => ({
+      ...r,
+      playerId: r.playerId?.toString() ?? null,
+    }));
   } catch (error) {
     if (!isMissingTableError(error)) throw error;
   }
@@ -140,13 +148,13 @@ export default async function TelemetryPage() {
   const kpis = [
     {
       title: "Active Players (1h)",
-      value: uniquePlayers.length,
+      value: playerCount,
       icon: Users,
       description: "Unique players with events in the past hour",
     },
     {
       title: "Active Servers (1h)",
-      value: activeServers.length,
+      value: serverCount,
       icon: Server,
       description: "Servers reporting in the past hour",
     },
@@ -318,9 +326,7 @@ export default async function TelemetryPage() {
                       <td className="py-2 pr-4 text-muted-foreground font-mono text-xs">
                         {ev.serverId?.slice(0, 8) ?? "—"}
                       </td>
-                      <td className="py-2 text-muted-foreground">
-                        {ev.playerId?.toString() ?? "—"}
-                      </td>
+                      <td className="py-2 text-muted-foreground">{ev.playerId ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
