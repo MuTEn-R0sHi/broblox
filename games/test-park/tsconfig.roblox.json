@@ -18,8 +18,7 @@
 
     "baseUrl": "src",
     "paths": {
-      "shared/*": ["shared/*"],
-      "@broblox/game-shared": ["../../../packages/game-shared/src"]
+      "shared/*": ["shared/*"]
     }
   },
   "rbxts": {
