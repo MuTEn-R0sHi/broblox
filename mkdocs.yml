@@ -105,6 +105,7 @@ nav:
       - Equipment: modules/equipment.md
       - Events: modules/events.md
       - Gacha: modules/gacha.md
+      - Game Shared: modules/game-shared.md
       - Hazards: modules/hazards.md
       - Input: modules/input.md
       - Inventory: modules/inventory.md

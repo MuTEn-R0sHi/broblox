@@ -17,7 +17,7 @@ BroBlox game studio — Roblox-TS multi-game platform + control-plane dashboard.
 
 ```
 broblox/
-├── packages/                 # 33 shared platform packages (TypeScript → Luau)
+├── packages/                 # 37 shared platform packages (TypeScript → Luau)
 │   ├── shared-types/         # Core type definitions, Result<T>, ErrorCode
 │   ├── constants/            # Numeric constants, timeouts, limits, validation helpers
 │   ├── core/                 # Application lifecycle, Logger, Cleanup, collection helpers
@@ -49,6 +49,10 @@ broblox/
 │   ├── input/                # Unified input (keyboard, gamepad, touch)
 │   ├── ui/                   # UI components, theming, layout utilities
 │   ├── marketplace/          # MonetizationService wrapper: developer products, game passes, receipt validation
+│   ├── game-shared/          # Shared remote payload types for cross-game remotes
+│   ├── equipment/            # Gear & equipment slot system with stat bonuses
+│   ├── hazards/              # Environmental hazard system (lava, spikes, poison)
+│   ├── obstacles/            # Dynamic obstacle system (platforms, beams, conveyors)
 │   └── testing/              # Test utilities and Roblox API mocks for vitest
 ├── games/                    # Roblox-TS game projects
 │   ├── test-park/              # Test Park sandbox (staff-only)

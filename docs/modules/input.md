@@ -11,6 +11,24 @@ Unified input abstraction for Roblox games supporting keyboard/mouse, gamepad, a
 
 ## Public API
 
+### createInputController()
+
+Factory function that returns a `Controller`-compatible handle for the input system, following the same factory pattern as server-side packages (`createCombatService`, `createQuestService`, etc.).
+
+```typescript
+import { createInputController } from "@broblox/input";
+
+const input = createInputController();
+// input.Controller — register with lifecycle system
+// input.getMovementState() — current movement state
+// input.getMoveVector() — normalized movement vector
+// input.isMoving() — whether player is moving
+// input.isActionActive(name) — check if action is pressed
+// input.onAction(name, callback) — subscribe to action events
+// input.getCurrentDevice() — "keyboard" | "gamepad" | "touch"
+// input.detectDeviceClass() — "kbm" | "gamepad" | "touch"
+```
+
 ### Device Detection
 
 Detect the player's active input device class at runtime.
