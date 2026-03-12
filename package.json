@@ -12,7 +12,7 @@
     "test": "pnpm -r test",
     "check:sync": "node tools/check-testing-sync.mjs",
     "test:coverage": "vitest run --coverage",
-    "build:packages": "pnpm --filter '@broblox/*' --filter '!@broblox/game-*' run build:roblox",
+    "build:packages": "pnpm --filter '@broblox/*' --filter '!@broblox/game-obby' --filter '!@broblox/game-test-park' run build:roblox",
     "build:test-park": "pnpm run build:packages && pnpm --filter @broblox/game-test-park run build",
     "build:obby": "pnpm run build:packages && pnpm --filter @broblox/game-obby run build",
     "game:test-park:build": "pnpm run build:test-park",
