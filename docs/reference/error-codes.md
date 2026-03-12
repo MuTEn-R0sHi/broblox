@@ -13,56 +13,56 @@ This document is **auto-generated** from the `ErrorCode` enum in `@broblox/share
 
 ## General Errors (0xxx)
 
-| Code | Name      | Description      |
-| ---- | --------- | ---------------- |
-| 0    | `Unknown` | _No description_ |
+| Code | Name      | Description               |
+| ---- | --------- | ------------------------- |
+| 0    | `Unknown` | An unknown error occurred |
 
 ## Validation Errors (1xxx)
 
-| Code | Name              | Description      |
-| ---- | ----------------- | ---------------- |
-| 1001 | `InvalidPayload`  | _No description_ |
-| 1002 | `PayloadTooLarge` | _No description_ |
-| 1003 | `MissingField`    | _No description_ |
-| 1004 | `InvalidType`     | _No description_ |
-| 1005 | `OutOfBounds`     | _No description_ |
+| Code | Name              | Description                             |
+| ---- | ----------------- | --------------------------------------- |
+| 1001 | `InvalidPayload`  | The request payload is invalid          |
+| 1002 | `PayloadTooLarge` | The request payload exceeds size limits |
+| 1003 | `MissingField`    | A required field is missing             |
+| 1004 | `InvalidType`     | A field has an invalid type             |
+| 1005 | `OutOfBounds`     | A value is outside acceptable bounds    |
 
 ## Business Logic Errors (2xxx)
 
-| Code | Name                    | Description      |
-| ---- | ----------------------- | ---------------- |
-| 2001 | `RateLimited`           | _No description_ |
-| 2002 | `Cooldown`              | _No description_ |
-| 2003 | `InvalidState`          | _No description_ |
-| 2004 | `NotFound`              | _No description_ |
-| 2005 | `AlreadyExists`         | _No description_ |
-| 2006 | `InsufficientResources` | _No description_ |
-| 2007 | `FeatureDisabled`       | _No description_ |
+| Code | Name                    | Description                               |
+| ---- | ----------------------- | ----------------------------------------- |
+| 2001 | `RateLimited`           | Too many requests, please slow down       |
+| 2002 | `Cooldown`              | Action is on cooldown                     |
+| 2003 | `InvalidState`          | Invalid state for this operation          |
+| 2004 | `NotFound`              | The requested resource was not found      |
+| 2005 | `AlreadyExists`         | The resource already exists               |
+| 2006 | `InsufficientResources` | Insufficient resources for this operation |
+| 2007 | `FeatureDisabled`       | This feature is currently disabled        |
 
 ## Protocol Errors (3xxx)
 
-| Code | Name               | Description      |
-| ---- | ------------------ | ---------------- |
-| 3001 | `ProtocolMismatch` | _No description_ |
-| 3002 | `ClientOutdated`   | _No description_ |
-| 3003 | `ServerOutdated`   | _No description_ |
+| Code | Name               | Description                                          |
+| ---- | ------------------ | ---------------------------------------------------- |
+| 3001 | `ProtocolMismatch` | Client and server protocol versions are incompatible |
+| 3002 | `ClientOutdated`   | Client version is too old                            |
+| 3003 | `ServerOutdated`   | Server version is too old                            |
 
 ## Authorization Errors (4xxx)
 
-| Code | Name             | Description      |
-| ---- | ---------------- | ---------------- |
-| 4001 | `Unauthorized`   | _No description_ |
-| 4002 | `Forbidden`      | _No description_ |
-| 4003 | `SessionExpired` | _No description_ |
+| Code | Name             | Description                          |
+| ---- | ---------------- | ------------------------------------ |
+| 4001 | `Unauthorized`   | Authentication required              |
+| 4002 | `Forbidden`      | Insufficient permissions             |
+| 4003 | `SessionExpired` | Session has expired, rejoin required |
 
 ## Internal Errors (5xxx)
 
-| Code | Name                 | Description      |
-| ---- | -------------------- | ---------------- |
-| 5001 | `InternalError`      | _No description_ |
-| 5002 | `ServiceUnavailable` | _No description_ |
-| 5003 | `Timeout`            | _No description_ |
-| 5004 | `DataStoreFailed`    | _No description_ |
+| Code | Name                 | Description                            |
+| ---- | -------------------- | -------------------------------------- |
+| 5001 | `InternalError`      | An internal server error occurred      |
+| 5002 | `ServiceUnavailable` | The service is temporarily unavailable |
+| 5003 | `Timeout`            | The operation timed out                |
+| 5004 | `DataStoreFailed`    | DataStore operation failed             |
 
 ## Adding New Error Codes
 
@@ -77,4 +77,4 @@ node tools/generate-error-catalog.mjs > docs/reference/error-codes.md
 
 ---
 
-_Last updated: 2026-02-06_
+_Last updated: 2026-03-12_

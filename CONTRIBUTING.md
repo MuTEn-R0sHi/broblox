@@ -45,6 +45,17 @@ Follow our conventions:
 
 ### 4. Test your changes
 
+Coverage thresholds enforced in CI (see `vitest.config.ts`):
+
+| Metric     | Minimum |
+| ---------- | ------- |
+| Lines      | 80%     |
+| Functions  | 80%     |
+| Statements | 80%     |
+| Branches   | 65%     |
+
+New code should meet or exceed these thresholds. Run locally:
+
 ```bash
 # Lint
 pnpm lint
