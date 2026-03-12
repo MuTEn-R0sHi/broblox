@@ -1,0 +1,31 @@
+{
+  "name": "@broblox/game-shared",
+  "version": "0.2.0",
+  "description": "Shared payload types and utilities used across all games",
+  "private": true,
+  "main": "out",
+  "types": "out/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "default": "./out"
+    }
+  },
+  "scripts": {
+    "build:roblox": "rbxtsc -p tsconfig.roblox.json --type package",
+    "lint": "eslint .",
+    "typecheck": "rbxtsc -p tsconfig.roblox.json --noInclude --type package",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@broblox/rewards": "workspace:*"
+  },
+  "devDependencies": {
+    "@broblox/testing": "workspace:*",
+    "@rbxts/compiler-types": "3.0.0-types.0",
+    "@rbxts/types": "^1.0.910",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

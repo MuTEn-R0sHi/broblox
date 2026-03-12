@@ -32,6 +32,26 @@ import type {
 } from "./types";
 import type { DailyRewardDay } from "@broblox/rewards";
 import type { HatchResult } from "@broblox/gacha";
+import type {
+  RemoteRewardEntry,
+  LevelUpPayload,
+  PrestigeUnlockedPayload,
+  QuestCompletedPayload,
+  AchievementCompletedPayload,
+  DailyRewardClaimedPayload,
+  EventActivePayload,
+} from "@broblox/game-shared";
+
+// Re-export shared types so existing consumers don't break
+export type {
+  RemoteRewardEntry,
+  LevelUpPayload,
+  PrestigeUnlockedPayload,
+  QuestCompletedPayload,
+  AchievementCompletedPayload,
+  DailyRewardClaimedPayload,
+  EventActivePayload,
+} from "@broblox/game-shared";
 
 // ============================================================================
 // Payload Types
@@ -83,47 +103,6 @@ export interface ServerNotification {
 export interface PlayerDataSyncPayload {
   coins: number;
   kills: number;
-}
-
-import type { RewardType } from "@broblox/rewards";
-
-/** A single reward entry used across notification payloads. */
-export interface RemoteRewardEntry {
-  type: RewardType;
-  amount: number;
-  itemId?: string;
-  label?: string;
-}
-
-export interface LevelUpPayload {
-  newLevel: number;
-}
-
-export interface PrestigeUnlockedPayload {
-  newPrestige: number;
-}
-
-export interface QuestCompletedPayload {
-  questId: string;
-  rewards: RemoteRewardEntry[];
-}
-
-export interface AchievementCompletedPayload {
-  achievementId: string;
-  rewards: RemoteRewardEntry[];
-}
-
-export interface DailyRewardClaimedPayload {
-  day: number;
-  streak: number;
-  rewards: RemoteRewardEntry[];
-}
-
-/** Payload for a scheduled in-game event becoming active or inactive */
-export interface EventActivePayload {
-  id: string;
-  label: string;
-  modifiers?: Record<string, unknown>;
 }
 
 // ============================================================================

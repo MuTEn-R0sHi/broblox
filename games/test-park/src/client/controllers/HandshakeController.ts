@@ -9,7 +9,7 @@ import { Controller, createLogger } from "@broblox/core";
 import { detectDeviceClass } from "@broblox/input";
 import { BUILD_ID } from "@broblox/constants";
 import { RemoteController } from "./RemoteController";
-import { UiController } from "./UiController";
+import { UIController } from "./UIController";
 import { HandshakeRequest } from "shared/remotes";
 
 const logger = createLogger("HandshakeController");
@@ -39,6 +39,6 @@ export const HandshakeController: Controller = {
       logger.error(`Handshake failed: ${result.code} - ${result.message}`);
     }
 
-    UiController.showStatus(connected);
+    UIController.showStatus(connected);
   },
 };

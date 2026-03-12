@@ -25,6 +25,7 @@
     "@broblox/equipment": "workspace:*",
     "@broblox/events": "workspace:*",
     "@broblox/gacha": "workspace:*",
+    "@broblox/game-shared": "workspace:*",
     "@broblox/hazards": "workspace:*",
     "@broblox/obstacles": "workspace:*",
     "@broblox/input": "workspace:*",

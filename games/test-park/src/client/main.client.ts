@@ -6,7 +6,7 @@
 import { Application, createLogger } from "@broblox/core";
 import { initInput } from "@broblox/input";
 import { RemoteController } from "./controllers/RemoteController";
-import { UiController } from "./controllers/UiController";
+import { UIController } from "./controllers/UIController";
 import { HandshakeController } from "./controllers/HandshakeController";
 import { ActionController } from "./controllers/ActionController";
 import { ChatModerationController } from "./controllers/ChatModerationController";
@@ -25,7 +25,7 @@ initInput();
 // Register controllers in dependency order
 app
   .register(RemoteController)
-  .register(UiController)
+  .register(UIController)
   .register(HandshakeController)
   .register(ActionController)
   .register(ChatModerationController)
