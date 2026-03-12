@@ -187,30 +187,32 @@ CI/CD workflows send notifications to a Discord channel for publish/promote outc
 1. Create a webhook in your Discord server: **Server Settings → Integrations → Webhooks → New Webhook**
 2. Copy the webhook URL
 3. Add as a repository secret: **Settings → Secrets and variables → Actions → New repository secret**
-   - **Name**: `DISCORD_WEBHOOK_URL`
+   - **Name**: `DISCORD_DEPLOY_WEBHOOK_URL`
    - **Value**: the webhook URL
 
 ### Notification triggers
 
-- Publish to dev (success/failure)
-- Promotion to staging (approval requested, success/failure)
-- Promotion to production (approval requested, success/failure)
+- Publish to dev (success)
+- Promotion to staging (success)
+- Promotion to production (success)
 
 ## Build Artifacts
 
 `.rbxl` build artifacts are automatically uploaded during CI for audit and rollback purposes.
 
-- **Retention**: GitHub Actions default retention (90 days)
+- **Retention**:
+  - `publish-dev.yml` artifacts are kept for 30 days
+  - `build-and-publish.yml` artifacts are kept for 90 days
 - **Access**: Available on the workflow run summary under "Artifacts"
 - **Rollback**: Download a previous artifact and republish manually via the Promote workflow
 
 ## PR Preview Deploys
 
-Pull requests automatically receive preview deployments:
+Pull requests receive preview artifacts and deployments:
 
-- **Docs site**: deployed via MkDocs build + preview URL comment on PR
-- **Website**: deployed via Vercel preview (automatic for `apps/website` changes)
-- **Dashboard**: deployed via Vercel preview (automatic for `apps/dashboard` changes)
+- **Docs site**: MkDocs build artifact uploaded to the workflow run; a PR comment provides download instructions
+- **Website**: Vercel preview deployment (automatic for `apps/website` changes)
+- **Dashboard**: Vercel preview deployment (automatic for `apps/dashboard` changes)
 
 Path filtering ensures docs-only PRs skip unnecessary game build steps and vice versa.
 

@@ -59,10 +59,8 @@ Observability owns no player profile data. All event data is ephemeral or shippe
 
 The HTTP sink batches telemetry events and sends them to the dashboard's `/api/telemetry` endpoint. Key behaviors:
 
-- **Batching**: Events are buffered and flushed when the batch reaches `batchSize` or a time window elapses.
-- **Sampling**: Only a `sampleRate` fraction of events are emitted (high-volume client events can be sampled down).
-- **Rate limiting**: Outbound requests are rate-limited to prevent flooding the dashboard.
-- **Error handling**: Sink errors are emitted as telemetry events themselves (dogfooding). Failed batches are dropped, not retried, to avoid backpressure.
+- **Batching**: Events are buffered and flushed when the batch reaches `maxBatchSize` or the `flushIntervalSec` timer elapses.
+- **Error handling**: Flush failures are logged via `warn(...)`. Failed batches are dropped, not retried, to avoid backpressure.
 
 ### BigInt Considerations
 

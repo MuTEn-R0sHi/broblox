@@ -15,11 +15,11 @@ Notes:
 
 - **@broblox/equipment package** — Reusable gear & equipment slot system. `GearRegistry` for static definitions with rarity tiers (Common → Mythic) and stat modifiers. `EquipmentStore` for per-player equip/unequip — one gear per named slot. `createEquipmentService` factory. 54 tests across 4 suites.
 - **@broblox/hazards package** — Pure-logic environmental hazard system. `HazardRegistry` for definition lookup by ID or CollectionService tag. `HazardManager` tracks per-instance state (5 behaviours: instant_kill, damage_zone, timed_burst, crumbling, contact_damage), timed toggles, and per-player immunity windows. `createHazardService` factory. 37 tests across 3 suites.
-- **Observability HTTP sinks** — `@broblox/observability` now ships telemetry events to the dashboard via configurable HTTP sinks with batching and sample rate control. Dashboard API ingests and indexes events.
-- **Telemetry dashboard page** — new `/telemetry` page with KPI cards (total events, unique players, unique categories, unique games), category breakdown chart, recent events stream, and environment/category/level filters.
+- **Observability HTTP sinks** — `@broblox/observability` now ships telemetry events to the dashboard via configurable HTTP sinks supporting batching (`maxBatchSize`) and periodic flushing (`flushIntervalSec`). Dashboard API ingests and indexes events.
+- **Telemetry dashboard page** — new `/telemetry` page with KPI cards (Active Players (1h), Active Servers (1h), Events (24h), Errors (24h)), category breakdown chart, recent events stream, and environment/category/level filters.
 - **CI/CD improvements** — Discord webhook notifications for publish/promote outcomes, `.rbxl` build artifact uploads for audit/rollback, PR preview deploys for docs site and website, path filtering for docs-only PRs.
 - **Dashboard hardening** — distributed rate limiting (replaces in-memory limiter), Zod validation on all server actions, explicit CSRF token mechanism (double-submit cookie), custom `error.tsx` and `not-found.tsx` pages, Settings page buildout.
-- **Dashboard CSRF protection** — `ensureCsrfCookie()` sets a double-submit CSRF cookie via Edge middleware using Web Crypto API. API routes are exempt (game servers use API keys). `validateCsrf()` for mutating browser-facing API routes.
+- **Dashboard CSRF protection** — `ensureCsrfCookie()` sets a double-submit CSRF cookie via Edge middleware using Web Crypto API. API routes are exempt (game servers use API keys). `validateCsrf()` helper available for wiring CSRF checks into mutating browser-facing routes.
 
 ### Changed
 

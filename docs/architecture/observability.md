@@ -54,7 +54,7 @@ Review process: Manual review via Studio output or Roblox Developer Console.
 
 - Events are batched and sent to the dashboard via HTTP sinks (`@broblox/observability`)
 - Dashboard `/api/telemetry` endpoint ingests and indexes events in MariaDB
-- `/telemetry` dashboard page: KPI cards (total events, unique players, categories, games), category breakdown, recent event stream with filters
+- `/telemetry` dashboard page: KPI cards ("Active Players (1h)", "Active Servers (1h)", "Events (24h)", "Errors (24h)"), category breakdown, recent event stream with filters
 - Root dashboard page: game overview, recent activity feed, aggregated counts via `$queryRaw COUNT(DISTINCT ...)`
 
 ### Phase 3+: Full observability stack

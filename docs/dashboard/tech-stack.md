@@ -259,11 +259,11 @@ end
 
 ### CSRF Protection
 
-The dashboard uses an explicit double-submit cookie for CSRF protection on mutating browser-facing API routes.
+The dashboard is designed to use an explicit double-submit cookie for CSRF protection on mutating browser-facing API routes.
 
 - **Token generation**: `ensureCsrfCookie(request, response)` runs in Edge middleware using the Web Crypto API (`crypto.getRandomValues`) for Edge runtime compatibility.
 - **Cookie scope**: Set on browser page requests only — API routes (`/api/*`) are skipped to avoid unnecessary `Set-Cookie` headers on high-QPS game-server endpoints.
-- **Validation**: Mutating API routes called from the browser call `validateCsrf(request)` to compare the cookie value against the `x-csrf-token` header using constant-time XOR comparison.
+- **Validation**: Mutating API routes called from the browser should call `validateCsrf(request)` to compare the cookie value against the `x-csrf-token` header using constant-time XOR comparison.
 - **Not in layout**: Cookies cannot be set during React Server Component render (Next.js restriction). The CSRF cookie is set exclusively in `middleware.ts`.
 
 ### BigInt Serialization
@@ -285,7 +285,7 @@ The dashboard ingests telemetry events from game servers via the `/api/telemetry
 
 The `/telemetry` dashboard page displays:
 
-- **KPI cards**: total events, unique players, unique categories, unique games
+- **KPI cards**: Active Players (1h), Active Servers (1h), Events (24h), Errors (24h)
 - **Category breakdown**: event counts grouped by category
 - **Recent events stream**: filterable by environment, category, and level
 
