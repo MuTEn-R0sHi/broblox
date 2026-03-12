@@ -77,6 +77,20 @@ Package paths need nested `out` folder to match compiled imports:
 
 **Why nested?** The compiled Luau does `TS.getModule(script, "@broblox", "shared-types").out` - it expects `.out` to be a child of the package folder.
 
+## File naming
+
+The codebase uses two naming conventions for TypeScript source files:
+
+- **Packages** (`packages/*/src/`): **kebab-case** — e.g. `create-inventory-service.ts`, `hit-validation.ts`, `obstacle-manager.ts`.
+- **Games** (`games/*/src/`): **PascalCase** — e.g. `InventoryService.ts`, `RemoteController.ts`, `StageService.ts`.
+
+This split is intentional:
+
+- Packages are reusable libraries with multiple source files per concern (factory, store, registry, types). Kebab-case matches the npm/Node.js ecosystem convention and keeps filenames visually distinct from their default exports.
+- Game services and controllers are singletons — one file per service/controller. PascalCase matches the exported const name (`export const InventoryService: Service = { ... }`), making it easy to locate by name.
+
+Both layers are consistent within themselves. New files should follow the convention of the layer they belong to.
+
 ## Folder intent
 
 - `client/`: UI, camera, input, effects, prediction

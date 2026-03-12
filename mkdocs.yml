@@ -116,6 +116,7 @@ nav:
       - Movement: modules/movement.md
       - Net: modules/net.md
       - Notifications: modules/notifications.md
+      - Obstacles: modules/obstacles.md
       - Observability: modules/observability.md
       - Pets: modules/pets.md
       - Progression: modules/progression.md

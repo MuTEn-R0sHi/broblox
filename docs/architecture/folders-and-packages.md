@@ -239,6 +239,13 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Pure-logic: all effects via callbacks (`onDamage`, `onKill`, `onToggle`).
   - `createHazardService` factory with lifecycle hooks.
 
+- `obstacles`
+  - Dynamic obstacle system for moving platforms, rotating beams, timed sequences, and conveyors.
+  - `ObstacleRegistry` for definition lookup by ID or CollectionService tag.
+  - `ObstacleManager` tracks per-instance state, drives movement each frame.
+  - Pure-logic: all position changes via callbacks (`onUpdate`, `onToggle`).
+  - `createObstacleService` factory with lifecycle hooks.
+
 ## Game folder expectations
 
 A game should only provide:
