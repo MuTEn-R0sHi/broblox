@@ -299,4 +299,106 @@ Notation:
   - abuse handling
   - observability event(s)
 
-> **Note:** Phase 4+ packages (analytics, notifications, leaderboards, codes, marketplace, etc.) define their own remotes following the same golden-path pattern above. Refer to each package's source for its specific remote definitions.
+---
+
+## Game-level remotes (implemented)
+
+The following remotes are defined per-game and follow the same golden-path pattern above. They are organized by feature area.
+
+### Shared metagame remotes (both games)
+
+These remotes exist in both test-park and obby with identical or near-identical payloads.
+
+**Client→Server Functions:**
+
+| Remote              | Payload → Response                                  | Rate Limit | Purpose                                 |
+| ------------------- | --------------------------------------------------- | ---------- | --------------------------------------- |
+| `GetFullPlayerData` | `void` → `FullPlayerDataPayload`                    | 2/2000ms   | Fetch full player state after handshake |
+| `ClaimDailyReward`  | `void` → `DailyRewardDay \| undefined`              | 1/2000ms   | Claim daily login reward                |
+| `RedeemCode`        | `RedeemCodeRequest` → `CodeRedeemResultPayload`     | 1/3000ms   | Redeem a promo code                     |
+| `HatchEgg`          | `HatchEggRequest` → `HatchResult[]`                 | 3/1000ms   | Gacha pull                              |
+| `CheckGamePass`     | `CheckGamePassRequest` → `GamePassOwnershipPayload` | 5/2000ms   | Verify game pass ownership              |
+
+**Client→Server Events:**
+
+| Remote                  | Payload                        | Rate Limit | Purpose                             |
+| ----------------------- | ------------------------------ | ---------- | ----------------------------------- |
+| `EquipPet`              | `EquipPetRequest`              | 3/500ms    | Equip a pet                         |
+| `UnequipPet`            | `UnequipPetRequest`            | 3/500ms    | Unequip a pet                       |
+| `EquipCosmetic`         | `EquipCosmeticRequest`         | 3/500ms    | Equip a cosmetic                    |
+| `UnequipCosmetic`       | `UnequipCosmeticRequest`       | 3/500ms    | Unequip a cosmetic                  |
+| `ClaimBattlePassReward` | `ClaimBattlePassRewardRequest` | 3/1000ms   | Claim a battle pass tier reward     |
+| `BuyProduct`            | `BuyProductRequest`            | 2/2000ms   | Initiate developer product purchase |
+
+**Server→Client Events:**
+
+| Remote                 | Payload                       | Purpose                                    |
+| ---------------------- | ----------------------------- | ------------------------------------------ |
+| `PlayerDataSync`       | `PlayerDataSyncPayload`       | Broadcast full player data after mutations |
+| `LevelUp`              | `LevelUpPayload`              | Notify client of level-up                  |
+| `PrestigeUnlocked`     | `PrestigeUnlockedPayload`     | Notify client of prestige unlock           |
+| `QuestCompleted`       | `QuestCompletedPayload`       | Notify client of quest completion          |
+| `AchievementCompleted` | `AchievementCompletedPayload` | Notify client of achievement               |
+| `DailyRewardClaimed`   | `DailyRewardClaimedPayload`   | Confirm daily reward claim                 |
+| `EventStarted`         | `EventActivePayload`          | Notify client that a timed event started   |
+| `EventEnded`           | `EventActivePayload`          | Notify client that a timed event ended     |
+
+### Test-park-specific remotes
+
+**Client→Server Events:**
+
+| Remote              | Payload                   | Rate Limit | Purpose               |
+| ------------------- | ------------------------- | ---------- | --------------------- |
+| `UseAbility`        | `UseAbilityRequest`       | 10/200ms   | Fire combat ability   |
+| `TestPark_Teleport` | `TestParkTeleportRequest` | 3/1000ms   | Teleport to test zone |
+
+**Client→Server Functions:**
+
+| Remote      | Payload → Response                      | Rate Limit | Purpose                          |
+| ----------- | --------------------------------------- | ---------- | -------------------------------- |
+| `ReportHit` | `ReportHitRequest` → `HitResultPayload` | 10/200ms   | Report hit for server validation |
+
+**Server→Client Events:**
+
+| Remote                  | Payload                       | Purpose                           |
+| ----------------------- | ----------------------------- | --------------------------------- |
+| `Notification`          | `ServerNotification`          | General server notification       |
+| `TestPark_ActionResult` | `TestParkActionResultPayload` | Action test result feedback toast |
+
+### Obby-specific remotes
+
+**Client→Server Events:**
+
+| Remote               | Payload                    | Rate Limit | Purpose                       |
+| -------------------- | -------------------------- | ---------- | ----------------------------- |
+| `RequestRespawn`     | `RespawnRequestPayload`    | 2/1000ms   | Request respawn at checkpoint |
+| `RequestLeaderboard` | `void`                     | 1/2000ms   | Request leaderboard refresh   |
+| `RequestTraining`    | `TrainingRequestPayload`   | 2/2000ms   | Start attribute training      |
+| `RequestEnterWorld`  | `EnterWorldRequestPayload` | 2/2000ms   | Enter a world zone            |
+| `RequestExitWorld`   | `void`                     | 2/2000ms   | Exit current world            |
+| `EquipGear`          | `EquipGearRequest`         | 3/500ms    | Equip a gear item             |
+| `UnequipGear`        | `UnequipGearRequest`       | 3/500ms    | Unequip a gear item           |
+
+**Client→Server Functions:**
+
+| Remote    | Payload → Response                        | Rate Limit | Purpose              |
+| --------- | ----------------------------------------- | ---------- | -------------------- |
+| `BuyGear` | `BuyGearRequest` → `BuyGearResultPayload` | 2/1000ms   | Purchase a gear item |
+
+**Server→Client Events:**
+
+| Remote                     | Payload                           | Purpose                             |
+| -------------------------- | --------------------------------- | ----------------------------------- |
+| `CheckpointReached`        | `CheckpointReachedEvent`          | Notify checkpoint progress          |
+| `StageCompleted`           | `StageCompletedEvent`             | Notify stage completion             |
+| `LeaderboardUpdate`        | `LeaderboardUpdatePayload`        | Push leaderboard data               |
+| `LeaderboardRefreshStatus` | `LeaderboardRefreshStatusPayload` | Leaderboard refresh cooldown status |
+| `AttributeSync`            | `AttributeSyncPayload`            | Sync player RPG attributes          |
+| `TrainingComplete`         | `TrainingCompletePayload`         | Training session result             |
+| `StaminaSync`              | `StaminaSyncPayload`              | Sync stamina state                  |
+| `WorldChanged`             | `WorldChangedPayload`             | Notify world zone change            |
+| `EquipmentSync`            | `EquipmentSyncPayload`            | Sync equipped gear                  |
+| `HazardToggle`             | `HazardTogglePayload`             | Hazard enabled/disabled state       |
+| `HazardDamage`             | `HazardDamagePayload`             | Hazard damage feedback              |
+| `ObstacleUpdate`           | `ObstacleUpdatePayload`           | Obstacle position/state update      |
+| `ObstacleToggle`           | `ObstacleTogglePayload`           | Obstacle enabled/disabled state     |

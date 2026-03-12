@@ -20,40 +20,40 @@
  * - 5xxx: Server/infrastructure errors
  */
 export enum ErrorCode {
-  // Unknown
-  Unknown = 0,
+  // 0: Unknown
+  Unknown = 0, // An unknown error occurred
 
   // 1xxx: Payload validation
-  InvalidPayload = 1001,
-  PayloadTooLarge = 1002,
-  MissingField = 1003,
-  InvalidType = 1004,
-  OutOfBounds = 1005,
+  InvalidPayload = 1001, // The request payload is invalid
+  PayloadTooLarge = 1002, // The request payload exceeds size limits
+  MissingField = 1003, // A required field is missing
+  InvalidType = 1004, // A field has an invalid type
+  OutOfBounds = 1005, // A value is outside acceptable bounds
 
   // 2xxx: State/business logic
-  RateLimited = 2001,
-  Cooldown = 2002,
-  InvalidState = 2003,
-  NotFound = 2004,
-  AlreadyExists = 2005,
-  InsufficientResources = 2006,
-  FeatureDisabled = 2007,
+  RateLimited = 2001, // Too many requests, please slow down
+  Cooldown = 2002, // Action is on cooldown
+  InvalidState = 2003, // Invalid state for this operation
+  NotFound = 2004, // The requested resource was not found
+  AlreadyExists = 2005, // The resource already exists
+  InsufficientResources = 2006, // Insufficient resources for this operation
+  FeatureDisabled = 2007, // This feature is currently disabled
 
   // 3xxx: Protocol compatibility
-  ProtocolMismatch = 3001,
-  ClientOutdated = 3002,
-  ServerOutdated = 3003,
+  ProtocolMismatch = 3001, // Client and server protocol versions are incompatible
+  ClientOutdated = 3002, // Client version is too old
+  ServerOutdated = 3003, // Server version is too old
 
   // 4xxx: Auth errors
-  Unauthorized = 4001,
-  Forbidden = 4002,
-  SessionExpired = 4003,
+  Unauthorized = 4001, // Authentication required
+  Forbidden = 4002, // Insufficient permissions
+  SessionExpired = 4003, // Session has expired, rejoin required
 
   // 5xxx: Server errors
-  InternalError = 5001,
-  ServiceUnavailable = 5002,
-  Timeout = 5003,
-  DataStoreFailed = 5004,
+  InternalError = 5001, // An internal server error occurred
+  ServiceUnavailable = 5002, // The service is temporarily unavailable
+  Timeout = 5003, // The operation timed out
+  DataStoreFailed = 5004, // DataStore operation failed
 }
 
 /**
@@ -98,25 +98,25 @@ export function getErrorCodeDescription(code: ErrorCode): string {
     case ErrorCode.FeatureDisabled:
       return "This feature is currently disabled";
     case ErrorCode.ProtocolMismatch:
-      return "Protocol version mismatch";
+      return "Client and server protocol versions are incompatible";
     case ErrorCode.ClientOutdated:
-      return "Client version is outdated, please update";
+      return "Client version is too old";
     case ErrorCode.ServerOutdated:
-      return "Server version is outdated";
+      return "Server version is too old";
     case ErrorCode.Unauthorized:
       return "Authentication required";
     case ErrorCode.Forbidden:
-      return "You don't have permission for this action";
+      return "Insufficient permissions";
     case ErrorCode.SessionExpired:
-      return "Your session has expired";
+      return "Session has expired, rejoin required";
     case ErrorCode.InternalError:
       return "An internal server error occurred";
     case ErrorCode.ServiceUnavailable:
-      return "Service temporarily unavailable";
+      return "The service is temporarily unavailable";
     case ErrorCode.Timeout:
       return "The operation timed out";
     case ErrorCode.DataStoreFailed:
-      return "Data store operation failed";
+      return "DataStore operation failed";
     default:
       return "An error occurred";
   }

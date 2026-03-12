@@ -44,7 +44,10 @@
       "@broblox/tutorial": ["./packages/tutorial/src/index.ts"],
       "@broblox/world-systems": ["./packages/world-systems/src/index.ts"],
       "@broblox/events": ["./packages/events/src/index.ts"],
-      "@broblox/marketplace": ["./packages/marketplace/src/index.ts"]
+      "@broblox/marketplace": ["./packages/marketplace/src/index.ts"],
+      "@broblox/equipment": ["./packages/equipment/src/index.ts"],
+      "@broblox/hazards": ["./packages/hazards/src/index.ts"],
+      "@broblox/obstacles": ["./packages/obstacles/src/index.ts"]
     }
   },
   "include": ["packages/*/src/**/*.ts"],

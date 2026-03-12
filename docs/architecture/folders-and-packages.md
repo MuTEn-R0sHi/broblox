@@ -100,6 +100,7 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Shared test utilities for vitest.
   - Roblox API mocks for Node.js.
   - Test factories and helpers.
+  - **Note:** This package is intentionally non-standard — it points `main`/`types` at `src/` (not `out/`), uses plain `tsc` instead of `rbxtsc`, and has no `build:roblox` script because it is never compiled to Luau. It is excluded from `tsconfig.roblox.json` paths.
 
 - `config-featureflags`
   - Runtime feature flag configuration.

@@ -5,14 +5,14 @@
  * **Integration status:**
  * - `setPositionProvider`, `resetPositionProvider`, `clearPlayerPosition` —
  *   integrated (CombatService wires movement positions)
- * - Cooldown system, hit validation core — @planned (tested internally,
- *   not yet wired to damage/ability remotes)
+ * - Cooldown system — integrated (test-park CombatService wires UseAbility remote)
+ * - Hit validation — integrated (test-park CombatService wires ReportHit remote)
  */
 
 // Types
 export * from "./types";
 
-// Cooldown system — @planned: wire to ability remotes
+// Cooldown system (wired via game-level CombatService → UseAbility remote)
 export {
   // Configuration
   registerAbility,
@@ -37,8 +37,7 @@ export {
   resetCooldowns,
 } from "./cooldown";
 
-// Hit validation — partially integrated (position provider wired),
-// @planned: wire validateHit to damage remote handler
+// Hit validation (position provider + validateHit wired via game-level CombatService → ReportHit remote)
 export {
   // Configuration
   configureHitValidation,
