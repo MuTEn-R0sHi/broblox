@@ -79,25 +79,25 @@ export function getErrorCodeDescription(code: ErrorCode): string {
     case ErrorCode.FeatureDisabled:
       return "This feature is currently disabled";
     case ErrorCode.ProtocolMismatch:
-      return "Protocol version mismatch";
+      return "Client and server protocol versions are incompatible";
     case ErrorCode.ClientOutdated:
-      return "Client version is outdated, please update";
+      return "Client version is too old";
     case ErrorCode.ServerOutdated:
-      return "Server version is outdated";
+      return "Server version is too old";
     case ErrorCode.Unauthorized:
       return "Authentication required";
     case ErrorCode.Forbidden:
-      return "You don't have permission for this action";
+      return "Insufficient permissions";
     case ErrorCode.SessionExpired:
-      return "Your session has expired";
+      return "Session has expired, rejoin required";
     case ErrorCode.InternalError:
       return "An internal server error occurred";
     case ErrorCode.ServiceUnavailable:
-      return "Service temporarily unavailable";
+      return "The service is temporarily unavailable";
     case ErrorCode.Timeout:
       return "The operation timed out";
     case ErrorCode.DataStoreFailed:
-      return "Data store operation failed";
+      return "DataStore operation failed";
     default:
       return "An error occurred";
   }
