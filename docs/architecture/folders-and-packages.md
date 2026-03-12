@@ -96,6 +96,12 @@ This project is intended to be a **monorepo** with many games sharing a common p
   - Higher-level components: `Dialog`, `Toast`, `ListView`, `ProgressBar`, `Spinner`.
   - Device-safe sizing with `px()` and `scale()` helpers.
 
+- `game-shared`
+  - Shared remote payload types used across all games' remote definitions.
+  - `RemoteRewardEntry`, `LevelUpPayload`, `QuestCompletedPayload`, `AchievementCompletedPayload`, `DailyRewardClaimedPayload`, `PrestigeUnlockedPayload`, `EventActivePayload`.
+  - Games import from `@broblox/game-shared` instead of duplicating interfaces.
+  - Depends on `@broblox/rewards` for `RewardType`.
+
 - `testing`
   - Shared test utilities for vitest.
   - Roblox API mocks for Node.js.

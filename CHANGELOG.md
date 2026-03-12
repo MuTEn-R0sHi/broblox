@@ -42,7 +42,7 @@ Notes:
 - **Rollup security patch** — added pnpm override `rollup@>=4.0.0 <4.59.0: ">=4.59.0"` to fix GHSA-mw96-cpmx-2vgc. All `@rollup/*` platform packages upgraded 4.55.2 → 4.59.0.
 - **tsconfig.roblox.json** — added `@broblox/events` path alias.
 - **vitest.config.ts** — added `@broblox/marketplace` alias.
-- **Docs sync** — updated `NEXT-SESSION.md`, `README.md`, `docs/roadmap/overview.md`, `docs/roadmap/future-phases.md`, `docs/architecture/folders-and-packages.md`, and `docs/architecture/platform.md` to reflect 33 packages, Phase 4 complete status, and marketplace addition.
+- **Docs sync** — updated `README.md`, `docs/roadmap/overview.md`, `docs/getting-started/overview.md`, `docs/architecture/folders-and-packages.md`, and `docs/architecture/platform.md` to reflect 37 packages, Phase 5d complete status, game-shared addition, and marketplace addition.
 
 ---
 
