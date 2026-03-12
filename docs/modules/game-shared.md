@@ -36,7 +36,7 @@ import type {
 
 ## Testing
 
-- Type-level tests validate all exported interfaces.
+- Package-level smoke tests ensure the module is importable; exported types are validated via TypeScript compilation in consuming games.
 
 ## See Also
 
