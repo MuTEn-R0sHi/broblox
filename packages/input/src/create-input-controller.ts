@@ -11,16 +11,11 @@ import { initInput } from "./input-manager";
 import { getMovementState, getMoveVector, isMoving } from "./input-manager";
 import { isActionActive, onAction } from "./actions";
 import { getCurrentDevice, detectDeviceClass } from "./device";
-import type { MovementState, MoveVector } from "./types";
+import type { DeviceType, MovementState, MoveVector } from "./types";
 
 // ============================================================================
 // Types
 // ============================================================================
-
-export interface InputControllerConfig {
-  /** If true, skip registering common actions and default bindings (for custom setups). */
-  skipDefaults?: boolean;
-}
 
 export interface InputControllerHandle {
   Controller: Controller;
@@ -32,7 +27,7 @@ export interface InputControllerHandle {
     actionName: string,
     callback: (action: string, state: { active: boolean }) => void
   ): () => void;
-  getCurrentDevice(): string;
+  getCurrentDevice(): DeviceType;
   detectDeviceClass(): "kbm" | "gamepad" | "touch";
 }
 
@@ -40,7 +35,7 @@ export interface InputControllerHandle {
 // Factory
 // ============================================================================
 
-export function createInputController(_config?: InputControllerConfig): InputControllerHandle {
+export function createInputController(): InputControllerHandle {
   let cleanup: (() => void) | undefined;
 
   const Controller: Controller = {
