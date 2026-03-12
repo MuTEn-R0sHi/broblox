@@ -60,12 +60,26 @@ export function createInputController(_config?: InputControllerConfig): InputCon
 
   return {
     Controller,
-    getMovementState,
-    getMoveVector,
-    isMoving,
-    isActionActive,
-    onAction,
-    getCurrentDevice,
-    detectDeviceClass,
+    getMovementState() {
+      return getMovementState();
+    },
+    getMoveVector() {
+      return getMoveVector();
+    },
+    isMoving() {
+      return isMoving();
+    },
+    isActionActive(actionName: string) {
+      return isActionActive(actionName);
+    },
+    onAction(actionName: string, callback: (action: string, state: { active: boolean }) => void) {
+      return onAction(actionName, callback);
+    },
+    getCurrentDevice() {
+      return getCurrentDevice();
+    },
+    detectDeviceClass() {
+      return detectDeviceClass();
+    },
   };
 }
