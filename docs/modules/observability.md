@@ -55,6 +55,20 @@ Observability owns no player profile data. All event data is ephemeral or shippe
 - `observability.batchSize` — events per HTTP batch.
 - `observability.sinkUrl` — dashboard API endpoint.
 
+## HTTP Sink
+
+The HTTP sink batches telemetry events and sends them to the dashboard's `/api/telemetry` endpoint. Key behaviors:
+
+- **Batching**: Events are buffered and flushed when the batch reaches `maxBatchSize` or the `flushIntervalSec` timer elapses.
+- **Error handling**: Flush failures are logged via `warn(...)`. Failed batches are dropped, not retried, to avoid backpressure.
+
+### BigInt Considerations
+
+Roblox IDs (universe, place, player) are `BigInt` in the database. When telemetry data reaches the Next.js dashboard:
+
+- Player IDs must be converted to `string` before React Server Component serialization.
+- Aggregate counts use `$queryRaw` with `COUNT(DISTINCT ...)` for DB-side computation instead of fetching rows and counting client-side.
+
 ## Observability (meta)
 
 The package dogfoods itself: initialization and sink errors are emitted as telemetry events.

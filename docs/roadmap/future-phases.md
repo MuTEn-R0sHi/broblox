@@ -51,7 +51,7 @@ See [game candidates](overview.md#game-candidates) in the roadmap overview for t
 
 **Depends on:** Phase 5b (companion), Phase 6 (BroCoins, social). Don't build this until Phase 6 is actually needed.
 
-See [ideas/game-ideas/broblox.md](../../ideas/game-ideas/broblox.md) for the full concept doc.
+See `ideas/game-ideas/broblox.md` in the repo root for the full concept doc.
 
 ---
 
@@ -63,7 +63,7 @@ See [ideas/game-ideas/broblox.md](../../ideas/game-ideas/broblox.md) for the ful
 
 **Depends on:** Phase 5b (pets system), Phase 6 (BroCoins for cross-game currency).
 
-See [ideas/IDEAS.md § The LittleBro](../../ideas/IDEAS.md#19-the-littlebro--platform-mascot) for the full concept.
+See `ideas/IDEAS.md` § "The LittleBro" in the repo root for the full concept.
 
 ---
 

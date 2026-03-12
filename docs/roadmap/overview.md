@@ -248,7 +248,7 @@ Small improvements that can be done anytime, independent of the priorities above
 
 ### Code quality (completed)
 
-Improvements from the [improvement plan](../improvement-plan.md), completed 2026-02-27:
+Improvements from the improvement plan, completed 2026-02-27:
 
 | Session | Area                                                   | Status  |
 | ------- | ------------------------------------------------------ | ------- |

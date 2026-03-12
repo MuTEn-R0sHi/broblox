@@ -220,7 +220,9 @@ Exports:
 1. **Server-side only**: All permission checks happen on the server
 2. **Audit immutability**: Application code never updates or deletes audit logs
 3. **Session security**: Database-backed sessions with secure, httpOnly cookies
-4. **Input validation**: All user input validated before processing
+4. **CSRF protection**: Double-submit cookie minted via Edge middleware (`ensureCsrfCookie`) for browser dashboard routes. Uses the Web Crypto API for token generation. The middleware skips setting the CSRF cookie on `/api/*` routes so game-server traffic authenticated with API keys is unaffected; a `validateCsrf` helper is available to wire CSRF checks into mutating browser-facing routes as needed.
+5. **Input validation**: All user input validated before processing (Zod schemas on all server actions)
+6. **Rate limiting**: Distributed rate limiting across serverless instances (database-backed, survives cold starts)
 
 ## Future Enhancements
 

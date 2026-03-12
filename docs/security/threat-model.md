@@ -121,12 +121,17 @@ Threats:
 - stolen operator session
 - excessive permissions
 - un-audited admin actions
+- CSRF attacks on mutating endpoints
 
 Mitigations:
 
-- Roblox OAuth login + allowlist + RBAC
+- GitHub OAuth login + allowlist + RBAC
 - Immutable audit logs for all privileged actions
 - Approval workflows for high-risk actions (prod promote, economy changes)
+- CSRF double-submit cookie: token set in Edge middleware via Web Crypto API; `validateCsrf` helper available for constant-time XOR validation on mutating browser routes (not yet wired into route handlers). API route cookie setting exempt (game servers use API keys).
+- Distributed rate limiting: per-operator limits backed by database (survives cold starts, shared across serverless instances)
+- Zod validation on all server actions
+- IP allowlisting via `DASHBOARD_ALLOWED_IPS` environment variable (exact IPs and CIDR ranges)
 
 ## Enforcement policy (default)
 
@@ -145,3 +150,5 @@ Mitigations:
 - No inbound remote reaches gameplay logic without schema validation and rate limiting.
 - All competitive outcomes are computed server-side.
 - All privileged dashboard actions are RBAC-protected and audited.
+- All mutating browser-facing dashboard routes are CSRF-protected (double-submit cookie).
+- All server actions validate input with Zod schemas.

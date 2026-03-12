@@ -15,6 +15,22 @@ Notes:
 
 - **@broblox/equipment package** — Reusable gear & equipment slot system. `GearRegistry` for static definitions with rarity tiers (Common → Mythic) and stat modifiers. `EquipmentStore` for per-player equip/unequip — one gear per named slot. `createEquipmentService` factory. 54 tests across 4 suites.
 - **@broblox/hazards package** — Pure-logic environmental hazard system. `HazardRegistry` for definition lookup by ID or CollectionService tag. `HazardManager` tracks per-instance state (5 behaviours: instant_kill, damage_zone, timed_burst, crumbling, contact_damage), timed toggles, and per-player immunity windows. `createHazardService` factory. 37 tests across 3 suites.
+- **Observability HTTP sinks** — `@broblox/observability` now ships telemetry events to the dashboard via configurable HTTP sinks supporting batching (`maxBatchSize`) and periodic flushing (`flushIntervalSec`). Dashboard API ingests and indexes events.
+- **Telemetry dashboard page** — new `/telemetry` page with KPI cards (Active Players (1h), Active Servers (1h), Events (24h), Errors (24h)), category breakdown chart, recent events stream, and environment/category/level filters.
+- **CI/CD improvements** — Discord webhook notifications for publish/promote outcomes, `.rbxl` build artifact uploads for audit/rollback, PR preview deploys for docs site and website, path filtering for docs-only PRs.
+- **Dashboard hardening** — distributed rate limiting (replaces in-memory limiter), Zod validation on all server actions, explicit CSRF token mechanism (double-submit cookie), custom `error.tsx` and `not-found.tsx` pages, Settings page buildout.
+- **Dashboard CSRF protection** — `ensureCsrfCookie()` sets a double-submit CSRF cookie via Edge middleware using Web Crypto API. API routes are exempt (game servers use API keys). `validateCsrf()` helper available for wiring CSRF checks into mutating browser-facing routes.
+
+### Changed
+
+- **Dashboard BigInt serialization** — Prisma `BigInt` fields (Roblox universe/place IDs, player IDs) are now converted before reaching React Server Components. Uses `$queryRaw` with `COUNT(DISTINCT ...)` for DB-side aggregation instead of client-side `findMany` + `.length`.
+- **CSRF cookie moved to middleware** — was previously set in the dashboard layout (RSC), which is forbidden by Next.js. Now set in `middleware.ts` with Edge-compatible Web Crypto API (`crypto.getRandomValues` + constant-time XOR comparison).
+
+### Fixed
+
+- **Dashboard 500 error (BigInt)** — `TypeError: Do not know how to serialize a BigInt` in RSC protocol when Prisma returned `BigInt` fields for Roblox IDs and player counts (PRs #183, #184).
+- **Dashboard 500 error (CSRF)** — `Error: Cookies can only be modified in a Server Action or Route Handler` caused by `getCsrfToken()` calling `cookieStore.set()` during RSC render (PR #185).
+- **Dashboard 404 errors (routing)** — game card clicks and internal navigation used `/dashboard/games/[id]` instead of `/games/[id]`. The `(dashboard)` route group does not appear in URL paths. Fixed 24 occurrences across 16 files (PR #186).
 - **Obby: HazardService** — 6 hazard definitions (lava floor, fire jet, poison zone, crumbling platform, spike trap, hot surface). Humanoid damage via `TakeDamage()`, death tracking via `DataService.incrementDeaths()`, `CollectionService` tag scanning, `RunService.Heartbeat` → `manager.update(dt)`, `HazardToggle`/`HazardDamage` remotes. 16 integration tests.
 - **Obby: Lava Caves world** — New `lava_caves` world config (unlock: speed 15, jump 40, stamina 10, requires grasslands completion), shared types and remote events for hazards, client-side HudController (damage flash) and RemoteController (hazard event listeners).
 - **@broblox/marketplace package (ADR-0008)** — Roblox `MarketplaceService` wrapper for developer products, game passes, and idempotent purchase receipt validation. Includes `DeveloperProductRegistry`, `GamePassCache` (TTL-based ownership cache), `PurchaseValidator` (deduplicates on `PurchaseId`), and `createMarketplaceService` factory. 47 tests across 5 suites.
@@ -43,7 +59,7 @@ Notes:
 - **@broblox/moderation — chat moderation** — `createChatModerationService()` prevents muted players from sending chat messages.
 - **Test Park — Baseplate and SpawnLocation** — added ground plane and spawn point via Rojo model JSON files and Workspace section in `default.project.json`.
 
-- **Dashboard News CMS** — full CRUD for studio news posts (`/dashboard/news`).
+- **Dashboard News CMS** — full CRUD for studio news posts (`/news`).
   - `NewsPost` Prisma model (title, slug, content, excerpt, coverImage, published, author).
   - Server actions for create / update / delete with RBAC enforcement (ENGINEER+ required).
   - Public API endpoint `GET /api/news` consumed by website with ISR (5-min revalidation).

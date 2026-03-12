@@ -197,14 +197,17 @@
 
 Track decisions made while working through this list:
 
-| Date       | Decision                                              | Context                                                                                                    |
-| ---------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| 2026-03-03 | Created pre-launch TODO from full project review      | Games remain private until P0 complete                                                                     |
-| 2026-03-03 | Wired marketplace + observability into both games     | P0 monetization & observability items done                                                                 |
-| 2026-03-03 | Added TelemetryService + marketplace e2e tests        | 509 tests pass (202 test-park, 307 obby)                                                                   |
-| 2026-03-03 | Wired @broblox/input into both games                  | Replaced raw UserInputService with proper input system                                                     |
-| 2026-03-03 | Wired @broblox/combat into test park                  | CombatService + hit validation + analytics + remote handlers                                               |
-| 2026-03-03 | @broblox/shared-types needed for Rojo transitive deps | NOT unused — packages import from it at runtime                                                            |
-| 2026-03-03 | Added client controller + service deep-config tests   | 658 tests pass (284 test-park, 374 obby)                                                                   |
-| 2026-03-03 | Dashboard hardening + CI/CD + web app tests           | 1,105 tests pass: 226 dashboard, 49 website, 284 test-park, 374 obby, 89 shared-types, 83 testing          |
-| 2026-03-03 | Shop UI + Zod validation + branch coverage push       | 3,149 tests pass. Shop screen wired into test-park. Zod applied to 7 action files. Branch coverage 78→80%. |
+| Date       | Decision                                              | Context                                                                                                     |
+| ---------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 2026-03-03 | Created pre-launch TODO from full project review      | Games remain private until P0 complete                                                                      |
+| 2026-03-03 | Wired marketplace + observability into both games     | P0 monetization & observability items done                                                                  |
+| 2026-03-03 | Added TelemetryService + marketplace e2e tests        | 509 tests pass (202 test-park, 307 obby)                                                                    |
+| 2026-03-03 | Wired @broblox/input into both games                  | Replaced raw UserInputService with proper input system                                                      |
+| 2026-03-03 | Wired @broblox/combat into test park                  | CombatService + hit validation + analytics + remote handlers                                                |
+| 2026-03-03 | @broblox/shared-types needed for Rojo transitive deps | NOT unused — packages import from it at runtime                                                             |
+| 2026-03-03 | Added client controller + service deep-config tests   | 658 tests pass (284 test-park, 374 obby)                                                                    |
+| 2026-03-03 | Dashboard hardening + CI/CD + web app tests           | 1,105 tests pass: 226 dashboard, 49 website, 284 test-park, 374 obby, 89 shared-types, 83 testing           |
+| 2026-03-03 | Shop UI + Zod validation + branch coverage push       | 3,149 tests pass. Shop screen wired into test-park. Zod applied to 7 action files. Branch coverage 78→80%.  |
+| 2026-03-04 | Fixed dashboard production 500s + 404s                | PRs #183-186: BigInt serialization, CSRF cookie → middleware (Web Crypto API), route group link prefix fix. |
+| 2026-03-04 | CSRF moved from layout to Edge middleware             | Next.js forbids cookie writes in RSC render. Now uses Web Crypto API for Edge compat, skips /api/\* routes. |
+| 2026-03-04 | Documentation sweep for PRs #182-186                  | Updated CHANGELOG, tech-stack, RBAC, observability, security, CI/CD docs with new patterns and features.    |
