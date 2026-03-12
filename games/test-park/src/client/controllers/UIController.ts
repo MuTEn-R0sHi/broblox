@@ -6,7 +6,7 @@ import { PROTOCOL_VERSION } from "@broblox/net";
  * UI Controller for status display.
  * Follows the Controller interface pattern.
  */
-export const UiController: Controller & {
+export const UIController: Controller & {
   showStatus(connected: boolean): void;
   showActionResult(message: string, success: boolean): void;
   screenGui?: ScreenGui;

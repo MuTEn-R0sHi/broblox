@@ -10,3 +10,4 @@ export * from "./device";
 export * from "./actions";
 export * from "./bindings";
 export * from "./input-manager";
+export * from "./create-input-controller";

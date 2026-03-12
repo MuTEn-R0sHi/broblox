@@ -36,6 +36,9 @@ declare const game: {
 /** Lua protected call — catches errors and returns [success, result]. */
 declare function pcall<T>(fn: () => T): LuaTuple<[boolean, T]>;
 
+/** Tuple type returned by Lua functions with multiple return values. */
+type LuaTuple<T extends unknown[]> = T & { readonly __LUA_TUPLE__: never };
+
 /** Lua type checking (roblox-ts `typeIs`). */
 declare function typeIs(value: unknown, typeName: string): boolean;
 
@@ -204,6 +207,39 @@ declare class Vector2 {
   readonly Magnitude: number;
 }
 
+/** 3D vector used for positions, directions, velocities. */
+declare class Vector3 {
+  constructor(x?: number, y?: number, z?: number);
+  readonly X: number;
+  readonly Y: number;
+  readonly Z: number;
+  readonly Magnitude: number;
+  readonly Unit: Vector3;
+  add(other: Vector3): Vector3;
+  sub(other: Vector3): Vector3;
+  mul(scalar: number | Vector3): Vector3;
+  div(scalar: number | Vector3): Vector3;
+  Dot(other: Vector3): number;
+  Cross(other: Vector3): Vector3;
+  Lerp(goal: Vector3, alpha: number): Vector3;
+  static readonly zero: Vector3;
+}
+
+/** Coordinate frame — position + rotation in 3D space. */
+declare class CFrame {
+  constructor(position?: Vector3);
+  constructor(x: number, y: number, z: number);
+  readonly Position: Vector3;
+  readonly LookVector: Vector3;
+  readonly RightVector: Vector3;
+  readonly UpVector: Vector3;
+  mul(other: CFrame): CFrame;
+  add(offset: Vector3): CFrame;
+  sub(offset: Vector3): CFrame;
+  Lerp(goal: CFrame, alpha: number): CFrame;
+  static readonly identity: CFrame;
+}
+
 /** RGB colour value (each channel 0-1). */
 declare class Color3 {
   constructor();
@@ -274,6 +310,52 @@ interface CreatableInstances {
   UIListLayout: UIListLayout;
   UIGridLayout: UIGridLayout;
   ScreenGui: ScreenGui;
+}
+
+// ============================================================================
+// Roblox 3D Objects
+// ============================================================================
+
+/** Base class for physical parts in the 3D workspace. */
+interface BasePart extends Instance {
+  Position: Vector3;
+  CFrame: CFrame;
+  Size: Vector3;
+  Anchored: boolean;
+  CanCollide: boolean;
+  Transparency: number;
+  BrickColor: unknown;
+  Color: Color3;
+  Material: EnumItem;
+  AssemblyLinearVelocity: Vector3;
+  AssemblyAngularVelocity: Vector3;
+  Touched: RBXScriptSignal;
+}
+
+/** Character movement and health controller. */
+interface Humanoid extends Instance {
+  Health: number;
+  MaxHealth: number;
+  WalkSpeed: number;
+  JumpPower: number;
+  JumpHeight: number;
+  FloorMaterial: EnumItem;
+  GetState(): EnumItem;
+  ChangeState(state: EnumItem): void;
+  TakeDamage(amount: number): void;
+  Move(moveDirection: Vector3, relativeToCamera?: boolean): void;
+  Died: RBXScriptSignal;
+  Running: RBXScriptSignal;
+  Jumping: RBXScriptSignal;
+  StateChanged: RBXScriptSignal;
+}
+
+/** A group of parts treated as a single unit (e.g. character models). */
+interface Model extends Instance {
+  PrimaryPart: BasePart | undefined;
+  GetPrimaryPartCFrame(): CFrame;
+  SetPrimaryPartCFrame(cframe: CFrame): void;
+  GetBoundingBox(): LuaTuple<[CFrame, Vector3]>;
 }
 
 // ============================================================================

@@ -1,6 +1,7 @@
 # BroBlox — Pre-Launch TODO
 
 > Generated from full project review (2026-03-03).
+> Updated: 2026-03-12 (review round 2).
 > Both games remain **private** until all P0 items are resolved.
 
 ---
@@ -9,13 +10,11 @@
 
 | Metric             | Current Value          |
 | ------------------ | ---------------------- |
-| Packages           | 35                     |
+| Packages           | 37                     |
 | Games              | 2 (test-park, obby)    |
 | Web apps           | 2 (dashboard, website) |
-| Test suites        | 145+                   |
-| Individual tests   | 3,372+                 |
-| Line coverage      | 88.40%                 |
-| Branch coverage    | 80.26%                 |
+| Test suites        | 172                    |
+| Individual tests   | 3,773                  |
 | `@planned` markers | 6 (matchmaking only)   |
 | Circular deps      | 0                      |
 | TODO/FIXME debt    | 0                      |

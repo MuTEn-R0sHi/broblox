@@ -4,7 +4,10 @@ import { getOrderedDataStoreEntries, summarizeOpenCloudError } from "@/lib/roblo
 /**
  * GET /api/leaderboards/:boardId
  *
- * Public endpoint — reads leaderboard data from Roblox OrderedDataStore
+ * **Intentionally public** — no authentication required.
+ * This endpoint is consumed by the website's public leaderboard pages.
+ *
+ * Reads leaderboard data from Roblox OrderedDataStore
  * via the Open Cloud API and returns ranked entries.
  *
  * Query parameters:

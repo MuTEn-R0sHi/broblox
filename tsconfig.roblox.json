@@ -47,7 +47,8 @@
       "@broblox/marketplace": ["./packages/marketplace/src/index.ts"],
       "@broblox/equipment": ["./packages/equipment/src/index.ts"],
       "@broblox/hazards": ["./packages/hazards/src/index.ts"],
-      "@broblox/obstacles": ["./packages/obstacles/src/index.ts"]
+      "@broblox/obstacles": ["./packages/obstacles/src/index.ts"],
+      "@broblox/game-shared": ["./packages/game-shared/src/index.ts"]
     }
   },
   "include": ["packages/*/src/**/*.ts"],

@@ -3,7 +3,7 @@
  *
  * Tests for all 7 client controllers:
  * - RemoteController: registry creation, event subscriptions
- * - UiController: GUI lifecycle, showStatus, showActionResult
+ * - UIController: GUI lifecycle, showStatus, showActionResult
  * - HandshakeController: device detection delegation, handshake flow
  * - ActionController: input action binding, DoAction invocation
  * - ChatModerationController: delegation to @broblox/moderation
@@ -157,10 +157,10 @@ describe("RemoteController (test-park client)", () => {
 });
 
 // ============================================================================
-// UiController
+// UIController
 // ============================================================================
 
-describe("UiController (test-park client)", () => {
+describe("UIController (test-park client)", () => {
   beforeEach(() => {
     vi.resetModules();
 
@@ -177,26 +177,26 @@ describe("UiController (test-park client)", () => {
     }));
   });
 
-  it("exports UiController with showStatus and showActionResult", async () => {
-    const mod = await import("./UiController");
-    expect(mod.UiController).toBeDefined();
-    expect(typeof mod.UiController.showStatus).toBe("function");
-    expect(typeof mod.UiController.showActionResult).toBe("function");
+  it("exports UIController with showStatus and showActionResult", async () => {
+    const mod = await import("./UIController");
+    expect(mod.UIController).toBeDefined();
+    expect(typeof mod.UIController.showStatus).toBe("function");
+    expect(typeof mod.UIController.showActionResult).toBe("function");
   });
 
   it("has ensureGui method for lazy GUI creation", async () => {
-    const mod = await import("./UiController");
-    expect(typeof mod.UiController.ensureGui).toBe("function");
+    const mod = await import("./UIController");
+    expect(typeof mod.UIController.ensureGui).toBe("function");
   });
 
   it("cleans up GUI on onDestroy", async () => {
-    const mod = await import("./UiController");
+    const mod = await import("./UIController");
     // Create a mock GUI to destroy
     const mockGui = { Destroy: vi.fn() };
-    (mod.UiController as Record<string, unknown>).screenGui = mockGui;
-    mod.UiController.onDestroy!();
+    (mod.UIController as Record<string, unknown>).screenGui = mockGui;
+    mod.UIController.onDestroy!();
     expect(mockGui.Destroy).toHaveBeenCalled();
-    expect(mod.UiController.screenGui).toBeUndefined();
+    expect(mod.UIController.screenGui).toBeUndefined();
   });
 });
 
@@ -249,8 +249,8 @@ describe("HandshakeController (test-park client)", () => {
       },
     }));
 
-    vi.doMock("./UiController", () => ({
-      UiController: { showStatus: mockShowStatus },
+    vi.doMock("./UIController", () => ({
+      UIController: { showStatus: mockShowStatus },
     }));
 
     vi.doMock("shared/remotes", () => ({}));
@@ -337,8 +337,8 @@ describe("ActionController (test-park client)", () => {
       },
     }));
 
-    vi.doMock("./UiController", () => ({
-      UiController: { showActionResult: mockShowActionResult },
+    vi.doMock("./UIController", () => ({
+      UIController: { showActionResult: mockShowActionResult },
     }));
 
     vi.doMock("shared/remotes", () => ({}));
