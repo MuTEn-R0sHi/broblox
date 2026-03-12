@@ -19,7 +19,7 @@
     "baseUrl": "src",
     "paths": {
       "shared/*": ["shared/*"],
-      "@broblox/game-shared": ["../../packages/game-shared/src"],
+      "@broblox/game-shared": ["../../../packages/game-shared/src"],
       "@broblox/*": ["../node_modules/@broblox/*"]
     }
   },
