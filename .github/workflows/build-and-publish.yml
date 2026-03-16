@@ -115,7 +115,7 @@ jobs:
           rojo build default.project.json -o build.rbxl
 
       - name: Upload .rbxl artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.game }}-${{ inputs.environment }}-${{ inputs.source_ref }}
           path: ${{ steps.game.outputs.game_path }}/build.rbxl
