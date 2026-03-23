@@ -24,7 +24,7 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.577.0",
     "mariadb": "^3.5.2",
-    "next": "^16.1.6",
+    "next": "^16.2.1",
     "next-auth": "5.0.0-beta.30",
     "postcss": "^8.5.8",
     "prisma": "^7.4.2",
