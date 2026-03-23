@@ -51,7 +51,7 @@
     "@broblox/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
     "@rbxts/services": "^1.6.0",
-    "@rbxts/types": "^1.0.910",
+    "@rbxts/types": "^1.0.912",
     "roblox-ts": "^3.0.0"
   }
 }
