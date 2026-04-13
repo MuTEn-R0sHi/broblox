@@ -27,10 +27,10 @@
   "devDependencies": {
     "@broblox/testing": "workspace:*",
     "@rbxts/compiler-types": "3.0.0-types.0",
-    "@rbxts/types": "^1.0.910",
+    "@rbxts/types": "^1.0.915",
     "roblox-ts": "^3.0.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.4"
   },
   "dependencies": {
     "@broblox/core": "workspace:*",
